@@ -1,0 +1,299 @@
+.v-sidebar-menu{max-width: 260px !important;}
+img{max-width:100% !important}
+
+#pet_info_main .pet_info_main{
+margin: 10px;
+padding: 15px 0;
+background: #f5f7ff;
+border-radius: 10px;
+display: flex;
+align-items: center;
+}
+#pet_dob{margin: 0 !important}
+.myedit_pet svg{
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: #b9b9b9;
+  padding: 6px;
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  color: #fff;
+}
+.b-form-datepicker button{margin: 0 !important} 
+.timepiker-block button{margin: 0 !important}
+.timepiker-block .b-form-spinbutton{padding-top: 0 !important; padding-bottom: 0 !important; height:auto !important;}
+.timepiker-block bdi{display: block !important;
+margin: 0 auto;}
+.add_client_link{text-align: right;width: 100%;display: block;margin-top: 10px;}
+.edit_client_link{position: relative;}
+.edit_client_link span{position: absolute;right: 0;}
+
+#pet_info_main .col-xl-4, .myedit_pet{position: relative;}
+#pet_info_main a{color:#333;text-decoration: none;}
+.pet_info_main p{font-size:12px;}
+.search_field{position:relative;}
+.search_field .input-group-append{position:absolute; top:0;right: 15px;}
+.search_field .input-group-append button{border-radius:10px;}
+#per-page-select{  width: auto !important;}
+
+.b-nav-dropdown ul{top:100% !important}
+.nav-pills{padding-bottom: 0 !important;}
+.vsm--list .vsm--item a{display:block; padding:5px 10px;}
+    .back_logon {
+  background: #fff;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.back_logon .div-center {
+  max-width: 440px !important;
+	width:100%;
+  height: 400px;
+  background-color: #fff;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: auto;
+  display: table;
+}
+
+.back_logon div.content {
+  display: table-cell;
+  vertical-align: middle;
+}   
+.main_booking label.label_datepicker, .main_booking legend{font-weight:bold; font-size:16px !important;}
+.main_booking .card-header ul{padding-bottom:0 !important}
+.main_booking .card-header, .main_booking .card-footer, .main_booking .card-header ul{ border:none !important}
+
+#pet-radios-btn{display:block !important;}
+.main_booking .nav-pills .nav-item{width: 30% !important; padding:0 !important;}
+.main_booking .nav-pills .nav-item:last-child{margin-right:0 !important;}
+/*#pet-radios-btn .choose-pet-radios-btn{margin-bottom:15px !important;}*/
+#pet-radios-btn .choose-pet-radios-btn input{display:none;}
+#pet-radios-btn .choose-pet-radios-btn .row{align-items:center;}
+.choose-pet-radios-btn label{width:100% !important;}
+.choose-pet-radios-btn .col-md-9{text-align:left}
+.choose-pet-radios-btn .col-md-5{text-align:right}
+.choose-pet-radios-btn .btn-outline-primary{padding-left:20px;padding-right:20px;}
+.time_slots .align-items-center .form-control{min-height:100px !important}
+.time_slots .align-items-center .form-control bdi{width:100% !important}
+#time-radios-btn{display:block !important;}
+#time-radios-btn .btn-outline-primary{width: 30.5% !important;
+border: 1px solid !important; padding-left:15px; padding-right:15px;
+margin: 1%!important;}
+
+#input-group-areas .dropdown-menu{padding:15px !important;}
+.total_cost{font-size: 22px;margin-bottom: 20px;font-weight: bold;}
+.date_range .b-form-datepicker label{position: absolute !important;
+top: 16px !important;
+left: 45px !important;}
+.service_tab_main legend, .label_datepicker{font-weight:bold; font-size:16px !important;}
+.service_tab_main .btn-outline-primary{padding-left:15px !important;padding-right:15px !important;}
+#client_info_div{padding:20px 20px 0}
+.service_tab_main .btn-group{display:inline-block !important;  width: 100%;}
+.service_tab_main .btn-group .btn-outline-primary{margin:0 1% 1% 0 !important;}
+
+
+/* Asif Css Here */
+
+.line-block { 
+    width: 100%; float: left; height: 2px; background: #F5F7FF; margin: 0px 0px 20px;
+}
+#client_info_div{
+    width: 100%;
+    float: left;
+    padding: 20px 20px;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+#client_info_div strong {
+    width: 180px;
+    display: inline-block;
+float:left;
+}
+
+.datepiker-block .b-calendar .b-calendar-grid-caption{
+  padding: 1rem;
+}
+.datepiker-block .border-bottom{
+  padding: 0.45rem 0px;
+}
+.datepiker-block .b-calendar .b-calendar-grid-body .col[data-date] .btn {
+    width: 30px;
+    height: auto;
+    font-size: 14px;
+    line-height: 1;
+    margin: 3px auto;
+    padding: 9px 0!important;
+}
+.date_range {
+    display: flex;
+    align-items: center;
+}
+.date_range .filter_label {
+    display: inline-block;
+    float: left;
+}
+.date_range .datepiker-block {
+    display: flex;
+    align-items: center;
+    float: left;
+    padding: 0 10px;
+    padding-left: 0px;
+}
+.date_range .datepiker-block span {
+    float: left;
+}
+.date_range .datepiker-block .b-form-datepicker {
+    width: 180px;
+    float: left;
+    margin: 0 !important;
+}
+.date_range .b-form-datepicker label.form-control {
+    width: 70% !important;
+}
+.date_range .filter_label label {
+    margin-bottom: 2px;
+}
+.choose_pet {
+    float: left;
+    width: 100%;
+    margin-top: 20px;
+}
+.nav-wizard li:last-child,
+.nav-wizard li:nth-child(3) {
+    display: none !important;
+}
+.multiselect {
+    margin-bottom: 15px !important;
+}
+.multiselect__input {
+    border: none !important;
+}
+.text-center .spinner-border {
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+#modal-2 #example-datepicker {
+    margin: 0 !important;
+}
+#modal-2 .b-form-datepicker label {
+    position: absolute;
+    top: 16px;
+    left: 42px;
+}
+
+
+/* Monday 28 feb */
+
+.call-center-dashboard .date_range .datepiker-block span {
+    font-size: 14px;
+    color: #7E7E7E;
+    font-weight: 700;
+}
+.call-center-dashboard .date_range .datepiker-block .b-form-datepicker{
+    margin: 0 !important;
+    display: flex;
+    align-items: center;
+    width: 160px;
+    height: auto!important;
+}
+.call-center-dashboard .form-control{
+    padding: 0.575rem 1.375rem;
+}
+.call-center-dashboard .date_range .b-form-datepicker label.form-control {
+    margin-bottom: 0!important;
+    font-size: 12px!important;
+    color: #7e7e7e!important;
+    font-weight: bolder;
+    top: auto!important;
+}
+.call-center-dashboard .btn.btn-primary {
+    padding: 0.675rem 1.5rem;
+    font-weight: 700;
+}
+.call-center-dashboard .list-appointments .form-group div{
+    color: #7E7E7E;
+}
+
+.call-center-dashboard .stretch-card .mb-4{
+    margin-bottom: 1.2rem !important;
+    font-size: 12px;
+    font-weight: bold;
+}
+.call-center-dashboard .stretch-card .fs-30{
+    font-size: 20px;
+    margin-bottom: 0!important;
+    font-weight: bold;
+}
+.call-center-dashboard .stretch-card p{
+    font-size: 12px;
+}
+
+.call-center-dashboard .page-titles {
+    width: 100%;
+    float: left;
+    margin-bottom: 20px;
+}
+
+.service_tab_main .datepiker-block button{
+    text-align: left;
+    width: auto;
+}
+
+/* Common Classies  */
+
+.space-bottom{
+    margin-bottom: 20px;
+}
+
+.block-heading {
+    padding: 10px 0px 20px;
+    font-weight: 700;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.blue-bar{
+    padding: 10px 0px 20px;
+    border-bottom: 2px solid #F5F7FF; 
+    margin-bottom: 20px;
+}
+
+.search_field input{
+    height: auto!important;
+    font-size: 14px!important;
+}
+.search_field .input-group-append,
+.search_field .input-group-append button{
+    height: 100%;
+}
+#additional-service-radios-btn .choose-pet-radios-btn{
+	width: 48%;
+	display: inline-block;
+	margin-left: 1%;
+	margin-right: 1%;
+}
+#vehicle-radios-btn .choose-pet-radios-btn{
+	width: 48%;
+	display: inline-block;
+	margin-left: 1%;
+	margin-right: 1%;
+}
+.main-panel-groomer nav.navbar{background:#fff}
+
+.login-btn{
+    width: 100%;
+}
