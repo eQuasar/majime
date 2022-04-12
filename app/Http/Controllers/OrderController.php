@@ -29,7 +29,9 @@ class OrderController extends Controller
 	public function getall()
 	{
 	
-		return json_encode(Orders);
+		return Orders::all();
+		//return json_encode(Orders:all());
+
 	}
 
 		private function getOrderWP()
