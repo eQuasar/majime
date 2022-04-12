@@ -1,0 +1,438 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,800;1,100&display=swap');
+
+body{
+    background: #fff;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: unset!important;
+}
+.main-container {
+    max-width: 700px;
+    width: 100%;
+    float: none;
+    margin: 0 auto;
+    padding: 70px 0px;
+    position: relative;
+}
+
+.marg-bottom {
+    margin-bottom: 40px;
+}
+
+.heading h1 {
+    font-size: 20px;
+    color: #df633f;
+}
+.heading p {
+    font-size: 14px;
+    color: #000000;
+    font-weight: 300;
+}
+.form-part .input-group {
+    border: 1px solid #2b2c40;
+    border-radius: 10px !important;
+    font-size: 14px;
+    color: #333239;
+    width: 100%;
+    padding: 10px 10px;
+    margin-bottom: 15px;
+}
+.form-part .input-group span,
+.form-part .input-group input {
+    border: none;
+    background: transparent;
+}
+.form-part .input-group input:focus {
+    border: none;
+    box-shadow: none;
+}
+.submit-btn {
+    width: 100%;
+    border: none;
+    padding: 15px 10px;
+    border-radius: 5px;
+    background: #2b2c40;
+    color: #fff;
+}
+#account-login-info {
+    position: absolute;
+    bottom: -10vh;
+    width: 100%;
+    text-align: center;
+}
+#account-login-info p {
+    font-size: 14px;
+    color: #7e7e7e;
+}
+#account-login-info p a {
+    margin-left: 5px;
+    text-decoration: none;
+    color: #7e7e7e;
+}
+/*======= Select Pet Css =======*/
+
+#select-pet-page .btn-group {
+    width: 100%;
+    display: block;
+    float: left;
+}
+
+#select-pet-page .btn-secondary {
+    width: 100%;
+    float: left;
+    border-radius: 10px !important;
+    margin: 10px 0px;
+    background: transparent;
+    color: #8b8b8b;
+    font-size: 14px;
+    font-weight: 300;
+    text-align: left;
+    padding: 15px 20px;
+    border-color: #4D4E5F;
+}
+#select-pet-page .add-btn {
+    width: 100%;
+    float: left;
+    border-radius: 10px !important;
+    margin: 10px 0px;
+    background: transparent;
+    color: #4D4E5F;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    padding: 15px 20px;
+    border: 1px solid #4D4E5F;
+}
+
+#select-pet-page .btn-secondary img {
+    max-width: 50px;
+    width: 100%;
+    border-radius: 4px;
+    margin-right:0px;
+}
+
+#select-pet-page .img-sec{
+    display: inline-block;
+    width: auto;
+}
+
+#select-pet-page .col-9 h4{
+    font-size: 15px;
+    margin-bottom: 0;
+}
+
+#select-pet-page .col-9 p{
+    margin-bottom: 0;
+}
+
+/*======= Add Pet Css =======*/
+
+#add-pet-page .btn-group {
+    width: 100%;
+    display: block;
+    float: left;
+    margin-bottom: 20px;
+}
+
+#add-pet-page .btn-secondary {
+    width: 49%;
+    float: left;
+    border-radius: 5px !important;
+    margin: 10px 0px;
+    background: transparent;
+    color: #8b8b8b;
+    font-size: 14px;
+    font-weight: 300;
+    text-align: center;
+    padding: 15px 20px;
+}
+#add-pet-page .add-btn {
+    width: 100%;
+    float: left;
+    border-radius: 5px !important;
+    margin: 10px 0px;
+    background: transparent;
+    color: #8b8b8b;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    padding: 15px 20px;
+    border: 1px solid;
+}
+
+#add-pet-page .btn-secondary img {
+    max-width: 30px;
+    width: 100%;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+/*======= Add Pet Css =======*/
+
+#service-page .btn-group {
+    width: 100%;
+    display: block;
+    float: left;
+    margin-bottom: 20px;
+}
+
+#service-page .btn-secondary {
+    width: 100%;
+    border-radius: 10px !important;
+    margin: 10px 0px;
+    background: transparent;
+    color: #8b8b8b;
+    font-size: 14px;
+    font-weight: 300;
+    text-align: left;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+}
+#service-page .add-btn {
+    width: 100%;
+    float: left;
+    border-radius: 5px !important;
+    margin: 10px 0px;
+    background: transparent;
+    color: #8b8b8b;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    padding: 15px 20px;
+    border: 1px solid;
+}
+#service-page .btn-secondary img {
+    max-width: 30px;
+    width: 100%;
+    border-radius: 4px;
+    margin-right: 20px;
+    display: inline-block;
+}
+#service-page .btn-secondary .btn-inner {
+    display: inline-block;
+}
+#service-page .btn-secondary .btn-inner p {
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-weight: 500;
+}
+#service-page .btn-inner span {
+    margin-right: 10px;
+}
+#service-page .half-btn {
+    width: 100%;
+}
+
+#service-page .vheical-btn .btn-secondary {
+    display: block !important;
+    text-align: center;
+}
+#service-page .vheical-btn .btn-secondary img {
+    max-width: 50px;
+    margin-right: 0px;
+}
+.recipt {
+    width: 100%;
+    float: left;
+    background: #fcfcfc;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 0px 5px #00000005;
+    border: 1px solid #ccc;
+}
+.recipt p {
+    margin: 0 0px 5px;
+    font-weight: 300;
+    font-size: 15px;
+}
+.recipt .right-spn {
+    float: right;
+}
+.recipt h5 {
+    margin-bottom: 20px;
+    color: #df633f;
+}
+.totl {
+    margin-top: 20px !important;
+}
+.totl span {
+    color: #df633f;
+    font-weight: 500;
+}
+
+
+/*  Home page css  */
+
+.send_otp_page form input{
+
+    width: 100%;
+/*    float: left;*/
+    border-radius: 5px !important;
+    margin: 10px 0px;
+    background: transparent;
+    color: #8b8b8b;
+    font-size: 16px;
+    font-weight: 300;
+    text-align: left;
+    padding: 14px 20px;
+    border: 1px solid;
+    margin-bottom: 20px;
+}
+
+.send_otp_page .btn-success {
+    width: 100%;
+    border: none;
+    padding: 15px 10px;
+    border-radius: 5px;
+    background: #2b2c40;
+    color: #fff;
+    float: left;
+    text-align: center;
+    text-decoration: none;
+}
+
+/*.main_booking{height: 100vh;}*/
+.main_booking .mx-auto.form-part{padding-bottom: 100px;}
+.main_booking .card-footer{position: relative; bottom: 0;width: 100%; z-index: 1;}
+
+
+/*  Client Home Screen  */
+
+.btn-outline-primary:not(:disabled):not(.disabled):active, .btn-outline-primary:not(:disabled):not(.disabled).active, .show > .btn-outline-primary.dropdown-toggle {
+    color: #333239;
+    background-color: #EAF1FB;
+    border-color: #4D4E5F80;
+}
+
+.main_booking .card-footer{
+    left: 0;
+    margin-top: 5vh;
+}
+
+#pet-radios-btn .choose-pet-radios-btn{
+    width: 100%;
+    padding:0px;
+}
+
+#pet-radios-btn .col-sm-9 h4{
+    font-size: 15px;
+    margin-bottom: 0;
+}
+
+#pet-radios-btn .col-sm-9 p{
+    margin-bottom: 0;
+}
+
+#pet-radios-btn .img-sec{
+    display: inline-block;
+    width: 80px;
+    max-width: 80px;
+}
+
+#pet-radios-btn .img-sec img{
+    border-radius: 5px;
+}
+
+.choose_pet label{
+    padding: 15px 15px!important;
+    margin-bottom: 15px;
+}
+
+.btn-outline-primary:hover {
+    color: #333239;
+    background-color: #EAF1FB;
+    border-color: #4D4E5F80;
+}
+
+.choose_pet label{
+    border: 1px solid #4D4E5F;
+}
+
+.myedit_pet svg{
+    right: -1px!important;
+    top: -1px!important;
+}
+
+.service_tab_main legend, .label_datepicker {
+    font-weight: 500;
+    font-size: 20px !important;
+    color: #DF633F;
+}
+
+.choose-pet-radios-btn label input{
+    display:  none;
+}
+
+.choose-pet-radios-btn .row{
+    align-items: center;
+}
+
+#bath-radios-btn .col-sm-9 h4,
+#additional-service-radios-btn .col-sm-9 h4,
+#vehicle-radios-btn .col-sm-9 h4{
+    font-size: 15px;
+    margin-bottom: 3px;
+    font-weight: 500;
+}
+
+#bath-radios-btn .col-sm-9 p,
+#additional-service-radios-btn .col-sm-9 p,
+#vehicle-radios-btn .col-sm-9 p{
+    margin-bottom: 0;
+    font-size: 13px;
+}
+
+#bath-radios-btn .img-sec,
+#additional-service-radios-btn .img-sec,
+#vehicle-radios-btn .img-sec{
+    display: inline-block;
+    width: 80px;
+    max-width: 80px;
+}
+
+#bath-radios-btn .img-sec img,
+#additional-service-radios-btn .img-sec img,
+#vehicle-radios-btn .img-sec img{
+    border-radius: 5px;
+}
+
+.service_tab_main .btn-group .btn-outline-primary{
+    margin-bottom: 15px!important;
+}
+
+.main_booking .mx-auto.form-part{
+    padding-bottom: 0px!important;
+}
+
+.total_cost p strong{
+    font-weight: 500;
+    font-size: 20px !important;
+    color: #DF633F;
+}
+
+.total_cost span{
+    border: 1px solid;
+    width: 100%;
+    float: left;
+    padding: 12px;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+
+@media only screen and (max-width: 767px) {
+    .card-footer button {
+      width: 140px !important;
+    }
+    .main-container {
+        max-width: 350px;
+        width: 100%;
+        float: none;
+        margin: 0 auto;
+    }
+    #pet-radios-btn .choose-pet-radios-btn {
+      width: 100% !important;
+    }
+}
