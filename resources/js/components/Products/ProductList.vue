@@ -134,7 +134,7 @@
     },
     mounted() {
 
-      // this.appointment();
+      
       this.ProductDetail();
     },
     data() 
@@ -207,93 +207,8 @@ computed: {
         return this.items.length
       }
     },
-  methods: {
-    gettimeslot() {
-        let formData = new FormData();
-        formData.append("type", "get_active");
-        timeslot
-            .addTimeSlot(formData)
-            .then((response) => {
-                this.time_slots = response.data.data;
-            })
-            .catch((error) => {
-                console.log(error);
-                if (error.response.status == 422) {
-                    this.errors_create = error.response.data.errors;
-                }
-            });
-    },
-    schedule_appointment() 
-    {
-        let formData = new FormData();
-        formData.append("id", this.appointment_id);
-        formData.append("time", this.time);
-        formData.append("date", this.date);
-        appointment
-          .scheduleAppointment(formData)
-          .then((response) => {
-                  this.$bvModal.hide("modal-2");
-                  this.appointment();
-              // }
-          })
-          .catch((error) => {
-              // console.log(error);
-              if (error.response.status == 422) {
-                  this.errors_create = error.response.data.errors;
-              }
-              // loader.hide();
-          });
-    },
-    cancel_appointment(id) 
-    {
-        let formData = new FormData();
-        formData.append("id", id);
-        appointment
-          .cancelAppointment(formData)
-          .then((response) => {
-                  // this.$bvModal.hide("modal-2");
-                  this.appointment();
-              // }
-          })
-          .catch((error) => {
-              // console.log(error);
-              if (error.response.status == 422) {
-                  this.errors_create = error.response.data.errors;
-              }
-              // loader.hide();
-          });
-    },
-    scheduleinfo(id){
-        //alert(id);
-        let obj = (this.items).find(o => o.id === id);
-        console.log(obj);
-        this.date = obj.date_simple;
-        this.time = obj.time.id;
-        this.appointment_id = id;
-        let formData = new FormData();
-        formData.append("id", id);
-        this.$bvModal.show("modal-2");
-    },
-    assign_appointment() 
-    {
-      let formData = new FormData();
-        formData.append("id", this.appointment_id);
-        formData.append("vehicle_assign", this.vehicle_assign);
-        appointment
-          .assignAppointment(formData)
-          .then((response) => {
-                  this.$bvModal.hide("modal-1");
-                  this.appointment();
-              // }
-          })
-          .catch((error) => {
-              // console.log(error);
-              if (error.response.status == 422) {
-                  this.errors_create = error.response.data.errors;
-              }
-              // loader.hide();
-          });
-    },
+  methods:{
+   
     onSubmit(event) {
       event.preventDefault()
       this.create_error = "";
@@ -315,62 +230,25 @@ computed: {
           .then((response) => {
               
                   this.items=response.data.data;
-                  
-              // }
+           
           })
           .catch((error) => {
               console.log(error);
               if (error.response.status == 422) {
                   this.errors_create = error.response.data.errors;
               }
-              // loader.hide();
-          });
-      // console.log(this.date_from);
-      // console.log(this.date_to);
-      // alert(JSON.stringify(this.form))
-    },
-    onReset(event) {
-      event.preventDefault()
-      // Reset our form values
-      this.date_to = '';
-      this.date_from = '';
-      this.appointment();
-    },
-    clearData()
-    {
-      this.appointment_id ='';
-    },
-    addinfo(id){
-        //alert(id);
-        
-        this.appointment_id = id;
-        let formData = new FormData();
-        formData.append("id", id);
-      appointment
-          .freeVehicle(formData)
-          .then((response) => {
-              
-                  this.vehicle_assign_array=response.data.data;
-                  this.$bvModal.show("modal-1");
-              // }
-          })
-          .catch((error) => {
-              // console.log(error);
-              if (error.response.status == 422) {
-                  this.errors_create = error.response.data.errors;
-              }
-              // loader.hide();
           });
     },
+  
     ProductDetail() {
-      // this.seen = true;
+      
       Product.getProductDetail()
         .then(( response ) => {
           console.log(response);
           this.items=response.data;
-          // this.countrys = response.data.data;
+   
           console.log(this.items);
-          //this.seen = false;
+    
         })
         .catch(response => {
             this.successful = false;

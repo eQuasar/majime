@@ -150,12 +150,12 @@
         time: "",
         date: "",
         time_slots: [],
-      seen: false,
+        seen: false,
         date_from: '',
         date_to: '',
         sortBy: 'date',
         sortDesc: true,
-         perPage: 10,
+        perPage: 10,
         currentPage: 1,
         pageOptions: [5, 10, 15, 20, 50, 100],
         filter: null,
@@ -258,32 +258,8 @@ computed: {
       this.date_from = '';
       this.appointment();
     },
-    clearData()
-    {
-      this.appointment_id ='';
-    },
-    addinfo(id){
-        //alert(id);
-        
-        this.appointment_id = id;
-        let formData = new FormData();
-        formData.append("id", id);
-      appointment
-          .freeVehicle(formData)
-          .then((response) => {
-              
-                  this.vehicle_assign_array=response.data.data;
-                  this.$bvModal.show("modal-1");
-              // }
-          })
-          .catch((error) => {
-              // console.log(error);
-              if (error.response.status == 422) {
-                  this.errors_create = error.response.data.errors;
-              }
-              // loader.hide();
-          });
-    },
+  
+    
     reportdetail() {
       // this.seen = true;
       report.getReportDetail()
@@ -300,24 +276,7 @@ computed: {
         });
 
     },
-    previewImage: function(event) {
-        // Reference to the DOM input element
-        var input = event.target;
-        // Ensure that you have a file before attempting to read it
-        if (input.files && input.files[0]) {
-            // create a new FileReader to read this image and convert to base64 format
-            var reader = new FileReader();
-            // Define a callback function to run, when FileReader finishes its job
-            reader.onload = (e) => {
-                // Note: arrow function used here, so that "this.imageData" refers to the imageData of Vue component
-                // Read image as base64 and set to imageData
-                this.imageData = e.target.result;
-                this.image_file = e.target.result;
-            }
-            // Start the reader job - read file as a data url (base64 format)
-            reader.readAsDataURL(input.files[0]);
-        }
-    },
+   
 
 
   }
