@@ -75,6 +75,6 @@ class __TwigTemplate_b49b39099d647a8ff16803a96c6a368866a042edb4bbbd8ccb58f259bcc
 
     public function getSourceContext()
     {
-        return new Source("", "config/form_display/form_top.twig", "/var/www/html/public/pma/templates/config/form_display/form_top.twig");
+        return new Source("", "config/form_display/form_top.twig", "/var/www/majime/public/pma/templates/config/form_display/form_top.twig");
     }
 }

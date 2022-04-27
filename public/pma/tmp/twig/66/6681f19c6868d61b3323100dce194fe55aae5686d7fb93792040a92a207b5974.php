@@ -282,6 +282,6 @@ class __TwigTemplate_d3c2c743818e1cada28493ddbe0a4238dcb73b8f06067371600947c7114
 
     public function getSourceContext()
     {
-        return new Source("", "display/results/checkbox_and_links.twig", "/var/www/html/public/pma/templates/display/results/checkbox_and_links.twig");
+        return new Source("", "display/results/checkbox_and_links.twig", "/var/www/majime/public/pma/templates/display/results/checkbox_and_links.twig");
     }
 }

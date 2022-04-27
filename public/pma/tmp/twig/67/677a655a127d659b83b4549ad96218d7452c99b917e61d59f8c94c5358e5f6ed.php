@@ -300,6 +300,6 @@ class __TwigTemplate_953f4d3e7e4b161fc2f9ae83fa8544650a73e8ecc0e2ccecb61368606bb
 
     public function getSourceContext()
     {
-        return new Source("", "columns_definitions/table_fields_definitions.twig", "/var/www/html/public/pma/templates/columns_definitions/table_fields_definitions.twig");
+        return new Source("", "columns_definitions/table_fields_definitions.twig", "/var/www/majime/public/pma/templates/columns_definitions/table_fields_definitions.twig");
     }
 }

@@ -80,6 +80,6 @@ class __TwigTemplate_9632f1b95229d736d9e60b40ee19fdbbf5a636c9e87d19177008e9a5f3f
 
     public function getSourceContext()
     {
-        return new Source("", "sql/sql_query_results.twig", "/var/www/html/public/pma/templates/sql/sql_query_results.twig");
+        return new Source("", "sql/sql_query_results.twig", "/var/www/majime/public/pma/templates/sql/sql_query_results.twig");
     }
 }

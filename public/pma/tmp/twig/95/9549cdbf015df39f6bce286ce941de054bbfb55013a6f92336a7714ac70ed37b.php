@@ -102,6 +102,6 @@ class __TwigTemplate_0e917ad89b2ed8f67e49f0b855814a5f591a4ea9232a96a9d96add74913
 
     public function getSourceContext()
     {
-        return new Source("", "table/page_with_secondary_tabs.twig", "/var/www/html/public/pma/templates/table/page_with_secondary_tabs.twig");
+        return new Source("", "table/page_with_secondary_tabs.twig", "/var/www/majime/public/pma/templates/table/page_with_secondary_tabs.twig");
     }
 }

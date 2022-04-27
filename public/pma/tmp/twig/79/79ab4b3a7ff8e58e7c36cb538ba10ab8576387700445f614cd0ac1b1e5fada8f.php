@@ -174,6 +174,6 @@ class __TwigTemplate_de1a4717b7266f2893973eb2baa311566d05fd169bdc104bc11a5bbfa91
 
     public function getSourceContext()
     {
-        return new Source("", "menu/breadcrumbs.twig", "/var/www/html/public/pma/templates/menu/breadcrumbs.twig");
+        return new Source("", "menu/breadcrumbs.twig", "/var/www/majime/public/pma/templates/menu/breadcrumbs.twig");
     }
 }

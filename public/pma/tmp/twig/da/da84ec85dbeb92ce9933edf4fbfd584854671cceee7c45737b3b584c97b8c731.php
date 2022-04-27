@@ -190,6 +190,6 @@ class __TwigTemplate_5168f983946d5dcee8fb3db56f21e026f9fff4992b65edb26ed4bb1b155
 
     public function getSourceContext()
     {
-        return new Source("", "database/structure/check_all_tables.twig", "/var/www/html/public/pma/templates/database/structure/check_all_tables.twig");
+        return new Source("", "database/structure/check_all_tables.twig", "/var/www/majime/public/pma/templates/database/structure/check_all_tables.twig");
     }
 }

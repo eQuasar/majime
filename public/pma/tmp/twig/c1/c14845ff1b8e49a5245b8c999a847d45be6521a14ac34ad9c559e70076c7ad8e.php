@@ -96,6 +96,6 @@ class __TwigTemplate_263b956f3e8278d128c163e6c546562187c66b2ea66790908bbe386b005
 
     public function getSourceContext()
     {
-        return new Source("", "display/results/table_navigation_button.twig", "/var/www/html/public/pma/templates/display/results/table_navigation_button.twig");
+        return new Source("", "display/results/table_navigation_button.twig", "/var/www/majime/public/pma/templates/display/results/table_navigation_button.twig");
     }
 }

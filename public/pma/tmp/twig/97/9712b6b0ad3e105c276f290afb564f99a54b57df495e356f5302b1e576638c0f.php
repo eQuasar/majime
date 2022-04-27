@@ -223,6 +223,6 @@ class __TwigTemplate_de2a9be4caabe920462afd7d0e33e4446ce1f89b534b7f52218fb3b7759
 
     public function getSourceContext()
     {
-        return new Source("", "header.twig", "/var/www/html/public/pma/templates/header.twig");
+        return new Source("", "header.twig", "/var/www/majime/public/pma/templates/header.twig");
     }
 }

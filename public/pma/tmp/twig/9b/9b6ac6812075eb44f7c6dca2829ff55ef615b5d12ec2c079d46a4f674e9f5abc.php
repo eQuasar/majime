@@ -97,6 +97,6 @@ class __TwigTemplate_b9bcad634eff84c7f1595718052cb273e708e88bfa9e9bb72dc3061aac1
 
     public function getSourceContext()
     {
-        return new Source("", "database/create_table.twig", "/var/www/html/public/pma/templates/database/create_table.twig");
+        return new Source("", "database/create_table.twig", "/var/www/majime/public/pma/templates/database/create_table.twig");
     }
 }

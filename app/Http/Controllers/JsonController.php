@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ProductController;
 use App\Models\Orders;
-use App\Models\billings;
+use App\Models\Billings;
 use App\Models\shippings;
 use App\Models\meta_data;
-use App\Models\line_items;
-use App\Models\line_items_meta;
+use App\Models\LineItems;
+use App\Models\LineItemsMeta;
 use App\Models\tax_lines;
 use App\Models\shipping_lines;
 use App\Models\Order_fee_lines;
@@ -28,8 +28,8 @@ class JsonController extends Controller
 	}
 	public function productDetail()
 	{
-		//return billings::all();
-		$obj['data'] = billings::join();
+		//return Billings::all();
+		$obj['data'] = Billings::join();
 		return $obj['data'];
 		//return InsertBilling::all();
 		
@@ -130,7 +130,7 @@ class JsonController extends Controller
 		    		// $BillingData=$orderBilling;
 		    
 		    		$billing[]=[
-		    				'Order_id'=>$orderID,
+		    				'order_id'=>$orderID,
 		    				'first_name'=>$BillingData->first_name,
 		    				'last_name'=>$BillingData->last_name,
 		    				'company'=>$BillingData->company,
@@ -145,7 +145,7 @@ class JsonController extends Controller
 		    				];
 		    	// } 
 
-		    	 billings::insert($billing);
+		    	 Billings::insert($billing);
 		        
 		    }
 		      public function InsertShipping($InsertorderID,$shippingData)
@@ -192,7 +192,7 @@ class JsonController extends Controller
 					foreach($LineItemData as $LineItem)
 					{
 						$line_items[]=[
-						 	'Order_id'=>$IDLineItem,
+						 	'order_id'=>$IDLineItem,
 						 	'line_item_id'=>$LineItem->id,
 						 	'name'=>$LineItem->name,
 						 	'product_id'=>$LineItem->product_id,
@@ -207,7 +207,7 @@ class JsonController extends Controller
 						 	'price'=>$LineItem->price,
 						 	'parent_name'=>$LineItem->parent_name,
 						];
-					  line_items::insert($line_items);
+					  LineItems::insert($line_items);
 					  }
 			}
 
@@ -220,14 +220,14 @@ class JsonController extends Controller
 						{
 							$Line_ItemID=$Line_meta_data->id;
 					$line_items_meta[]=[	
-					'Order_id'=>$IDLineMetaData,
-					'Line_meta_id'=>$Line_meta_data->id,
+					'product_id'=>$IDLineMetaData,
+					'line_meta_id'=>$Line_meta_data->id,
 					'key'=>$Line_meta_data->key,
 					'value'=>$Line_meta_data->value,
 					'display_key'=>$Line_meta_data->display_key,
 					'display_value'=>$Line_meta_data->display_value,
 				           ];
-				line_items_meta::insert($line_items_meta);
+				LineItemsMeta::insert($line_items_meta);
 					    }
 	      			}     
 	    	} 

@@ -542,6 +542,6 @@ function extendingValidatorMessages () {
 
     public function getSourceContext()
     {
-        return new Source("", "javascript/variables.twig", "/var/www/html/public/pma/templates/javascript/variables.twig");
+        return new Source("", "javascript/variables.twig", "/var/www/majime/public/pma/templates/javascript/variables.twig");
     }
 }

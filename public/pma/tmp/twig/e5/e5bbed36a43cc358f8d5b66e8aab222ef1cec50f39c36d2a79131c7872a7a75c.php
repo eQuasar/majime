@@ -83,6 +83,6 @@ class __TwigTemplate_9b4c650b2d3d64296c90ec17dceed62b6f28058674f8657e3d84ee6d2db
 
     public function getSourceContext()
     {
-        return new Source("", "navigation/tree/state.twig", "/var/www/html/public/pma/templates/navigation/tree/state.twig");
+        return new Source("", "navigation/tree/state.twig", "/var/www/majime/public/pma/templates/navigation/tree/state.twig");
     }
 }

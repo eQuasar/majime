@@ -783,6 +783,6 @@ class __TwigTemplate_caf4c11e2a664babd5e13ad89f7603cce4bb5b8d0f74a9effef5da7cb65
 
     public function getSourceContext()
     {
-        return new Source("", "columns_definitions/column_attributes.twig", "/var/www/html/public/pma/templates/columns_definitions/column_attributes.twig");
+        return new Source("", "columns_definitions/column_attributes.twig", "/var/www/majime/public/pma/templates/columns_definitions/column_attributes.twig");
     }
 }

@@ -561,6 +561,6 @@ class __TwigTemplate_0f49b4e17a995616a6f5f7a023c2faa5a04cb48e86fc7e4eba0cbecf0ea
 
     public function getSourceContext()
     {
-        return new Source("", "database/structure/structure_table_row.twig", "/var/www/html/public/pma/templates/database/structure/structure_table_row.twig");
+        return new Source("", "database/structure/structure_table_row.twig", "/var/www/majime/public/pma/templates/database/structure/structure_table_row.twig");
     }
 }

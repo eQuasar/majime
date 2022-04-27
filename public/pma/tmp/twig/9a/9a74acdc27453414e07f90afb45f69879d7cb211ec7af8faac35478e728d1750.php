@@ -62,6 +62,6 @@ class __TwigTemplate_1ab009198c4a7481b373f20e0d30d8a136fb0470969051a52a4570e9610
 
     public function getSourceContext()
     {
-        return new Source("", "message.twig", "/var/www/html/public/pma/templates/message.twig");
+        return new Source("", "message.twig", "/var/www/majime/public/pma/templates/message.twig");
     }
 }

@@ -15,8 +15,12 @@ class CreatePetCategoriesTable extends Migration
     {
         Schema::create('pet_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->timestamps();
+            $table->integer('product_id');
+            $table->integer('line_item_id');
+            $table->string('key');
+            $table->string('value');
+            $table->string('display_key');
+            $table->string('display_value');
         });
     }
 

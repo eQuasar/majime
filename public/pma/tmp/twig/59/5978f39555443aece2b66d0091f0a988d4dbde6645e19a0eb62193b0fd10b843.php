@@ -96,6 +96,6 @@ class __TwigTemplate_06080656e9c92b2137317dbd54a5f8ee04c8fd86b7639f3f4ef81fa5137
 
     public function getSourceContext()
     {
-        return new Source("", "table/export/index.twig", "/var/www/html/public/pma/templates/table/export/index.twig");
+        return new Source("", "table/export/index.twig", "/var/www/majime/public/pma/templates/table/export/index.twig");
     }
 }

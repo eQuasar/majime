@@ -289,6 +289,6 @@ class __TwigTemplate_a44d79c71f6753e98feaea4923ef39896c9f5db96f840d8fd16c14336b6
 
     public function getSourceContext()
     {
-        return new Source("", "database/structure/body_for_table_summary.twig", "/var/www/html/public/pma/templates/database/structure/body_for_table_summary.twig");
+        return new Source("", "database/structure/body_for_table_summary.twig", "/var/www/majime/public/pma/templates/database/structure/body_for_table_summary.twig");
     }
 }

@@ -108,6 +108,6 @@ class __TwigTemplate_1faecd954d72a6845d9ee02a56b469961aa7081e2ed41e88c7b89308376
 
     public function getSourceContext()
     {
-        return new Source("", "config/form_display/fieldset_top.twig", "/var/www/html/public/pma/templates/config/form_display/fieldset_top.twig");
+        return new Source("", "config/form_display/fieldset_top.twig", "/var/www/majime/public/pma/templates/config/form_display/fieldset_top.twig");
     }
 }

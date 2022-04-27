@@ -1353,6 +1353,6 @@ $context["index"], "getName", [], "method", false, false, false, 457))];
 
     public function getSourceContext()
     {
-        return new Source("", "table/structure/display_structure.twig", "/var/www/html/public/pma/templates/table/structure/display_structure.twig");
+        return new Source("", "table/structure/display_structure.twig", "/var/www/majime/public/pma/templates/table/structure/display_structure.twig");
     }
 }

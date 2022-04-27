@@ -87,6 +87,6 @@ class __TwigTemplate_ef6a7271d44967c90b5ada3a3810aa599b3fb71ddfff868dc937d55efb8
 
     public function getSourceContext()
     {
-        return new Source("", "display/results/sort_by_key.twig", "/var/www/html/public/pma/templates/display/results/sort_by_key.twig");
+        return new Source("", "display/results/sort_by_key.twig", "/var/www/majime/public/pma/templates/display/results/sort_by_key.twig");
     }
 }

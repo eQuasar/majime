@@ -449,6 +449,6 @@ class __TwigTemplate_62b6d798f0155384d25020cc65f131b7fa6de27df9a11e1b4ffdf3ebfb0
 
     public function getSourceContext()
     {
-        return new Source("", "sql/query.twig", "/var/www/html/public/pma/templates/sql/query.twig");
+        return new Source("", "sql/query.twig", "/var/www/majime/public/pma/templates/sql/query.twig");
     }
 }

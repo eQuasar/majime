@@ -59,6 +59,6 @@ class __TwigTemplate_03bb75a2811075e561ca292709aaecd63fe67c615d8835aabbf4f208c67
 
     public function getSourceContext()
     {
-        return new Source("", "display/results/empty_display.twig", "/var/www/html/public/pma/templates/display/results/empty_display.twig");
+        return new Source("", "display/results/empty_display.twig", "/var/www/majime/public/pma/templates/display/results/empty_display.twig");
     }
 }
