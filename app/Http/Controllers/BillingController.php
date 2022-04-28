@@ -13,10 +13,9 @@ class BillingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $billing= Billings::all();
-        // $billing= billing::where('state_id','=',32)->get();
+        $billing= Billings::where('order_id','=',$request->id)->get();
         return BillingResource::collection($billing);
     }
 

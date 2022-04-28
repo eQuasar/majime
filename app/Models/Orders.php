@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Orders extends Model
 {
     use HasFactory;
-    public function billing()
+    public function billings($id)
     {
-        return $this->belongsTo(Billings::class);
+        return $this->belongsTo(Billings::class, 'id');
     }
     public function line_items()
     {

@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\BillingResource;
+use App\Http\Resources\LineItemsResource;
 
 class OrderResource extends JsonResource
 {
@@ -16,7 +18,7 @@ class OrderResource extends JsonResource
     {
         
       return [
-      'id' => $this->id,
+      'id' => (int) $this->id,
       'vid' => $this->vid,
       'status' => $this->status,
       'currency' => $this->currency,
@@ -31,8 +33,8 @@ class OrderResource extends JsonResource
       'customer_id' => $this->customer_id,
       'payment_method' => $this->payment_method,
       'payment_method_title' => $this->payment_method_title,
-      'billing_info' => new BillingResource($this),
-      'order_info' => new LineItemsResource($this),
+      'billing_info' => new BillingResource($this->id),
+      // 'order_info' => new LineItemsResource($this->whenLoaded($this->id)),
       ];
     }
 }

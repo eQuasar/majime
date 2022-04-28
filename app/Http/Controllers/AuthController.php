@@ -20,7 +20,7 @@ class AuthController extends Controller
     /**
      * Write code on Method
      *
-     * @return response()
+     * @return response() 
      */
     
     public function index()
