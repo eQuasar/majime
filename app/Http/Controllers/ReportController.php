@@ -67,10 +67,6 @@ class ReportController extends Controller
      //  return $order;
  
            
-public function way_data()
-	{
-        
-	}
 
 
 

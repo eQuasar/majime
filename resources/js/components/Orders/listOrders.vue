@@ -6,8 +6,8 @@ x<template>
       </div>
     </div>
     
-    <div class="content_bar card">
-        <div class="card-body">
+    <div class="content_bar ">
+        <div class="card-body card">
           <div class="call-center-dashboard">
           <b-row>
             <b-col xl="9" lg="9" md="9">
@@ -58,6 +58,7 @@ x<template>
           
         </div>
         </div>
+          </div><br>
          <b-table striped hover responsive :items="items"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
@@ -86,7 +87,7 @@ x<template>
       :per-page="perPage"
       aria-controls="my-table"
     ></b-pagination>
-  </div>
+
     </div>
 
 
@@ -133,8 +134,6 @@ x<template>
 <script>
     import order from '../../api/order.js';
     import user from '../../api/user.js';
-    import * as XLSX from 'xlsx/xlsx.mjs';
-
   export default {
 
     props: {
@@ -223,10 +222,10 @@ computed: {
       }
     },
   methods: {
-    getOrderDetails(vid)
+    getOrderDetails()
     {
       let formData = new FormData();
-      formData.append('vid', vid);
+      formData.append('vendor', this.vendor);
       formData.append('type', 'get');
       console.log(this.vendor);
       order.getOrderDetails(formData)
@@ -284,9 +283,8 @@ computed: {
       user.getVid(formData)
        .then(( response ) => {
           this.vid = response.data;
-
           localStorage.setItem("ivid", this.vid);
-          this.getOrderDetails(this.vid);
+          this.getOrderDetails();
         })
         .catch(response => {
             this.successful = false;

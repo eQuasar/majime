@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\WayData;
 use Illuminate\Http\Request;
 
+
+
 class WayDataController extends Controller
 {
     /**
@@ -24,7 +26,7 @@ class WayDataController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -36,6 +38,7 @@ class WayDataController extends Controller
     public function store(Request $request)
     {
         //
+      
     }
 
     /**

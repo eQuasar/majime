@@ -22064,7 +22064,7 @@ label{
 
 
 .v-sidebar-menu {
-    background-color: #ffffff!important;
+    background-color: #000!important;
 }
 
 .navbar .nav-search {
@@ -22129,7 +22129,7 @@ label{
     align-items: center;
     white-space: nowrap;
     padding: 10px 10px;
-    color: #6c7383;
+    color: #fff;
     border-radius: 8px;
     -webkit-transition-duration: 0.45s;
     -moz-transition-duration: 0.45s;
@@ -22153,16 +22153,20 @@ label{
     font-size: 1rem;
     line-height: 1;
     margin-right: 1rem;
-    color: #6c7383;
+    color: #fff;
+}
+
+.vsm--item.vsm--item_open .v-sidebar-menu .vsm--link:hover{
+  background: transparent!important;
 }
 
 .v-sidebar-menu .vsm--link:hover {
-    background-color: #fff !important;
-    color: #7467ff !important;
+    color: #fff !important;
+    background-color: #4B49AC!important;
 }
 
 .v-sidebar-menu .vsm--link:hover i{
-    color: #7467ff !important;
+    color: #fff !important;
 }
 
 .v-sidebar-menu .vsm--link:hover:before {
@@ -22170,23 +22174,32 @@ label{
 }
 
 .v-sidebar-menu.vsm_expanded .vsm--item_open .vsm--link_level-1 {
-    background-color: #fff !important;
+    background-color: #4B49AC !important;
     /*border-radius: 8px 8px 0px 0px!important;*/
-    color: #7467ff !important;
+    color: #fff !important;
 }
 
 .v-sidebar-menu.vsm_expanded .vsm--item_open .vsm--link_level-1 .vsm--icon {
-    color: #7467ff ;
+    color: #fff ;
+}
+
+.v-sidebar-menu .vsm--link_level-1.vsm--link_exact-active, .v-sidebar-menu .vsm--link_level-1.vsm--link_active{
+  background: #4B49AC;
+}
+
+.vsm--item.vsm--item_open{
+  background-color: #4B49AC !important; 
+  border-radius: 10px;
 }
 
 .v-sidebar-menu .vsm--link_exact-active span,
 .v-sidebar-menu .vsm--link_active span{
-    color: #7467ff !important;
+    color: #fff !important;
 }
 
 .v-sidebar-menu .vsm--link_exact-active i,
 .v-sidebar-menu .vsm--link_active i{
-    color: #7467ff !important;  
+    color: #fff !important;  
 }
 
 .vsm--item_open {
@@ -22201,15 +22214,15 @@ label{
 
 .vsm--dropdown .vsm--item a {
     border-radius: 0 !important;
-    background-color: #fff!important;
     font-size: 14px;
-    color: #6c7383 !important;
+    color: #fff !important;
     font-weight: 600;
 }
 
 .vsm--dropdown {
-    padding: 0.25rem 0 0 3.07rem;
-    background: transparent;
+    padding: 0.25rem 0 0 2.0rem;
+    margin: 0px 15px;
+    border-radius: 10px;
 }
 
 .vsm--dropdown .vsm--item a::before {
@@ -22219,7 +22232,7 @@ label{
     position: absolute;
     margin-top: 0px;
     border-radius: 50%;
-    background: #6c7383;
+    background: #fff;
     left: -2px;
 }
 

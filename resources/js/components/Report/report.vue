@@ -179,53 +179,53 @@
       },
       create() {
         this.create_error = "";
+        if (!this.city) {
+          this.create_error += "Add city,";
+        }
         if (!this.name) {
           this.create_error += "Add Name,";
         }
-        if (!this.url) {
-          this.create_error += "Add URL,";
+        if (!this.pin) {
+          this.create_error += "Add Pincode,";
         }
-        if (!this.user_name) {
-          this.create_error += "Add User Name,";
+        if (!this.country) {
+          this.create_error += "Add Country,";
         }
-        if (!this.user_phone) {
-          this.create_error += "Add Phone Number,";
+        if (!this.phone) {
+          this.create_error += "Add Phone,";
         }
-        if (!this.secret_key) {
-          this.create_error += "Add Secret Key,";
+        if (!this.add) {
+          this.create_error += "Add Address,";
         }
-        if (!this.consumer_key) {
-          this.create_error += "Add Consumer Key,";
-        }
-        if (!this.email) {
-          this.create_error += "Add Email,";
+        if (!this.token) {
+          this.create_error += "Add Token,";
         }
         if (this.create_error != "") {
           return false;
         }
         let formData = new FormData();
-        formData.append("name", this.city);
-        formData.append("url", this.name);
-        formData.append("role_id", this.pin);
-        formData.append("user_name", this.country);
-        formData.append("user_phone", this.phone);
-        formData.append("email", this.add);
-        formData.append("secret_key", this.token);
+        formData.append("city", this.city);
+        formData.append("name", this.name);
+        formData.append("pin", this.pin);
+        formData.append("country", this.country);
+        formData.append("phone", this.phone);
+        formData.append("add", this.add);
+        formData.append("token", this.token);
         
-        waydata
+        report
           .addwaydata(formData)
           .then((response) => {
             this.successful = true;
             this.error = true;
             //this.items=response.data;
             this.items.push(response.data);
+            this.city='';
             this.name='';
-            this.url='';
-            this.user_name='';
-            this.user_phone='';
-            this.email='';
-            this.consumer_key='';
-            this.secret_key='';
+            this.pin='';
+            this.country='';
+            this.phone='';
+            this.add='';
+            this.token='';
           })
           .catch((error) => {
               console.log(error);

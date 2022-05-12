@@ -55,7 +55,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('changeStatus', 'OrderController@changeStatus')->name('changeStatus');
 	Route::post('assignAWB', 'OrderController@assignAWB')->name('assignAWB');
 	Route::post('getVid', 'AuthController@getVid')->name('getVid');
-	Route::post('way_data', 'ReportController@way_data')->name('way_data');
+	Route::post('way_data', 'WayDataController@way_data')->name('way_data');
 	
 	
 	

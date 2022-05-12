@@ -39,12 +39,13 @@
       </div>
     </div>
     <div class="tenpxdiv"></div>
-    <div class="content_bar card">
+    <div class="content_bar">
       <div class="card-body">
         <b-row>
           <b-col xl="12" lg="12" md="12">
             <b-table striped hover responsive :items="items"
-                  :filter-included-fields="filterOn" 
+                  :sort-by.sync="sortBy"
+                  sort-icon-left :filter-included-fields="filterOn" 
                   :filter="filter" :fields="fields" :per-page="perPage" 
                   :current-page="currentPage" show-empty>
                   <template v-slot:cell(sr)="row">
@@ -71,10 +72,12 @@ import OrderProfile from '../../api/order.js';
     },
     mounted() {
       this.getOrder();
+      this.getOrderItems();
     },
     data() {
       return {
         show: false,
+        currentPage: 1,
         image:'',
         rowClass:'',
         image_file:null,
@@ -92,18 +95,14 @@ import OrderProfile from '../../api/order.js';
         date_created_gmt:'',
         amount:0,
         successful: false,
+        sortBy: 'date',
         errors_create:[],
         create_error:'',
         selected: 'first',
+        vid: 0,
+        perPage: 10,
+
         options: [],
-        vid:0,
-        sortBy: 'DESC',
-        sortDesc: true,
-         perPage: 10,
-        currentPage: 1,
-        pageOptions: [5, 10, 15, 20, 50, 100],
-        filter: null,
-        filterOn: [],
         fields: [
           {
             key: 'sr',
@@ -111,19 +110,24 @@ import OrderProfile from '../../api/order.js';
         
           },
           {
-            key: 'product_id',
-            label: 'Product ID',
-        
+            key: 'line_item_id',
+            label: 'Item ID',
+            sortable: true
           },
           {
             key: 'variation_id',
-            label: 'variation ID',
-        
+            label: 'Item ID',
+            sortable: true
           },
           {
             key: 'name',
             label: 'Name',
-        
+            sortable: true
+          },
+          {
+            key: 'parent_name',
+            label: 'Parent Name',
+            sortable: true
           },
           {
             key: 'quantity',
@@ -147,8 +151,8 @@ import OrderProfile from '../../api/order.js';
     },
     methods: {
       getOrder() {
-          this.vid = JSON.parse(localStorage.getItem("ivid"));
-          OrderProfile.getOrderProfile(this.oid, this.vid)
+          this.vid = localStorage.getItem("ivid");
+          OrderProfile.getOrderProfile(this.oid,this.vid)
           .then(( response ) => {
             if(response.data)
             {
@@ -165,8 +169,6 @@ import OrderProfile from '../../api/order.js';
               this.city=response.data[0].city;
               this.date_created_gmt=response.data[0].date_created_gmt;
               this.status=response.data[0].status;
-
-              this.getOrderItems();
              
             }
           })
@@ -176,8 +178,7 @@ import OrderProfile from '../../api/order.js';
           });
       },
       getOrderItems() {
-          this.vid = JSON.parse(localStorage.getItem("ivid"));
-          OrderProfile.getOrderItems(this.oid, this.vid) 
+          OrderProfile.getOrderItems(this.oid,this.vid) 
           .then(( response ) => {
             if(response.data)
             {
