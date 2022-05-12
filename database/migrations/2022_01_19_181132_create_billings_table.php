@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBillingsTable extends Migration
+class CreatebillingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,6 +15,7 @@ class CreateBillingsTable extends Migration
     {
         Schema::create('billings', function (Blueprint $table) {
             $table->id();
+            $table->integer('vid');
             $table->integer('order_id');
             $table->string('first_name');
             $table->string('last_name');
@@ -26,7 +27,7 @@ class CreateBillingsTable extends Migration
             $table->integer('postcode');
             $table->string('country');
             $table->string('email');
-            $table->integer('phone');
+            $table->string('phone');
         });
     }
 

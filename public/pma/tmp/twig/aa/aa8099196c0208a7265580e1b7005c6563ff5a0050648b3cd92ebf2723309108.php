@@ -117,6 +117,6 @@ class __TwigTemplate_420f74b4f111fa98afea1f7ce08f352e66616974692ef43085b430ff9e3
 
     public function getSourceContext()
     {
-        return new Source("", "sql/bookmark.twig", "/var/www/html/public/pma/templates/sql/bookmark.twig");
+        return new Source("", "sql/bookmark.twig", "/var/www/majime/public/pma/templates/sql/bookmark.twig");
     }
 }

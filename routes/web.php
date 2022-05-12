@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 Route::group(['middleware'  => ['admin']], function() {
-Route::get('/admin/{any}', 'PagesController@admin ')->where('any', '.*');
+Route::get('/admin/{any}', 'PagesController@admin')->where('any', '.*');
 });
 Route::group(['middleware'  => ['vendor']], function() {
 	Route::get('/vendor/{any}', 'PagesController@vendor')->where('any', '.*');

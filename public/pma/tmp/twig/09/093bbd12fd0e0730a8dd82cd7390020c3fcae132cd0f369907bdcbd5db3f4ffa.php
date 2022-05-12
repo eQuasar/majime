@@ -97,6 +97,6 @@ $context["bookmark"], "getDatabase", [], "method", false, false, false, 15)]]]))
 
     public function getSourceContext()
     {
-        return new Source("", "console/bookmark_content.twig", "/var/www/html/public/pma/templates/console/bookmark_content.twig");
+        return new Source("", "console/bookmark_content.twig", "/var/www/majime/public/pma/templates/console/bookmark_content.twig");
     }
 }

@@ -18,33 +18,62 @@ use App\Models\Order_Refunds;
 use App\Models\Order_links;
 use App\Models\meta_data_value;
 use App\Http\Resources\OrdersResource;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
    
 	public function Report_detail()
 	{
-		 // $obj=Orders::where('id','5393')->first();
-		 //$obj=Orders::whereId('5393')->first();
-           //             return $obj;
-		return orders::all();
+        $obj=orders::join('billings','orders.oid','=','billings.order_id')
+       ->join('categories','categories.id','=', 'orders.id')
+       //->join('line_items_metas','line_items_metas.product_id','=','line_items.product_id')->get(['orders.oid', 'billings.city','billings.first_name','orders.status','orders.payment_method']); 
+       ->get(['orders.oid', 'billings.city','billings.first_name','orders.status','orders.payment_method','categories.name','orders.date_created_gmt']); 
+		return $obj ;
 	}
 
-    public function ReportProfile_detail()
-  
-    {
+ // public function status_details(Request $request)
+ // {
+ // 	$status = $request->status;
+	// 	if($status != null){
+	// 		$orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
+	// 		  ->join('line_items','line_items.order_id','=', 'orders.oid')
+	// 		  ->join('line_items_metas','line_items_metas.product_id','=','line_items.product_id')
+	//           ->where('orders.status','=',$status)
+	//           ->select("orders.*","billings.*","line_items.*")
 
-          //$obj=Orders::whereId('5393')->first(); 
-           $obj=Orders::where('id','5393')->first();
-		// $obj=Orders::whereId('5393')->first();
-        return $obj; 
- 
-        //
+	//           return $orders; 
+	                    
+	//     }else{
+	//     	$orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
+
+	//           ->select("orders.*","billings.*",
+
+	//                     DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+
+	//                                 WHERE line_items.order_id = orders.oid
+
+	//                                 GROUP BY line_items.order_id) as quantity"))
+
+	//           ->get();
+	//     }
+
+
+
+
+    // }   //
     
         // dd($client);
      //  return $order;
-    }
+ 
            
+public function way_data()
+	{
+        
+	}
+
+
+
 		
 	}
 

@@ -2,7 +2,7 @@
   <b-container fluid> 
     <div class="header_title">
       <div class="header_inner">
-        <h3><strong>Accounts Detail</strong></h3><br/>
+        <h3><strong>Product List</strong></h3><br/>
       </div>
     </div>
     
@@ -11,7 +11,7 @@
           <div class="call-center-dashboard">
           <b-col xl="10" lg="10" md="10">
             <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
-            <b-form @submit="onSubmit" class="date_range" @reset="onReset">
+            <b-form @submit="onSubmit" class="date_range">
               
               <div class="datepiker-block">
                 <span>From:&nbsp;</span>  <b-form-datepicker  id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"  locale="en-IN"></b-form-datepicker>
@@ -20,7 +20,6 @@
                 <span>To:&nbsp;</span> <b-form-datepicker  id="to" v-model="date_to" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"  locale="en-IN"></b-form-datepicker>
               </div>
               <b-button type="submit" variant="primary">Submit</b-button>
-              <!--<b-button type="reset" variant="danger" style="float: right;margin-right: 10px;">Reset</b-button>-->
             </b-form>
           </b-col>
          <div class="blue-bar"></div>
@@ -62,7 +61,7 @@
                 <p style="text-align:center;">No record found, choose date filter to found the result.</p>
             </template>
             <template v-slot:cell(oid)="row">
-              {{(row.item.Order_id)}}
+              {{(row.item.oid)}}
             </template>
           </b-table>
           <div class="text-center" v-if="seen">
@@ -75,67 +74,17 @@
     ></b-pagination>
   </div>
     </div>
-    <b-modal id="modal-1" title="Appointment Assign to:" hide-footer @hidden="clearData" size="lg">
-      <b-form>
-        <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
-        <div :class="['form-group m-1 p-3', (successful ? 'alert-success' : '')]" v-show="successful">
-          <span v-if="successful" class="label label-sucess">Published!</span>
-        </div>
-        <b-form-input v-model="appointment_id" id="appointment_id_val" style="display:none"></b-form-input>
-        <b-form-select v-model="vehicle_assign" class="" :options="vehicle_assign_array" value-field="id" text-field="vehicle_number">
-          <template v-slot:first>
-            <b-form-select-option :value="0" disabled>-- Select Vehicle --</b-form-select-option>
-          </template>
-        </b-form-select>
-        
-        <b-button type="submit" @click.prevent="assign_appointment" variant="primary">Submit </b-button>
-      </b-form> 
-    </b-modal>
-    <b-modal id="modal-2" title="Appointment Schedule to:" hide-footer @hidden="clearData" size="lg">
-      <b-form>
-        <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
-        <div :class="['form-group m-1 p-3', (successful ? 'alert-success' : '')]" v-show="successful">
-          <span v-if="successful" class="label label-sucess">Published!</span>
-        </div>
-        <b-form-input v-model="appointment_id" id="appointment_id_val" style="display:none"></b-form-input>
-        <div class="datepiker-block">
-            <label class="label_datepicker" for="example-datepicker">Choose Date & Time</label>
-            <b-form-datepicker id="example-datepicker" v-model="date" class="mb-2"></b-form-datepicker>
-        </div>
-        <b-form-group label="" v-slot="{ ariaDescribedby }">
-            <b-form-radio-group
-                id="time-radios-btn"
-                v-model="time"
-                :aria-describedby="ariaDescribedby"
-                button-variant="outline-primary"
-                size="lg"
-                :options="time_slots"
-                value-field="id"
-                text-field="time"
-                name="radio-btn-outline"
-                buttons
-            >
-            </b-form-radio-group>
-        </b-form-group>
-        
-        <b-button type="submit" @click.prevent="schedule_appointment" variant="primary">Submit </b-button>
-      </b-form> 
-    </b-modal>
 </b-container>
 </template>
 
 <script>
-    // import appointment from '../../api/appointment.js';
-    import order from '../../api/order.js';
-    import Product from '../../api/Product.js';
+  
     import accounts from '../../api/accounts.js';
   export default {
 
     props: {
     },
     mounted() {
-
-      // this.appointment();
       this.AccountsDetail();
     },
     data() 
@@ -207,6 +156,7 @@
             label: 'Download',
             sortable: false
           },
+        
         ],
         items: [],
         errors_create:[],
@@ -219,9 +169,40 @@ computed: {
         return this.items.length
       }
     },
-  methods: {
-  
+  methods:{
    
+    onSubmit(event) {
+      event.preventDefault()
+      this.create_error = "";
+      if (!this.date_from) {
+        this.create_error += "Add date from,";
+      }
+      if (!this.date_to) {
+        this.create_error += "Add date to,";
+      }
+      if (this.create_error != "") {
+        return false;
+      }
+      let formData = new FormData();
+      formData.append("date_from", this.date_from);
+      formData.append("date_to", this.date_to);
+      
+      appointment
+          .appointmentSearch(formData)
+          .then((response) => {
+              
+                  this.items=response.data.data;
+           
+          })
+          .catch((error) => {
+              console.log(error);
+              if (error.response.status == 422) {
+                  this.errors_create = error.response.data.errors;
+              }
+          });
+    },
+  
+  
     AccountsDetail() {
       // this.seen = true;
       accounts.getAccountsDetail()

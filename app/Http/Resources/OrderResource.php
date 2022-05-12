@@ -24,6 +24,7 @@ class OrderResource extends JsonResource
       'currency' => $this->currency,
       'prices_include_tax' => $this->prices_include_tax,
       'discount_total' => $this->discount_total,
+      'date_created_gmt'=>$this->date_created_gmt,
       'discount_tax' => $this->discount_tax,
       'shipping_total' => $this->shipping_total,
       'shipping_tax' => $this->shipping_tax,

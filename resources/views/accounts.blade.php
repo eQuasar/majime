@@ -32,7 +32,7 @@
         <div class="container-scroller">
             <app-header></app-header>
             <div class="container-fluid page-body-wrapper">
-                <service-sidebar></service-sidebar>
+                <account-sidebar></account-sidebar>
                 <main class="main-panel">
                     <div class="content-wrapper">
                     @yield('content')

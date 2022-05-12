@@ -64,6 +64,6 @@ class __TwigTemplate_5cc5fd0d35f9660205285e697d7f74cf32bd2f6b5431e888985c88941e6
 
     public function getSourceContext()
     {
-        return new Source("", "table/search/column_comparison_operators.twig", "/var/www/html/public/pma/templates/table/search/column_comparison_operators.twig");
+        return new Source("", "table/search/column_comparison_operators.twig", "/var/www/majime/public/pma/templates/table/search/column_comparison_operators.twig");
     }
 }

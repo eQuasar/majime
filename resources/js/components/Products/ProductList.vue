@@ -11,7 +11,7 @@
           <div class="call-center-dashboard">
           <b-col xl="10" lg="10" md="10">
             <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
-            <b-form @submit="onSubmit" class="date_range" @reset="onReset">
+            <b-form @submit="onSubmit" class="date_range">
               
               <div class="datepiker-block">
                 <span>From:&nbsp;</span>  <b-form-datepicker  id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"  locale="en-IN"></b-form-datepicker>
@@ -20,8 +20,10 @@
                 <span>To:&nbsp;</span> <b-form-datepicker  id="to" v-model="date_to" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"  locale="en-IN"></b-form-datepicker>
               </div>
               <b-button type="submit" variant="primary">Submit</b-button>
-              <!--<b-button type="reset" variant="danger" style="float: right;margin-right: 10px;">Reset</b-button>-->
             </b-form>
+          </b-col>
+          <b-col>
+                <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download</button>
           </b-col>
          <div class="blue-bar"></div>
         <div class="content_bar card list-appointments space-bottom">
@@ -64,6 +66,15 @@
             <template v-slot:cell(oid)="row">
               {{(row.item.Order_id)}}
             </template>
+
+            <template v-slot:cell(size)="row">
+              {{(row.item.name)}}
+            
+            </template>
+            <template v-slot:cell(color)="row">
+              {{(row.item.name)}}
+            </template>
+
           </b-table>
           <div class="text-center" v-if="seen">
   <b-spinner variant="primary" label="Text Centered"></b-spinner>
@@ -75,67 +86,21 @@
     ></b-pagination>
   </div>
     </div>
-    <b-modal id="modal-1" title="Appointment Assign to:" hide-footer @hidden="clearData" size="lg">
-      <b-form>
-        <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
-        <div :class="['form-group m-1 p-3', (successful ? 'alert-success' : '')]" v-show="successful">
-          <span v-if="successful" class="label label-sucess">Published!</span>
-        </div>
-        <b-form-input v-model="appointment_id" id="appointment_id_val" style="display:none"></b-form-input>
-        <b-form-select v-model="vehicle_assign" class="" :options="vehicle_assign_array" value-field="id" text-field="vehicle_number">
-          <template v-slot:first>
-            <b-form-select-option :value="0" disabled>-- Select Vehicle --</b-form-select-option>
-          </template>
-        </b-form-select>
-        
-        <b-button type="submit" @click.prevent="assign_appointment" variant="primary">Submit </b-button>
-      </b-form> 
-    </b-modal>
-    <b-modal id="modal-2" title="Appointment Schedule to:" hide-footer @hidden="clearData" size="lg">
-      <b-form>
-        <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
-        <div :class="['form-group m-1 p-3', (successful ? 'alert-success' : '')]" v-show="successful">
-          <span v-if="successful" class="label label-sucess">Published!</span>
-        </div>
-        <b-form-input v-model="appointment_id" id="appointment_id_val" style="display:none"></b-form-input>
-        <div class="datepiker-block">
-            <label class="label_datepicker" for="example-datepicker">Choose Date & Time</label>
-            <b-form-datepicker id="example-datepicker" v-model="date" class="mb-2"></b-form-datepicker>
-        </div>
-        <b-form-group label="" v-slot="{ ariaDescribedby }">
-            <b-form-radio-group
-                id="time-radios-btn"
-                v-model="time"
-                :aria-describedby="ariaDescribedby"
-                button-variant="outline-primary"
-                size="lg"
-                :options="time_slots"
-                value-field="id"
-                text-field="time"
-                name="radio-btn-outline"
-                buttons
-            >
-            </b-form-radio-group>
-        </b-form-group>
-        
-        <b-button type="submit" @click.prevent="schedule_appointment" variant="primary">Submit </b-button>
-      </b-form> 
-    </b-modal>
 </b-container>
 </template>
 
 <script>
-    // import appointment from '../../api/appointment.js';
     import order from '../../api/order.js';
-    import Product from '../../api/Product.js';
+    import product_list from '../../api/Product.js';
+    import user from '../../api/user.js';
+    import * as XLSX from 'xlsx/xlsx.mjs';
+
   export default {
 
     props: {
     },
     mounted() {
-
-      
-      this.ProductDetail();
+      this.getVidz();
     },
     data() 
     {
@@ -146,6 +111,7 @@
         time_slots: [],
       seen: false,
         date_from: '',
+        vid: 0,
         date_to: '',
         sortBy: 'date',
         sortDesc: true,
@@ -155,9 +121,16 @@
         filter: null,
         filterOn: [],
         fields: [
+          
+           {
+            key: 'product_id',
+            label: 'Product Id',
+            sortable: true
+          },
+
           {
             key: 'name',
-            label: 'Product',
+            label: 'Name',
             sortable: true
           },
           {
@@ -166,35 +139,28 @@
             sortable: true
           },
           {
-            key: 'parent_name',
+            key: 'categories',
             label: 'Category',
             sortable: true
           },
           {
-            key: 'city',
-            label: 'City',
+            key: 'size',
+            label: 'Size',
             sortable: true
           },
           {
-            key: 'value',
+            key: 'color',
             label: 'Color',
             sortable: true
           },
           {
-            key: 'subtotal',
+            key: 'price',
             label: 'Amount',
             sortable: true
           },
         
-            
-
-
-
-          {
-            key: 'action',
-            label: 'Action',
-            sortable: false
-          }
+        
+        
         ],
         items: [],
         errors_create:[],
@@ -240,13 +206,31 @@ computed: {
           });
     },
   
+     getVidz()
+     {
+      let formData= new FormData();
+      formData.append("user_id", this.$userId);
+      user.getVid(formData)
+       .then(( response ) => {
+          this.vid = response.data;
+          console.log(response);
+          this.ProductDetail();
+        })
+        .catch(response => {
+            this.successful = false;
+            alert('something went wrong');
+        })
+
+      // alert("aaa");
+     },
+
     ProductDetail() {
-      
-      Product.getProductDetail()
-        .then(( response ) => {
+      let formData= new FormData();
+      formData.append("vid", this.vid);
+      product_list.getProductDetail(formData)
+       .then(( response ) => {
           console.log(response);
           this.items=response.data;
-   
           console.log(this.items);
     
         })
@@ -254,7 +238,13 @@ computed: {
             this.successful = false;
             alert('something went wrong');
         })
-    }
+    },
+        download : function() {
+                const data = XLSX.utils.json_to_sheet(this.items)
+                const wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, data, 'data')
+                XLSX.writeFile(wb,'download_list.xlsx')
+            },
   }
 };  
 </script>

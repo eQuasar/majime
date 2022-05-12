@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class LineItemsMeta extends Model
 {
     use HasFactory;
+     public function line_items($id)
+    {
+        return $this->hasOne(line_items::class, 'product_id');
+    }
 }

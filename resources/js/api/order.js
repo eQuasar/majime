@@ -2,65 +2,36 @@ import axios from './axios.js'
 
 export default {
 
-    getOrderDetail() {
-        return axios.get('getOrderdetail')
+    getOrderDetail(data) {
+        return axios.post('getOrderdetail', data)
     },
 
-    
-    /*
-
-    getAppointment(id) {
-        return axios.get('appointment/' + id)
+    getOrderDetails(data) {
+        return axios.post('getOrderDetails', data)
     },
 
-    addAppointment(data) {
-        return axios.post('appointment', data)
+     orderSearch(data) {
+        return axios.post('order_Search',data)
     },
 
-    editAppointment(id, data) {
-        return axios.post('appointment/' + id, data)
+    getOrderProfile(oid, vid) {
+        return axios.get('order_Profile/' + oid+'?vid='+vid)
     },
-
-    deleteAppointment(id) {
-        return axios.delete('appointment/' + id)
+    getOrderItems(oid, vid) {
+        return axios.get('order_items/' + oid+'?vid='+vid)
     },
-    appointmentSearch(data) {
-        return axios.post('appointmentSearch', data)
+    changeStatus(data) {
+        return axios.post('changeStatus', data)
     },
-    clientAppointment(data) {
-        return axios.post('clientappointment', data)
+    getPackDetail(data) {
+        return axios.get('getpackdetail/' + data)
     },
-    freeVehicle(data) {
-        return axios.post('free_vehicle', data)
+    getOrderOnStatus(vid,status) {
+        // alert(vid+" uuuu "+status);
+        return axios.get('getOrderOnStatus/'+vid+'/'+status)
     },
-    assignAppointment(data) {
-        return axios.post('assign_appointment', data)
-    },
-    scheduleAppointment(data) {
-        return axios.post('schedule_appointment', data)
-    },
-    cancelAppointment(data) {
-        return axios.post('cancel_appointment', data)
-    },
-    processAppointment(data) {
-        return axios.post('process_appointment', data)
-    },
-    feedbackAppointment(data) {
-        return axios.post('feedback', data)
-    },
-    upcomingAppointments() {
-        return axios.get('upcomingappointment')
-    },
-    // groomerAppointment(id) {
-    //     return axios.get('groomerappointment')
-    // },
-    groomerAppointments(data) {
-        return axios.post('groomerappointments', data)
-    },
-    excelAppointments(data) {
-        return axios.post('excelappointments', data)
-    },
-    getPetAppointment(data) {
-        return axios.post('getpetappointment', data)
-    }*/
+    assignAWB(data){
+        return axios.post('assignAWB', data)
+    }
 }
+

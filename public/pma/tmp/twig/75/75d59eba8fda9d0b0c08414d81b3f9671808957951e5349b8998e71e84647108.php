@@ -477,6 +477,6 @@ $context["column"], "getSubPart", [], "method", false, false, false, 181), "html
 
     public function getSourceContext()
     {
-        return new Source("", "table/index_form.twig", "/var/www/html/public/pma/templates/table/index_form.twig");
+        return new Source("", "table/index_form.twig", "/var/www/majime/public/pma/templates/table/index_form.twig");
     }
 }

@@ -16,10 +16,10 @@ class AccountController extends Controller
 	public function Account_detail()
 	{
 		// $id =  
-		 $obj=Orders::join('billings','Orders.id','=','billings.Order_id')		                 
-						 ->join('line_items','line_items.Order_id','=', 'billings.Order_id')
-						->get();
-                        return $obj;	
+		 $obj=orders::join('billings','orders.oid','=','billings.order_id')		                 
+		->join('line_items','line_items.order_id','=', 'billings.order_id')
+		->get();
+        return $obj;	
 	}
 
 		

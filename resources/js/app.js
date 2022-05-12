@@ -90,6 +90,8 @@ Vue.component('app-header', require('./components/HeaderComponent.vue').default)
 Vue.component('app-footer', require('./components/FooterComponent.vue').default);
 Vue.component('app-sidebar', require('./components/SidebarComponent.vue').default);
 Vue.component('service-sidebar', require('./components/ServiceSidebar.vue').default);
+Vue.component('vendor-sidebar', require('./components/VendorsidebarComponent.vue').default);
+Vue.component('account-sidebar', require('./components/AccountsidebarComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

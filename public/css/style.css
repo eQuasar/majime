@@ -60,6 +60,8 @@
   box-sizing: border-box;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&display=swap');
+
 html {
   font-family: sans-serif;
   line-height: 1.15;
@@ -73,7 +75,7 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -1510,7 +1512,7 @@ pre code {
 
 .table thead th, .jsgrid .jsgrid-table thead th {
   vertical-align: bottom;
-  border-bottom: 2px solid #CED4DA;
+  border-bottom: none;
 }
 
 .table tbody + tbody, .jsgrid .jsgrid-table tbody + tbody {
@@ -1544,7 +1546,7 @@ pre code {
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: #F5F7FF;
+  background-color: #fff;
 }
 
 .table-hover tbody tr:hover {
@@ -1770,9 +1772,9 @@ pre code {
   border: 0;
 }
 
-.table-dark.table-striped tbody tr:nth-of-type(odd) {
+/*.table-dark.table-striped tbody tr:nth-of-type(odd) {
   background-color: rgba(255, 255, 255, 0.05);
-}
+}*/
 
 .table-dark.table-hover tbody tr:hover {
   color: #fff;
@@ -5159,7 +5161,7 @@ input::placeholder{text-align: left;}
   background-color: #fff;
   background-clip: border-box;
   border: 1px solid #e3e3e3;
-  border-radius: 20px;
+  border-radius: 10px;
   /*height: 80vh;  */
 }
 
@@ -10798,7 +10800,7 @@ input:focus {
 /* Typography */
 body {
   font-size: 1rem;
-  font-family: "Nunito", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-weight: initial;
   line-height: normal;
   -webkit-font-smoothing: antialiased;
@@ -11056,7 +11058,7 @@ pre {
 code {
   padding: 5px;
   color: #FF4747;
-  font-family: "Nunito", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-weight: 300;
   font-size: 0.875rem;
   border-radius: 4px;
@@ -11071,7 +11073,7 @@ code {
   -webkit-transition: all 0.25s ease;
   -ms-transition: all 0.25s ease;
   font-size: calc(0.875rem - 0.05rem);
-  font-family: "Nunito", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-weight: 400;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
@@ -15122,7 +15124,7 @@ dl li {
   padding-left: 0;
   position: relative;
   margin-bottom: 0;
-  font-family: "Nunito", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
 .icon-data-list li {
@@ -17782,7 +17784,7 @@ table.dataTable tbody td.select-checkbox:after {
 
 .datepicker.datepicker-dropdown .datepicker-days table.table-condensed thead tr th.dow,
 .datepicker.datepicker-inline .datepicker-days table.table-condensed thead tr th.dow {
-  font-family: "Nunito", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   color: #1F1F1F;
   font-size: 0.875rem;
   font-weight: initial;
@@ -19847,7 +19849,7 @@ div.tagsinput span.tag a {
 .sidebar {
   min-height: calc(100vh - 60px);
   background: #fff;
-  font-family: "Nunito", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-weight: 500;
   padding: 0;
   width: 235px;
@@ -20294,7 +20296,7 @@ div.tagsinput span.tag a {
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group .tt-hint,
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap .tt-hint {
   margin-left: .7rem;
-  font-family: "Nunito", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group .form-control::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap .form-control::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group .asColorPicker-input::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap .asColorPicker-input::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group .dataTables_wrapper select::-webkit-input-placeholder, .dataTables_wrapper .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group select::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap .dataTables_wrapper select::-webkit-input-placeholder, .dataTables_wrapper .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap select::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group .jsgrid .jsgrid-table .jsgrid-filter-row input[type=text]::-webkit-input-placeholder, .jsgrid .jsgrid-table .jsgrid-filter-row .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group input[type=text]::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap .jsgrid .jsgrid-table .jsgrid-filter-row input[type=text]::-webkit-input-placeholder, .jsgrid .jsgrid-table .jsgrid-filter-row .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap input[type=text]::-webkit-input-placeholder,
@@ -21654,7 +21656,7 @@ div.tagsinput span.tag a {
 .settings-panel .settings-heading {
   padding: 16px 0 13px 35px;
   font-size: 0.875rem;
-  font-family: "Nunito", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-weight: 500;
   line-height: 1;
   color: rgba(0, 0, 0, 0.9);
@@ -21849,7 +21851,7 @@ div.tagsinput span.tag a {
 }
 
 .settings-panel .events p {
-  font-family: "Nunito", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-weight: 400;
 }
 
@@ -22228,7 +22230,6 @@ label{
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) > * {
-    background: #f8f8f8;
     --bs-table-accent-bg: unset;
 }
 
@@ -22241,7 +22242,7 @@ label{
 }
 
 .table > :not(:first-child) {
-    border-top: 2px solid #d8d8d8;
+    border-top: none;
 }
 
 .table-striped tbody tr a .b-icon {
@@ -22311,6 +22312,7 @@ label{
 
 .table td {
     border: none;
+    padding: 24px 15px;
 }
 
 .custom-select {

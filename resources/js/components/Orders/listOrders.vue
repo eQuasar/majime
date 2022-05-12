@@ -1,4 +1,4 @@
-<template>
+x<template>
   <b-container fluid> 
     <div class="header_title">
       <div class="header_inner">
@@ -9,25 +9,28 @@
     <div class="content_bar card">
         <div class="card-body">
           <div class="call-center-dashboard">
-          <b-col xl="10" lg="10" md="10">
-            <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
-            <b-form @submit="onSubmit" class="date_range" @reset="onReset">
-              
-              <div class="datepiker-block">
-                <span>From:&nbsp;</span>  <b-form-datepicker  id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"  locale="en-IN"></b-form-datepicker>
-              </div>
-              <div class="datepiker-block">
-                <span>To:&nbsp;</span> <b-form-datepicker  id="to" v-model="date_to" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"  locale="en-IN"></b-form-datepicker>
-              </div>
-              <b-button type="submit" variant="primary">Submit</b-button>
-              <!--<b-button type="reset" variant="danger" style="float: right;margin-right: 10px;">Reset</b-button>-->
-            </b-form>
-          </b-col>
+          <b-row>
+            <b-col xl="9" lg="9" md="9">
+              <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
+              <b-form @submit="onSubmit" class="date_range">
+                <div class="datepiker-block">
+                  <span>From:&nbsp;</span>  <b-form-datepicker  id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"  locale="en-IN"></b-form-datepicker>
+                </div>
+                <div class="datepiker-block">
+                  <span>To:&nbsp;</span> <b-form-datepicker id="to" v-model="date_to" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"  locale="en-IN"></b-form-datepicker>
+                </div>
+                <b-button type="submit" variant="primary">Submit</b-button>
+              </b-form>
+            </b-col>
+            <b-col>
+                <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download</button>
+            </b-col>
+          </b-row>
          <div class="blue-bar"></div>
         <div class="content_bar card list-appointments space-bottom">
           <div class="col-sm-12">
             <b-row>
-              <b-col xl="5" lg="5" md="5">
+              <b-col xl="4" lg="4" md="4">
                 <b-form-group
                   class="mb-0"
                 >
@@ -39,7 +42,7 @@
                   ></b-form-select> entries
                 </b-form-group>
               </b-col>
-              <b-col xl="7" lg="7" md="7" class="search_field">
+              <b-col xl="8" lg="8" md="8" class="search_field">
                 <b-form-input
                     id="filter-input"
                     v-model="filter"
@@ -52,6 +55,7 @@
               </b-col>
             </b-row>
           </div>
+          
         </div>
         </div>
          <b-table striped hover responsive :items="items"
@@ -62,8 +66,17 @@
                 <p style="text-align:center;">No record found, choose date filter to found the result.</p>
             </template>
             <template v-slot:cell(oid)="row">
-              {{(row.item.Order_id)}}
+              #{{(row.item.oid)}}
             </template>
+
+            <template v-slot:cell(action)="row">
+              <router-link :to="{ name: 'OrderProfile', params: { oid: (row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
+              &nbsp;&nbsp; <b-link @click="addstatus(row.item.oid)"><b-icon icon="exclamation-circle-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link>
+            </template>
+
+
+
+
           </b-table>
           <div class="text-center" v-if="seen">
   <b-spinner variant="primary" label="Text Centered"></b-spinner>
@@ -75,74 +88,76 @@
     ></b-pagination>
   </div>
     </div>
-    <b-modal id="modal-1" title="Appointment Assign to:" hide-footer @hidden="clearData" size="lg">
+
+
+               <b-modal id="modal-1" title="Change Status:" hide-footer  size="lg">
       <b-form>
         <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
         <div :class="['form-group m-1 p-3', (successful ? 'alert-success' : '')]" v-show="successful">
           <span v-if="successful" class="label label-sucess">Published!</span>
         </div>
-        <b-form-input v-model="appointment_id" id="appointment_id_val" style="display:none"></b-form-input>
-        <b-form-select v-model="vehicle_assign" class="" :options="vehicle_assign_array" value-field="id" text-field="vehicle_number">
+        <b-form-input v-model="oid" id="oid_val" style="display:none"></b-form-input>
+        
+        <b-form-select v-model="status_assign">
           <template v-slot:first>
-            <b-form-select-option :value="0" disabled>-- Select Vehicle --</b-form-select-option>
+            <b-form-select-option :value="null" disabled selected>-- Select Status --</b-form-select-option>
           </template>
+            <!-- <b-form-select-option value="0">-- Change status to RTD-Online --</b-form-select-option>
+            <b-form-select-option value="0">-- Change status to RTD-COD --</b-form-select-option>
+            <b-form-select-option value="0">-- Change status to Refunded --</b-form-select-option>
+            <b-form-select-option value="0">-- Change status to DTO Delivery to Warehouse --</b-form-select-option>
+            <b-form-select-option value="0">-- Change status to DTO intransit --</b-form-select-option> -->
+            <b-form-select-option value="dtobooked">-- Change status to DTO Booked --</b-form-select-option>
+           <!--  <b-form-select-option value="0">-- Change status to  delivered to customer--</b-form-select-option> -->
+            <b-form-select-option value="intransit">-- Change status to Intransit --</b-form-select-option>
+           <!--  <b-form-select-option value="0">-- Change status to Picked up --</b-form-select-option> -->
+            <b-form-select-option value="confirmed">-- Change status to Confirmed --</b-form-select-option>
+            <b-form-select-option value="processing">-- Change status to processing --</b-form-select-option>
+          <!--   <b-form-select-option value="0">-- Change status to on-hold --</b-form-select-option> -->
+            <b-form-select-option value="completed">-- Change status to completed --</b-form-select-option>
+            <b-form-select-option value="cancelled">-- Change status to cancelled --</b-form-select-option>
+          <!--   <b-form-select-option value="0">-- PDF Invoice --</b-form-select-option>
+            <b-form-select-option value="0">-- PDF Packing Slip --</b-form-select-option> -->
         </b-form-select>
         
-        <b-button type="submit" @click.prevent="assign_appointment" variant="primary">Submit </b-button>
+        <b-button type="submit" @click.prevent="assign_status" variant="primary">Submit </b-button>
       </b-form> 
     </b-modal>
-    <b-modal id="modal-2" title="Appointment Schedule to:" hide-footer @hidden="clearData" size="lg">
-      <b-form>
-        <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
-        <div :class="['form-group m-1 p-3', (successful ? 'alert-success' : '')]" v-show="successful">
-          <span v-if="successful" class="label label-sucess">Published!</span>
-        </div>
-        <b-form-input v-model="appointment_id" id="appointment_id_val" style="display:none"></b-form-input>
-        <div class="datepiker-block">
-            <label class="label_datepicker" for="example-datepicker">Choose Date & Time</label>
-            <b-form-datepicker id="example-datepicker" v-model="date" class="mb-2"></b-form-datepicker>
-        </div>
-        <b-form-group label="" v-slot="{ ariaDescribedby }">
-            <b-form-radio-group
-                id="time-radios-btn"
-                v-model="time"
-                :aria-describedby="ariaDescribedby"
-                button-variant="outline-primary"
-                size="lg"
-                :options="time_slots"
-                value-field="id"
-                text-field="time"
-                name="radio-btn-outline"
-                buttons
-            >
-            </b-form-radio-group>
-        </b-form-group>
-        
-        <b-button type="submit" @click.prevent="schedule_appointment" variant="primary">Submit </b-button>
-      </b-form> 
-    </b-modal>
+
+    
+
+
 </b-container>
 </template>
 
 <script>
-    // import appointment from '../../api/appointment.js';
     import order from '../../api/order.js';
+    import user from '../../api/user.js';
+    import * as XLSX from 'xlsx/xlsx.mjs';
+
   export default {
 
     props: {
     },
     mounted() {
-
-      // this.appointment();
-      this.getOrderdetail();
+      this.getVidz();
     },
     data() 
     {
       return {
+        vendor:null,
+        status_assign:"",
+        oid:0,
+        selected: null,
+        options: [
+          { value: null, text: 'Vendor Wise Detail' },
+        ],
         ariaDescribedby: "",
         time: "",
         date: "",
+        vid: 0,
         time_slots: [],
+        status_assign_array:[],
       seen: false,
         date_from: '',
         date_to: '',
@@ -155,7 +170,7 @@
         filterOn: [],
         fields: [
           {
-            key: 'id',
+            key: 'oid',
             label: 'Order ID',
             sortable: true
           },
@@ -165,7 +180,7 @@
             sortable: true
           },
           {
-            key: 'subtotal',
+            key: 'total',
             label: 'Amount',
             sortable: true
           },
@@ -179,13 +194,9 @@
             label: 'City',
             sortable: true
           },
+       
           {
-            key: 'value',
-            label: 'Color',
-            sortable: true
-          },
-          {
-            key: 'date_completed',
+            key: 'date_created_gmt',
             label: 'Order Date ',
             sortable: true
           },
@@ -212,12 +223,28 @@ computed: {
       }
     },
   methods: {
-    
-    
-  
-    
+    getOrderDetails(vid)
+    {
+      let formData = new FormData();
+      formData.append('vid', vid);
+      formData.append('type', 'get');
+      console.log(this.vendor);
+      order.getOrderDetails(formData)
+        .then(( response ) => {
+          console.log(response);
+          this.items=response.data;
+          // this.countrys = response.data.data;
+          console.log(this.items);
+          //this.seen = false;
+        })
+        .catch(response => {
+            this.successful = false;
+            alert('something went wrong');
+        })
+    },
     onSubmit(event) {
       event.preventDefault()
+      console.log(this.date_from);
       this.create_error = "";
       if (!this.date_from) {
         this.create_error += "Add date from,";
@@ -232,11 +259,11 @@ computed: {
       formData.append("date_from", this.date_from);
       formData.append("date_to", this.date_to);
       
-      appointment
-          .appointmentSearch(formData)
+      order.orderSearch(formData)
           .then((response) => {
               
-                  this.items=response.data.data;
+                  this.items=response.data;
+                  console.log(this.items);
                   
               // }
           })
@@ -247,34 +274,46 @@ computed: {
               }
               // loader.hide();
           });
-      // console.log(this.date_from);
-      // console.log(this.date_to);
-      // alert(JSON.stringify(this.form))
+    
     },
-    onReset(event) {
-      event.preventDefault()
-      // Reset our form values
-      this.date_to = '';
-      this.date_from = '';
-      this.appointment();
-    },
-    clearData()
+
+  getVidz()
+     {
+      let formData= new FormData();
+      formData.append("user_id", this.$userId);
+      user.getVid(formData)
+       .then(( response ) => {
+          this.vid = response.data;
+
+          localStorage.setItem("ivid", this.vid);
+          this.getOrderDetails(this.vid);
+        })
+        .catch(response => {
+            this.successful = false;
+            alert('something went wrong');
+        })
+
+      // alert("aaa");
+     },
+    addstatus(oid){
+      //alert(oid);
+                 this.oid = oid;
+                 let formData= new FormData();
+                  formData.append("oid", this.oid);
+                 this.$bvModal.show("modal-1");
+                 console.log(this.oid);
+               },
+   assign_status() 
     {
-      this.appointment_id ='';
-    },
-    addinfo(id){
-        //alert(id);
-        
-        this.appointment_id = id;
-        let formData = new FormData();
-        formData.append("id", id);
-      appointment
-          .freeVehicle(formData)
+        this.vid = JSON.parse(localStorage.getItem("ivid"));
+         let formData = new FormData();
+        formData.append("oid",this.oid);
+        formData.append("status_assign",this.status_assign);
+        formData.append("vid",this.vid);
+      order.changeStatus(formData)
           .then((response) => {
-              
-                  this.vehicle_assign_array=response.data.data;
-                  this.$bvModal.show("modal-1");
-              // }
+                  alert('Status Update Successfully');
+               //}
           })
           .catch((error) => {
               // console.log(error);
@@ -284,21 +323,19 @@ computed: {
               // loader.hide();
           });
     },
-    getOrderdetail() {
-      // this.seen = true;
-      order.getOrderDetail()
-        .then(( response ) => {
-          console.log(response);
-          this.items=response.data;
-          // this.countrys = response.data.data;
-          console.log(this.items);
-          //this.seen = false;
-        })
-        .catch(response => {
-            this.successful = false;
-            alert('something went wrong');
-        })
-    }
-  }
+            download : function() {
+                const data = XLSX.utils.json_to_sheet(this.items)
+                const wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, data, 'data')
+                XLSX.writeFile(wb,'download_list.xlsx')
+            },
+
+  },
+
+clearData()
+    {
+      this.oid ='';
+    },
+
 };  
 </script>

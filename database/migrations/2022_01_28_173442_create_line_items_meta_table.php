@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePetCategoriesTable extends Migration
+class CreateLineItemsMetaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreatePetCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('pet_categories', function (Blueprint $table) {
+        Schema::create('line_items_metas', function (Blueprint $table) {
             $table->id();
             $table->integer('product_id');
             $table->integer('line_item_id');
@@ -31,6 +31,6 @@ class CreatePetCategoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pet_categories');
+        Schema::dropIfExists('line_items_metas');
     }
 }
