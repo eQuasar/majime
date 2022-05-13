@@ -255,7 +255,7 @@ computed: {
       user.getVid(formData)
        .then(( response ) => {
           this.vid = response.data;
-          //console.log(response);
+          localStorage.setItem("ivid", this.vid);
           order.getOrderOnStatus(this.vid,"confirmed")
             .then(( response ) => {
               if(response.data)
@@ -290,7 +290,19 @@ computed: {
         })
       },
       assignAWBOrder(oid){
-        alert('Assigned Successfully');
+        // alert('Assigned Successfully');
+        this.vid = JSON.parse(localStorage.getItem("ivid"));
+        let formData= new FormData();
+        formData.append("vid", this.vid);
+        formData.append("oid", oid);
+          order.assignAWBOrder(formData)
+         .then(( response ) => {
+            alert(response.data.msg);
+          })
+          .catch(response => {
+              this.successful = false;
+              alert('something went wrong');
+          })
       }
   },
 

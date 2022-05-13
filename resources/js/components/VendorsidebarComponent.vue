@@ -27,14 +27,14 @@
                     {
                         
                         title: 'Wallet',
-                        icon: 'fa fa-user',
+                        icon: 'fa fa-wallet',
                         href:{ name: 'wallet'}
                        
                     },
                     {
                         href:{ name: 'report'},
                         title: 'Reports',
-                        icon: 'fa fa-user',
+                        icon: 'fa fa-pencil',
                        
                     },
                     {
@@ -47,6 +47,12 @@
                         href:{ name: 'confirmedorders'},
                         title: 'Assign AWB',
                         icon: 'fa fa-user',
+                       
+                    },
+                    {
+                        href:{ name: 'vendor_awbdata'},
+                        title: 'AWB Pickup Location',
+                        icon: 'fa fa-info',
                        
                     },
                     //  {

@@ -2,7 +2,7 @@ import App from './components/AppComponent.vue'
 import AdminDashboard from './components/Admin/Dashboard.vue'
 import ImportVendor from './components/Admin/ImportVendor.vue'
 import wallet from './components/Wallet/wallet.vue'
-import report from './components/Report/report.vue'
+import AddAWBData from './components/Manage/AddAWBData.vue'
 import accounts from './components/Accounts/Accounts.vue'
 
 
@@ -27,7 +27,8 @@ export const routes = [
     {path:'/vendor/dashboard',component: vendorDashboard,name:'vendorDashboard',meta: { auth: true}},
     {path:'/admin/dashboard',component: AdminDashboard,name:'admindashboard',meta: { auth: true}},
     {path:'/vendor/wallet',component: wallet,name:'wallet',meta: { auth: true}},
-    {path:'/vendor/report',component: report,name:'report',meta: { auth: true}},
+    {path:'/admin/awb-data',component: AddAWBData,name:'admin_awbdata',meta: { auth: true}},
+    {path:'/vendor/awb-data',component: AddAWBData,name:'vendor_awbdata',meta: { auth: true}},
     {path:'/vendor/accounts',component: accounts,name:'accounts',meta: { auth: true}},
     {path:'/accounts/allaccounts',component: accounts,name:'allaccounts',meta: { auth: true}},
     {path:'/admin/import-vendor',component: ImportVendor,name:'importvendor',meta: { auth: true}},

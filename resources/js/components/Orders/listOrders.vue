@@ -101,26 +101,15 @@ x<template>
         
         <b-form-select v-model="status_assign">
           <template v-slot:first>
-            <b-form-select-option :value="null" disabled selected>-- Select Status --</b-form-select-option>
+            <b-form-select-option value="null" disabled selected>-- Select Status --</b-form-select-option>
           </template>
-            <!-- <b-form-select-option value="0">-- Change status to RTD-Online --</b-form-select-option>
-            <b-form-select-option value="0">-- Change status to RTD-COD --</b-form-select-option>
-            <b-form-select-option value="0">-- Change status to Refunded --</b-form-select-option>
-            <b-form-select-option value="0">-- Change status to DTO Delivery to Warehouse --</b-form-select-option>
-            <b-form-select-option value="0">-- Change status to DTO intransit --</b-form-select-option> -->
             <b-form-select-option value="dtobooked">-- Change status to DTO Booked --</b-form-select-option>
-           <!--  <b-form-select-option value="0">-- Change status to  delivered to customer--</b-form-select-option> -->
             <b-form-select-option value="intransit">-- Change status to Intransit --</b-form-select-option>
-           <!--  <b-form-select-option value="0">-- Change status to Picked up --</b-form-select-option> -->
             <b-form-select-option value="confirmed">-- Change status to Confirmed --</b-form-select-option>
             <b-form-select-option value="processing">-- Change status to processing --</b-form-select-option>
-          <!--   <b-form-select-option value="0">-- Change status to on-hold --</b-form-select-option> -->
             <b-form-select-option value="completed">-- Change status to completed --</b-form-select-option>
             <b-form-select-option value="cancelled">-- Change status to cancelled --</b-form-select-option>
-          <!--   <b-form-select-option value="0">-- PDF Invoice --</b-form-select-option>
-            <b-form-select-option value="0">-- PDF Packing Slip --</b-form-select-option> -->
         </b-form-select>
-        
         <b-button type="submit" @click.prevent="assign_status" variant="primary">Submit </b-button>
       </b-form> 
     </b-modal>
@@ -222,12 +211,11 @@ computed: {
       }
     },
   methods: {
-    getOrderDetails()
+    getOrderDetails(vid)
     {
       let formData = new FormData();
-      formData.append('vendor', this.vendor);
+      formData.append('vid', vid);
       formData.append('type', 'get');
-      console.log(this.vendor);
       order.getOrderDetails(formData)
         .then(( response ) => {
           console.log(response);
@@ -284,7 +272,7 @@ computed: {
        .then(( response ) => {
           this.vid = response.data;
           localStorage.setItem("ivid", this.vid);
-          this.getOrderDetails();
+          this.getOrderDetails(this.vid);
         })
         .catch(response => {
             this.successful = false;
@@ -310,6 +298,7 @@ computed: {
         formData.append("vid",this.vid);
       order.changeStatus(formData)
           .then((response) => {
+              this.$bvModal.hide("modal-1");
                   alert('Status Update Successfully');
                //}
           })

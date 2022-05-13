@@ -12,7 +12,7 @@
                         title: 'Dashboard',
                         icon: 'fas fa-th'
                     },
-			{
+			        {
                         title: 'Sales',
                         icon: 'fas fa-calendar-alt',
                         child: [
@@ -49,6 +49,12 @@
                        
                     },
                     
+                    {
+                        href:{ name: 'vendor_awbdata'},
+                        title: 'AWB Pickup Location',
+                        icon: 'fa fa-info',
+                       
+                    },
                 ]
             }
         }

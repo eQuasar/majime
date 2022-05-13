@@ -9,8 +9,7 @@ export default {
     getOrderDetails(data) {
         return axios.post('getOrderDetails', data)
     },
-
-     orderSearch(data) {
+    orderSearch(data) {
         return axios.post('order_Search',data)
     },
 
@@ -27,11 +26,13 @@ export default {
         return axios.get('getpackdetail/' + data)
     },
     getOrderOnStatus(vid,status) {
-        // alert(vid+" uuuu "+status);
         return axios.get('getOrderOnStatus/'+vid+'/'+status)
     },
     assignAWB(data){
         return axios.post('assignAWB', data)
+    },
+    assignAWBOrder(data){
+        return axios.post('assignAWBOrder', data)
     }
 }
 

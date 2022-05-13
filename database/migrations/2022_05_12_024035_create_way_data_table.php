@@ -15,6 +15,7 @@ class CreateWayDataTable extends Migration
     {
         Schema::create('way_data', function (Blueprint $table) {
             $table->id();
+           $table->integer('user_id');
            $table->integer('vid');
            $table->string('city');
            $table->string('name');

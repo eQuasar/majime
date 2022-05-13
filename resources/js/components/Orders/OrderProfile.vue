@@ -110,13 +110,13 @@ import OrderProfile from '../../api/order.js';
         
           },
           {
-            key: 'line_item_id',
-            label: 'Item ID',
+            key: 'product_id',
+            label: 'Product ID',
             sortable: true
           },
           {
             key: 'variation_id',
-            label: 'Item ID',
+            label: 'Variation ID',
             sortable: true
           },
           {
@@ -124,11 +124,11 @@ import OrderProfile from '../../api/order.js';
             label: 'Name',
             sortable: true
           },
-          {
-            key: 'parent_name',
-            label: 'Parent Name',
-            sortable: true
-          },
+          // {
+          //   key: 'parent_name',
+          //   label: 'Parent Name',
+          //   sortable: true
+          // },
           {
             key: 'quantity',
             label: 'Quantity',

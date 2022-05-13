@@ -54,11 +54,11 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('getJson', 'JsonController@getJson')->name('getJson');
 	Route::post('changeStatus', 'OrderController@changeStatus')->name('changeStatus');
 	Route::post('assignAWB', 'OrderController@assignAWB')->name('assignAWB');
+	Route::post('assignAWBOrder', 'OrderController@assignAWBOrder')->name('assignAWBOrder');
 	Route::post('getVid', 'AuthController@getVid')->name('getVid');
-	Route::post('way_data', 'WayDataController@way_data')->name('way_data');
+	Route::post('addWayData', 'WayDataController@store')->name('addWayData');
+	Route::post('updateWayData', 'WayDataController@update')->name('updateWayData');
+	Route::post('getAWBLocation', 'WayDataController@getAWBLocation')->name('getAWBLocation');
 	
-	
-	
-    
 }); 
 

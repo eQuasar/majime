@@ -10,8 +10,4 @@ export default {
         return axios.post('status_details', data)
     },
 
-    addwaydata(data) {
-        return axios.post('way_data', data)
-    },
-
-   }
+}

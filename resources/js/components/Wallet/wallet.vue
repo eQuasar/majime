@@ -6,8 +6,8 @@
       </div>
     </div>
     
-    <div class="content_bar card">
-        <div class="card-body">
+    <div class="content_bar ">
+        <div class="card-body card">
           <div class="call-center-dashboard">
           <b-col xl="10" lg="10" md="10">
             <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
@@ -53,6 +53,8 @@
           </div>
         </div>
         </div>
+      </div>
+      <br>
          <b-table striped hover responsive :items="items"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
@@ -72,7 +74,6 @@
       :per-page="perPage"
       aria-controls="my-table"
     ></b-pagination>
-  </div>
     </div>
 </b-container>
 </template>

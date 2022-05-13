@@ -20143,9 +20143,9 @@ div.tagsinput span.tag a {
   -webkit-transition: background 0.25s ease;
   -moz-transition: background 0.25s ease;
   -ms-transition: background 0.25s ease;
-  -webkit-box-shadow: 0px 5px 21px -5px #4747a11a;
+/*  -webkit-box-shadow: 0px 5px 21px -5px #4747a11a;
   -moz-box-shadow: 0px 5px 21px -5px #4747a11a;
-  box-shadow: 0px 5px 21px -5px #4747a11a;
+  box-shadow: 0px 5px 21px -5px #4747a11a;*/
   /* Navbar color variations */
 }
 

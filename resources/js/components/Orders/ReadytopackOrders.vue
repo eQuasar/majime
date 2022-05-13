@@ -8,8 +8,8 @@
         <div class="clear">&nbsp;</div>
         <b-row>
             <b-col xl="12" lg="12" md="12">
-                <div class="list-appointments content_bar card">
-                    <div class="card-body">
+                <div class="list-appointments content_bar ">
+                    <div class="card-body card">
                         <b-row>
                             <b-col>
                                 <h4 class="own-heading">Ready to Pack Order List</h4>
@@ -18,7 +18,8 @@
                                 <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download</button>
                             </b-col>
                         </b-row>
-                        
+                        </div>
+                        <br>
                         <div class="groomer-page">
                           <b-table
                               striped
@@ -33,7 +34,6 @@
                               :fields="fields"
                               :per-page="perPage"
                               :current-page="currentPage"
-                              @row-clicked="myRowClickHandler"
                               show-empty
                           >
                               <template #empty="scope">
@@ -48,7 +48,7 @@
                             <b-spinner variant="primary" label="Text Centered"></b-spinner>
                         </div>
                         <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="my-table"></b-pagination>
-                    </div>
+                    
                 </div>
             </b-col>
         </b-row>
@@ -131,14 +131,11 @@
             sortable: true
           },
 
-            {
-            key: 'Parent',
-            label: 'Parent',
-            sortable: true
-          },
-
-
-
+          //   {
+          //   key: 'Parent',
+          //   label: 'Parent',
+          //   sortable: true
+          // },
 
         ],
         items: [],
@@ -214,8 +211,8 @@ computed: {
       user.getVid(formData)
        .then(( response ) => {
           this.vid = response.data;
-          console.log(response);
-          this.getPackdetail();
+          localStorage.setItem("ivid", this.vid);
+          this.getPackdetail(this.vid);
         })
         .catch(response => {
             this.successful = false;
@@ -225,8 +222,8 @@ computed: {
       // alert("aaa");
      },
 
-    getPackdetail() {
-      order.getPackDetail(this.vid)
+    getPackdetail(vid) {
+      order.getPackDetail(vid)
           .then(( response ) => {
             if(response.data)
             {
