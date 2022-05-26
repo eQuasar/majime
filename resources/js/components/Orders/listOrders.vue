@@ -1,14 +1,42 @@
-x<template>
+<template>
   <b-container fluid> 
     <div class="header_title">
       <div class="header_inner">
-        <h3><strong>List Orders</strong></h3><br/>
-      </div>
+        <b-row>
+          <b-col xl="2" lg="2" md="2">
+            <h3><strong>List Orders</strong></h3><br/>
+          </b-col>
+          <b-col xl="3" lg="3" md="3">
+            <select v-model="status" :options="allstatus" @change="onChangeStatus($event)" class="form-control">
+              <!-- <option value="null" disabled>Select status</option>
+               <option value="intransit">intransit</option>
+               <option value="processing">processing</option>
+               <option value="dtobooked">dtobooked</option>
+               <option value="cancelled">cancelled</option> -->
+            </select>
+          </b-col>
+          <b-col xl="3" lg="3" md="3">
+            <select v-model="state" :options="allstate" @change="onChangeState($event)" class="form-control">
+              <option value="null" disabled>Select State</option>
+               <!-- <option value="PB">pb</option>
+               <option value="CH">ch</option> -->
+            </select>
+          </b-col>
+          <b-col xl="3" lg="3" md="3">
+            <select v-model="city" :options="allcity" @change="onChangeCity($event)" class="form-control">
+              <option value="null" disabled>Select City</option>
+               <!-- <option value="Ludhiana">Ludhiana</option>
+               <option value="Jalandhar">Jalandhar</option>
+               <option value="Surat">Surat</option>
+               <option value="Noida">Noida</option> -->
+            </select>
+          </b-col>
+        </b-row>
+     </div>
     </div>
-    
-    <div class="content_bar ">
-        <div class="card-body card">
-          <div class="call-center-dashboard">
+    <div class="content_bar">
+      <div class="card-body card">
+        <div class="call-center-dashboard">
           <b-row>
             <b-col xl="9" lg="9" md="9">
               <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
@@ -22,12 +50,14 @@ x<template>
                 <b-button type="submit" variant="primary">Submit</b-button>
               </b-form>
             </b-col>
-            <b-col>
+            <b-col xl="3" lg="3" md="3">
                 <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download</button>
             </b-col>
           </b-row>
-         <div class="blue-bar"></div>
-        <div class="content_bar card list-appointments space-bottom">
+        </div>
+      </div>
+      <div class="blue-bar"></div>
+      <div class="card list-appointments space-bottom">
           <div class="col-sm-12">
             <b-row>
               <b-col xl="4" lg="4" md="4">
@@ -47,51 +77,42 @@ x<template>
                     id="filter-input"
                     v-model="filter"
                     type="search"
-                    placeholder="Type to Search"
-                  ></b-form-input>
+                    placeholder="Type to Search">
+                </b-form-input>
                   <b-input-group-append>
                     <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
                   </b-input-group-append>
               </b-col>
             </b-row>
           </div>
-          
         </div>
+        <b-table striped hover responsive :items="items"
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDesc"
+        sort-icon-left :filter-included-fields="filterOn" :filter="filter" :fields="fields" :per-page="perPage" :current-page="currentPage" show-empty>
+              <template #empty="scope">
+                  <p style="text-align:center;">No record found, choose date filter to found the result.</p>
+              </template>
+
+              <template v-slot:cell(oid)="row">
+                #{{(row.item.oid)}}
+              	</template>
+              <template v-slot:cell(action)="row">
+
+                <router-link :to="{ name: 'OrderProfile', params: { oid: (row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
+                &nbsp;&nbsp; <b-link @click="addstatus(row.item.oid)"><b-icon icon="exclamation-circle-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link>
+              </template>
+        </b-table>
+        <div class="text-center" v-if="seen">
+          <b-spinner variant="primary" label="Text Centered"></b-spinner>
         </div>
-          </div><br>
-         <b-table striped hover responsive :items="items"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
-      sort-icon-left :filter-included-fields="filterOn" :filter="filter" :fields="fields" :per-page="perPage" :current-page="currentPage" show-empty>
-            <template #empty="scope">
-                <p style="text-align:center;">No record found, choose date filter to found the result.</p>
-            </template>
-            <template v-slot:cell(oid)="row">
-              #{{(row.item.oid)}}
-            </template>
-
-            <template v-slot:cell(action)="row">
-              <router-link :to="{ name: 'OrderProfile', params: { oid: (row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
-              &nbsp;&nbsp; <b-link @click="addstatus(row.item.oid)"><b-icon icon="exclamation-circle-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link>
-            </template>
-
-
-
-
-          </b-table>
-          <div class="text-center" v-if="seen">
-  <b-spinner variant="primary" label="Text Centered"></b-spinner>
-</div>
-  <b-pagination v-model="currentPage"
-       :total-rows="rows"
-      :per-page="perPage"
-      aria-controls="my-table"
-    ></b-pagination>
-
+        <b-pagination v-model="currentPage"
+         :total-rows="rows"
+        :per-page="perPage"
+        aria-controls="my-table">
+        </b-pagination>
     </div>
-
-
-               <b-modal id="modal-1" title="Change Status:" hide-footer  size="lg">
+    <b-modal id="modal-1" title="Change Status:" hide-footer  size="lg">
       <b-form>
         <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
         <div :class="['form-group m-1 p-3', (successful ? 'alert-success' : '')]" v-show="successful">
@@ -103,29 +124,27 @@ x<template>
           <template v-slot:first>
             <b-form-select-option value="null" disabled selected>-- Select Status --</b-form-select-option>
           </template>
-            <b-form-select-option value="dtobooked">-- Change status to DTO Booked --</b-form-select-option>
-            <b-form-select-option value="intransit">-- Change status to Intransit --</b-form-select-option>
-            <b-form-select-option value="confirmed">-- Change status to Confirmed --</b-form-select-option>
-            <b-form-select-option value="processing">-- Change status to processing --</b-form-select-option>
-            <b-form-select-option value="completed">-- Change status to completed --</b-form-select-option>
-            <b-form-select-option value="cancelled">-- Change status to cancelled --</b-form-select-option>
+            <b-form-select-option value="dtobooked">Change status to DTO Booked</b-form-select-option>
+            <b-form-select-option value="intransit">Change status to Intransit</b-form-select-option>
+            <b-form-select-option value="confirmed">Change status to Confirmed</b-form-select-option>
+            <b-form-select-option value="processing">Change status to processing</b-form-select-option>
+            <b-form-select-option value="completed">Change status to completed</b-form-select-option>
+            <b-form-select-option value="cancelled">Change status to cancelled</b-form-select-option>
         </b-form-select>
-        <b-button type="submit" @click.prevent="assign_status" variant="primary">Submit </b-button>
+        <b-button type="submit" @click.prevent="assign_status" variant="primary">Submit</b-button>
       </b-form> 
     </b-modal>
-
-    
-
-
-</b-container>
+  </b-container>
 </template>
-
 <script>
     import order from '../../api/order.js';
     import user from '../../api/user.js';
+    import * as XLSX from 'xlsx/xlsx.mjs';
+
   export default {
 
     props: {
+
     },
     mounted() {
       this.getVidz();
@@ -135,19 +154,34 @@ x<template>
       return {
         vendor:null,
         status_assign:"",
+        key: "",
         oid:0,
-        selected: null,
-        options: [
-          { value: null, text: 'Vendor Wise Detail' },
-        ],
+        status_assign: null,
+        option: [
+          { value: null, text: 'Select status' },
+          ],
+        status: null,
+        option: [
+          { value: null, text: 'Select status' },
+          ],
+        state: null,
+        option: [
+          { value: null, text: 'Select state' },
+          ],
+        city: null,
+        option: [
+          { value: null, text: 'Select city' },
+          ],
         ariaDescribedby: "",
         time: "",
         date: "",
         vid: 0,
         time_slots: [],
         status_assign_array:[],
-      seen: false,
+        seen: false,
         date_from: '',
+        city: '',
+        state:'',
         date_to: '',
         sortBy: 'date',
         sortDesc: true,
@@ -211,6 +245,81 @@ computed: {
       }
     },
   methods: {
+  	 onChangeCity(event) {
+            // console.log(event.target.value)
+           // alert('something went wrong');
+ 
+            console.log(event.target.value);
+
+      let formData = new FormData();
+      formData.append("city", this.city);
+      order.citySearch(formData)
+          .then((response) => {
+              
+                  this.items=response.data;
+                  console.log(this.items);
+                  
+              // }
+          })
+          .catch((error) => {
+              console.log(error);
+              if (error.response.city == 422) {
+                  this.errors_create = error.response.data.errors;
+              }
+              // loader.hide();
+          });
+    
+        },
+        onChangeState(event) {
+            // console.log(event.target.value)
+           // alert('something went wrong');
+ 
+            console.log(event.target.value);
+
+      let formData = new FormData();
+      formData.append("state", this.state);
+      order.stateSearch(formData)
+          .then((response) => {
+              
+                  this.items=response.data;
+                  console.log(this.items);
+                  
+              // }
+          })
+          .catch((error) => {
+              console.log(error);
+              if (error.response.state == 422) {
+                  this.errors_create = error.response.data.errors;
+              }
+              // loader.hide();
+          });
+    
+        },
+        onChangeStatus(event) {
+            // console.log(event.target.value)
+           // alert('something went wrong');
+ 
+            console.log(event.target.value);
+
+      let formData = new FormData();
+      formData.append("status", this.status);
+      order.statusSearch(formData)
+          .then((response) => {
+              
+                  this.items=response.data;
+                  console.log(this.items);
+                  
+              // }
+          })
+          .catch((error) => {
+              console.log(error);
+              if (error.response.status == 422) {
+                  this.errors_create = error.response.data.errors;
+              }
+              // loader.hide();
+          });
+    
+        },
     getOrderDetails(vid)
     {
       let formData = new FormData();
@@ -300,7 +409,7 @@ computed: {
           .then((response) => {
               this.$bvModal.hide("modal-1");
                   alert('Status Update Successfully');
-               //}
+               window.location.reload();
           })
           .catch((error) => {
               // console.log(error);
@@ -324,5 +433,28 @@ clearData()
       this.oid ='';
     },
 
+	// onCity(){
+ 
+ //      console.log(this.city);
+ //      let formData = new FormData();
+ //      formData.append("date_from", this.city);
+      
+ //      order.citySearch(formData)
+ //          .then((response) => {
+              
+ //                  this.items=response.data;
+ //                  console.log(this.items);
+                  
+ //              // }
+ //          })
+ //          .catch((error) => {
+ //              console.log(error);
+ //              if (error.response.status == 422) {
+ //                  this.errors_create = error.response.data.errors;
+ //              }
+ //              // loader.hide();
+ //          });
+    
+ //    },
 };  
 </script>

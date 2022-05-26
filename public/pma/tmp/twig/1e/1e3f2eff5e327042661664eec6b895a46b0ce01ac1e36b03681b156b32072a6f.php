@@ -74,6 +74,6 @@ class __TwigTemplate_ef6d7d9879fb7d74083ae8cbc5371e995dec7f4043ef3a15a41ba680dbb
 
     public function getSourceContext()
     {
-        return new Source("", "file_select_options.twig", "/var/www/html/public/pma/templates/file_select_options.twig");
+        return new Source("", "file_select_options.twig", "/var/www/majime/public/pma/templates/file_select_options.twig");
     }
 }

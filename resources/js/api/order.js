@@ -33,6 +33,24 @@ export default {
     },
     assignAWBOrder(data){
         return axios.post('assignAWBOrder', data)
-    }
+    },
+    return_order(){
+        return axios.get('return_order')
+    },
+    printSlip(data){
+        return axios.post('printSlip', data)
+    },
+    printOrderSlip(data){
+        return axios.post('printOrderSlip', data)
+    },
+     citySearch(data) {
+        return axios.post('city_Search', data)
+    },
+    stateSearch(data) {
+        return axios.post('state_Search', data)
+    },
+    statusSearch(data) {
+        return axios.post('status_Search', data)
+    },
 }
 

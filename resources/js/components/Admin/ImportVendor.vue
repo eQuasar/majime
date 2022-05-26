@@ -65,7 +65,7 @@
                 </b-col>
               </b-row>
               <b-row style="margin-bottom: 10px;">
-                <b-col xl="12" lg="12" md="12">
+                <b-col xl="6" lg="6" md="6">
                   <b-form-group
                       id="input-group-user_phone"
                       label="User Phone"
@@ -80,8 +80,6 @@
                       ></b-form-input>
                   </b-form-group>
                 </b-col>
-              </b-row>
-              <b-row style="margin-bottom: 10px;">
                 <b-col xl="6" lg="6" md="6">
                   <b-form-group
                       id="input-group-name"
@@ -94,6 +92,23 @@
                         type="text"
                         required
                         placeholder="Enter Name"
+                      ></b-form-input>
+                  </b-form-group>
+                </b-col>
+              </b-row>
+              <b-row style="margin-bottom: 10px;">
+                <b-col xl="6" lg="6" md="6">
+                  <b-form-group
+                      id="input-group-token"
+                      label="Token"
+                      label-for="input-token"
+                      >
+                  <b-form-input
+                        id="input-token"
+                        v-model="token"
+                        type="text"
+                        required
+                        placeholder="Enter Token"
                       ></b-form-input>
                   </b-form-group>
                 </b-col>
@@ -113,7 +128,7 @@
                   </b-form-group>
                 </b-col>
               </b-row>
-              <b-row style="margin-bottom: 10px;">
+              <b-row style="margin-bottom: 10px; display:none;">
                 <b-col xl="6" lg="6" md="6">
                   <b-form-group
                       id="input-group-consumer_key"
@@ -171,6 +186,7 @@
         name: "",
         url: "",
         email:"",
+        token:"",
         role_id:1,
         consumer_key:"",
         secret_key:"",
@@ -241,11 +257,8 @@
         if (!this.user_phone) {
           this.create_error += "Add Phone Number,";
         }
-        if (!this.secret_key) {
+        if (!this.token) {
           this.create_error += "Add Secret Key,";
-        }
-        if (!this.consumer_key) {
-          this.create_error += "Add Consumer Key,";
         }
         if (!this.email) {
           this.create_error += "Add Email,";
@@ -260,6 +273,7 @@
         formData.append("user_name", this.user_name);
         formData.append("user_phone", this.user_phone);
         formData.append("email", this.email);
+        formData.append("token", this.token);
         formData.append("secret_key", this.secret_key);
         formData.append("consumer_key", this.consumer_key);
         
@@ -277,6 +291,7 @@
             this.email='';
             this.consumer_key='';
             this.secret_key='';
+            this.token='';
           })
           .catch((error) => {
               console.log(error);

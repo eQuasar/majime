@@ -29,6 +29,7 @@
                 <option value="1">intransit</option>
                 <option value="2">confirmed</option>
                 <option value="3">dtobooked</option>
+                <option value="4">cancelled</option>
               </b-form-select>
             </b-col>
           </b-row>
@@ -89,8 +90,7 @@
 
 
 <script>
-    
-    import report from '../../api/report.js';
+  import report from '../../api/report.js';
   export default {
 
     props: {
@@ -172,10 +172,7 @@ computed: {
       }
     },
   methods:{
-
-  
-
-     getstatus()
+    getstatus()
     {
       let formData = new FormData();
       formData.append('status', this.status);

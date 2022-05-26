@@ -116,6 +116,19 @@
                         placeholder="Enter Token"
                       ></b-form-input>
                   </b-form-group>
+                  <b-form-group
+                      id="input-group-prefix"
+                      label="Order Prefix"
+                      label-for="input-Order_prefix"
+                      >
+                  <b-form-input
+                        id="input-prefix"
+                        v-model="Prefix"
+                        type="text" :value="this.order_prefix"
+                        required
+                        placeholder="Enter Order Prefix"
+                      ></b-form-input>
+                  </b-form-group>
                 </b-col>
               </b-row>
               <div v-if="this.awb_id != 0">
@@ -373,16 +386,20 @@
         formData.append("vid", this.vid);
         awb.getAWBLocation(formData)
         .then(( response ) => {
-          this.vid=response.data[0].vid;
-          this.user_id=response.data[0].user_id;
-          this.city=response.data[0].city;
-          this.name=response.data[0].name;
-          this.pin=response.data[0].pin;
-          this.country=response.data[0].country;
-          this.phone=response.data[0].phone;
-          this.add=response.data[0].add;
-          this.token=response.data[0].token;
-          this.awb_id=response.data[0].id;
+          if(response.data.msg){
+            alert(response.data.msg);
+          }else{
+            this.vid=response.data[0].vid;
+            this.user_id=response.data[0].user_id;
+            this.city=response.data[0].city;
+            this.name=response.data[0].name;
+            this.pin=response.data[0].pin;
+            this.country=response.data[0].country;
+            this.phone=response.data[0].phone;
+            this.add=response.data[0].add;
+            this.token=response.data[0].token;
+            this.awb_id=response.data[0].id;
+          }
         })
         .catch(response => {
             this.successful = false;

@@ -21,6 +21,7 @@ class CreateVendorsTable extends Migration
             $table->string('data_added')->nullable();
             $table->string('consumer_key');
             $table->string('secret_key');
+            $table->string('token');
             $table->timestamps();
         });
     }

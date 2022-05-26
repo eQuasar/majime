@@ -529,6 +529,6 @@ $context["charset"] == ($context["import_charset"] ?? null)))) {
 
     public function getSourceContext()
     {
-        return new Source("", "import.twig", "/var/www/html/public/pma/templates/import.twig");
+        return new Source("", "import.twig", "/var/www/majime/public/pma/templates/import.twig");
     }
 }

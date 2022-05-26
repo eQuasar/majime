@@ -55,6 +55,12 @@
                         icon: 'fa fa-info',
                        
                     },
+                    {
+                        href:{ name: 'printslip'},
+                        title: 'Print Slip',
+                        icon: 'fa fa-info',
+                       
+                    },
                     //  {
                     //     href:{ name: 'accounts'},
                     //     title: 'Accounts',

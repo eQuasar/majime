@@ -40,6 +40,7 @@ class VendorsController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request);
         $request->validate([
                 'name' => 'required|string|max:255',
                 'url' => 'required|string|max:255',
@@ -48,8 +49,9 @@ class VendorsController extends Controller
             $userinfo = DB::table("users")
                 ->where("phone", $request->user_phone)
                 ->orWhere("email", $request->email)->get()->toArray();
-
+                       
             if(isset($userinfo)){
+             //   dd($userinfo);
                 $uid = $userinfo[0]->id;
                 $vendors = DB::table("vendors")
                 ->where("user_id", $uid)->get()->toArray();
@@ -60,6 +62,7 @@ class VendorsController extends Controller
                     $import->url = $request->url;
                     $import->consumer_key = $request->consumer_key;
                     $import->secret_key = $request->secret_key;
+                    $import->token = $request->token;
                     $import->save();
                     return response()->json(['error' => false,'data' => $import,'msg' => "Vendor created successfully"],200);
                 }else{
@@ -79,6 +82,7 @@ class VendorsController extends Controller
                 $import->url = $request->url;
                 $import->consumer_key = $request->consumer_key;
                 $import->secret_key = $request->secret_key;
+                $import->token = $request->token;
                 $import->save();
                 return response()->json(['error' => false,'data' => $import,'msg' => "Vendor created successfully"],200);
             }

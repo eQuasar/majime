@@ -66,6 +66,6 @@ class __TwigTemplate_ce1031c1a77dc183cf0235f410231a84bf20435fa84e6813cd61993c76a
 
     public function getSourceContext()
     {
-        return new Source("", "table/import/index.twig", "/var/www/html/public/pma/templates/table/import/index.twig");
+        return new Source("", "table/import/index.twig", "/var/www/majime/public/pma/templates/table/import/index.twig");
     }
 }

@@ -2,7 +2,7 @@
     <b-container fluid>
         <div class="header_title">
             <div class="header_inner">
-                <h2><strong>Download Order List in Excel Format</strong></h2>
+                <h2><strong>Ready to Pack Order List</strong></h2>
             </div>
         </div>
         <div class="clear">&nbsp;</div>
@@ -11,9 +11,6 @@
                 <div class="list-appointments content_bar ">
                     <div class="card-body card">
                         <b-row>
-                            <b-col>
-                                <h4 class="own-heading">Ready to Pack Order List</h4>
-                            </b-col>
                             <b-col>
                                 <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download</button>
                             </b-col>

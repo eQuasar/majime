@@ -2,12 +2,12 @@
   <b-container fluid> 
     <div class="header_title">
     <div class="header_inner">
-        <h3><strong>Confirmed Orders</strong></h3><br/>
+        <h3><strong>Assign AWB</strong></h3><br/>
       </div>
     </div>
     
-    <div class="content_bar card">
-        <div class="card-body">
+    <div class="content_bar ">
+        <div class="card-body card">
           <div class="call-center-dashboard">
           <b-row>
             <b-col xl="9" lg="9" md="9">
@@ -49,6 +49,8 @@
           
         </div>
         </div>
+        </div>
+        <br>
          <b-table striped hover responsive :items="items"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
@@ -97,7 +99,7 @@
       aria-controls="my-table"
     ></b-pagination>
   </div>
-    </div>
+    
 </b-container>
 </template>
 

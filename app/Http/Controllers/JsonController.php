@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrderController;
 use App\Models\Vendors;
 use App\Models\Orders;
 use App\Models\Billings;
@@ -21,7 +22,9 @@ use App\Models\meta_data_value;
 use App\Models\Products;
 use App\Models\Category;
 use App\Models\ProductTag;
+use App\Models\UpdateStatus;
 use App\Models\Product_Attribute;
+use Illuminate\Support\Facades\DB;
 
 class JsonController extends Controller
 {	
@@ -36,12 +39,119 @@ class JsonController extends Controller
 		//DD($request);
 		$url = $request->url;
 		$vid = $request->vid;
-		$jsonResponse=$this->getOrderWP($url);
+		$jsonResponse=$this->getOrderWP($url, $vid);
 		$this->InsertOrder($jsonResponse, $vid, $url);
 	}
 
-	private function getProductWP($url)
+    public function get_order_data(Request $request)
 	{
+		$url = $_REQUEST['api_url'];
+		$vid = $_REQUEST['vid'];
+		$jsonResponse=$this->addOrderWP($url, $vid);
+		$this->InsertOrderID($jsonResponse, $vid, $url);
+    }
+
+      public function order_update(Request $request)
+	{
+		$oid = $request->oid;
+		$status=$request->status;
+		$jsonResponse=$this->OrderUpdateWP($url, $vid);
+		$this->InsertOrderID($jsonResponse, $vid, $url);
+    }
+
+
+
+
+	private function addOrderWP($url, $vid)
+	{
+		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
+		$curl = curl_init();
+
+	    curl_setopt_array($curl, array(
+
+	    CURLOPT_URL => $url,
+	    CURLOPT_RETURNTRANSFER => true,
+	    CURLOPT_ENCODING => '',
+	    CURLOPT_MAXREDIRS => 10,
+	    CURLOPT_TIMEOUT => 0,
+	    CURLOPT_FOLLOWLOCATION => true,
+	    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	    CURLOPT_CUSTOMREQUEST => 'GET',
+	    CURLOPT_HTTPHEADER => array(
+
+	        'Authorization: Basic '.$vendor[0]->token
+	      ),
+	    ));
+
+	    $response = curl_exec($curl);
+	    curl_close($curl);
+	    $jsonResp = json_decode($response);
+		return  $jsonResp;
+ 	}
+
+ 	public function InsertOrderID($order, $vid, $url)
+	{
+
+		$orderItems =DB::table("orders")->where('oid','=',$order->id)->where('vid','=',intval($vid))->get()->toArray();
+		
+		if(!empty($orderItems)){}else{
+		
+          	$Orders[]=[
+				'oid'=>$order->id,
+				'vid'=>intval($vid),
+				'parent_id'=>$order->parent_id,
+				'status'=>$order->status,
+				'currency'=>$order->currency,
+				 'version'=>$order->version,
+				 'prices_include_tax'=>$order->prices_include_tax,
+				 'date_created'=>$order->date_created,
+				 'date_modified'=>$order->date_modified,
+				 'discount_total'=>$order->discount_total,
+				 'discount_tax'=>$order->discount_tax,
+				 'shipping_total'=>$order->shipping_total,
+				 'shipping_tax'=>$order->shipping_tax,
+				 'cart_tax'=>$order->cart_tax,
+				 'total'=>$order->total,
+				 'total_tax'=>$order->total_tax,
+				 'customer_id'=>$order->customer_id,
+				 'order_key'=>$order->order_key,
+				 'payment_method'=>$order->payment_method,
+				 'payment_method_title'=>$order->payment_method_title,
+				 'transaction_id'=>$order->transaction_id,
+				 'customer_ip_address'=>$order->customer_ip_address,
+				 // 'customer_user_agent'=>$order->customer_user_agent,
+				 'customer_user_agent'=>'',
+				 'created_via'=>$order->created_via,
+				 'customer_note'=>$order->customer_note,
+				 'date_completed'=>$order->date_completed,
+				 'date_paid'=>$order->date_paid,
+				 'cart_hash'=>$order->cart_hash,
+				 'number'=>$order->number,
+				 'date_created_gmt'=>$order->date_created_gmt,
+				 'date_modified_gmt'=>$order->date_modified_gmt,
+				 'date_completed_gmt'=>$order->date_completed_gmt,
+				 'date_paid_gmt'=>$order->date_paid_gmt,
+				 'currency_symbol'=>$order->currency_symbol,
+			];
+			$this->InsertBilling($order->id,$order->billing,$vid);
+			$this->InsertShipping($order->id,$order->shipping,$vid);
+		    //$this->OrderMetaData($order->id,$order->meta_data);
+		    $this->insertLineItems($order->id,$order->line_items,$vid);
+			//$this->LineItem_Metadata($order->id,$order->line_items);
+			$this->OrderTaxLines($order->id,$order->tax_lines,$vid);
+			$this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
+			$this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
+			$this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
+		    $this->Order_refunds($order->id,$order->refunds,$vid);
+			$this->Order_links($order->id,$order->_links,$vid);
+	    
+	    	Orders::insert($Orders); 	
+       }
+    }
+
+	private function getProductWP($url, $vid)
+	{
+		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
 		$curl = curl_init();
 
 	    curl_setopt_array($curl, array(
@@ -56,7 +166,7 @@ class JsonController extends Controller
 	    CURLOPT_CUSTOMREQUEST => 'GET',
 	    CURLOPT_HTTPHEADER => array(
 
-	        'Authorization: Basic Y2tfOWE3MDUwOWVkODk2ODZiZTM0YTY5ZGY3OTI2ZWNhMjBmZmE0MDY0ZTpjc184OWJiODY2ZTY5NjIyMmE3ZjFmZmViMTNkMzhiNjFmYmFkZDFjZjRm'
+	        'Authorization: Basic '.$vendor[0]->token
 	      ),
 	    ));
 
@@ -68,8 +178,9 @@ class JsonController extends Controller
  	}
 
 
-	private function getProductCatWP($url)
+	private function getProductCatWP($url, $vid)
 	{
+		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
 		$curl = curl_init();
 
 	    curl_setopt_array($curl, array(
@@ -84,7 +195,7 @@ class JsonController extends Controller
 	    CURLOPT_CUSTOMREQUEST => 'GET',
 	    CURLOPT_HTTPHEADER => array(
 
-	        'Authorization: Basic Y2tfOWE3MDUwOWVkODk2ODZiZTM0YTY5ZGY3OTI2ZWNhMjBmZmE0MDY0ZTpjc184OWJiODY2ZTY5NjIyMmE3ZjFmZmViMTNkMzhiNjFmYmFkZDFjZjRm'
+	        'Authorization: Basic '.$vendor[0]->token
 	      ),
 	    ));
 
@@ -96,8 +207,9 @@ class JsonController extends Controller
 
  	}
 	
-	private function getOrderWP($url)
+	private function getOrderWP($url, $vid)
 	{
+		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
 		$curl = curl_init();
 
 	    curl_setopt_array($curl, array(
@@ -112,7 +224,7 @@ class JsonController extends Controller
 	    CURLOPT_CUSTOMREQUEST => 'GET',
 	    CURLOPT_HTTPHEADER => array(
 
-	        'Authorization: Basic Y2tfOWE3MDUwOWVkODk2ODZiZTM0YTY5ZGY3OTI2ZWNhMjBmZmE0MDY0ZTpjc184OWJiODY2ZTY5NjIyMmE3ZjFmZmViMTNkMzhiNjFmYmFkZDFjZjRm'
+	        'Authorization: Basic '.$vendor[0]->token
 	      ),
 	    ));
 
@@ -122,8 +234,9 @@ class JsonController extends Controller
 		return  $jsonResp;
  	}
 
- 	private function getProductTagWp($url)
+ 	private function getProductTagWp($url, $vid)
 	{
+		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
 		$curl = curl_init();
 
 	    curl_setopt_array($curl, array(
@@ -138,7 +251,7 @@ class JsonController extends Controller
 	    CURLOPT_CUSTOMREQUEST => 'GET',
 	    CURLOPT_HTTPHEADER => array(
 
-	        'Authorization: Basic Y2tfOWE3MDUwOWVkODk2ODZiZTM0YTY5ZGY3OTI2ZWNhMjBmZmE0MDY0ZTpjc184OWJiODY2ZTY5NjIyMmE3ZjFmZmViMTNkMzhiNjFmYmFkZDFjZjRm'
+	        'Authorization: Basic '.$vendor[0]->token
 	      ),
 	    ));
 
@@ -149,8 +262,9 @@ class JsonController extends Controller
 		return  $jsonResp;
  	}
 
- 	private function getProductAttWp($url)
+ 	private function getProductAttWp($url, $vid)
 	{
+		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
 		$curl = curl_init();
 
 	    curl_setopt_array($curl, array(
@@ -165,7 +279,7 @@ class JsonController extends Controller
 	    CURLOPT_CUSTOMREQUEST => 'GET',
 	    CURLOPT_HTTPHEADER => array(
 
-	        'Authorization: Basic Y2tfOWE3MDUwOWVkODk2ODZiZTM0YTY5ZGY3OTI2ZWNhMjBmZmE0MDY0ZTpjc184OWJiODY2ZTY5NjIyMmE3ZjFmZmViMTNkMzhiNjFmYmFkZDFjZjRm'
+	        'Authorization: Basic '.$vendor[0]->token
 	      ),
 	    ));
 
@@ -176,18 +290,192 @@ class JsonController extends Controller
 		return  $jsonResp;
  	}
 
- 	
+ 	public function cronOrderStatusUpdate($vid){
+ 		$orders=DB::table("orders")
+ 				->join('waybill', 'orders.oid','=','waybill.order_id')
+ 				->whereIn('orders.status',['dtobooked','packed','intransit','on-hold','deliveredtocust','dtointransit'])
+ 				->where('orders.vid',$vid)
+ 		        ->select("orders.oid","waybill.waybill_no")->get();
+		$this->getAWBStatus($orders,$vid);
+		exit();
+
+// 		        https://staging-express.delhivery.com/api/v1/packages/json/?waybill=1325110000361&token=5235172eea087eda74de0cf82149fa8a419d5122
+ 		      return $orders;
+
+
+
+ 	}
+
+ 	public function getAWBStatus($orders,$vid)
+	{	
+		// dd($orders);
+		$waybill_nos = "";
+		foreach ($orders as $order) {
+			$waybill_nos = $waybill_nos.",".$order->waybill_no;
+	    }
+	    $waybill_nos = substr($waybill_nos, 1);
+	    
+	    $url = "https://staging-express.delhivery.com/api/v1/packages/json/?waybill=".$waybill_nos."&token=5235172eea087eda74de0cf82149fa8a419d5122";
+		
+		$curl = curl_init();
+
+	    curl_setopt_array($curl, array(
+
+	    CURLOPT_URL => $url,
+	    CURLOPT_RETURNTRANSFER => true,
+	    CURLOPT_ENCODING => '',
+	    CURLOPT_MAXREDIRS => 10,
+	    CURLOPT_TIMEOUT => 0,
+	    CURLOPT_FOLLOWLOCATION => true,
+	    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	    CURLOPT_CUSTOMREQUEST => 'GET'
+	    
+	    ));
+
+    	$response = curl_exec($curl);
+    	$response = json_decode($response,true);
+
+    	
+    	for($i=0; $i < sizeof($response['ShipmentData']) ; $i++){
+
+    		// waybill table get orderId of awb = $response['ShipmentData'][$i]['Shipment']['AWB'];
+
+
+    		for($j=0; $j < sizeof($orders) ; $j++){
+    			if($orders[$i]->waybill_no == $response['ShipmentData'][$i]['Shipment']['AWB']){
+    				$order_id = $orders[$i]->oid;
+    				break;
+    			}
+    		}
+    // 		foreach ($orders as $order) {
+				// $waybill_nos = $waybill_nos.",".$order->waybill_no;
+		  //   }
+		  //   $waybill_nos = substr($waybill_nos, 1);
+    		$statusDel[$i]['vid'] = addslashes( $vid );
+    		$statusDel[$i]['awb'] = addslashes( $response['ShipmentData'][$i]['Shipment']['AWB'] );
+    		$statusDel[$i]['oid'] = addslashes( $order_id );
+			$statusDel[$i]['delivery_status_name'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] );
+			$statusDel[$i]['delivery_status_code'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] );
+			$statusDel[$i]['delivery_order_sno'] = addslashes( $response['ShipmentData'][$i]['Shipment']['ReferenceNo'] );
+			$statusDel[$i]['delivery_status_date_and_time'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusDateTime'] );
+			$statusDel[$i]['delivery_brief_status'] = strtolower( addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['Status'] ) );
+			$statusDel[$i]['delivery_instructions'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['Instructions'] );
+			$statusDel[$i]['delivery_dispatch_count'] = (int) $response['ShipmentData'][$i]['Shipment']['DispatchCount'];
+			$statusDel[$i]['delivery_invoice_amount'] =  $response['ShipmentData'][$i]['Shipment']['InvoiceAmount'];
+			$statusDel[$i]['delivery_scans'] = addslashes( json_encode($delivery_scans = $response['ShipmentData'][$i]['Shipment']['Scans'] ) );
+			$statusDel[$i]['delivery_destination_received_date'] = addslashes( str_replace( "T", " ", $response['ShipmentData'][$i]['Shipment']['DestRecieveDate'] ) );
+			$statusDel[$i]['delivery_pickup_date'] = addslashes( str_replace( "T", " ", $response['ShipmentData'][$i]['Shipment']['PickUpDate'] ) );
+			$statusDel[$i]['delivery_charged_weight_in_grams'] = (int) $response['ShipmentData'][$i]['Shipment']['ChargedWeight'] ;
+		
+    	}
+    	$details = $this->updateStatusDelivary($statusDel,$vid);
+
+    	
+    	return  $response;
+
+ 	}
+
+ 	public function updateStatusDelivary($statusDel,$vid){
+ 		foreach($statusDel as  $status_update)
+ 		{
+          	$data[]=[
+				
+				'vid'=>intval($vid),
+				'orderid'=>$status_update['oid'],
+				'awb'=>$status_update['awb'],
+				'delivery_status_name'=>$status_update['delivery_status_name'],
+				'delivery_status_code'=>$status_update['delivery_status_code'],
+				'delivery_order_sno'=>$status_update['delivery_order_sno'],
+				 'delivery_status_date_and_time'=>$status_update['delivery_status_date_and_time'],
+				 'delivery_brief_status'=>$status_update['delivery_brief_status'],
+				 'delivery_instructions'=>$status_update['delivery_instructions'],
+				 'delivery_dispatch_count'=>$status_update['delivery_dispatch_count'],
+				 'delivery_invoice_amount'=>$status_update['delivery_invoice_amount'],
+				 // 'delivery_scans'=>$status_update['delivery_scans'],
+				 // 'delivery_destination_received_date'=>$status_update['delivery_destination_received_date'],
+				 'delivery_pickup_date'=>$status_update['delivery_pickup_date'],
+				 'delivery_charged_weight_in_grams'=>$status_update['delivery_charged_weight_in_grams'],
+				 			
+			];
+			$statusCheck=DB::table("update_statuses")
+				->where([
+							'update_statuses.awb' => $status_update['awb'],
+							'update_statuses.delivery_status_code' => $status_update['delivery_status_code'],
+							'update_statuses.delivery_brief_status' => $status_update['delivery_brief_status']
+					])->get();
+
+			if( sizeof($statusCheck) == 0){
+				echo "AWB: ".$status_update['awb']." Updated Successfully.";
+				UpdateStatus::insert($data);
+
+
+				
+			}
+	    }
+	}
+
+
+ 	// Table to add all data 
+
+
+
+ 		// order table status get check if new status and old status is different
+
+
+
+ 		// update the status in oredr table (Hold)
 
 
 
 
+ 		/*
+ 		DB::table('orders')
+          ->where('oid', $request->oid)
+          ->where('vid', $request->vid)
+          ->update(['status' => $request->status_assign]);
 
-	public function InsertOrder($InOrder, $vid, $url)
-	{
-		// var_dump($InOrder); die;
+			// print_r($woocommerce->put('orders/'.$request->oid, $data)); die;
+			// https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
+		$vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
+		
+          $curl = curl_init();
 
+		    curl_setopt_array($curl, array(
+
+		    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$request->oid.'?status='.$request->status_assign,
+		    CURLOPT_RETURNTRANSFER => true,
+		    CURLOPT_ENCODING => '',
+		    CURLOPT_MAXREDIRS => 10,
+		    CURLOPT_TIMEOUT => 0,
+		    CURLOPT_FOLLOWLOCATION => true,
+		    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		    CURLOPT_CUSTOMREQUEST => 'PUT',
+		    CURLOPT_HTTPHEADER => array(
+
+		        'Authorization: Basic '.$vendor[0]->token
+		      ),
+		    ));
+
+		    $response = curl_exec($curl);
+		    curl_close($curl);
+		    $jsonResp = json_decode($response);
+		  */
+ 
+
+    public function getUpdateStatus(Request $request)
+	{	
+
+// https://dlv-api.delhivery.com/v3/track?wbn=1325110000232
+
+		$response = OrderController::changeStatus($request);
+		return  $response;
+
+ 	}
+
+	public function InsertOrder($InOrder, $vid, $url){
 		foreach($InOrder as $order)
 		{
+			// var_dump($order->id); die;
           	$Orders[]=[
 				'oid'=>$order->id,
 				'vid'=>intval($vid),
@@ -238,20 +526,20 @@ class JsonController extends Controller
 			$this->Order_links($order->id,$order->_links,$vid);
 
 		
-			$jsonResponse=$this->getProductWP($url);
+			$jsonResponse=$this->getProductWP($url, intval($vid));
 			$this->InsertProduct($jsonResponse, $vid);
 			// dd($jsonResponse);
 
-			$jsonResponsecat=$this->getProductCatWP($url);
+			$jsonResponsecat=$this->getProductCatWP($url, intval($vid));
 			$this->InsertProductCat($jsonResponsecat, $vid);
 			// dd($jsonResponsecat);
 
-			$jsonResponseTag=$this->getProductTagWp($url);
+			$jsonResponseTag=$this->getProductTagWp($url, intval($vid));
 			$this->InsertProductTag($jsonResponseTag, $vid);
 			//dd($jsonResponseTag);
 
-			$jsonResponseAtt=$this->getProductAttWp($url);
-			$this->InsertProductAtt($jsonResponseAtt,$jsonResponse,$vid,);
+			$jsonResponseAtt=$this->getProductAttWp($url, intval($vid));
+			$this->InsertProductAtt($jsonResponseAtt, $vid);
 			// dd($jsonResponseAtt);
 			
 

@@ -37,6 +37,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('order_Profile/{oid}', 'OrderController@order_Profile')->name('order_Profile');
 	Route::get('order_items/{oid}', 'OrderController@order_items')->name('order_items');
 	
+	Route::get('get_order_data', 'JsonController@get_order_data')->name('get_order_data');
 	
 	Route::get('getOrderOnStatus/{vid}/{status}', 'OrderController@getOrderOnStatus')->name('getOrderOnStatus');
 
@@ -55,10 +56,21 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('changeStatus', 'OrderController@changeStatus')->name('changeStatus');
 	Route::post('assignAWB', 'OrderController@assignAWB')->name('assignAWB');
 	Route::post('assignAWBOrder', 'OrderController@assignAWBOrder')->name('assignAWBOrder');
+	Route::get('return_order', 'OrderController@return_order')->name('return_order');
+	Route::post('printSlip', 'OrderController@printSlip')->name('printSlip');
+	Route::post('printOrderSlip', 'OrderController@printOrderSlip')->name('printOrderSlip');
 	Route::post('getVid', 'AuthController@getVid')->name('getVid');
 	Route::post('addWayData', 'WayDataController@store')->name('addWayData');
 	Route::post('updateWayData', 'WayDataController@update')->name('updateWayData');
 	Route::post('getAWBLocation', 'WayDataController@getAWBLocation')->name('getAWBLocation');
+	Route::post('city_Search', 'OrderController@city_Search')->name('city_Search');
+	Route::post('state_Search', 'OrderController@state_Search')->name('state_Search');
+	Route::post('status_Search', 'OrderController@status_Search')->name('status_Search');
+	Route::post('add_Transaction_Data','AddTransactionController@store')->name('add_Transaction_Data');
+	Route::get('view_Transaction','AddTransactionController@show')->name('view_Transaction');
+	Route::post('updateStatusWP', 'JsonController@getUpdateStatus')->name('updateStatusWP');
+	Route::get('getAWBStatus/{awb}', 'JsonController@getAWBStatus')->name('getAWBStatus');
+	Route::get('cronOrderStatusUpdate/{vid}', 'JsonController@cronOrderStatusUpdate')->name('cronOrderStatusUpdate');
 	
 }); 
 

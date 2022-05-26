@@ -50,6 +50,8 @@ class WayDataController extends Controller
                 'add' => 'required',
                 'token' => 'required',
             ]);
+
+        // dd($request); die;
             
             
             $wb_data = new WayData();
@@ -144,8 +146,12 @@ class WayDataController extends Controller
         $awb_record =DB::table("way_data")
             ->where('vid',$request->vid)
             ->where('user_id',$request->user_id)
-            ->get();
-           
-         return $awb_record;
+            ->get()->toArray();
+
+        if(!empty($awb_record)){
+            return $awb_record;
+        }else{
+           return response()->json(['error' => false, 'msg' => "No Data found.","ErrorCode" => "000"],200);
+        }
     }
 }

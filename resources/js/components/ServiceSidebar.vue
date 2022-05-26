@@ -18,15 +18,30 @@
                         child: [
                           
                             {
-                                href: { name: 'ProductList'},
+                                href: { name: 'adminProductList'},
                                 title: 'Products'
                             },
                             {
-                                href: { name: 'listOrders'},
+                                href: { name: 'adminlistOrders'},
                                 title: 'Orders'
                             },
                           
                           
+                        ]
+                    },
+			        {
+                        title: 'Transactions',
+                        icon: 'fas fa-calendar-alt',
+                        child: [
+                          
+                            {
+                                href: { name: 'ViewTransaction'},
+                                title: 'View'
+                            },
+                            {
+                                href: { name: 'TransactionDetail'},
+                                title: 'Add'
+                            },
                         ]
                     },
                     {
@@ -48,11 +63,10 @@
                         icon: 'fa fa-user',
                        
                     },
-                    
-                    {
-                        href:{ name: 'vendor_awbdata'},
-                        title: 'AWB Pickup Location',
-                        icon: 'fa fa-info',
+                     {
+                        href:{ name: 'importvendor'},
+                        title: 'Import Vendor',
+                        icon: 'fa fa-user',
                        
                     },
                 ]

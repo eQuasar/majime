@@ -2,7 +2,7 @@
   <b-container fluid> 
     <div class="header_title">
       <div class="header_inner">
-        <h3><strong>Product List</strong></h3><br/>
+        <h3><strong>Wallet</strong></h3><br/>
       </div>
     </div>
     
@@ -94,6 +94,7 @@
         ariaDescribedby: "",
         time: "",
         date: "",
+        oid:"",
         time_slots: [],
       seen: false,
         date_from: '',
@@ -111,27 +112,77 @@
             label: 'Date',
             sortable: true
           },
+          
           {
-            key: 'transaction_id',
-            label: 'Transaction Id',
+            key: 'id',
+            label: 'Discription',
             sortable: true
           },
           {
-            key: 'name',
-            label: 'Description',
+            key: 'discount_total',
+            label: 'Services Charges',
+            sortable: true
+          },
+          {
+            key: 'orderno',
+            label: 'Order No',
+            sortable: true
+          },
+          {
+            key: 'payment_method_title',
+            label: 'Pay Mode',
+            sortable: true
+          },
+          {
+            key: 'status',
+            label: 'Status',
             sortable: true
           },
           {
             key: 'total',
-            label: 'Amount',
+            label: 'Sale Amount',
             sortable: true
           },
           {
-            key: 'total',
-            label: 'Balance',
+            key: 'cart_tax',
+            label: 'Wallet Used',
             sortable: true
           },
-        
+          {
+            key: 'shipping_tax',
+            label: 'Logistic Cost',
+            sortable: true
+          },
+         {
+            key: 'gateway_cost',
+            label: 'Payment Gateway Charges',
+            sortable: true
+          },
+          {
+           key: 'prices_include_tax',
+           label: 'SMS Cost',
+           sortable: true
+           },
+          {
+            key: 'm_cost',
+            label: 'Majime Charges',
+            sortable: true
+          },
+          {
+            key: 'net_amount',
+            label: 'Net Amount',
+            sortable: true
+          },
+          {
+            key: 'subtotal_tax',
+            label: 'Current Wallet Balance',
+            sortable: true
+          },
+          {
+            key: 'quantity',
+            label: 'Order Count',
+            sortable: true
+          }
         
         ],
         items: [],

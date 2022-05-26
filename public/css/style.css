@@ -22544,8 +22544,10 @@ label{
 .list-appointments .row{    align-items: center;}
 .list-appointments .form-group div{ font-size: 14px; font-weight: 700;}
 .list-appointments .form-group div select{ height: 35px!important; width: auto; font-size: 14px!important; border: 1.7px solid #ccc!important;  border-radius: 8px!important;}
-
 .list-appointments .input-group-append button{ background: #4b49ac; color: #fff; font-weight: 600; border-radius: 0px 9px 8px 0px!important;}
+
+.select-list .form-control{ font-size: 14px; font-weight: 700;}
+.select-list .form-control{ height: 35px!important; width: auto; font-size: 14px!important; border: 1.7px solid #ccc!important;  border-radius: 8px!important;}
 
 /* pet info main */
 
