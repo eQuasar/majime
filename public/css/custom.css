@@ -139,9 +139,11 @@ float:left;
 }
 .date_range {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: center;
 }
+
+
 .date_range .filter_label {
     display: inline-block;
     float: left;

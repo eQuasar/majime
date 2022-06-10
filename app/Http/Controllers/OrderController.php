@@ -265,256 +265,277 @@ class OrderController extends Controller
 	  	}
 
   	public function assignAWB(Request $request){
-  		$orders =DB::table("orders")
-		  	->join('billings','orders.oid','=','billings.order_id')	
-		  	->where('orders.vid',$request->vid)
-			->where('orders.status','confirmed')->get();
-		$my_data =DB::table("way_data")
-		->where('vid',$request->vid)->get();
+  		$main = explode(',', $request->allSelected);
+  		for ($i=0; $i < count($main); $i++) { 
+	  		$orders =DB::table("orders")
+			  	->join('billings','orders.oid','=','billings.order_id')	
+			  	->where('orders.oid', intval($main[$i]))
+			  	->where('orders.vid',$request->vid)
+				->where('orders.status','confirmed')->get();
+			$my_data =DB::table("way_data")
+			->where('vid',$request->vid)->get();
 
-		$city = $my_data[0]->city;
-		$name = $my_data[0]->name;
-		$pin = $my_data[0]->pin;
-		$country = $my_data[0]->country;
-		$phone = $my_data[0]->phone;
-		$add = $my_data[0]->add;
-		$token = $my_data[0]->token;
+			$city = $my_data[0]->city;
+			$name = $my_data[0]->name;
+			$pin = $my_data[0]->pin;
+			$country = $my_data[0]->country;
+			$phone = $my_data[0]->phone;
+			$add = $my_data[0]->add;
+			$token = $my_data[0]->token;
 
-		foreach($orders as $order){
+			foreach($orders as $order){
 
-			// var_dump($order);die();
-			$order_id = $order->oid;
-			$product_name = "";
-			$order_items =DB::table("line_items")
-			->where('line_items.vid',$request->vid)
-			->where('line_items.order_id',$order_id)->get();
+				// var_dump($order);die();
+				$order_id = $order->oid;
+				$product_name = "";
+				$order_items =DB::table("line_items")
+				->where('line_items.vid',$request->vid)
+				->where('line_items.order_id',$order_id)->get();
 
-			if($request->vid == 1){
-				$curlopt_url = "https://staging-express.delhivery.com/api/cmu/create.json";
-				$del_url = "https://staging-express.delhivery.com/c/api/pin-codes/json/";
-			}else{
-				$curlopt_url = "https://track.delhivery.com/api/cmu/create.json";
-				$del_url = "https://track.delhivery.com/c/api/pin-codes/json/";
-			}
-
-			foreach( $order_items as $product ) {
-
-				$product_name = $product_name." | ".$product->name." - ".$product->quantity;
-			}
-			$curl2 = curl_init();
-			curl_setopt_array($curl2, array(
-			  CURLOPT_URL => $del_url.'?filter_codes='.$order->postcode,
-			  CURLOPT_RETURNTRANSFER => true,
-			  CURLOPT_ENCODING => '',
-			  CURLOPT_MAXREDIRS => 10,
-			  CURLOPT_TIMEOUT => 0,
-			  CURLOPT_FOLLOWLOCATION => true,
-			  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-			  CURLOPT_CUSTOMREQUEST => 'GET',
-			  CURLOPT_HTTPHEADER => array(
-				'Authorization: Token '.$token,
-				'Content-Type: application/json'
-			  ),
-			));
-
-			$response2 = curl_exec($curl2);
-			curl_close($curl2);
-			$new_val2 = json_decode($response2, true);
-			if(count($new_val2["delivery_codes"]) > 0){
-				$curl = curl_init();
-				if($order->payment_method == "cod"){
-					curl_setopt_array($curl, array(
-					  CURLOPT_URL => $curlopt_url,
-					  CURLOPT_RETURNTRANSFER => true,
-					  CURLOPT_ENCODING => '',
-					  CURLOPT_MAXREDIRS => 10,
-					  CURLOPT_TIMEOUT => 0,
-					  CURLOPT_FOLLOWLOCATION => true,
-					  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-					  CURLOPT_CUSTOMREQUEST => 'POST',
-					  CURLOPT_POSTFIELDS =>'format=json&data={
-					  "shipments": [
-						{
-						  "add": "'.$order->address_1.', '.$order->address_2.'",
-						  "phone": '.$order->phone.',
-						  "payment_mode": "COD",
-						  "name": "'.$order->first_name.' '.$order->last_name.'",
-						  "pin": '.$order->postcode.',
-						  "cod_amount":'.$order->total.',
-						  "order": "blah_'.$order->id.'",
-						  "shipping_mode" : "Surface",
-						  "products_desc": "'.$product_name.'"
-						}
-					  ],
-					  "pickup_location": 
-						{
-						  "city": "'.$city.'",
-						  "name": "'.$name.'",
-						  "pin": "'.$pin.'",
-						  "country": "'.$country.'",
-						  "phone": "'.$phone.'",
-						  "add": "'.$add.'"
-						}
-					}',
-					  CURLOPT_HTTPHEADER => array(
-						'Authorization: Token '.$token,
-						'Content-Type: application/json',
-						'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'
-					  ),
-					));
+				if($request->vid == 1){
+					$curlopt_url = "https://staging-express.delhivery.com/api/cmu/create.json";
+					$del_url = "https://staging-express.delhivery.com/c/api/pin-codes/json/";
 				}else{
-					curl_setopt_array($curl, array(
-					  CURLOPT_URL => $curlopt_url,
-					  CURLOPT_RETURNTRANSFER => true,
-					  CURLOPT_ENCODING => '',
-					  CURLOPT_MAXREDIRS => 10,
-					  CURLOPT_TIMEOUT => 0,
-					  CURLOPT_FOLLOWLOCATION => true,
-					  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-					  CURLOPT_CUSTOMREQUEST => 'POST',
-					  CURLOPT_POSTFIELDS =>'format=json&data={
-					  "shipments": [
-						{
-						  "add": "'.$order->address_1.', '.$order->address_2.'",
-						  "phone": '.$order->phone.',
-						  "payment_mode": "COD",
-						  "name": "'.$order->first_name.' '.$order->last_name.'",
-						  "pin": '.$order->postcode.',
-						  "cod_amount":'.$order->total.',
-						  "order": "blah_'.$order->id.'",
-						  "shipping_mode" : "Surface",
-						  "products_desc": "'.$product_name.'"
-						}
-					  ],
-					  "pickup_location": 
-						{
-						  "city": "'.$city.'",
-						  "name": "'.$name.'",
-						  "pin": "'.$pin.'",
-						  "country": "'.$country.'",
-						  "phone": "'.$phone.'",
-						  "add": "'.$add.'"
-						}
-					}',
-					  CURLOPT_HTTPHEADER => array(
-						'Authorization: Token '.$token,
-						'Content-Type: application/json',
-						'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'
-					  ),
-					));
+					$curlopt_url = "https://track.delhivery.com/api/cmu/create.json";
+					$del_url = "https://track.delhivery.com/c/api/pin-codes/json/";
 				}
 
-				$response = curl_exec($curl);
-			
-				curl_close($curl);
-				$new_val = json_decode($response, true);
+				foreach( $order_items as $product ) {
 
-				if(isset($new_val["packages"])){
-					if(!empty($new_val["packages"])){
-						$wbill = $new_val["packages"][0]["waybill"];
-						$o_id = $order_id;
+					$product_name = $product_name." | ".$product->name." - ".$product->quantity;
+				}
+				$curl2 = curl_init();
+				curl_setopt_array($curl2, array(
+				  CURLOPT_URL => $del_url.'?filter_codes='.$order->postcode,
+				  CURLOPT_RETURNTRANSFER => true,
+				  CURLOPT_ENCODING => '',
+				  CURLOPT_MAXREDIRS => 10,
+				  CURLOPT_TIMEOUT => 0,
+				  CURLOPT_FOLLOWLOCATION => true,
+				  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+				  CURLOPT_CUSTOMREQUEST => 'GET',
+				  CURLOPT_HTTPHEADER => array(
+					'Authorization: Token '.$token,
+					'Content-Type: application/json'
+				  ),
+				));
 
-						$order_items =DB::table("waybill")
-							->where('waybill.vid',$request->vid)
-							->where('waybill.order_id',$order_id)->get()->toArray();
-						if(empty($order_items)){
-							DB::table('waybill')->insert(
-							    ['vid' => $request->vid, 'order_id' => $order_id, 'waybill_no' => $wbill, 'date_created' => date("Y-m-d h:i:s")]
-							);
-							DB::table('orders')
-				              ->where('oid', $order_id)
-				              ->where('vid', $request->vid)
-				              ->update(['status' => "packed"]);
+				$response2 = curl_exec($curl2);
+				curl_close($curl2);
+				$new_val2 = json_decode($response2, true);
+				if(count($new_val2["delivery_codes"]) > 0){
+					$curl = curl_init();
+					if($order->payment_method == "cod"){
+						curl_setopt_array($curl, array(
+						  CURLOPT_URL => $curlopt_url,
+						  CURLOPT_RETURNTRANSFER => true,
+						  CURLOPT_ENCODING => '',
+						  CURLOPT_MAXREDIRS => 10,
+						  CURLOPT_TIMEOUT => 0,
+						  CURLOPT_FOLLOWLOCATION => true,
+						  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+						  CURLOPT_CUSTOMREQUEST => 'POST',
+						  CURLOPT_POSTFIELDS =>'format=json&data={
+						  "shipments": [
+							{
+							  "add": "'.$order->address_1.', '.$order->address_2.'",
+							  "phone": '.$order->phone.',
+							  "payment_mode": "COD",
+							  "name": "'.$order->first_name.' '.$order->last_name.'",
+							  "pin": '.$order->postcode.',
+							  "cod_amount":'.$order->total.',
+							  "order": "blah_'.$order->id.'",
+							  "shipping_mode" : "Surface",
+							  "products_desc": "'.$product_name.'"
+							}
+						  ],
+						  "pickup_location": 
+							{
+							  "city": "'.$city.'",
+							  "name": "'.$name.'",
+							  "pin": "'.$pin.'",
+							  "country": "'.$country.'",
+							  "phone": "'.$phone.'",
+							  "add": "'.$add.'"
+							}
+						}',
+						  CURLOPT_HTTPHEADER => array(
+							'Authorization: Token '.$token,
+							'Content-Type: application/json',
+							'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'
+						  ),
+						));
+					}else{
+						curl_setopt_array($curl, array(
+						  CURLOPT_URL => $curlopt_url,
+						  CURLOPT_RETURNTRANSFER => true,
+						  CURLOPT_ENCODING => '',
+						  CURLOPT_MAXREDIRS => 10,
+						  CURLOPT_TIMEOUT => 0,
+						  CURLOPT_FOLLOWLOCATION => true,
+						  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+						  CURLOPT_CUSTOMREQUEST => 'POST',
+						  CURLOPT_POSTFIELDS =>'format=json&data={
+						  "shipments": [
+							{
+							  "add": "'.$order->address_1.', '.$order->address_2.'",
+							  "phone": '.$order->phone.',
+							  "payment_mode": "COD",
+							  "name": "'.$order->first_name.' '.$order->last_name.'",
+							  "pin": '.$order->postcode.',
+							  "cod_amount":'.$order->total.',
+							  "order": "blah_'.$order->id.'",
+							  "shipping_mode" : "Surface",
+							  "products_desc": "'.$product_name.'"
+							}
+						  ],
+						  "pickup_location": 
+							{
+							  "city": "'.$city.'",
+							  "name": "'.$name.'",
+							  "pin": "'.$pin.'",
+							  "country": "'.$country.'",
+							  "phone": "'.$phone.'",
+							  "add": "'.$add.'"
+							}
+						}',
+						  CURLOPT_HTTPHEADER => array(
+							'Authorization: Token '.$token,
+							'Content-Type: application/json',
+							'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'
+						  ),
+						));
+					}
 
-				              $curl = curl_init();
+					$response = curl_exec($curl);
+				
+					curl_close($curl);
+					$new_val = json_decode($response, true);
 
-				              $vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
+					if(isset($new_val["packages"])){
+						if(!empty($new_val["packages"])){
+							$wbill = $new_val["packages"][0]["waybill"];
+							$o_id = $order_id;
 
-							    curl_setopt_array($curl, array(
+							$order_items =DB::table("waybill")
+								->where('waybill.vid',$request->vid)
+								->where('waybill.order_id',$order_id)->get()->toArray();
+							if(empty($order_items)){
+								DB::table('waybill')->insert(
+								    ['vid' => $request->vid, 'order_id' => $order_id, 'waybill_no' => $wbill, 'date_created' => date("Y-m-d h:i:s")]
+								);
+								DB::table('orders')
+					              ->where('oid', $order_id)
+					              ->where('vid', $request->vid)
+					              ->update(['status' => "packed"]);
 
-							    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$order_id.'?status=intransit',
-							    CURLOPT_RETURNTRANSFER => true,
-							    CURLOPT_ENCODING => '',
-							    CURLOPT_MAXREDIRS => 10,
-							    CURLOPT_TIMEOUT => 0,
-							    CURLOPT_FOLLOWLOCATION => true,
-							    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-							    CURLOPT_CUSTOMREQUEST => 'PUT',
-							    CURLOPT_HTTPHEADER => array(
+					              $curl = curl_init();
 
-							        'Authorization: Basic '.$vendor[0]->token
-							      ),
-							    ));
+					              $vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
 
-							    $response = curl_exec($curl);
-							    curl_close($curl);
-							    $jsonResp = json_decode($response);
+								    curl_setopt_array($curl, array(
+
+								    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$order_id.'?status=intransit',
+								    CURLOPT_RETURNTRANSFER => true,
+								    CURLOPT_ENCODING => '',
+								    CURLOPT_MAXREDIRS => 10,
+								    CURLOPT_TIMEOUT => 0,
+								    CURLOPT_FOLLOWLOCATION => true,
+								    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+								    CURLOPT_CUSTOMREQUEST => 'PUT',
+								    CURLOPT_HTTPHEADER => array(
+
+								        'Authorization: Basic '.$vendor[0]->token
+								      ),
+								    ));
+
+								    $response = curl_exec($curl);
+								    curl_close($curl);
+								    $jsonResp = json_decode($response);
 
 
-								$curl2 = curl_init();
+									$curl2 = curl_init();
 
-								curl_setopt_array($curl2, array(
-								  CURLOPT_URL => $vendor[0]->url.'/wp-json/waybill/waybill_data?order_id='.$order_id.'&waybill_no='.$new_val["packages"][0]["waybill"],
-								  CURLOPT_RETURNTRANSFER => true,
-								  CURLOPT_ENCODING => '',
-								  CURLOPT_MAXREDIRS => 10,
-								  CURLOPT_TIMEOUT => 0,
-								  CURLOPT_FOLLOWLOCATION => true,
-								  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-								  CURLOPT_CUSTOMREQUEST => 'GET',
-								));
+									curl_setopt_array($curl2, array(
+									  CURLOPT_URL => $vendor[0]->url.'/wp-json/waybill/waybill_data?order_id='.$order_id.'&waybill_no='.$new_val["packages"][0]["waybill"],
+									  CURLOPT_RETURNTRANSFER => true,
+									  CURLOPT_ENCODING => '',
+									  CURLOPT_MAXREDIRS => 10,
+									  CURLOPT_TIMEOUT => 0,
+									  CURLOPT_FOLLOWLOCATION => true,
+									  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+									  CURLOPT_CUSTOMREQUEST => 'GET',
+									));
 
-							    $response2 = curl_exec($curl2);
-							    curl_close($curl2);
-							    $jsonResp2 = json_decode($response2);
+								    $response2 = curl_exec($curl2);
+								    curl_close($curl2);
+								    $jsonResp2 = json_decode($response2);
 
-							    
-							return response()->json(['error' => false, 'msg' => "WayBill successfully added.","ErrorCode" => "000"],200);
+								    
+								$error = false;
+								$msg = "WayBill successfully added.";
+								// return response()->json(['error' => false, 'msg' => "WayBill successfully added.","ErrorCode" => "000"],200);
+							}else{
+								DB::table('orders')
+					              ->where('oid', $order_id)
+					              ->where('vid', $request->vid)
+					              ->update(['status' => "packed"]);
+
+								$error = false;
+								$msg = "Already Assign AWB No.";
+								// return response()->json(['error' => true, 'msg' => "Already Assign AWB No.","ErrorCode" => -2],200);
+							}
 						}else{
-							DB::table('orders')
-				              ->where('oid', $order_id)
-				              ->where('vid', $request->vid)
-				              ->update(['status' => "packed"]);
-							return response()->json(['error' => true, 'msg' => "Already Assign AWB No.","ErrorCode" => -2],200);
+							$error = true;
+							$msg = $new_val['rmk'];
+							// return response()->json(['error' => true, 'msg' => $new_val['rmk'],"ErrorCode" => -2],200);
 						}
 					}else{
-						return response()->json(['error' => true, 'msg' => $new_val['rmk'],"ErrorCode" => -2],200);
+
+						$error = true;
+						$msg = $new_val['detail'];
+						// return response()->json(['error' => true, 'msg' => $new_val['detail'],"ErrorCode" => -2],200);
 					}
 				}else{
-					return response()->json(['error' => true, 'msg' => $new_val['detail'],"ErrorCode" => -2],200);
+					DB::table('orders')
+			              ->where('oid', $order_id)
+			              ->where('vid', $request->vid)
+			              ->update(['status' => "on-hold"]);
+
+			              $curl = curl_init();
+
+			              $vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
+
+						    curl_setopt_array($curl, array(
+
+						    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$order_id.'?status=on-hold',
+						    CURLOPT_RETURNTRANSFER => true,
+						    CURLOPT_ENCODING => '',
+						    CURLOPT_MAXREDIRS => 10,
+						    CURLOPT_TIMEOUT => 0,
+						    CURLOPT_FOLLOWLOCATION => true,
+						    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+						    CURLOPT_CUSTOMREQUEST => 'PUT',
+						    CURLOPT_HTTPHEADER => array(
+
+						        'Authorization: Basic '.$vendor[0]->token
+						      ),
+						    ));
+
+						    $response = curl_exec($curl);
+						    curl_close($curl);
+						    $jsonResp = json_decode($response);
+
+					$error = false;
+					$msg = "No WayBill generate so status set to on-hold.";
+			        // return response()->json(['error' => false, 'msg' => "No WayBill generate so status set to on-hold.","ErrorCode" => "000"],200);
 				}
-			}else{
-				DB::table('orders')
-		              ->where('oid', $order_id)
-		              ->where('vid', $request->vid)
-		              ->update(['status' => "on-hold"]);
-
-		              $curl = curl_init();
-
-		              $vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
-
-					    curl_setopt_array($curl, array(
-
-					    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$order_id.'?status=on-hold',
-					    CURLOPT_RETURNTRANSFER => true,
-					    CURLOPT_ENCODING => '',
-					    CURLOPT_MAXREDIRS => 10,
-					    CURLOPT_TIMEOUT => 0,
-					    CURLOPT_FOLLOWLOCATION => true,
-					    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-					    CURLOPT_CUSTOMREQUEST => 'PUT',
-					    CURLOPT_HTTPHEADER => array(
-
-					        'Authorization: Basic '.$vendor[0]->token
-					      ),
-					    ));
-
-					    $response = curl_exec($curl);
-					    curl_close($curl);
-					    $jsonResp = json_decode($response);
-
-		        return response()->json(['error' => false, 'msg' => "No WayBill generate so status set to on-hold.","ErrorCode" => "000"],200);
 			}
+		}
+		if($error == false){
+			return response()->json(['error' => false, 'msg' => $msg,"ErrorCode" => "000"],200);
+		}else{
+			return response()->json(['error' => true, 'msg' => $msg,"ErrorCode" => -2],200);
 		}
   	}
 

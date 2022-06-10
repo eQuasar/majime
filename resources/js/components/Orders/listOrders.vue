@@ -7,8 +7,7 @@
     </div> 
     </br>
     <div class="content_bar"> 
-      
-        <div class="card-body card">
+      <div class="card-body card">
            <div class="call-center-dashboard">
             <div class="select-list">
           <b-row>
@@ -94,7 +93,7 @@
               </template>
               <template v-slot:cell(action)="row">
                <p class="h3 mb-2">   <router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
-                &nbsp;&nbsp; <b-link @click="addstatus(row.item.oid)"><b-icon icon="type-strikethrough" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></p>
+                &nbsp;&nbsp; <b-link @click="addstatusOID(row.item.oid)"><b-icon icon="type-strikethrough" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></p>
               </template>
       </b-table>
           <div class="text-center" v-if="seen">
@@ -113,7 +112,7 @@
                       <span v-if="successful" class="label label-sucess">Published!</span>
                   </div>
                      <b-form-input v-model="oid" id="oid_val" style="display:none"></b-form-input>
-                     <div id="vue-app">
+               
                        <b-form-select v-model="status_assign">
                          <template v-slot:first>
                             <b-form-select-option value="null" disabled selected>-- Select Status --</b-form-select-option>
@@ -135,12 +134,11 @@
                               <b-form-select-option value="pickedup">Change status to Picked up</b-form-select-option>
                               <b-form-select-option value="on-hold">Change status to on-hold</b-form-select-option>
                           </b-form-select>
-                          </div>
+      
                           <b-button type="submit" @click.prevent="assign_status" variant="primary">Submit</b-button>
                  </b-form> 
 
-              
-      </b-modal>
+     </b-modal>
      </b-container>
     </template>
     <script>
@@ -157,7 +155,6 @@
       this.getCity();
       this.getStatus();
     },
-    el: '#vue-app',
     data() 
     {
       return {
@@ -263,7 +260,7 @@ computed: {
           this.selectall = selected;
         }
       },
-  	     onChangeCity(event)
+         onChangeCity(event)
          {
           this.vid = JSON.parse(localStorage.getItem("ivid"));
           console.log(event.target.value);
@@ -407,32 +404,44 @@ computed: {
                 this.vid = response.data;
                 localStorage.setItem("ivid", this.vid);
                 this.getOrderDetails(this.vid);
-        
+                this.allSelected=-false;
               })
               .catch(response => {
                   this.successful = false;
                   alert('something went wrong');
               })
            },
+
+     addstatusOID(oid) {
+        this.allSelected=-false;
+        this.oid = oid;
+        // this.allSelected = "false";
+        this.$bvModal.show("modal-1");
+        // this.addstatus();
+      },
         addstatus()
         {
           let formData= new FormData();
           this.$bvModal.show("modal-1");
-          console.log(this.oid);
+          // console.log(this.oid);
         },
        assign_status() 
         {
           this.vid = JSON.parse(localStorage.getItem("ivid"));
           let formData = new FormData();
-          //formData.append("oid",this.oid);
+          // formData.append("oid",this.oid);
           formData.append("status_assign",this.status_assign);
-          formData.append("selectall",this.selectall)
+          if(this.oid != 0){
+            formData.append("selectall",this.oid)
+          }else{
+            formData.append("selectall",this.selectall);
+          }
           formData.append("vid",this.vid);
           order.changeStatus(formData)
               .then((response) => {
                   this.$bvModal.hide("modal-1");
                   alert('Status Update Successfully');
-                  window.location.reload();
+                  this.getVidz();
               })
               .catch((error) => {
                   // console.log(error);
@@ -468,7 +477,7 @@ computed: {
           order.ListOrderStatus_assign(formData)
           .then((response)=>{
               alert(response.data.msg);
-              window.location.reload();
+              this.getVidz();
           })
             .catch(response=>{
               this.successful=false;
@@ -505,7 +514,3 @@ computed: {
   },
 };  
 </script>
-
-
-
-

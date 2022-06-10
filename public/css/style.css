@@ -22227,14 +22227,16 @@ label{
 }
 
 .vsm--dropdown .vsm--item a::before {
-    content: "";
+content: '\f105';
     width: 5px;
     height: 5px;
     position: absolute;
     margin-top: 0px;
     border-radius: 50%;
-    background: #fff;
+    /* background: #fff; */
     left: -2px;
+    font-family: 'Font Awesome 5 Free';
+    top: 10px;
 }
 
 .v-sidebar-menu .vsm--toggle-btn {

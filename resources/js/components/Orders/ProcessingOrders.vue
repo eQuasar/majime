@@ -198,11 +198,15 @@ computed: {
       }
     },
      confirmstatus(){
+      if(this.allSelected != ''){
         this.addstatus();
+      }else{
+        alert("Please choose at least one value from checkbox...")
+      }
      },
      confirmstatusOID(oid) {
         this.oid = oid;
-        this.allSelected = "false";
+        this.allSelected = false;
         this.addstatus();
       },
       addstatus(){
@@ -224,7 +228,7 @@ computed: {
           order.changeProcessingStatus(formData)
               .then((response) => {
                   alert('Status Update Successfully');
-                  window.location.reload();
+                this.getVidz();
               })
               .catch((error) => {
                   // console.log(error);
@@ -345,7 +349,7 @@ computed: {
         order.PendingRefund_changeStatus(formData)
           .then((response) => {
                alert(response.data.msg);
-               window.location.reload();
+              this.getVidz();
              })
                     .catch(response => {
             this.successful = false;

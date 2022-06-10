@@ -2,7 +2,7 @@
   <b-container fluid> 
     <div class="header_title">
     <div class="header_inner">
-        <h3><strong>Packed</strong></h3><br/>
+        <h3><strong>Ready to Pack</strong></h3><br/>
       </div>
     </div>
     <div class="content_bar ">
@@ -12,7 +12,7 @@
             <b-col xl="9" lg="9" md="9">
             </b-col>
             <b-col>
-                <button type="button" class="download-btn btn btn-primary" v-on:click="assignAWB">Assign AWB</button>
+                <button type="button" class="download-btn btn btn-primary" v-on:click="confirmAssignAWB">Assign AWB</button>
             </b-col>
             <b-col>
                 <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download Pickup List</button>
@@ -56,7 +56,7 @@
       :sort-desc.sync="sortDesc"
       sort-icon-left :filter-included-fields="filterOn" :filter="filter" :fields="fields" :per-page="perPage" :current-page="currentPage" show-empty>
             <template #head(select)="data">
-              <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="allSelected"> {{ data.label }}</span>
+              <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="selectallcheckbox"> {{ data.label }}</span>
             </template>
             <template #empty="scope">
               <p style="text-align:center;">No record found, choose date filter to found the result.</p>
@@ -64,14 +64,14 @@
             <template v-slot:cell(oid)="row">
               #{{(row.item.oid)}}
             </template>
-          <template v-slot:cell(sr)="row">
-            {{((currentPage-1)*perPage)+(row.index)+1}}
-          </template>
-              <template v-slot:cell(selectall)="row">
-            <input type="checkbox" :value="row.item.oid" v-model="selectall">
-          </template>
+            <template v-slot:cell(sr)="row">
+              {{((currentPage-1)*perPage)+(row.index)+1}}
+            </template>
+            <template v-slot:cell(select)="row">   
+                <input type="checkbox" :value="row.item.oid" v-model="allSelected">
+            </template>
             <template v-slot:cell(action)="row">
-                <p class="h3 mb-2"><b-link @click="assignAWBOrder(row.item.oid)"><b-icon icon="truck" aria-hidden="true" data-toggle="tooltip" title="Assign AWB Number"></b-icon></b-link>  &nbsp;&nbsp;<router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
+                <p class="h3 mb-2"><b-link @click="assignAWBOrder(row.item.oid, row.index)"><b-icon icon="truck" aria-hidden="true" data-toggle="tooltip" title="Assign AWB Number"></b-icon></b-link>  &nbsp;&nbsp;<router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
               </p>
             </template>
 
@@ -139,19 +139,21 @@
         status_assign_array:[],
         selectall:[],
         allSelected: false,
+        selectallcheckbox:false,
         seen: false,
         date_from: '',
         date_to: '',
         sortBy: 'date',
         sortDesc: true,
          perPage: 10,
+        allSelected:[],
         currentPage: 1,
         pageOptions: [5, 10, 15, 20, 50, 100],
         filter: null,
         filterOn: [],
         fields: [
            {
-            key: 'selectall',
+            key: 'select',
             label: 'Select All',
             sortable: true
           },
@@ -212,11 +214,11 @@ computed: {
     },
   methods: {
     async selectedAll() {
-      if (this.allSelected) {
-        this.selectall = [];
+      if (this.selectallcheckbox) {
+        this.allSelected = [];
       } else {
         const selected = this.items.map((u) => u.oid);
-        this.selectall = selected;
+        this.allSelected = selected;
       }
     },
     getPackdetail(vid) {
@@ -312,15 +314,24 @@ computed: {
             alert('something went wrong');
         })
      },
-
+     confirmAssignAWB(){
+      if(this.allSelected != ''){
+        this.assignAWB();
+      }else{
+        alert("Please choose at least one value from checkbox...")
+      }
+     },
       assignAWB(){
         // alert('Assigned Successfully');
         this.vid = JSON.parse(localStorage.getItem("ivid"));
         let formData= new FormData();
+      // formData.append("oid", this.oid);
+          formData.append("allSelected",this.allSelected);
       formData.append("vid", this.vid);
         order.assignAWB(formData)
        .then(( response ) => {
           alert(response.data.msg);
+      this.getVidz();
 
         })
         .catch(response => {
@@ -328,7 +339,7 @@ computed: {
             alert('something went wrong');
         })
       },
-      assignAWBOrder(oid){
+      assignAWBOrder(oid, index){
         // alert('Assigned Successfully');
         this.vid = JSON.parse(localStorage.getItem("ivid"));
         let formData= new FormData();
@@ -337,6 +348,8 @@ computed: {
           order.assignAWBOrder(formData)
          .then(( response ) => {
             alert(response.data.msg);
+            this.getVidz();
+             // this.items.splice(this.items.indexOf(index), 1);
           })
           .catch(response => {
               this.successful = false;

@@ -91,12 +91,12 @@
     data() 
     {
       return {
-        ariaDescribedby: "",
+        //ariaDescribedby: "",
         time: "",
         date: "",
         oid:"",
         time_slots: [],
-      seen: false,
+        seen: false,
         date_from: '',
         date_to: '',
         sortBy: 'date',
@@ -106,7 +106,7 @@
         pageOptions: [5, 10, 15, 20, 50, 100],
         filter: null,
         filterOn: [],
-       fields: [
+        fields: [
           {
             key: 'date_created',
             label: 'Date',

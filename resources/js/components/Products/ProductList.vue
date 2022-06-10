@@ -32,7 +32,7 @@
         <div class="card-body card">
           <div class="call-center-dashboard">
             <b-row>
-              <b-col xl="10" lg="10" md="10">
+              <b-col xl="8" lg="8" md="8">
                 <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
                 <b-form @submit="onSubmit" class="date_range">
                   <div class="datepiker-block">
@@ -44,9 +44,17 @@
                   <b-button type="submit" variant="primary">Submit</b-button>
                 </b-form>
               </b-col>
-              <b-col>
-                <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download</button>
-              </b-col>
+              <b-col xl="4" lg="4" md="4" class="search_field">
+                    <b-form-input
+                        id="filter-input"
+                        v-model="filter"
+                        type="search"
+                        placeholder="Type to Search"
+                      ></b-form-input>
+                      <b-input-group-append>
+                        <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+                      </b-input-group-append>
+                  </b-col>
             </b-row>
             <div class="blue-bar"></div>
             <div class="content_bar card list-appointments space-bottom">
@@ -64,16 +72,8 @@
                       ></b-form-select> entries
                     </b-form-group>
                   </b-col>
-                  <b-col xl="7" lg="7" md="7" class="search_field">
-                    <b-form-input
-                        id="filter-input"
-                        v-model="filter"
-                        type="search"
-                        placeholder="Type to Search"
-                      ></b-form-input>
-                      <b-input-group-append>
-                        <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
-                      </b-input-group-append>
+                  <b-col>
+                    <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download</button>
                   </b-col>
                 </b-row>
               </div>

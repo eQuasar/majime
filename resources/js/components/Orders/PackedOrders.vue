@@ -45,8 +45,8 @@
                                <template v-slot:cell(sr)="row">
                                 {{((currentPage-1)*perPage)+(row.index)+1}}
                               </template>
-                              <template v-slot:cell(select)="row">
-                                <input type="checkbox" :value="row.item.oid" v-model="allSelected">
+                              <template v-slot:cell(select)="row">   
+                                  <input type="checkbox" :value="row.item.oid" v-model="allSelected">
                               </template>
                               <template v-slot:cell(name)="row">
                                 {{row.item.name}}
@@ -180,11 +180,15 @@ computed: {
       }
     },
     confirmstatus(){
-        this.addstatus();
+        if(this.allSelected != ''){
+          this.addstatus();
+        }else{
+          alert("Please choose at least one value from checkbox...")
+        }
      },
      confirmstatusOID(oid) {
         this.oid = oid;
-        this.allSelected = "false";
+        this.allSelected = false;
         this.addstatus();
       },
       addstatus(){
@@ -207,7 +211,7 @@ computed: {
           order.changeProcessingStatus(formData)
               .then((response) => {
                   alert('Status Update Successfully');
-                  window.location.reload();
+                  this.getVidz();
               })
               .catch((error) => {
                   // console.log(error);
