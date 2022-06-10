@@ -12,9 +12,12 @@
                     <div class="card-body card">
                         <b-row>
                             <b-col>
-                                <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download</button>
+                                <button type="button" class="download-btn btn btn-primary" v-on:click="download">Pickup List Download</button>
                             </b-col>
-                        </b-row>
+                            <b-col>
+                                <button type="button" class="download-btn btn btn-primary" v-on:click="selectdownload">Selected Download</button>
+                            </b-col>
+                        </b-row>  
                         </div>
                         <br>
                         <div class="groomer-page">
@@ -33,19 +36,22 @@
                               :current-page="currentPage"
                               show-empty
                           >
+                              <template #head(select)="data">
+                                <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="allSelected"> {{ data.label }}</span>
+                              </template>
                               <template #empty="scope">
                                 <p style="text-align: center;">No record found, choose date filter to found the result.</p>
                               </template>
-                               <template v-slot:cell(sr)="row">
-                                {{((currentPage-1)*perPage)+(row.index)+1}}
+                               <template v-slot:cell(select)="row">
+                                <input type="checkbox" :value="row.item.OrderID" v-model="selectedval" >                               
                               </template>
+              
                           </b-table>
                         </div>
                         <div class="text-center" v-if="seen">
                             <b-spinner variant="primary" label="Text Centered"></b-spinner>
                         </div>
                         <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage" aria-controls="my-table"></b-pagination>
-                    
                 </div>
             </b-col>
         </b-row>
@@ -81,7 +87,10 @@
         vid: 0,
         time_slots: [],
         status_assign_array:[],
+        selectedval: [],
+        selectdata: '',
       seen: false,
+      allSelected: false,
         date_from: '',
         date_to: '',
         sortBy: 'date',
@@ -92,9 +101,9 @@
         filter: null,
         filterOn: [],
         fields: [
-           {
-            key: 'sr',
-            label: 'S. No.',
+        {
+            key: 'select',
+            label: 'Select All',
             sortable: true
           },
 
@@ -126,16 +135,10 @@
             key: 'Qty',
             label: 'Quantity',
             sortable: true
-          },
-
-          //   {
-          //   key: 'Parent',
-          //   label: 'Parent',
-          //   sortable: true
-          // },
-
+          },         
         ],
         items: [],
+        items2: [],
         errors_create:[],
         successful: false,
         create_error:'',
@@ -147,6 +150,14 @@ computed: {
       }
     },
   methods: {
+    async selectedAll() {
+      if (this.allSelected) {
+        this.selectall = [];
+      } else {
+        const selected = this.items.map((u) => u.oid);
+        this.selectall = selected;
+      }
+    },
     getvendor()
     {
       let formData = new FormData();
@@ -277,17 +288,33 @@ computed: {
                 XLSX.writeFile(wb,'readytopack_orders.xlsx')
             },
 
+ 
+  selectdownload()
+  {
+    alert(this.selectedval);
+            let formData = new FormData();
+            formData.append("selectedval",this.selectedval)
+            formData.append("vid",this.vid)
+            order.downloadsheet(formData)
+             .then((response) => {
+                  this.items2=response.data;
+                  const data = XLSX.utils.json_to_sheet(this.items2)
+                const wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, data, 'data')
+                XLSX.writeFile(wb,'readytopack_orders.xlsx')
+          })
+          .catch((error) => {
+              console.log(error);
+              if (error.response.status == 422) {
+                  this.errors_create = error.response.data.errors;
+              }
+              // loader.hide();
+          });
+
+
   },
 
-
-
-
-
-clearData()
-    {
-      this.oid ='';
-    },
-
+ },
 };  
 </script>
 

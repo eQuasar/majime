@@ -144,9 +144,50 @@ class JsonController extends Controller
 			$this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
 		    $this->Order_refunds($order->id,$order->refunds,$vid);
 			$this->Order_links($order->id,$order->_links,$vid);
+
+			$this->getWayBill($vid, $url);
 	    
 	    	Orders::insert($Orders); 	
        }
+    }
+
+    public function getWayBill($vid, $url){
+    	// https://isdemo.in/fc/wp-json/waybill_import/waybill_import_data
+    	$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
+		
+    	$curl = curl_init();
+
+	    curl_setopt_array($curl, array(
+
+	    CURLOPT_URL => $url.'/wp-json/waybill_import/waybill_import_data',
+	    CURLOPT_RETURNTRANSFER => true,
+	    CURLOPT_ENCODING => '',
+	    CURLOPT_MAXREDIRS => 10,
+	    CURLOPT_TIMEOUT => 0,
+	    CURLOPT_FOLLOWLOCATION => true,
+	    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	    CURLOPT_CUSTOMREQUEST => 'GET',
+	    CURLOPT_HTTPHEADER => array(
+
+	        'Authorization: Basic '.$vendor[0]->token
+	      ),
+	    ));
+
+	    $response = curl_exec($curl);
+
+	    curl_close($curl);
+	    $jsonResp = json_decode($response, true);
+
+	    // var_dump($jsonResp); die;
+
+	    for ($i=0; $i < count($jsonResp); $i++)
+		{
+			
+			DB::table('waybill')->insert(
+			    ['vid' => $vid, 'order_id' => $jsonResp[$i]['order_id'], 'waybill_no' => $jsonResp[$i]['waybill_no'], 'return_waybill_no' => $jsonResp[$i]['return_waybill_no'], 'date_created' => $jsonResp[$i]['date_created']]
+			);
+
+	    }
     }
 
 	private function getProductWP($url, $vid)
@@ -293,9 +334,11 @@ class JsonController extends Controller
  	public function cronOrderStatusUpdate($vid){
  		$orders=DB::table("orders")
  				->join('waybill', 'orders.oid','=','waybill.order_id')
- 				->whereIn('orders.status',['dtobooked','packed','intransit','on-hold','deliveredtocust','dtointransit'])
+ 				->whereIn('orders.status',['intransit'])
+ 				// ->whereIn('orders.status',['dtobooked','packed','intransit','on-hold','deliveredtocust','dtointransit'])
  				->where('orders.vid',$vid)
  		        ->select("orders.oid","waybill.waybill_no")->get();
+ 		        // print_r($orders);exit();
 		$this->getAWBStatus($orders,$vid);
 		exit();
 
@@ -407,8 +450,12 @@ class JsonController extends Controller
 			if( sizeof($statusCheck) == 0){
 				echo "AWB: ".$status_update['awb']." Updated Successfully.";
 				UpdateStatus::insert($data);
+				if ($status_update['delivery_status_code'] == 'UD'){
+					Order::changeOrderStatus($vid,$status_update['oid'],$status);
+				}
+				
 
-
+				// call order status update method that will further update vendor's wordpress order status as well.
 				
 			}
 	    }
@@ -525,7 +572,8 @@ class JsonController extends Controller
 		    $this->Order_refunds($order->id,$order->refunds,$vid);
 			$this->Order_links($order->id,$order->_links,$vid);
 
-		
+			$this->getWayBill($vid, $url);
+			
 			$jsonResponse=$this->getProductWP($url, intval($vid));
 			$this->InsertProduct($jsonResponse, $vid);
 			// dd($jsonResponse);
@@ -554,7 +602,12 @@ class JsonController extends Controller
 		 {
 		 	$cat = '';
 		 	for ($i=0; $i < count($InProduct->categories); $i++) { 
-		 		$cat .= $InProduct->categories[$i]->name.", ";
+		 		// if($i == count($InProduct->categories)-1){
+		 			// $cat .= $InProduct->categories[$i]->name;
+		 		// }else{
+		 			$cat .= $InProduct->categories[$i]->name.",";
+		 		// }
+		 		
 		 	}
 
 			$product[]=[
@@ -777,9 +830,9 @@ class JsonController extends Controller
 			 	'price'=>$LineItem->price,
 			 	'parent_name'=>$LineItem->parent_name,
 			];
-	  	}
-
+	  
 	  	LineItems::insert($LineItems);
+	  	}
 	}
 
 	/*public function OrderMetaData($OrderID,$Order_MetaData)

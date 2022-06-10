@@ -33,14 +33,13 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('order_Search', 'OrderController@Order_Search')->name('Order_Search');
 	Route::post('status_details', 'ReportController@status_details')->name('status_details');
 	Route::get('insertAllOrders',[App\Http\Controllers\OrderController::class,'insertAllOrders']);
-	// Route::get('order_Profile/{oid}',[App\Http\Controllers\OrderController::class,'OrdersProfile']);
+	 Route::get('order_Profile/{oid}',[App\Http\Controllers\OrderController::class,'OrdersProfile']);
     Route::get('order_Profile/{oid}', 'OrderController@order_Profile')->name('order_Profile');
-	Route::get('order_items/{oid}', 'OrderController@order_items')->name('order_items');
-	
+    // Route::get('order_Profile/{oid}', 'OrderController@order_Profile')->name('order_Profile');
+	Route::get('product_Profile/{variation_id}', 'ProductController@product_Profile')->name('product_Profile');
+	Route::get('product_items/{variation_id}', 'ProductController@product_items')->name('product_items');
 	Route::get('get_order_data', 'JsonController@get_order_data')->name('get_order_data');
-	
 	Route::get('getOrderOnStatus/{vid}/{status}', 'OrderController@getOrderOnStatus')->name('getOrderOnStatus');
-
 	Route::get('getpackdetail/{vid}', 'OrderController@getPackdetail')->name('getpackdetail'); 
 	// Route::get('getConfirmeddetail/{vid}', 'OrderController@getConfirmeddetail')->name('getConfirmeddetail');
 	
@@ -66,11 +65,32 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('city_Search', 'OrderController@city_Search')->name('city_Search');
 	Route::post('state_Search', 'OrderController@state_Search')->name('state_Search');
 	Route::post('status_Search', 'OrderController@status_Search')->name('status_Search');
-	Route::post('add_Transaction_Data','AddTransactionController@store')->name('add_Transaction_Data');
+	Route::post('category_Search', 'ProductController@category_Search')->name('category_Search');
+	Route::post('product_search', 'ProductController@product_Search')->name('product_Search');
+	Route::post('color_Search', 'ProductController@color_Search')->name('color_Search');
+    Route::post('add_Transaction_Data','AddTransactionController@store')->name('add_Transaction_Data');
 	Route::get('view_Transaction','AddTransactionController@show')->name('view_Transaction');
 	Route::post('updateStatusWP', 'JsonController@getUpdateStatus')->name('updateStatusWP');
 	Route::get('getAWBStatus/{awb}', 'JsonController@getAWBStatus')->name('getAWBStatus');
 	Route::get('cronOrderStatusUpdate/{vid}', 'JsonController@cronOrderStatusUpdate')->name('cronOrderStatusUpdate');
+	// Route::post('get_Packdetail_Refund/{vid}','orderController@get_Packdetail_Refund')->name('get_Packdetail_Refund'); 
+	Route::post('PackingRefund_changeStatus', 'OrderController@PackingRefund_changeStatus')->name('PackingRefund_changeStatus');
+	Route::post('Refundchange_Status', 'OrderController@Refundchange_Status')->name('Refundchange_Status');
+	Route::post('listOrder_Status', 'OrderController@listOrder_Status')->name('listOrder_Status');
+	Route::post('download_Sheet', 'OrderController@download_Sheet')->name('download_Sheet');
+    //Route::get('export', [OrderController::class, 'export']);
+    Route::post('state_Search_Select', 'OrderController@state_Search_Select')->name('state_Search_Select');
+    Route::get('state_data', 'OrderController@state_data')->name('state_data');
+    Route::get('city_data', 'OrderController@city_data')->name('city_data');
+    Route::get('status_data', 'OrderController@status_data')->name('status_data');
+    Route::get('get_packdetail_Refund/{vid}','OrderController@get_packdetail_Refund')->name('get_packdetail_Refund');
+    Route::get('product_data','ProductController@product_data')->name('product_data');
+    Route::get('order_items/{variation_id}',[App\Http\Controllers\OrderController::class,'order_items']);
+    Route::post('getDelivery_Details','ProductController@getDelivery_Details')->name('getDelivery_Details');
+    Route::post('changeProcessing_Status', 'OrderController@changeProcessing_Status')->name('changeProcessing_Status');
+    Route::post('getProcessingOrder_Details', 'OrderController@getProcessingOrder_Details')->name('getProcessingOrder_Details');
+    Route::get('get_processing_data/{vid}','OrderController@get_processing_data')->name('get_processing_data');
+
 	
 }); 
 

@@ -139,6 +139,7 @@ float:left;
 }
 .date_range {
     display: flex;
+    justify-content: flex-end;
     align-items: center;
 }
 .date_range .filter_label {
@@ -218,6 +219,7 @@ float:left;
     color: #7e7e7e!important;
     font-weight: bolder;
     top: auto!important;
+    border: none!important;
 }
 .call-center-dashboard .btn.btn-primary {
     padding: 0.675rem 1.5rem;

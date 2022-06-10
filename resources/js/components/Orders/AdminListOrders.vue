@@ -8,9 +8,8 @@
           >
           <b-form-select v-model="vendor" class="" :options="allvendors" value-field="id" text-field="name" @change="vendor_wise_detail">
             <template v-slot:first>
-              <b-form-select-option :value="0" disabled>-- Select Vendor --</b-form-select-option>
-              
-            </template>
+              <b-form-select-option :value="0" disabled>Select Vendor</b-form-select-option>
+           </template>
           </b-form-select>
       </b-form-group>
       <br/>
@@ -101,9 +100,9 @@
           <b-spinner variant="primary" label="Text Centered"></b-spinner>
         </div>
         <b-pagination v-model="currentPage"
-                   :total-rows="rows"
-                  :per-page="perPage"
-                  aria-controls="my-table">
+            :total-rows="rows"
+            :per-page="perPage"
+            aria-controls="my-table">
         </b-pagination>
       </div>
     </div>
@@ -116,8 +115,7 @@
           <b-form-select v-model="vendor" class="" :options="allvendors" value-field="id" text-field="name" @change="vendor_wise_detail">
             <template v-slot:first>
               <b-form-select-option :value="0" disabled>-- Select Vendor --</b-form-select-option>
-              
-            </template>
+           </template>
           </b-form-select>
       </b-form-group>
     </div>
@@ -129,17 +127,16 @@
             <span v-if="successful" class="label label-sucess">Published!</span>
           </div>
           <b-form-input v-model="oid" id="oid_val" style="display:none"></b-form-input>
-          
           <b-form-select v-model="status_assign">
             <template v-slot:first>
-              <b-form-select-option value="null" disabled selected>-- Select Status --</b-form-select-option>
+              <b-form-select-option value="null" disabled selected>Select Status</b-form-select-option>
             </template>
-              <b-form-select-option value="dtobooked">-- Change status to DTO Booked --</b-form-select-option>
-              <b-form-select-option value="intransit">-- Change status to Intransit --</b-form-select-option>
-              <b-form-select-option value="confirmed">-- Change status to Confirmed --</b-form-select-option>
-              <b-form-select-option value="processing">-- Change status to processing --</b-form-select-option>
-              <b-form-select-option value="completed">-- Change status to completed --</b-form-select-option>
-              <b-form-select-option value="cancelled">-- Change status to cancelled --</b-form-select-option>
+              <b-form-select-option value="dtobooked">Change status to DTO Booked</b-form-select-option>
+              <b-form-select-option value="intransit">Change status to Intransit</b-form-select-option>
+              <b-form-select-option value="confirmed">Change status to Confirmed</b-form-select-option>
+              <b-form-select-option value="processing">Change status to processing</b-form-select-option>
+              <b-form-select-option value="completed">Change status to completed</b-form-select-option>
+              <b-form-select-option value="cancelled">Change status to cancelled</b-form-select-option>
           </b-form-select>
           <b-button type="submit" @click.prevent="assign_status" variant="primary">Submit</b-button>
         </b-form> 

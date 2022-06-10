@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DB;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Vendors;
 
@@ -50,8 +51,8 @@ class VendorsController extends Controller
                 ->where("phone", $request->user_phone)
                 ->orWhere("email", $request->email)->get()->toArray();
                        
-            if(isset($userinfo)){
-             //   dd($userinfo);
+            if(!empty($userinfo)){
+                //   dd($userinfo);
                 $uid = $userinfo[0]->id;
                 $vendors = DB::table("vendors")
                 ->where("user_id", $uid)->get()->toArray();

@@ -1,28 +1,29 @@
 <template>
   <b-container fluid> 
-    <div class="content_bar card">
-      <div class="card-body">
-        <b-table striped hover responsive :items="items"
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc"
-        sort-icon-left :filter-included-fields="filterOn" :filter="filter" :fields="fields" :per-page="perPage" :current-page="currentPage" show-empty>
-            <template #empty="scope">
-                <p style="text-align:center;">No record found, choose date filter to found the result.</p>
-            </template>
-            <template v-slot:cell(action)="row">
-              <b-link @click="import_data(row.item.id, row.item.url)"><button class="btn btn-primary" style="float:none;">Import Data</button></b-link>
-            </template>
-          </b-table>
-          <div class="text-center" v-if="seen">
-            <b-spinner variant="primary" label="Text Centered"></b-spinner>
-          </div>
-          <b-pagination v-model="currentPage"
-               :total-rows="rows"
-              :per-page="perPage"
-              aria-controls="my-table"
-            ></b-pagination>
+    <b-overlay :show="show" rounded="sm">
+      <div class="content_bar card">
+        <div class="card-body">
+          <b-table striped hover responsive :items="items"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          sort-icon-left :filter-included-fields="filterOn" :filter="filter" :fields="fields" :per-page="perPage" :current-page="currentPage" show-empty>
+              <template #empty="scope">
+                  <p style="text-align:center;">No record found, choose date filter to found the result.</p>
+              </template>
+              <template v-slot:cell(action)="row">
+                <b-link @click="import_data(row.item.id, row.item.url)"><button class="btn btn-primary" style="float:none;">Import Data</button></b-link>
+              </template>
+            </b-table>
+            <div class="text-center" v-if="seen">
+              <b-spinner variant="primary" label="Text Centered"></b-spinner>
             </div>
-        </div>
+            <b-pagination v-model="currentPage"
+                 :total-rows="rows"
+                :per-page="perPage"
+                aria-controls="my-table"
+              ></b-pagination>
+          </div>
+      </div>
       <div class="card-body">
         <h3><strong>Import Data</strong></h3>
         <br/>
@@ -31,141 +32,140 @@
             <div :class="['form-group m-1 p-3', (successful ? 'alert-success' : '')]" v-show="successful">
               <span v-if="successful" class="label label-sucess">Published!</span>
             </div>
-            <b-overlay :show="show" rounded="sm">
-              <b-row style="margin-bottom: 10px;">
-                <b-col xl="6" lg="6" md="6">
-                  <b-form-group
-                      id="input-group-user-name"
-                      label="User Name"
-                      label-for="input-user-name"
-                      >
-                  <b-form-input
-                        id="input-user-name"
-                        v-model="user_name"
-                        type="text"
-                        required
-                        placeholder="Enter User Name"
-                      ></b-form-input>
-                  </b-form-group>
-                </b-col>
-                <b-col xl="6" lg="6" md="6">
-                  <b-form-group
-                      id="input-group-email"
-                      label="User Email"
-                      label-for="input-email"
-                      >
-                  <b-form-input
-                        id="input-email"
-                        v-model="email"
-                        type="email"
-                        required
-                        placeholder="Enter email"
-                      ></b-form-input>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <b-row style="margin-bottom: 10px;">
-                <b-col xl="6" lg="6" md="6">
-                  <b-form-group
-                      id="input-group-user_phone"
-                      label="User Phone"
-                      label-for="input-user_phone"
-                      >
-                  <b-form-input
-                        id="input-user-phone"
-                        v-model="user_phone"
-                        type="text" @keypress="isNumber($event)" maxlength="10"
-                        required
-                        placeholder="Enter Phone"
-                      ></b-form-input>
-                  </b-form-group>
-                </b-col>
-                <b-col xl="6" lg="6" md="6">
-                  <b-form-group
-                      id="input-group-name"
-                      label="Name"
-                      label-for="input-name"
-                      >
-                  <b-form-input
-                        id="input-name"
-                        v-model="name"
-                        type="text"
-                        required
-                        placeholder="Enter Name"
-                      ></b-form-input>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <b-row style="margin-bottom: 10px;">
-                <b-col xl="6" lg="6" md="6">
-                  <b-form-group
-                      id="input-group-token"
-                      label="Token"
-                      label-for="input-token"
-                      >
-                  <b-form-input
-                        id="input-token"
-                        v-model="token"
-                        type="text"
-                        required
-                        placeholder="Enter Token"
-                      ></b-form-input>
-                  </b-form-group>
-                </b-col>
-                <b-col xl="6" lg="6" md="6">
-                  <b-form-group
-                      id="input-group-url"
-                      label="Website URL"
-                      label-for="input-url"
-                      >
-                  <b-form-input
-                        id="input-url"
-                        v-model="url"
-                        type="text"
-                        required
-                        placeholder="Enter URL"
-                      ></b-form-input>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <b-row style="margin-bottom: 10px; display:none;">
-                <b-col xl="6" lg="6" md="6">
-                  <b-form-group
-                      id="input-group-consumer_key"
-                      label="Consumer Key"
-                      label-for="input-consumer_key"
-                      >
-                  <b-form-input
-                        id="input-consumer_key"
-                        v-model="consumer_key"
-                        type="text"
-                        required
-                        placeholder="Enter Consumer Key"
-                      ></b-form-input>
-                  </b-form-group>
-                </b-col>
-                <b-col xl="6" lg="6" md="6">
-                  <b-form-group
-                      id="input-group-secret_key"
-                      label="Secret Key"
-                      label-for="input-secret_key"
-                      >
-                  <b-form-input
-                        id="input-secret_key"
-                        v-model="secret_key"
-                        type="text"
-                        required
-                        placeholder="Enter Secret Key"
-                      ></b-form-input>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <input type="text" v-model="role_id" value="1" style="display:none;"/>
-              <b-button type="submit" @click.prevent="create" variant="primary">Submit </b-button>
-            </b-overlay>
+            <b-row style="margin-bottom: 10px;">
+              <b-col xl="6" lg="6" md="6">
+                <b-form-group
+                    id="input-group-user-name"
+                    label="User Name"
+                    label-for="input-user-name"
+                    >
+                <b-form-input
+                      id="input-user-name"
+                      v-model="user_name"
+                      type="text"
+                      required
+                      placeholder="Enter User Name"
+                    ></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col xl="6" lg="6" md="6">
+                <b-form-group
+                    id="input-group-email"
+                    label="User Email"
+                    label-for="input-email"
+                    >
+                <b-form-input
+                      id="input-email"
+                      v-model="email"
+                      type="email"
+                      required
+                      placeholder="Enter email"
+                    ></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <b-row style="margin-bottom: 10px;">
+              <b-col xl="6" lg="6" md="6">
+                <b-form-group
+                    id="input-group-user_phone"
+                    label="User Phone"
+                    label-for="input-user_phone"
+                    >
+                <b-form-input
+                      id="input-user-phone"
+                      v-model="user_phone"
+                      type="text" @keypress="isNumber($event)" maxlength="10"
+                      required
+                      placeholder="Enter Phone"
+                    ></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col xl="6" lg="6" md="6">
+                <b-form-group
+                    id="input-group-name"
+                    label="Vendor Name"
+                    label-for="input-name"
+                    >
+                <b-form-input
+                      id="input-name"
+                      v-model="name"
+                      type="text"
+                      required
+                      placeholder="Enter Vendor Name"
+                    ></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <b-row style="margin-bottom: 10px;">
+              <b-col xl="6" lg="6" md="6">
+                <b-form-group
+                    id="input-group-token"
+                    label="Token"
+                    label-for="input-token"
+                    >
+                <b-form-input
+                      id="input-token"
+                      v-model="token"
+                      type="text"
+                      required
+                      placeholder="Enter Token"
+                    ></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col xl="6" lg="6" md="6">
+                <b-form-group
+                    id="input-group-url"
+                    label="Website URL"
+                    label-for="input-url"
+                    >
+                <b-form-input
+                      id="input-url"
+                      v-model="url"
+                      type="text"
+                      required
+                      placeholder="Enter URL"
+                    ></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <b-row style="margin-bottom: 10px; display:none;">
+              <b-col xl="6" lg="6" md="6">
+                <b-form-group
+                    id="input-group-consumer_key"
+                    label="Consumer Key"
+                    label-for="input-consumer_key"
+                    >
+                <b-form-input
+                      id="input-consumer_key"
+                      v-model="consumer_key"
+                      type="text"
+                      required
+                      placeholder="Enter Consumer Key"
+                    ></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col xl="6" lg="6" md="6">
+                <b-form-group
+                    id="input-group-secret_key"
+                    label="Secret Key"
+                    label-for="input-secret_key"
+                    >
+                <b-form-input
+                      id="input-secret_key"
+                      v-model="secret_key"
+                      type="text"
+                      required
+                      placeholder="Enter Secret Key"
+                    ></b-form-input>
+                </b-form-group>
+              </b-col>
+            </b-row>
+            <input type="text" v-model="role_id" value="1" style="display:none;"/>
+            <b-button type="submit" @click.prevent="create" variant="primary">Submit </b-button>
           </b-form>
+        </div>
       </div>
-    </div>
+    </b-overlay>
   </b-container>
 </template>
 
@@ -282,8 +282,9 @@
           .then((response) => {
             this.successful = true;
             this.error = true;
+            console.log(response.data.data);
             //this.items=response.data;
-            this.items.push(response.data);
+            this.items.push(response.data.data);
             this.name='';
             this.url='';
             this.user_name='';
@@ -301,8 +302,7 @@
           });
       },
       import_data(id, url) {
-        console.log(id);
-        console.log(url);
+        this.show = true;
         let formData = new FormData();
         formData.append("vid", id);
         formData.append("url", url);
@@ -311,6 +311,7 @@
           .getJson(formData)
           .then((response) => {
               alert("Data imported successfully.");
+              this.show = false;
           })
           .catch((error) => {
               console.log(error);

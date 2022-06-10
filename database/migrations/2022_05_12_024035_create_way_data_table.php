@@ -23,7 +23,7 @@ class CreateWayDataTable extends Migration
            $table->string('country');
            $table->integer('phone');
            $table->string('add');
-           $table->string('Token');
+           $table->string('token');
            $table->string('order_prefix');
            $table->timestamps();
 

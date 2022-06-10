@@ -22,9 +22,7 @@ export default {
     changeStatus(data) {
         return axios.post('changeStatus', data)
     },
-    getPackDetail(data) {
-        return axios.get('getpackdetail/' + data)
-    },
+    
     getOrderOnStatus(vid,status) {
         return axios.get('getOrderOnStatus/'+vid+'/'+status)
     },
@@ -52,5 +50,51 @@ export default {
     statusSearch(data) {
         return axios.post('status_Search', data)
     },
-}
+     PendingRefundstatus(data) {
+        return axios.get('get_PackdetailRefund1', data)
+    },
+    PendingRefund_changeStatus(data) {
+        return axios.post('Refundchange_Status', data)
+    },
+    // getPackdetail_Refund(data) {
+    //     return axios.post('get_Packdetail_Refund', data)
+    // },
+    ListOrderStatus_assign(data) {
+        return axios.post('listOrder_Status', data)
+    },
+    downloadsheet(data) {
+        return axios.post('download_Sheet', data)
+    },
 
+    stateSearchoption(data) {
+        return axios.post('state_Search_option', data)
+    },
+     stateSearchSt(data) {
+        return axios.post('state_Search_Select', data)
+    },
+    getStates() {
+        return axios.get('state_data')
+    },
+    getCity() {
+        return axios.get('city_data')
+    },
+     getStatus() {
+        return axios.get('status_data')
+    },
+     getPackdetail_Refund(data) {
+        return axios.get('get_packdetail_Refund/' + data)
+    },
+    getPackDetail(data) {
+        return axios.get('getpackdetail/' + data)
+    },
+    changeProcessingStatus(data) {
+        return axios.post('changeProcessing_Status', data)
+    },
+       getProcessing_OrderDetails(data) {
+        return axios.post('getProcessingOrder_Details', data)
+    },
+      getProcessing_data(data) {
+        return axios.get('get_processing_data/' + data)
+    },
+
+}

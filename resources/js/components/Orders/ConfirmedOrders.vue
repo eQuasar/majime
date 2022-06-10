@@ -2,19 +2,20 @@
   <b-container fluid> 
     <div class="header_title">
     <div class="header_inner">
-        <h3><strong>Assign AWB</strong></h3><br/>
+        <h3><strong>Packed</strong></h3><br/>
       </div>
     </div>
-    
     <div class="content_bar ">
         <div class="card-body card">
           <div class="call-center-dashboard">
           <b-row>
             <b-col xl="9" lg="9" md="9">
-            
             </b-col>
             <b-col>
                 <button type="button" class="download-btn btn btn-primary" v-on:click="assignAWB">Assign AWB</button>
+            </b-col>
+            <b-col>
+                <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download Pickup List</button>
             </b-col>
           </b-row>
          <div class="blue-bar"></div>
@@ -46,8 +47,7 @@
               </b-col>
             </b-row>
           </div>
-          
-        </div>
+       </div>
         </div>
         </div>
         <br>
@@ -55,8 +55,11 @@
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       sort-icon-left :filter-included-fields="filterOn" :filter="filter" :fields="fields" :per-page="perPage" :current-page="currentPage" show-empty>
+            <template #head(select)="data">
+              <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="allSelected"> {{ data.label }}</span>
+            </template>
             <template #empty="scope">
-                <p style="text-align:center;">No record found, choose date filter to found the result.</p>
+              <p style="text-align:center;">No record found, choose date filter to found the result.</p>
             </template>
             <template v-slot:cell(oid)="row">
               #{{(row.item.oid)}}
@@ -64,8 +67,12 @@
           <template v-slot:cell(sr)="row">
             {{((currentPage-1)*perPage)+(row.index)+1}}
           </template>
+              <template v-slot:cell(selectall)="row">
+            <input type="checkbox" :value="row.item.oid" v-model="selectall">
+          </template>
             <template v-slot:cell(action)="row">
-                <b-link @click="assignAWBOrder(row.item.oid)"><b-icon icon="key" aria-hidden="true" data-toggle="tooltip" title="Assign AWB Number"></b-icon></b-link>
+                <p class="h3 mb-2"><b-link @click="assignAWBOrder(row.item.oid)"><b-icon icon="truck" aria-hidden="true" data-toggle="tooltip" title="Assign AWB Number"></b-icon></b-link>  &nbsp;&nbsp;<router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
+              </p>
             </template>
 
                <b-modal id="modal-1" title="Change Status:" hide-footer  size="lg">
@@ -79,10 +86,7 @@
           <template v-slot:first>
             <b-form-select-option :value="0" disabled>-- Select Status --</b-form-select-option>
           </template>
-          
-
         </b-form-select>
-        
         <b-button type="submit" @click.prevent="s" variant="primary">Submit </b-button>
       </b-form> 
     </b-modal>
@@ -99,13 +103,13 @@
       aria-controls="my-table"
     ></b-pagination>
   </div>
-    
 </b-container>
 </template>
 
 <script>
     import order from '../../api/order.js';
     import user from '../../api/user.js';
+    import * as XLSX from 'xlsx/xlsx.mjs'; 
   export default {
 
     props: {
@@ -133,7 +137,9 @@
         vid: 0,
         time_slots: [],
         status_assign_array:[],
-      seen: false,
+        selectall:[],
+        allSelected: false,
+        seen: false,
         date_from: '',
         date_to: '',
         sortBy: 'date',
@@ -145,37 +151,44 @@
         filterOn: [],
         fields: [
            {
-            key: 'sr',
+            key: 'selectall',
+            label: 'Select All',
             sortable: true
           },
-
-            {
+        
+          {
             key: 'oid',
             label: 'Order ID',
             sortable: true
           },
-
-            {
+          {
+            key: 'date_created_gmt',
+            label: 'Date',
+            sortable: true
+          },
+          {
             key: 'first_name',
             label: 'First Name',
             sortable: true
           },
-
-            {
+          {
             key: 'last_name',
             label: 'Last Name',
             sortable: true
           },
-
-            {
+          {
             key: 'phone',
             label: 'Contact',
             sortable: true
           },
-
-            {
-            key: 'payment_method_title',
-            label: 'Payment Method',
+          {
+            key: 'email',
+            label: 'Email',
+            sortable: true
+          },
+          {
+            key: 'payment_method',
+            label: 'Payment',
             sortable: true
           },
           {
@@ -183,8 +196,10 @@
             label: 'Action',
             sortable: false
           }
+
         ],
         items: [],
+        packedItems: [],
         errors_create:[],
         successful: false,
         create_error:'',
@@ -196,6 +211,28 @@ computed: {
       }
     },
   methods: {
+    async selectedAll() {
+      if (this.allSelected) {
+        this.selectall = [];
+      } else {
+        const selected = this.items.map((u) => u.oid);
+        this.selectall = selected;
+      }
+    },
+    getPackdetail(vid) {
+      order.getPackDetail(vid)
+          .then(( response ) => {
+            if(response.data)
+            {
+              this.packedItems=response.data;
+            }
+          })
+          .catch(error => {
+              console.log(error);
+              
+          });
+          console.log("Pack - 3");
+    },
     getvendor()
     {
       let formData = new FormData();
@@ -305,13 +342,14 @@ computed: {
               this.successful = false;
               alert('something went wrong');
           })
-      }
+      },
+      download : function() {
+            const data = XLSX.utils.json_to_sheet(this.packedItems)
+            const wb = XLSX.utils.book_new()
+            XLSX.utils.book_append_sheet(wb, data, 'data')
+            XLSX.writeFile(wb,'readytopack_orders.xlsx')
+        },
   },
-
-
-
-
-
 clearData()
     {
       this.oid ='';

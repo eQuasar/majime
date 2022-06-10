@@ -49,6 +49,7 @@ class WayDataController extends Controller
                 'phone' => 'required',
                 'add' => 'required',
                 'token' => 'required',
+                'order_prefix' => 'required',
             ]);
 
         // dd($request); die;
@@ -65,6 +66,7 @@ class WayDataController extends Controller
             $wb_data->phone = $request->phone;
             $wb_data->add = $request->add;
             $wb_data->token = $request->token;
+            $wb_data->order_prefix = $request->order_prefix;
             
             $wb_data->save();
             return response()->json(['error' => false,'data' => $wb_data],200);
@@ -111,6 +113,7 @@ class WayDataController extends Controller
                 'phone' => 'required',
                 'add' => 'required',
                 'token' => 'required',
+                'order_prefix' => 'required',
             ]);
             
             
@@ -125,6 +128,7 @@ class WayDataController extends Controller
             $wb_data->phone = $request->phone;
             $wb_data->add = $request->add;
             $wb_data->token = $request->token;
+            $wb_data->order_prefix = $request->order_prefix;
             
             $wb_data->save();
             return response()->json(['error' => false,'data' => $wb_data],200);

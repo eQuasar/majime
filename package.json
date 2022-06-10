@@ -30,6 +30,7 @@
         "@fortawesome/vue-fontawesome": "^2.0.6",
         "bootstrap-vue": "^2.21.2",
         "chart.js": "^3.7.1",
+        "lodash.uniq": "^4.5.0",
         "moment": "^2.29.3",
         "vform": "^2.1.2",
         "vue-autosuggest": "^2.2.0",

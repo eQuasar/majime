@@ -119,11 +119,11 @@
                   <b-form-group
                       id="input-group-prefix"
                       label="Order Prefix"
-                      label-for="input-Order_prefix"
+                      label-for="input-order_prefix"
                       >
                   <b-form-input
                         id="input-prefix"
-                        v-model="Prefix"
+                        v-model="order_prefix"
                         type="text" :value="this.order_prefix"
                         required
                         placeholder="Enter Order Prefix"
@@ -162,6 +162,7 @@
     {
       return {
         show: false,
+        order_prefix: "",
         ariaDescribedby: "",
         name: "",
         vid:0,
@@ -262,6 +263,9 @@
         if (!this.token) {
           this.create_error += "Add Token,";
         }
+        if (!this.order_prefix) {
+          this.create_error += "Order Prefix,";
+        }
         if (this.create_error != "") {
           return false;
         }
@@ -275,6 +279,7 @@
         formData.append("country", this.country);
         formData.append("phone", this.phone);
         formData.append("add", this.add);
+        formData.append("order_prefix", this.order_prefix);
         formData.append("token", this.token);
         
         awb.addWayData(formData)
@@ -322,6 +327,9 @@
         if (!this.token) {
           this.create_error += "Add Token,";
         }
+        if (!this.order_prefix) {
+          this.create_error += "Order Prefix,";
+        }
         if (this.create_error != "") {
           return false;
         }
@@ -336,6 +344,7 @@
         formData.append("phone", this.phone);
         formData.append("add", this.add);
         formData.append("token", this.token);
+        formData.append("order_prefix", this.order_prefix);
         formData.append("id", this.awb_id);
         
         awb.updateWayData(formData)
@@ -398,6 +407,7 @@
             this.phone=response.data[0].phone;
             this.add=response.data[0].add;
             this.token=response.data[0].token;
+            this.order_prefix=response.data[0].order_prefix;
             this.awb_id=response.data[0].id;
           }
         })

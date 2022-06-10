@@ -4,8 +4,13 @@
       <div class="card-body">
         <b-row>
           <b-col xl="12" lg="12" md="12">
+             <template>
+                <b-button pill variant="download-btn btn btn-primary" @click="goBack">Go Back</b-button>
+             </template>
             <div class="profile_info">
-                <h3 class="own-heading">Order #5393 Detail &nbsp;<strong><router-link :to="{ name: 'OrderProfile', params: { oid: (this.oid).toString() }}"></router-link></strong></h3>
+                <h3 class="own-heading"><p class="h2 mb-2"><strong>Order ID:{{oid}}</strong></p> <strong><router-link :to="{ name: 'OrderProfile', params: { oid: (this.oid).toString() }}"></router-link></strong></h3>
+
+
             </div>
           </b-col>
         </b-row>
@@ -51,6 +56,8 @@
                   <template v-slot:cell(sr)="row">
                     {{((currentPage-1)*perPage)+(row.index)+1}}
                   </template>
+                  
+
             </b-table>
           </b-col>
         </b-row>
@@ -92,6 +99,8 @@ import OrderProfile from '../../api/order.js';
         city:'',
         status:'',
         total:'',
+        filter: null,
+        filterOn: [],
         date_created_gmt:'',
         amount:0,
         successful: false,
@@ -164,7 +173,6 @@ import OrderProfile from '../../api/order.js';
               this.last_name = response.data[0].last_name;
               this.address_1 = response.data[0].address_1;
               this.address_2 = response.data[0].address_2;
-
               this.state = response.data[0].state;
               this.city=response.data[0].city;
               this.date_created_gmt=response.data[0].date_created_gmt;
@@ -176,6 +184,9 @@ import OrderProfile from '../../api/order.js';
               console.log(error);
               
           });
+      },
+      goBack(){
+        return this.$router.go(-1);
       },
       getOrderItems() {
           OrderProfile.getOrderItems(this.oid,this.vid) 

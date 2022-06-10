@@ -23,152 +23,252 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Elibyy\TCPDF\Facades\TCPDF;
 use PDF;
+use \Milon\Barcode\DNS1D;
 
 class OrderController extends Controller
 {
-    public function OrderDetail(Request $request)
-	{
-		$orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-		->join('products', 'orders.id', '=', 'products.id')
-		->where('orders.vid','=',$request->vid)
-          ->select("orders.*","billings.*","products.*",
-          DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-
-                                WHERE line_items.order_id = orders.oid
-
-                                GROUP BY line_items.order_id) as quantity"))
-
-          ->get();
-        return $orders;
-	}
-
-	public function getOrderDetails(Request $request)
-	{
-		$vendor = $request->vid;
-
-		if($vendor != null){
+		public function OrderDetail(Request $request)
+		{
 			$orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-			   // ->join('waybill','orders.oid','=','waybill.order_id')
-	          ->where('orders.vid','=',intval($vendor))
-	          ->where('billings.vid','=',intval($vendor))
-	           // ->select("orders.*","waybill.waybill_no","orders.status as orderstatus","billings.*",
-	          ->select("orders.*","orders.status as orderstatus","billings.*",
-
-	                    DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vendor)." GROUP BY line_items.order_id) as quantity"))
+			->join('products', 'orders.id', '=', 'products.id')
+			->where('orders.vid','=',$request->vid)
+		      ->select("orders.*","billings.*","products.*",
+		      DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+	                    WHERE line_items.order_id = orders.oid
+	                    GROUP BY line_items.order_id) as quantity"))
+		      ->get();
+		    return $orders;
+		}
+		public function Order_Search(Request $request)
+		{
+			$range =[$request->date_from,$request->date_to];
+	       	// $order=orders::whereBetween('date_created_gmt',$range)->get();
+	       	$order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
+		          ->whereBetween('date_created_gmt',$range)
+		          ->select("orders.*","billings.*",
+		                    DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+		                                WHERE line_items.order_id = orders.oid
+		                                GROUP BY line_items.order_id) as quantity"))
 	          ->get();
-	    }else{
-	    	$orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-
-	          ->select("orders.*","orders.status as orderstatus","billings.*",
-
-	                    DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-
-	                                WHERE line_items.order_id = orders.oid
-
-	                                GROUP BY line_items.order_id) as quantity"))
-
-	          ->get();
+	        return $order;
+  	    }
+	    public function order_Profile($oid)
+	    {
+         	 $order =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
+		      	->where('orders.oid','=',$oid)
+		        ->where('orders.vid','=',intval($_REQUEST['vid']))
+		      	->where('billings.vid','=',intval($_REQUEST['vid']))
+		        ->select("orders.*","billings.*",
+		        		DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($_REQUEST['vid'])." GROUP BY line_items.order_id) as quantity"))
+	         ->get();
+       	    return $order;
 	    }
-        return $orders;
-	}
+	    public function order_items($oid){
+		        $orderItems =DB::table("line_items")->where('order_id','=',$oid)->where('vid','=',$_REQUEST['vid'])->get();
+	       	return $orderItems;
+	    }
+	    public function getOrderDetails(Request $request)
+		{
+			$vendor = $request->vid;
+			if($vendor != null){
+				$orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
+				   // ->join('waybill','orders.oid','=','waybill.order_id')
+		          ->where('orders.vid','=',intval($vendor))
+		          ->where('billings.vid','=',intval($vendor))
+		          ->orderBy('oid','DESC')
+		           // ->select("orders.*","waybill.waybill_no","orders.status as orderstatus","billings.*",
+		          ->select("orders.*","orders.status as orderstatus","billings.*",
+		                    DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = ".intval($vendor)." GROUP BY line_items.order_id) as quantity"))
+		          	          ->get();
+		       
+		    }else{
+		    	$orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
+		    	->orderBy('oid', 'DESC')
+		          ->select("orders.*","orders.status as orderstatus","billings.*",
+		                    DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+		                                WHERE line_items.order_id = orders.oid
+		                                GROUP BY line_items.order_id) as quantity"))    
+		          ->get();
+		        }
+	        return $orders;
+		}
+	    public function getPackdetail($vid)
+		   {
+		        $orderItems =DB::table("orders")
+		         ->join('billings','orders.oid','=','billings.order_id')
+		        // ->join('line_items','orders.oid','=','line_items.order_id')
+		       ->where('orders.vid',$vid)
+		       ->where('orders.status',"packed")
+		       ->select("orders.*","billings.*",
+		        		DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vid)." GROUP BY line_items.order_id) as quantity"),
+		        		DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vid)." limit 1) as name"),
+		        		DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vid)." limit 1) as sku"))
+		        	// ->select("line_items.sku as SKU","line_items.name as Name","line_items.quantity as Qty") 
+		        				// DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+			           //                      WHERE line_items.order_id = orders.oid
+			           //                      GROUP BY line_items.order_id) as quantity")
+		        ->orderBy('oid','DESC')
+		        ->get();
+		            return $orderItems;
+        	}
+	 	public function get_packdetail_Refund($vid)
+	    	{
+	  		    $orders =DB::table("orders")
+	  		       ->join('billings','orders.oid','=','billings.order_id')
+			  		->where('orders.vid',$vid)
+		       ->where('orders.status',"dtobooked")
+		       ->select("orders.*","billings.*",
+		        		DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vid)." GROUP BY line_items.order_id) as quantity"),
+		        		DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vid)." limit 1) as name"),
+		        		DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vid)." limit 1) as sku"))
+		       ->orderBy('oid','DESC')
+		        ->get();
+		        
+				return $orders;
+	  		}
+		public function getOrderOnStatus($vid,$status)
+			{
+					// echo "string"; die;
+			  $orderItems =DB::table("orders")
+			  	->join('billings','orders.oid','=','billings.order_id')	
+			  	->where('orders.vid',$vid)
+			  	// ->where('billings.vid',$vid)
+				->where('orders.status',$status)->get();
+			   	return $orderItems;
+	  		}
 
-	public function Order_Search(Request $request)
-	{
-		$range =[$request->date_from,$request->date_to];
-       	// $order=orders::whereBetween('date_created_gmt',$range)->get();
-       	$order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-	          ->whereBetween('date_created_gmt',$range)
-	          ->select("orders.*","billings.*",
+  		public function return_order(){
+		  		$oid = $_REQUEST['order_id'];
+		  		$vid = $_REQUEST['vid'];
+		  		$my_data =DB::table("way_data")
+				->where('vid',$_REQUEST['vid'])->get();
+				$city = $my_data[0]->city;
+				$name = $my_data[0]->name;
+				$pin = $my_data[0]->pin;
+				$country = $my_data[0]->country;
+				$phone = $my_data[0]->phone;
+				$add = $my_data[0]->add;
+				$token = $my_data[0]->token;
+		  		$orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
+				->join('products', 'orders.id', '=', 'products.id')
+				->where('orders.vid','=',$vid)
+				->where('orders.oid','=',$oid)
+		          ->select("orders.*","billings.*","products.*",
+		          DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+		                                WHERE line_items.order_id = orders.oid
+		                                GROUP BY line_items.order_id) as quantity"))
+		          ->get();
+  				$curl = curl_init();
+					curl_setopt_array($curl, array(
+					CURLOPT_URL => 'https://track.delhivery.com/api/cmu/create.json',
+					CURLOPT_RETURNTRANSFER => true,
+					CURLOPT_ENCODING => '',
+					CURLOPT_MAXREDIRS => 10,
+					CURLOPT_TIMEOUT => 30,
+					CURLOPT_FOLLOWLOCATION => true,
+					CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+					CURLOPT_CUSTOMREQUEST => 'POST',
+					CURLOPT_POSTFIELDS =>'format=json&data={
+						  "shipments": [
+							{
+							  "add": "'.$orders[0]->address_1.', '.$orders[0]->address_2.'",
+							  "phone": '.$orders[0]->phone.',
+							  "payment_mode": "Pickup",
+							  "name": "'.$orders[0]->first_name.'",
+							  "pin": '.$orders[0]->postcode.',
+							  "order": "BBB_'.$oid.'",
+							  "return_state": "'.$city.'",
+								"return_city": "'.$city.'",
+								"return_phone": "'.$phone.'",
+								"return_add": "'.$add.'",
+								"return_pin": "'.$pin.'",
+								"extra_parameters": { 
+								  "return_reason": "Return Order"
+								},
+								"return_name": "'.$name.'"
+							}
+						  ],
+						  "pickup_location": 
+							{
+							  "city": "'.$city.'",
+							  "name": "'.$name.'",
+							  "pin": "'.$pin.'",
+							  "country": "'.$country.'",
+							  "phone": "'.$phone.'",
+							  "add": "'.$add.'"
+							}
+						}',
+					CURLOPT_HTTPHEADER => array(
+						'Authorization: Token '.$token,
+						'Content-Type: application/json',
+						'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'
+					),
+				));
+					$response = curl_exec($curl);
+					$new_val = json_decode($response, true);
+					$wbill = $new_val["packages"][0]["waybill"];
+					$order_items =DB::table("waybill")
+					->where('waybill.vid',$vid)
+					->where('waybill.order_id',$oid)->get()->toArray();
+					// var_dump($order_items); die;
+					if(!empty($order_items)){
+						DB::table('waybill')
+			              ->where('order_id', $_REQUEST['order_id'])
+			              ->where('vid', $_REQUEST['vid'])
+			              ->update(['return_waybill_no' => $wbill]);
+			              DB::table('orders')
+			              ->where('oid', $_REQUEST['order_id'])
+			              ->where('vid', $_REQUEST['vid'])
+			              ->update(['status' => "dtobooked"]);
+    //           $curl = curl_init();
+    //           $vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
+    //           var_dump($vendor[0]->url); die;
+			 //    curl_setopt_array($curl, array(
+			 //    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$_REQUEST['order_id'].'?status=dtobooked',
+			 //    CURLOPT_RETURNTRANSFER => true,
+			 //    CURLOPT_ENCODING => '',
+			 //    CURLOPT_MAXREDIRS => 10,
+			 //    CURLOPT_TIMEOUT => 0,
+			 //    CURLOPT_FOLLOWLOCATION => true,
+			 //    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			 //    CURLOPT_CUSTOMREQUEST => 'PUT',
+			 //    CURLOPT_HTTPHEADER => array(
 
-	                    DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+			 //        'Authorization: Basic '.$vendor[0]->token
+			 //      ),
+			 //    ));
 
-	                                WHERE line_items.order_id = orders.oid
+			 //    $response = curl_exec($curl);
+			 //    curl_close($curl);
+			 //    $jsonResp = json_decode($response);
 
-	                                GROUP BY line_items.order_id) as quantity"))
-	          ->get();
 
-        return $order;
-       
-    }
+				// $curl2 = curl_init();
 
-   public function order_Profile($oid)
-    {
+				// curl_setopt_array($curl2, array(
+				//   CURLOPT_URL => $vendor[0]->url.'/wp-json/waybill/waybill_data?order_id='.$order_id.'&return=1&waybill_no='.$new_val["packages"][0]["waybill"],
+				//   CURLOPT_RETURNTRANSFER => true,
+				//   CURLOPT_ENCODING => '',
+				//   CURLOPT_MAXREDIRS => 10,
+				//   CURLOPT_TIMEOUT => 0,
+				//   CURLOPT_FOLLOWLOCATION => true,
+				//   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+				//   CURLOPT_CUSTOMREQUEST => 'GET',
+				// ));
 
-        // $order =DB::table("orders")->where('orders.oid','=',$oid)
-        // ->join('billings','orders.oid','=','billings.order_id')
-        // ->select("orders.*","billings.*",
-        // 				DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+			 //    $response2 = curl_exec($curl2);
+			 //    curl_close($curl2);
+			 //    $jsonResp2 = json_decode($response2);
 
-	       //                          WHERE line_items.order_id = orders.oid
-
-	       //                          GROUP BY line_items.order_id) as quantity"))
-
-        //  ->get();
-         
-        $order =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
-      	->where('orders.oid','=',$oid)
-        ->where('orders.vid','=',intval($_REQUEST['vid']))
-      	->where('billings.vid','=',intval($_REQUEST['vid']))
-        ->select("orders.*","billings.*",
-        				DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($_REQUEST['vid'])." GROUP BY line_items.order_id) as quantity"))
-
-         ->get();
-         
-       	return $order;
-    }
-    public function order_items($oid){
-        $orderItems =DB::table("line_items")->where('order_id','=',$oid)->where('vid','=',$_REQUEST['vid'])->get();
-       	return $orderItems;
-    }
-  public function getPackdetail($vid)
-  {
-        $orderItems =DB::table("line_items")->where('line_items.vid',$vid)
-
-        ->join('orders','orders.oid','=','line_items.order_id')
-        	->select("line_items.sku as SKU","line_items.name as Name","line_items.quantity as Qty","line_items.parent_name as Parent","line_items.order_id as OrderID","orders.date_created as Date") 
-        // 				DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-
-	       //                          WHERE line_items.order_id = orders.oid
-
-	       //                          GROUP BY line_items.order_id) as quantity"))
-
-         ->get();
-         
-       return $orderItems;
-    }
-
-	public function getOrderOnStatus($vid,$status){
-		
-		// echo "string"; die;
-
-		  $orderItems =DB::table("orders")
-		  	->join('billings','orders.oid','=','billings.order_id')	
-		  	->where('orders.vid',$vid)
-		  	// ->where('billings.vid',$vid)
-			->where('orders.status',$status)->get();
-		   
-		 return $orderItems;
-  	}
-
-  	public function return_order(){
-  		$order_items =DB::table("waybill")
-		->where('waybill.vid',$_REQUEST['vid'])
-		->where('waybill.order_id',$_REQUEST['order_id'])->get()->toArray();
-
-		if(!empty($order_items)){
-			DB::table('waybill')
-              ->where('order_id', $_REQUEST['order_id'])
-              ->where('vid', $_REQUEST['vid'])
-              ->update(['return_waybill_no' => $_REQUEST['return_waybill_no']]);
-      	}
-  	}
+              return response()->json(['error' => false, 'abn_no' => $wbill,"ErrorCode" => "000"],200);
+	      	}
+	  	}
 
   	public function assignAWB(Request $request){
   		$orders =DB::table("orders")
 		  	->join('billings','orders.oid','=','billings.order_id')	
 		  	->where('orders.vid',$request->vid)
 			->where('orders.status','confirmed')->get();
-
 		$my_data =DB::table("way_data")
 		->where('vid',$request->vid)->get();
 
@@ -189,7 +289,13 @@ class OrderController extends Controller
 			->where('line_items.vid',$request->vid)
 			->where('line_items.order_id',$order_id)->get();
 
-			$curlopt_url = "https://staging-express.delhivery.com/api/cmu/create.json";
+			if($request->vid == 1){
+				$curlopt_url = "https://staging-express.delhivery.com/api/cmu/create.json";
+				$del_url = "https://staging-express.delhivery.com/c/api/pin-codes/json/";
+			}else{
+				$curlopt_url = "https://track.delhivery.com/api/cmu/create.json";
+				$del_url = "https://track.delhivery.com/c/api/pin-codes/json/";
+			}
 
 			foreach( $order_items as $product ) {
 
@@ -197,7 +303,7 @@ class OrderController extends Controller
 			}
 			$curl2 = curl_init();
 			curl_setopt_array($curl2, array(
-			  CURLOPT_URL => 'https://staging-express.delhivery.com/c/api/pin-codes/json/?filter_codes='.$order->postcode,
+			  CURLOPT_URL => $del_url.'?filter_codes='.$order->postcode,
 			  CURLOPT_RETURNTRANSFER => true,
 			  CURLOPT_ENCODING => '',
 			  CURLOPT_MAXREDIRS => 10,
@@ -318,7 +424,7 @@ class OrderController extends Controller
 							DB::table('orders')
 				              ->where('oid', $order_id)
 				              ->where('vid', $request->vid)
-				              ->update(['status' => "intransit"]);
+				              ->update(['status' => "packed"]);
 
 				              $curl = curl_init();
 
@@ -365,7 +471,11 @@ class OrderController extends Controller
 							    
 							return response()->json(['error' => false, 'msg' => "WayBill successfully added.","ErrorCode" => "000"],200);
 						}else{
-							return response()->json(['error' => true, 'msg' => "Something went wrong.","ErrorCode" => -2],200);
+							DB::table('orders')
+				              ->where('oid', $order_id)
+				              ->where('vid', $request->vid)
+				              ->update(['status' => "packed"]);
+							return response()->json(['error' => true, 'msg' => "Already Assign AWB No.","ErrorCode" => -2],200);
 						}
 					}else{
 						return response()->json(['error' => true, 'msg' => $new_val['rmk'],"ErrorCode" => -2],200);
@@ -409,183 +519,136 @@ class OrderController extends Controller
   	}
 
   	function assignAWBOrder(Request $request){
-  		
-  			$orders =DB::table("orders")
-		  	->join('billings','orders.oid','=','billings.order_id')	
-		  	->where('orders.vid',$request->vid)
-		  	->where('orders.oid',$request->oid)
-			->where('orders.status','confirmed')->get();
+   			$orders =DB::table("orders")
+			  	->join('billings','orders.oid','=','billings.order_id')	
+			  	->where('orders.vid',$request->vid)
+			  	->where('orders.oid',$request->oid)
+				->where('orders.status','confirmed')->get();
+			$my_data =DB::table("way_data")
+				->where('vid',$request->vid)->get();
+			// var_dump($my_data); die;
+				$city = $my_data[0]->city;
+				$name = $my_data[0]->name;
+				$pin = $my_data[0]->pin;
+				$country = $my_data[0]->country;
+				$phone = $my_data[0]->phone;
+				$add = $my_data[0]->add;
+				$token = $my_data[0]->token;
+				$order_prefix = $my_data[0]->order_prefix;
 
+				if($request->vid == 1){
+					$curlopt_url = "https://staging-express.delhivery.com/api/cmu/create.json";
+					$del_url = "https://staging-express.delhivery.com/c/api/pin-codes/json/";
+				}else{
+					$curlopt_url = "https://track.delhivery.com/api/cmu/create.json";
+					$del_url = "https://track.delhivery.com/c/api/pin-codes/json/";
+				}
 
+				// $curlopt_url = "https://track.delhivery.com/api/cmu/create.json";
+					foreach($orders as $order){
+				// var_dump($order);die();
+					$order_id = $order->oid;
+					$product_name = "";
+					$order_items =DB::table("line_items")
+					->where('line_items.vid',$request->vid)
+					->where('line_items.order_id',$order_id)->get();
+						foreach( $order_items as $product ) {
+							$product_name = $product_name." | ".$product->name." - ".$product->quantity;
 
-		$my_data =DB::table("way_data")
-			->where('vid',$request->vid)->get();
-
-
-		$city = $my_data[0]->city;
-		$name = $my_data[0]->name;
-		$pin = $my_data[0]->pin;
-		$country = $my_data[0]->country;
-		$phone = $my_data[0]->phone;
-		$add = $my_data[0]->add;
-		$token = $my_data[0]->token;
-
-		$curlopt_url = "https://staging-express.delhivery.com/api/cmu/create.json";
-
-		foreach($orders as $order){
-			// var_dump($order);die();
-
-			$order_id = $order->oid;
-			$product_name = "";
-			$order_items =DB::table("line_items")
-			->where('line_items.vid',$request->vid)
-			->where('line_items.order_id',$order_id)->get();
-			foreach( $order_items as $product ) {
-				$product_name = $product_name." | ".$product->name." - ".$product->quantity;
-
-			}
-			// echo $order->postcode; die;
-			$curl2 = curl_init();
-			curl_setopt_array($curl2, array(
-			  CURLOPT_URL => 'https://staging-express.delhivery.com/c/api/pin-codes/json/?filter_codes='.$order->postcode,
-			  CURLOPT_RETURNTRANSFER => true,
-			  CURLOPT_ENCODING => '',
-			  CURLOPT_MAXREDIRS => 10,
-			  CURLOPT_TIMEOUT => 0,
-			  CURLOPT_FOLLOWLOCATION => true,
-			  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-			  CURLOPT_CUSTOMREQUEST => 'GET',
-			  CURLOPT_HTTPHEADER => array(
-				'Authorization: Token '.$token,
-				'Content-Type: application/json'
-			  ),
-			));
-
+					}
+					// echo $order->postcode; die;
+					$curl2 = curl_init();
+					curl_setopt_array($curl2, array(
+					  CURLOPT_URL => $del_url.'?filter_codes='.$order->postcode,
+					  CURLOPT_RETURNTRANSFER => true,
+					  CURLOPT_ENCODING => '',
+					  CURLOPT_MAXREDIRS => 10,
+					  CURLOPT_TIMEOUT => 0,
+					  CURLOPT_FOLLOWLOCATION => true,
+					  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+					  CURLOPT_CUSTOMREQUEST => 'GET',
+					  CURLOPT_HTTPHEADER => array(
+						'Authorization: Token '.$token,
+						'Content-Type: application/json'
+					  ),
+					));
 			$response2 = curl_exec($curl2);
 			curl_close($curl2);
 			$new_val2 = json_decode($response2, true);
 			if($new_val2 != NULL){
 				$curl = curl_init();
 				if($order->payment_method == "cod"){
-					curl_setopt_array($curl, array(
-					  CURLOPT_URL => $curlopt_url,
-					  CURLOPT_RETURNTRANSFER => true,
-					  CURLOPT_ENCODING => '',
-					  CURLOPT_MAXREDIRS => 10,
-					  CURLOPT_TIMEOUT => 0,
-					  CURLOPT_FOLLOWLOCATION => true,
-					  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-					  CURLOPT_CUSTOMREQUEST => 'POST',
-					  CURLOPT_POSTFIELDS =>'format=json&data={
-					  "shipments": [
-						{
-						  "add": "'.$order->address_1.', '.$order->address_2.'",
-						  "phone": '.$order->phone.',
-						  "payment_mode": "COD",
-						  "name": "'.$order->first_name.' '.$order->last_name.'",
-						  "pin": '.$order->postcode.',
-						  "cod_amount":'.$order->total.',
-						  "order": "blah_'.$order->id.'",
-						  "shipping_mode" : "Surface",
-						  "products_desc": "'.$product_name.'"
-						}
-					  ],
-					  "pickup_location": 
-						{
-						  "city": "'.$city.'",
-						  "name": "'.$name.'",
-						  "pin": "'.$pin.'",
-						  "country": "'.$country.'",
-						  "phone": "'.$phone.'",
-						  "add": "'.$add.'"
-						}
-					}',
-					  CURLOPT_HTTPHEADER => array(
-						'Authorization: Token '.$token,
-						'Content-Type: application/json',
-						'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'
-					  ),
-					));
+					$payment_mode = "COD";
 				}else{
-					curl_setopt_array($curl, array(
-					  CURLOPT_URL => $curlopt_url,
-					  CURLOPT_RETURNTRANSFER => true,
-					  CURLOPT_ENCODING => '',
-					  CURLOPT_MAXREDIRS => 10,
-					  CURLOPT_TIMEOUT => 0,
-					  CURLOPT_FOLLOWLOCATION => true,
-					  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-					  CURLOPT_CUSTOMREQUEST => 'POST',
-					  CURLOPT_POSTFIELDS =>'format=json&data={
-					  "shipments": [
-						{
-						  "add": "'.$order->address_1.', '.$order->address_2.'",
-						  "phone": '.$order->phone.',
-						  "payment_mode": "Prepaid",
-						  "name": "'.$order->first_name.' '.$order->last_name.'",
-						  "pin": '.$order->postcode.',
-						  "cod_amount":'.$order->total.',
-						  "order": "blah_'.$order->id.'",
-						  "shipping_mode" : "Surface",
-						  "products_desc": "'.$product_name.'"
-						}
-					  ],
-					  "pickup_location": 
-						{
-						  "city": "'.$city.'",
-						  "name": "'.$name.'",
-						  "pin": "'.$pin.'",
-						  "country": "'.$country.'",
-						  "phone": "'.$phone.'",
-						  "add": "'.$add.'"
-						}
-					}',
-					  CURLOPT_HTTPHEADER => array(
-						'Authorization: Token '.$token,
-						'Content-Type: application/json',
-						'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'
-					  ),
-					));
+					$payment_mode = "Prepaid";
 				}
 
-				$response = curl_exec($curl);
-
-				curl_close($curl);
-
+				$postfields = 'format=json&data={
+					  "shipments": [
+						{
+						  "add": "'.$order->address_1.', '.$order->address_2.'",
+						  "phone": '.$order->phone.',
+						  "payment_mode": "'.$payment_mode.'",
+						  "name": "'.$order->first_name.' '.$order->last_name.'",
+						  "pin": '.$order->postcode.',
+						  "cod_amount":'.$order->total.',
+						  "order": "'.$order_prefix.$order->id.'",
+						  "shipping_mode" : "Surface",
+						  "products_desc": "'.$product_name.'"
+						}
+					  ],
+					  "pickup_location": 
+						{
+						  "city": "'.$city.'",
+						  "name": "'.$name.'",
+						  "pin": "'.$pin.'",
+						  "country": "'.$country.'",
+						  "phone": "'.$phone.'",
+						  "add": "'.$add.'"
+						}
+					}';
+				
+				//echo $postfields;
+				
+					curl_setopt_array($curl, array(
+					  CURLOPT_URL => $curlopt_url,
+					  CURLOPT_RETURNTRANSFER => true,
+					  CURLOPT_ENCODING => '',
+					  CURLOPT_MAXREDIRS => 10,
+					  CURLOPT_TIMEOUT => 0,
+					  CURLOPT_FOLLOWLOCATION => true,
+					  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+					  CURLOPT_CUSTOMREQUEST => 'POST',
+					  CURLOPT_POSTFIELDS => $postfields,
+					  CURLOPT_HTTPHEADER => array(
+						'Authorization: Token '.$token,
+						'Content-Type: application/json',
+						'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'
+					  ),
+					));
+					$response = curl_exec($curl);
+					curl_close($curl);
 				$new_val = json_decode($response, true);
-
-
-				// var_dump($new_val["packages"][0]["waybill"]); die;
+				// var_dump($new_val["packages"]); die;
 
 				// if(isset($new_val["packages"])){
 					if(!empty($new_val["packages"])){
 						$wbill = $new_val["packages"][0]["waybill"];
 						$o_id = $order_id;
-
 						$order_items =DB::table("waybill")
 							->where('waybill.vid',$request->vid)
 							->where('waybill.order_id',$order_id)->get()->toArray();
-
-
 						if(empty($order_items)){
-
-
 							DB::table('waybill')->insert(
 							    ['vid' => $request->vid, 'order_id' => $order_id, 'waybill_no' => $wbill, 'date_created' => date("Y-m-d h:i:s")]
 							);
 							DB::table('orders')
 				              ->where('oid', $order_id)
 				              ->where('vid', $request->vid)
-				              ->update(['status' => "intransit"]);
-
+				              ->update(['status' => "packed"]);
 				              $curl = curl_init();
-
-
 				              $vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
-
-
 							    curl_setopt_array($curl, array(
-
 							    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$order_id.'?status=intransit',
 							    CURLOPT_RETURNTRANSFER => true,
 							    CURLOPT_ENCODING => '',
@@ -603,10 +666,7 @@ class OrderController extends Controller
 							    $response = curl_exec($curl);
 							    curl_close($curl);
 							    $jsonResp = json_decode($response);
-
-
 							$curl2 = curl_init();
-
 							curl_setopt_array($curl2, array(
 							  CURLOPT_URL => $vendor[0]->url.'/wp-json/waybill/waybill_data?order_id='.$order_id.'&waybill_no='.$new_val["packages"][0]["waybill"],
 							  CURLOPT_RETURNTRANSFER => true,
@@ -621,11 +681,13 @@ class OrderController extends Controller
 						    $response2 = curl_exec($curl2);
 						    curl_close($curl2);
 						    $jsonResp2 = json_decode($response2);
-						    
-
 							return response()->json(['error' => false, 'msg' => "WayBill successfully added.","ErrorCode" => "000"],200);
 						}else{
-							return response()->json(['error' => true, 'msg' => "Something went wrong.","ErrorCode" => -2],200);
+							DB::table('orders')
+				              ->where('oid', $order_id)
+				              ->where('vid', $request->vid)
+				              ->update(['status' => "packed"]);
+							return response()->json(['error' => true, 'msg' => "Already Assign AWB No.","ErrorCode" => -2],200);
 						}
 					}else{
 						return response()->json(['error' => true, 'msg' => $new_val['rmk'],"ErrorCode" => -2],200);
@@ -638,13 +700,9 @@ class OrderController extends Controller
 		              ->where('oid', $order_id)
 		              ->where('vid', $request->vid)
 		              ->update(['status' => "on-hold"]);
-
 		              $curl = curl_init();
-
 		              $vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
-
 					    curl_setopt_array($curl, array(
-
 					    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$order_id.'?status=on-hold',
 					    CURLOPT_RETURNTRANSFER => true,
 					    CURLOPT_ENCODING => '',
@@ -654,76 +712,95 @@ class OrderController extends Controller
 					    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 					    CURLOPT_CUSTOMREQUEST => 'PUT',
 					    CURLOPT_HTTPHEADER => array(
-
 					        'Authorization: Basic '.$vendor[0]->token
 					      ),
 					    ));
-
 					    $response = curl_exec($curl);
 					    curl_close($curl);
 					    $jsonResp = json_decode($response);
-
 		        return response()->json(['error' => false, 'msg' => "No WayBill generate so status set to on-hold.","ErrorCode" => "000"],200);
 			}
 		}
   	}
+	  	function changeStatus(Request $request){
+	  		$listImp=explode(',',$request->selectall);
+	  	  		for($i=0;$i<count($listImp); $i++)
+	  		          {
+		  				DB::table('orders')
+			          ->where('oid', intval($listImp[$i]))
+			          ->where('vid', intval($request->vid))
+			          ->update(['status' => $request->status_assign]);
+					// print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
+					// https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
+				$vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
+					          $curl = curl_init();
+				    curl_setopt_array($curl, array(
+				    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$listImp[$i].'?status='.$request->status_assign,
+				    CURLOPT_RETURNTRANSFER => true,
+				    CURLOPT_ENCODING => '',
+				    CURLOPT_MAXREDIRS => 10,
+				    CURLOPT_TIMEOUT => 0,
+				    CURLOPT_FOLLOWLOCATION => true,
+				    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+				    CURLOPT_CUSTOMREQUEST => 'PUT',
+				    CURLOPT_HTTPHEADER => array(
 
-  	function changeStatus(Request $request){
-  		DB::table('orders')
-          ->where('oid', $request->oid)
-          ->where('vid', $request->vid)
-          ->update(['status' => $request->status_assign]);
+				        'Authorization: Basic '.$vendor[0]->token
+				      ),
+				    ));
 
-			// print_r($woocommerce->put('orders/'.$request->oid, $data)); die;
-			// https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
-		$vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
-		
-          $curl = curl_init();
+				    $response = curl_exec($curl);
+				    curl_close($curl);
+				    $jsonResp = json_decode($response);
+					// var_dump($jsonResp);
+	  		}
+	  		return response()->json(['error' => false, 'msg' => "Order Status successfully updated.","ErrorCode" => "000"],200);
+	  	}
 
-		    curl_setopt_array($curl, array(
+	  	function changeOrderStatus($vid,$oid,$status){
+  				DB::table('orders')
+			          ->where('oid', intval($oid))
+			          ->where('vid', intval($vid))
+			          ->update(['status' => $status]);
+					// print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
+					// https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
+				$vendor =DB::table("vendors")->where('id','=',intval($oid))->get();
+					          $curl = curl_init();
+				    curl_setopt_array($curl, array(
+				    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$oid.'?status='.$status,
+				    CURLOPT_RETURNTRANSFER => true,
+				    CURLOPT_ENCODING => '',
+				    CURLOPT_MAXREDIRS => 10,
+				    CURLOPT_TIMEOUT => 0,
+				    CURLOPT_FOLLOWLOCATION => true,
+				    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+				    CURLOPT_CUSTOMREQUEST => 'PUT',
+				    CURLOPT_HTTPHEADER => array(
 
-		    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$request->oid.'?status='.$request->status_assign,
-		    CURLOPT_RETURNTRANSFER => true,
-		    CURLOPT_ENCODING => '',
-		    CURLOPT_MAXREDIRS => 10,
-		    CURLOPT_TIMEOUT => 0,
-		    CURLOPT_FOLLOWLOCATION => true,
-		    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		    CURLOPT_CUSTOMREQUEST => 'PUT',
-		    CURLOPT_HTTPHEADER => array(
+				        'Authorization: Basic '.$vendor[0]->token
+				      ),
+				    ));
 
-		        'Authorization: Basic '.$vendor[0]->token
-		      ),
-		    ));
-
-		    $response = curl_exec($curl);
-		    curl_close($curl);
-		    $jsonResp = json_decode($response);
-			// var_dump($jsonResp);
-
-        return response()->json(['error' => false, 'msg' => "Order Status successfully updated.","ErrorCode" => "000"],200);
-  	}
-
+				    $response = curl_exec($curl);
+				    curl_close($curl);
+				    $jsonResp = json_decode($response);
+	  		return response()->json(['error' => false, 'msg' => "Order Status successfully updated.","ErrorCode" => "000"],200);
+	  	}
   	function printSlip(Request $request){
+  		$d = new DNS1D();
   		// create new PDF document
     	$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-    
-    	// set document information
+        	// set document information
     	$pdf::SetTitle('Slip');
-    
-    	// set default monospaced font
+        	// set default monospaced font
     	$pdf::SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
     	$pdf::SetPrintHeader(false);
 		$pdf::SetPrintFooter(false);
-    
-    	// set auto page breaks
+        	// set auto page breaks
     	$pdf::SetAutoPageBreak(TRUE, 0);
-    
-    	// set image scale factor
+        	// set image scale factor
     	$pdf::setImageScale(PDF_IMAGE_SCALE_RATIO);
-    	
-    	$pdf::SetFont('helvetica', '', 10);
-
+    	    	$pdf::SetFont('helvetica', '', 10);
         // define barcode style
         $style = array(
             'position' => 'C',
@@ -745,8 +822,7 @@ class OrderController extends Controller
 		$orders =DB::table("orders")
 		  	->join('billings','orders.oid','=','billings.order_id')	
 		  	->where('orders.vid',$request->vid)
-			->where('orders.status','intransit')->get();
-
+			->where('orders.status','packed')->get();
 		// dd($orders); die;
 	    $i=1;
 		foreach($orders as $order){
@@ -756,16 +832,29 @@ class OrderController extends Controller
 			  	->where('order_id',$oid)->get()->toArray();
 			if(!empty($results2)){
 				$wbill = $results2[0]->waybill_no;
+
+				$img_base64_encoded = 'data:image/png;base64,'. $d->getBarcodePNG($wbill, 'C128', 3,33,array(1,1,1));
+		  		$params = '<img src="@' . preg_replace('#^data:image/[^;]+;base64,#', '', $img_base64_encoded) . '">';
+
+		  		$img_base64_encoded2 = 'data:image/png;base64,'. $d->getBarcodePNG($order->oid, 'C128', 3,33,array(1,1,1));
+		  		$params2 = '<img src="@' . preg_replace('#^data:image/[^;]+;base64,#', '', $img_base64_encoded2) . '">';
 			}else{
 				$wbill = "";
+				$params = "";
+
+		  		$img_base64_encoded2 = 'data:image/png;base64,'. $d->getBarcodePNG($order->oid, 'C128', 3,33,array(1,1,1));
+		  		$params2 = '<img src="@' . preg_replace('#^data:image/[^;]+;base64,#', '', $img_base64_encoded2) . '">';
 			}
 	// 	    $pdf::Cell(0, 0, 'CODABAR', 0, 1);
 	//         $params = $pdf::write1DBarcode($order->id, 'CODABAR', '', '', '', 18, 0.4, $style, 'N');
-			$params = $pdf::serializeTCPDFtagParameters(array($wbill, 'C128', '', '', '', 18, 1.0, $style, 'N'));
-			$params2 = $pdf::serializeTCPDFtagParameters(array($order->oid, 'C128', '', '', '', 18, 1.0, $style, 'N'));
+			// $params_d = $pdf::serializeTCPDFtagParameters(array($wbill, 'C128', '', '', '', 18, 1.0, $style, 'N'));
+			// $params2_d = $pdf::serializeTCPDFtagParameters(array($order->oid, 'C128', '', '', '', 18, 1.0, $style, 'N'));
+			
+
+	  		// echo $params2; die;
+			
 	    	// define some HTML content with style
 	$html2 = '<style type="text/css">
-
 	@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap");
 	table, th, td, p, div, h1, h2, h3, h4, h5, h6 {font-family: "Poppins", sans-serif;}
 	table, th, td {  border:1px solid black; border-collapse: collapse; margin: 0 auto;}
@@ -826,8 +915,7 @@ class OrderController extends Controller
 				<table width="100%" cellpadding="5" class="child_table customer_awb">
 	                <tbody>
 	                    <tr>
-	                        <td width="660" align="center"><span class="awb_text">AWB : '.$wbill.'</span><br/><tcpdf method="write1DBarcode" params="' . $params . '" />
-							</td>
+	                        <td width="660" align="center"><span class="awb_text">AWB : '.$wbill.'</span><br/>' . $params . '</td>
 	                    </tr>
 	                </tbody>
 				</table>
@@ -881,8 +969,8 @@ class OrderController extends Controller
 	                    </tr>
 	                    <tr>
 	                        <td rowspan="2" colspan="4" class="bottom_barcode">
-	                            '.$order->oid;
-	$html2 .= '<tcpdf method="write1DBarcode" params="' . $params2 . '" />';
+	                            '.$order->oid.'<br>'.$params2;
+	// $html2 .= '<tcpdf method="write1DBarcode" params="' . $params2 . '" />';
 	                        $html2 .= '</td>
 	                        <td width="90">Serv.Charges</td>
 	                        <td width="100">Payable AMT.</td>
@@ -933,6 +1021,7 @@ class OrderController extends Controller
   	}
 
   	function printOrderSlip(Request $request){
+  		$d = new DNS1D();
   		// create new PDF document
     	$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
     
@@ -974,7 +1063,7 @@ class OrderController extends Controller
 		  	->join('billings','orders.oid','=','billings.order_id')	
 		  	->where('orders.vid',$request->vid)
 		  	->where('orders.oid',$request->oid)
-			->where('orders.status','intransit')->get();
+			->where('orders.status','packed')->get();
 
 		$oid = $request->oid;
 		$results2 =DB::table("waybill")	
@@ -982,16 +1071,34 @@ class OrderController extends Controller
 		  	->where('order_id',$oid)->get()->toArray();
 		if(!empty($results2)){
 			$wbill = $results2[0]->waybill_no;
+
+	  		$img_base64_encoded = 'data:image/png;base64,'. $d->getBarcodePNG($wbill, 'C128', 3,33,array(1,1,1));
+	  		$params = '<img src="@' . preg_replace('#^data:image/[^;]+;base64,#', '', $img_base64_encoded) . '">';
+
+	  		$img_base64_encoded2 = 'data:image/png;base64,'. $d->getBarcodePNG($oid, 'C128', 3,33,array(1,1,1));
+	  		$params2 = '<img src="@' . preg_replace('#^data:image/[^;]+;base64,#', '', $img_base64_encoded2) . '">';
 		}else{
 			$wbill = "";
+			$params = "";
+	  		$img_base64_encoded2 = 'data:image/png;base64,'. $d->getBarcodePNG($oid, 'C128', 3,33,array(1,1,1));
+	  		$params2 = '<img src="@' . preg_replace('#^data:image/[^;]+;base64,#', '', $img_base64_encoded2) . '">';
 		}
 	    $i=1;
+	    // $params = $d->getBarcodeHTML($wbill, 'C128');
+  		// $params = '<img src="data:image/png;base64,' . $d->getBarcodePNG($wbill, 'C128', 3,33,array(1,1,1)) . '" alt="barcode"   />';
+		// $params2 = $d->getBarcodeHTML($oid, 'C128');
+  		// $params2 = '<img src="data:image/png;base64,' . $d->getBarcodePNG($oid, 'C128', 3,33,array(1,1,1)) . '" alt="barcode"   />';
+		
+		
+		// echo $params2; die;
+    	// var_dump($pdf::write1DBarcode($wbill, 'C128', '', '', '', 18, 1.0, $style, 'N')); die;
 		foreach($orders as $order){
 	// 	    $pdf::Cell(0, 0, 'CODABAR', 0, 1);
 	//         $params = $pdf::write1DBarcode($order->id, 'CODABAR', '', '', '', 18, 0.4, $style, 'N');
-			$params = $pdf::serializeTCPDFtagParameters(array($wbill, 'C128', '', '', '', 18, 1.0, $style, 'N'));
-			$params2 = $pdf::serializeTCPDFtagParameters(array($oid, 'C128', '', '', '', 18, 1.0, $style, 'N'));
-	    	// define some HTML content with style
+			// $params = $pdf::serializeTCPDFtagParameters(array($wbill, 'C128', '', '', '', 18, 1.0, $style, 'N'));
+			// $params2 = $pdf::serializeTCPDFtagParameters(array($oid, 'C128', '', '', '', 18, 1.0, $style, 'N'));
+			// define some HTML content with style
+
 	$html2 = '<style type="text/css">
 
 	@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap");
@@ -1054,8 +1161,9 @@ class OrderController extends Controller
 				<table width="100%" cellpadding="5" class="child_table customer_awb">
 	                <tbody>
 	                    <tr>
-	                        <td width="660" align="center"><span class="awb_text">AWB : '.$wbill.'</span><br/><tcpdf method="write1DBarcode" params="' . $params . '" />
-							</td>
+	                        <td width="660" align="center"><span class="awb_text">AWB : '.$wbill.'</span><br/>'.$params;
+	                        //<tcpdf method="write1DBarcode" params="' . $params . '" />
+							$html2 .= '</td>
 	                    </tr>
 	                </tbody>
 				</table>
@@ -1109,8 +1217,8 @@ class OrderController extends Controller
 	                    </tr>
 	                    <tr>
 	                        <td rowspan="2" colspan="4" class="bottom_barcode">
-	                            '.$oid;
-	$html2 .= '<tcpdf method="write1DBarcode" params="' . $params2 . '" />';
+	                            '.$oid.'<br/>'.$params2;
+	// $html2 .= '<tcpdf method="write1DBarcode" params="' . $params2 . '" />';
 	                        $html2 .= '</td>
 	                        <td width="90">Serv.Charges</td>
 	                        <td width="100">Payable AMT.</td>
@@ -1142,7 +1250,6 @@ class OrderController extends Controller
 	                </tr>
 				</table>
 	</div>';
-
 	    	// add a page
 	    	$pdf::AddPage();
 			
@@ -1171,12 +1278,11 @@ class OrderController extends Controller
 
     public function city_Search(Request $request)
 	{
-		
-       	// $order=orders::whereBetween('date_created_gmt',$range)->get();
-       
-                      
+		       	// $order=orders::whereBetween('date_created_gmt',$range)->get();                 
        	$order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-	         ->Where('city', 'like', '%' . $request->city . '%')->get();
+       	         ->Where('billings.city', 'like', '%' . $request->city . '%')
+       	         ->where('orders.vid',$request->vid)
+	              ->get();
 	          // ->select("orders.*","billings.*","line_items.*",
 
 	          //           DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
@@ -1188,44 +1294,179 @@ class OrderController extends Controller
 
         return $order;
     }
+    public function get_processing_data($vid)
+	    	{
+	  		    $orders =DB::table("orders")
+	  		       ->join('billings','orders.oid','=','billings.order_id')
+			  		->where('orders.vid',$vid)
+		       ->where('orders.status',"processing")
+		       ->select("orders.*","billings.*",
+		        		DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vid)." GROUP BY line_items.order_id) as quantity"),
+		        		DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vid)." limit 1) as name"),
+		        		DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vid)." limit 1) as sku"))
+		       ->orderBy('oid','DESC')
+		        ->get();
+		        
+				return $orders;
+	  		}
+
     public function state_Search(Request $request)
 	{
-		
-       	// $order=orders::whereBetween('date_created_gmt',$range)->get();
-       
-                      
+		       	// $order=orders::whereBetween('date_created_gmt',$range)->get();      
        	$order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
 	         ->Where('state', 'like', '%' . $request->state . '%')->get();
 	          // ->select("orders.*","billings.*","line_items.*",
-
 	          //           DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-
 	          //                       WHERE line_items.order_id = orders.oid
-
 	          //                       GROUP BY line_items.order_id) as quantity"))
 	          // ->get();
-
         return $order;
     }
-    public function status_Search(Request $request)
-	{
+		    public function state_data(Request $request)
+		    	{
+			       	$order =DB::table('billings')
+				       	     ->distinct()
+				       	     ->select('billings.state')
+			       		 	 ->get();     
+			        return $order;
+			    }
+			public function city_data(Request $request)
+		    	{
+			       	$order =DB::table('billings')
+				       	     ->distinct()
+				       	     ->select('billings.city')
+			       		 	 ->get();     
+			        return $order;
+			    }
+				    public function status_data(Request $request)
+			    	{
+				       	$order = DB::table("orders")
+					       	     ->distinct()
+					       	     ->select('orders.status')
+				       		 	 ->get();     
+				        return $order;
+				    }
+		    public function status_Search(Request $request)
+				{
+             	$order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
+       	         ->Where('orders.status', 'like', '%' . $request->status . '%')
+       	         ->where('orders.vid',$request->vid)
+	              ->get();
+	              return $order;
+			     }
+		  	function Refundchange_Status(Request $request)
+		  		{
+  					$imp = explode(',', $request->allSelected);
+				  		for ($i=0; $i < count($imp); $i++) 
+				  			{ 
+					  		   DB::table('orders')
+					          ->where('oid', $imp[$i])
+					          ->where('vid', $request->vid)
+					          ->update(['status' => $request->status]);
+
+								$vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
+						        $curl = curl_init();
+							    curl_setopt_array($curl, array(
+							    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$imp[$i].'?status='.$request->status,
+							    CURLOPT_RETURNTRANSFER => true,
+							    CURLOPT_ENCODING => '',
+							    CURLOPT_MAXREDIRS => 10,
+							    CURLOPT_TIMEOUT => 0,
+							    CURLOPT_FOLLOWLOCATION => true,
+							    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+							    CURLOPT_CUSTOMREQUEST => 'PUT',
+							    CURLOPT_HTTPHEADER => array(
+			       				 'Authorization: Basic '.$vendor[0]->token
+			      			),
+			    		));
+							    $response = curl_exec($curl);
+							    curl_close($curl);
+							    $jsonResp = json_decode($response);
+						    }
+	        			return response()->json(['error' => false, 'msg' => "Order Status successfully updated.","ErrorCode" => "000"],200);
+  				}
+
+			function download_Sheet(Request $request){
+ 
+		    $orderItems =DB::table("line_items")->where('line_items.vid',$request->vid)
+	        ->join('orders','orders.oid','=','line_items.order_id')
+	        	->select("line_items.sku as SKU","line_items.name as Name","line_items.quantity as Qty","line_items.parent_name as Parent","line_items.order_id as OrderID","orders.date_created as Date") 
+
+	        	->whereIn('line_items.order_id', [$request->selectedval])
+
+	        ->orderBy('oid','DESC')
+	         ->get();
+	         return $orderItems;
+	  	}
+
+	  	function changeProcessing_Status(Request $request){
+	  		// var_dump($request->allSelected);
+	  		if($request->allSelected == "false"){
+	  			$listImp['0'] = $request->oid;
+	  		// var_dump($listImp); die;
+	  		}else{
+	  			$listImp=explode(',',$request->allSelected);
+	  		}
+
+	  	  		for($i=0;$i<count($listImp); $i++)
+	  		          {
+		  				DB::table('orders')
+			          ->where('oid', intval($listImp[$i]))
+			          ->where('vid', intval($request->vid))
+			          ->update(['status' => $request->status_assign]);
+					// print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
+					// https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
+				$vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
+					          $curl = curl_init();
+				    curl_setopt_array($curl, array(
+				    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$listImp[$i].'?status='.$request->status_assign,
+				    CURLOPT_RETURNTRANSFER => true,
+				    CURLOPT_ENCODING => '',
+				    CURLOPT_MAXREDIRS => 10,
+				    CURLOPT_TIMEOUT => 0,
+				    CURLOPT_FOLLOWLOCATION => true,
+				    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+				    CURLOPT_CUSTOMREQUEST => 'PUT',
+				    CURLOPT_HTTPHEADER => array(
+
+				        'Authorization: Basic '.$vendor[0]->token
+				      ),
+				    ));
+
+				    $response = curl_exec($curl);
+				    curl_close($curl);
+				    $jsonResp = json_decode($response);
+					// var_dump($jsonResp);
+	  		}
+	  		return response()->json(['error' => false, 'msg' => "Order Status successfully updated.","ErrorCode" => "000"],200);
+	  	}
+
+	  	public function getProcessingOrder_Details(Request $request)
+		{
+			$vendor = $request->vid;
+			if($vendor != null){
+				$orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
+				   // ->join('waybill','orders.oid','=','waybill.order_id')
+		          ->where('orders.vid','=',intval($vendor))
+		          ->where('billings.vid','=',intval($vendor))
+		          ->orderBy('oid','DESC')
+		           // ->select("orders.*","waybill.waybill_no","orders.status as orderstatus","billings.*",
+		          ->select("orders.*","orders.status as orderstatus","billings.*",
+		                    DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = ".intval($vendor)." GROUP BY line_items.order_id) as quantity"))
+		          	          ->get();
+		       
+		    }else{
+		    	$orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
+		    	->orderBy('oid', 'DESC')
+		          ->select("orders.*","orders.status as orderstatus","billings.*",
+		                    DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+		                                WHERE line_items.order_id = orders.oid
+		                                GROUP BY line_items.order_id) as quantity"))    
+		          ->get();
+		        }
+	        return $orders;
+		}
+
 		
-       	// $order=orders::whereBetween('date_created_gmt',$range)->get();
-       
-                      
-       	$order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-	         ->Where('status', 'like', '%' . $request->status . '%')->get();
-	          // ->select("orders.*","billings.*","line_items.*",
-
-	          //           DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-
-	          //                       WHERE line_items.order_id = orders.oid
-
-	          //                       GROUP BY line_items.order_id) as quantity"))
-	          // ->get();
-	         return $order;
-	     }
-
-
-
-}
+  	
+	}
