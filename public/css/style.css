@@ -22170,9 +22170,9 @@ label{
     color: #fff !important;
 }
 
-.v-sidebar-menu .vsm--link:hover:before {
+/*.v-sidebar-menu .vsm--link:hover:before {
     background: #7467ff !important;
-}
+}*/
 
 .v-sidebar-menu.vsm_expanded .vsm--item_open .vsm--link_level-1 {
     background-color: #4B49AC !important;
@@ -22654,7 +22654,18 @@ content: '\f105';
 .Package-Details h1 a{ color: #000000; }
 .Package-Details h1{padding: 18px;}
 
+.text-info input {
+    display: flex;
+    height: auto!important;
+    float: left;
+    align-items: center;
+}
 
+.text-info {
+    color: #000 !important;
+    margin-left: 5px;
+    display: block;
+}
 
 @media (max-width: 1600px) {
 

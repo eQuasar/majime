@@ -9,28 +9,18 @@
         <b-row>
             <b-col xl="12" lg="12" md="12">
                 <div class="list-appointments content_bar">
-                    <div class="card-body card">
-                        <b-row>
-                           <div class="select-list">
-                        <!-- <b-col xl="3" lg="3" md="3">
-                          <select v-model="status" @change="Pendingassign_status($event)" class="form-control custom-select">
-                            <option value="null" disabled>Select status</option>
-                            <option value="intransit">intransit</option>
-                            <option value="processing">processing</option>
-                            <option value="dtobooked">dtobooked</option>
-                            <option value="cancelled">cancelled</option>
-                        </select>
-                    </b-col>
-                   -->
-                </div>
-                    <b-col>
-                      <button type="button" class="download-btn btn btn-primary" v-on:click="confirmstatus">Confirm</button>
-                    </b-col>
-                    <b-col>
-                      <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download</button>
-                    </b-col>
-                        </b-row>
-                  </div>
+                        <div class="card-body card">
+                            <b-row>
+                              <b-col xl="6" lg="6" md="6" class="search_field">
+                                    <b-form-input id="filter-input" v-model="filter" type="search" placeholder="Type to Search"></b-form-input>
+                                    <b-input-group-append><b-button :disabled="!filter" @click="filter = ''">Clear</b-button></b-input-group-append>
+                                </b-col>
+                                <b-col xl="6" lg="6" md="6">
+                                    <button type="button" class="download-btn btn btn-primary" v-on:click="download" style=" margin-left: 15px;">Download</button>
+                                    <button type="button" class="download-btn btn btn-primary" v-on:click="confirmstatus">Confirm</button>                                    
+                                </b-col>                                
+                            </b-row>
+                        </div>
                         <br>
                         <div class="groomer-page">
 
@@ -50,7 +40,7 @@
                               show-empty
                           >
                             <template #head(select)="data">
-                              <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="selectallcheckbox"> {{ data.label }}</span>
+                              <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="selectallcheckbox">&nbsp;{{ data.label }}</span>
                             </template>
                             <template #empty="scope">
                               <p style="text-align: center;">No record found, choose date filter to found the result.</p>

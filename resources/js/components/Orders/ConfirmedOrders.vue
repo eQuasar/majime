@@ -7,56 +7,36 @@
     </div>
     <div class="content_bar ">
         <div class="card-body card">
-          <div class="call-center-dashboard">
-          <b-row>
-            <b-col xl="9" lg="9" md="9">
+    <div class="call-center-dashboard">
+        <b-row>
+          <b-col xl="6" lg="6" md="6" class="search_field">
+                <b-form-input id="filter-input" v-model="filter" type="search" placeholder="Type to Search"></b-form-input>
+                <b-input-group-append><b-button :disabled="!filter" @click="filter = ''">Clear</b-button></b-input-group-append>
             </b-col>
-            <b-col>
-                <button type="button" class="download-btn btn btn-primary" v-on:click="confirmAssignAWB">Assign AWB</button>
-            </b-col>
-            <b-col>
+            <b-col xl="6" lg="6" md="6">
+                <button type="button" class="download-btn btn btn-primary" v-on:click="confirmAssignAWB" style="margin-left: 15px;">Assign AWB</button>
                 <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download Pickup List</button>
-            </b-col>
-          </b-row>
-         <div class="blue-bar"></div>
+            </b-col>            
+        </b-row>
+        <div class="blue-bar"></div>
         <div class="content_bar card list-appointments space-bottom">
-          <div class="col-sm-12">
-            <b-row>
-              <b-col xl="4" lg="4" md="4">
-                <b-form-group
-                  class="mb-0"
-                >
-                 Show <b-form-select
-                    id="per-page-select"
-                    v-model="perPage"
-                    :options="pageOptions"
-                    size="sm"
-                  ></b-form-select> entries
-                </b-form-group>
-              </b-col>
-              <b-col xl="8" lg="8" md="8" class="search_field">
-                <b-form-input
-                    id="filter-input"
-                    v-model="filter"
-                    type="search"
-                    placeholder="Type to Search"
-                  ></b-form-input>
-                  <b-input-group-append>
-                    <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
-                  </b-input-group-append>
-              </b-col>
-            </b-row>
-          </div>
-       </div>
+            <div class="col-sm-12">
+                <b-row>
+                    <b-col xl="4" lg="4" md="4">
+                        <b-form-group class="mb-0"> Show <b-form-select id="per-page-select" v-model="perPage" :options="pageOptions" size="sm"></b-form-select> entries </b-form-group>
+                    </b-col>
+                </b-row>
+            </div>
         </div>
-        </div>
+    </div>
+</div>
         <br>
          <b-table striped hover responsive :items="items"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       sort-icon-left :filter-included-fields="filterOn" :filter="filter" :fields="fields" :per-page="perPage" :current-page="currentPage" show-empty>
             <template #head(select)="data">
-              <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="selectallcheckbox"> {{ data.label }}</span>
+              <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="selectallcheckbox">&nbsp;{{ data.label }}</span>
             </template>
             <template #empty="scope">
               <p style="text-align:center;">No record found, choose date filter to found the result.</p>

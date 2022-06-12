@@ -1,24 +1,30 @@
 <template>
-    <b-container fluid>
-        <div class="header_title">
-            <div class="header_inner">
-                <h2><strong>Packed Orders</strong></h2>
-            </div>
-        </div>
-        <div class="clear">&nbsp;</div>
+  <b-container fluid>
+    <!-- header -->
+    <div class="header_title">
+      <div class="header_inner">
+        <h2><strong>Packed Orders</strong></h2>
+      </div>
+    </div>
+
+    <div class="clear">&nbsp;</div>
+
         <b-row>
             <b-col xl="12" lg="12" md="12">
                 <div class="list-appointments content_bar">
-                      <div class="card-body card">
-                          <b-row>
-                              <b-col xl="10" lg="10" md="10">
-                                <button type="button" class="download-btn btn btn-primary" v-on:click="confirmstatus">Dispatch</button>
-                              </b-col>
-                              <b-col xl="2" lg="2" md="2">
-                                <button type="button" class="download-btn btn btn-primary" v-on:click="printSlip">Print Slip</button>
-                              </b-col>
-                          </b-row>
-                        </div>
+<div class="card-body card">
+    <b-row>
+      <b-col xl="6" lg="6" md="6" class="search_field">
+            <b-form-input id="filter-input" v-model="filter" type="search" placeholder="Type to Search"></b-form-input>
+            <b-input-group-append><b-button :disabled="!filter" @click="filter = ''">Clear</b-button></b-input-group-append>
+        </b-col>
+        <b-col xl="6" lg="6" md="6">
+            <button type="button" class="download-btn btn btn-primary" v-on:click="confirmstatus" style="margin-left: 15px;">Dispatch</button>
+            <button type="button" class="download-btn btn btn-primary" v-on:click="printSlip">Print Slip</button>
+        </b-col>
+        
+    </b-row>
+</div>
                         <br>
                         <div class="groomer-page">
                           <b-table
@@ -37,7 +43,7 @@
                               show-empty
                           >
                               <template #head(select)="data">
-                              <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="selectallcheckbox"> {{ data.label }}</span>
+                              <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="selectallcheckbox">&nbsp;{{ data.label }}</span>
                               </template>
                               <template #empty="scope">
                                 <p style="text-align: center;">No record found, choose date filter to found the result.</p>

@@ -47,7 +47,7 @@
                               show-empty
                           >
                             <template #head(select)="data">
-                              <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="allSelected"> {{ data.label }}</span>
+                              <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="allSelected">&nbsp;{{ data.label }}</span>
                             </template>
                             <template #empty="scope">
                               <p style="text-align: center;">No record found, choose date filter to found the result.</p>
