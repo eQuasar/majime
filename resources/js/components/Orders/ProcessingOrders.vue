@@ -16,7 +16,7 @@
                                     <b-input-group-append><b-button :disabled="!filter" @click="filter = ''">Clear</b-button></b-input-group-append>
                                 </b-col>
                                 <b-col xl="6" lg="6" md="6">
-                                    <button type="button" class="download-btn btn btn-primary" v-on:click="download" style=" margin-left: 15px;">Download</button>
+                                    <button type="button" class="download-btn btn btn-primary" v-on:click="ProcessingList_download" style=" margin-left: 15px;">Download</button>
                                     <button type="button" class="download-btn btn btn-primary" v-on:click="confirmstatus">Confirm</button>                                    
                                 </b-col>                                
                             </b-row>
@@ -50,6 +50,9 @@
                             </template>
                             <template v-slot:cell(select)="row">   
                                 <input type="checkbox" :value="row.item.oid" v-model="allSelected">
+                            </template>
+                            <template v-slot:cell(status)="row">
+                              <span :class="row.item.status"> {{(row.item.status)}}</span>
                             </template>
                               <template v-slot:cell(action)="row">
                                <p class="h3 mb-2"><router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
@@ -356,19 +359,35 @@ computed: {
     //              //this.$bvModal.show("modal-1");
     //              // console.log(this.oid);
     // },
-    
-    download : function() {
-                const data = XLSX.utils.json_to_sheet(this.items)
-                const wb = XLSX.utils.book_new()
-                XLSX.utils.book_append_sheet(wb, data, 'data')
-                XLSX.writeFile(wb,'dtobooked_orders.xlsx')
-            },
-  },
 clearData()
     {
       this.oid ='';
     },
 
+        ProcessingList_download()
+      {
+            let formData = new FormData();
+            formData.append("allSelected",this.allSelected)
+            formData.append("vid",this.vid)
+            order.Processing_downloadsheet(formData)
+             .then((response) => {
+              console.log(response.data[0]);
+                  this.items2=response.data[0];
+                  const data = XLSX.utils.json_to_sheet(this.items2)
+                const wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, data, 'data')
+                XLSX.writeFile(wb,'ProcessingList_Downloads.xlsx')
+          })
+          .catch((error) => {
+              console.log(error);
+              if (error.response.status == 422) {
+                  this.errors_create = error.response.data.errors;
+              }
+              // loader.hide();
+          });
+      }, 
+
+  },
 };  
 </script>
 

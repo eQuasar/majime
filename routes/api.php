@@ -25,7 +25,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('getOrderDetails', 'OrderController@getOrderDetails')->name('getOrderDetails');
 	Route::post('getProductdetail',[App\Http\Controllers\ProductController::class,'productDetail']);
 	Route::get('getDashbaord',[App\Http\Controllers\DashboardController::class,'Dashboard_Detail']);
-	Route::get('walletdetail',[App\Http\Controllers\WalletController::class,'Wallet_detail']);
+	Route::post('walletDetail', 'WalletController@walletDetail')->name('walletDetail'); 
 	Route::get('reportdetail',[App\Http\Controllers\ReportController::class,'Report_detail']);
 	Route::get('Accountdetail',[App\Http\Controllers\AccountController::class,'Account_detail']);
 	Route::get('get_orderProfile',[App\Http\Controllers\ReportController::class,'ReportProfile_detail']);
@@ -90,7 +90,10 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('changeProcessing_Status', 'OrderController@changeProcessing_Status')->name('changeProcessing_Status');
     Route::post('getProcessingOrder_Details', 'OrderController@getProcessingOrder_Details')->name('getProcessingOrder_Details');
     Route::get('get_processing_data/{vid}','OrderController@get_processing_data')->name('get_processing_data');
-
-	
+    Route::post('product_Sheet_download', 'ProductController@product_Sheet_download')->name('product_Sheet_download');
+    Route::post('processing_download_Sheet', 'OrderController@processing_download_Sheet')->name('processing_download_Sheet');
+    Route::post('confirm_download_Sheet', 'OrderController@confirm_download_Sheet')->name('confirm_download_Sheet');
+    Route::post('pending_download_Sheet', 'OrderController@pending_download_Sheet')->name('pending_download_Sheet');
+    Route::post('delivery_download_Sheet', 'OrderController@delivery_download_Sheet')->name('delivery_download_Sheet');
 }); 
 

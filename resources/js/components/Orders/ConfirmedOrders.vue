@@ -15,7 +15,7 @@
             </b-col>
             <b-col xl="6" lg="6" md="6">
                 <button type="button" class="download-btn btn btn-primary" v-on:click="confirmAssignAWB" style="margin-left: 15px;">Assign AWB</button>
-                <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download Pickup List</button>
+                <button type="button" class="download-btn btn btn-primary" v-on:click="Confirmdownload">Download Pickup List</button>
             </b-col>            
         </b-row>
         <div class="blue-bar"></div>
@@ -336,17 +336,42 @@ computed: {
               alert('something went wrong');
           })
       },
-      download : function() {
-            const data = XLSX.utils.json_to_sheet(this.packedItems)
-            const wb = XLSX.utils.book_new()
-            XLSX.utils.book_append_sheet(wb, data, 'data')
-            XLSX.writeFile(wb,'readytopack_orders.xlsx')
-        },
-  },
-clearData()
+      clearData()
     {
       this.oid ='';
     },
+//       download : function() {
+//             const data = XLSX.utils.json_to_sheet(this.packedItems)
+//             const wb = XLSX.utils.book_new()
+//             XLSX.utils.book_append_sheet(wb, data, 'data')
+//             XLSX.writeFile(wb,'readytopack_orders.xlsx')
+//         },
+//   },
 
+// };  
+ Confirmdownload()
+      {
+            let formData = new FormData();
+            formData.append("allSelected",this.allSelected)
+            formData.append("vid",this.vid)
+            order.Confirm_downloadsheet(formData)
+             .then((response) => {
+              console.log(response.data[0]);
+                  this.items2=response.data[0];
+                  const data = XLSX.utils.json_to_sheet(this.items2)
+                const wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, data, 'data')
+                XLSX.writeFile(wb,'Confirm_orders.xlsx')
+          })
+          .catch((error) => {
+              console.log(error);
+              if (error.response.status == 422) {
+                  this.errors_create = error.response.data.errors;
+              }
+              // loader.hide();
+          });
+      }, 
+
+  },
 };  
 </script>

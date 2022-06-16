@@ -9,6 +9,7 @@
     <div class="content_bar">
       <div class="select-list">
     <b-row>
+    	
         <b-col xl="3" lg="3" md="3">
             <select class="form-control custom-select" v-model="status" :options="allstatusdata" @change="onChangeStatus($event)">
                 <option disabled value="null">Select status</option>
@@ -70,13 +71,16 @@
               <template v-slot:cell(oid)="row">
                 #{{(row.item.oid)}}
               </template>
+              <template v-slot:cell(status)="row">
+                <span :class="row.item.status"> {{(row.item.status)}}</span>
+              </template>
              
               <template v-slot:cell(select)="row">
                 <input type="checkbox" :value="row.item.oid" v-model="selectall" >
               </template>
               <template v-slot:cell(action)="row">
                <p class="h3 mb-2">   <router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
-                &nbsp;&nbsp; <b-link @click="addstatusOID(row.item.oid)"><b-icon icon="type-strikethrough" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></p>
+                &nbsp;&nbsp; <b-link @click="addstatusOID(row.item.oid)"><b-icon icon="check-square-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></p>
               </template>
       </b-table>
           <div class="text-center" v-if="seen">
@@ -223,6 +227,7 @@
           }
         ],
         items:[],
+        items2:[],
         errors_create:[],
         successful: false,
         create_error:'',
@@ -473,17 +478,17 @@ computed: {
 
        selectdownload()
       {
-            alert(this.selectedval);
             let formData = new FormData();
             formData.append("selectall",this.selectall)
             formData.append("vid",this.vid)
             order.downloadsheet(formData)
              .then((response) => {
-                  this.items2=response.data;
+             	console.log(response.data[0]);
+                  this.items2=response.data[0];
                   const data = XLSX.utils.json_to_sheet(this.items2)
                 const wb = XLSX.utils.book_new()
                 XLSX.utils.book_append_sheet(wb, data, 'data')
-                XLSX.writeFile(wb,'readytopack_orders.xlsx')
+                XLSX.writeFile(wb,'List_orders.xlsx')
           })
           .catch((error) => {
               console.log(error);
@@ -497,3 +502,4 @@ computed: {
   },
 };  
 </script>
+

@@ -12,19 +12,9 @@
                     <div class="card-body card">
                         <b-row>
                            <div class="select-list">
-                        <!-- <b-col xl="3" lg="3" md="3">
-                          <select v-model="status" @change="Pendingassign_status($event)" class="form-control custom-select">
-                            <option value="null" disabled>Select status</option>
-                            <option value="intransit">intransit</option>
-                            <option value="processing">processing</option>
-                            <option value="dtobooked">dtobooked</option>
-                            <option value="cancelled">cancelled</option>
-                        </select>
-                    </b-col>
-                   -->
-                </div>
+                        </div>
                     <b-col>
-                      <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download</button>
+                      <button type="button" class="download-btn btn btn-primary" v-on:click="pendingdownload">Download</button>
                     </b-col>
                         </b-row>
                   </div>
@@ -56,7 +46,7 @@
                                 {{((currentPage-1)*perPage)+(row.index)+1}} 
                             </template>
                             <template v-slot:cell(select)="row">   
-                                <input type="checkbox" :value="row.item.oid" v-model="allSelected">
+                                <input type="checkbox" :value="row.item.oid" v-model="selectall">
                             </template>
                               <template v-slot:cell(action)="row">
                              <p class="h3 mb-2"></b-link><router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link></p>
@@ -142,6 +132,7 @@
         perPage: 10,
         currentPage: 1,
         allSelected:[],
+        selectall:[],
         status:'',
         pageOptions: [5, 10, 15, 20, 50, 100],
         filter: null,
@@ -307,7 +298,7 @@ computed: {
     {
         this.vid = JSON.parse(localStorage.getItem("ivid"));
          let formData = new FormData();
-        formData.append("allSelected",this.allSelected);
+        formData.append("selectall",this.selectall);
         formData.append("status",this.status);
         formData.append("vid",this.vid);
         order.PendingRefund_changeStatus(formData)
@@ -330,19 +321,34 @@ computed: {
     //              //this.$bvModal.show("modal-1");
     //              // console.log(this.oid);
     // },
-    
-    download : function() {
-                const data = XLSX.utils.json_to_sheet(this.items)
-                const wb = XLSX.utils.book_new()
-                XLSX.utils.book_append_sheet(wb, data, 'data')
-                XLSX.writeFile(wb,'dtobooked_orders.xlsx')
-            },
-  },
-clearData()
+    clearData()
     {
       this.oid ='';
     },
+ pendingdownload()
+      {
+            let formData = new FormData();
+            formData.append("selectall",this.selectall)
+            formData.append("vid",this.vid)
+            order.Pending_downloadsheet(formData)
+             .then((response) => {
+              console.log(response.data[0]);
+                  this.items2=response.data[0];
+                  const data = XLSX.utils.json_to_sheet(this.items2)
+                const wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, data, 'data')
+                XLSX.writeFile(wb,'Confirm_orders.xlsx')
+          })
+          .catch((error) => {
+              console.log(error);
+              if (error.response.status == 422) {
+                  this.errors_create = error.response.data.errors;
+              }
+              // loader.hide();
+          });
+      }, 
 
+  },
 };  
 </script>
 

@@ -29,6 +29,10 @@ export default {
      getDeliveryDetails(data) {
         return axios.post('getDelivery_Details', data)
     },
+     Product_downloadsheet(data) {
+        return axios.post('product_Sheet_download', data)
+    },
+
 
 
 

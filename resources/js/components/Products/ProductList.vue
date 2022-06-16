@@ -14,19 +14,7 @@
                             <option v-for='data in allproductdata' :value='data.name'>{{data.name}}</option>
                         </select>
                </b-col>
-              <b-col xl="3" lg="3" md="3">
-                        <select class='form-control custom-select' v-model='size' :options="allsizedata" @change='onChangeproduct($event)'>
-                            <option value='null' disabled>Select Size</option>
-                            <option v-for='data in size' :value='data.size'>{{size}}</option>
-                        </select>
-               </b-col>
-                <b-col xl="3" lg="3" md="3">
-                        <select class='form-control custom-select' v-model='color' :options="allcolordata" @change='onChangecolor($event)'>
-                            <option value='null' disabled>Select Color</option>
-                            <option v-for='data in color' :value='data.color'>{{color}}</option>
-                        </select>
-               </b-col>
-          </b-row>
+            </b-row>
       </div>
       </br>
         <div class="card-body card">
@@ -73,7 +61,7 @@
                     </b-form-group>
                   </b-col>
                   <b-col>
-                    <button type="button" class="download-btn btn btn-primary" v-on:click="download">Download</button>
+                    <button type="button" class="download-btn btn btn-primary" v-on:click="ProductList_download">Download</button>
                   </b-col>
                 </b-row>
               </div>
@@ -116,7 +104,7 @@
               </span>
             </template>
             <template v-slot:cell(select)="row">
-            	<input type="checkbox" :value="row.item.oid" v-model="selectall">
+            	<input type="checkbox" :value="row.item.variation_id" v-model="selectall">
             </template>
 
           </b-table>
@@ -167,9 +155,9 @@
         vid: 0,
         size:"",
         date_to: '',
-        color: null,
+        // color: null,
+        // size: null,
         name: null,
-        size: null,
         product: null,
         variation_id:"",
         sortBy: 'date',
@@ -225,6 +213,7 @@
         ],
         pro_cat:'',
         items: [],
+        items2: [],
         errors_create:[],
         successful: false,
         create_error:'',
@@ -239,8 +228,9 @@ computed: {
   	 async selectedAll() {
       if (this.allSelected) {
         this.selectall = [];
+        
       } else {
-        const selected = this.items.map((u) => u.oid);
+        const selected = this.items.map((u) => u.variation_id);
         this.selectall = selected;
       }
     },
@@ -402,12 +392,28 @@ computed: {
             alert('something went wrong');
         })
     },
-        download : function() {
-            const data = XLSX.utils.json_to_sheet(this.items)
-            const wb = XLSX.utils.book_new()
-            XLSX.utils.book_append_sheet(wb, data, 'data')
-            XLSX.writeFile(wb,'download_list.xlsx')
+        ProductList_download()
+        {
+           let formData = new FormData();
+            formData.append("selectall",this.selectall)
+            formData.append("vid",this.vid)
+            product.Product_downloadsheet(formData)
+             .then((response) => {
+              console.log(response.data[0]);
+                  this.items2=response.data[0];
+                  const data = XLSX.utils.json_to_sheet(this.items2)
+                const wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, data, 'data')
+                XLSX.writeFile(wb,'ProductList_Sheet.xlsx')
+          })
+          .catch((error) => {
+              console.log(error);
+              if (error.response.status == 422) {
+                  this.errors_create = error.response.data.errors;
+              }
+              // loader.hide();
+          });
         },
-  }
+    }
 };  
 </script>

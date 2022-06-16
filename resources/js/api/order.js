@@ -96,5 +96,21 @@ export default {
       getProcessing_data(data) {
         return axios.get('get_processing_data/' + data)
     },
+       Processing_downloadsheet(data) {
+        return axios.post('processing_download_Sheet', data)
+    },
+      Processing_downloadsheet(data) {
+        return axios.post('processing_download_Sheet', data)
+    },
+    Confirm_downloadsheet(data) {
+        return axios.post('confirm_download_Sheet', data)
+    },
+    Pending_downloadsheet(data) {
+        return axios.post('pending_download_Sheet', data)
+    },
+     deliverysheet(data) {
+        return axios.post('delivery_download_Sheet', data)
+    },
+
 
 }

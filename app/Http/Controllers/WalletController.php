@@ -20,11 +20,19 @@ use App\Http\Resources\OrdersResource;
 use Illuminate\Support\Facades\DB;
 class WalletController extends Controller
 {
-	public function Wallet_detail()
+	public function walletDetail(Request $request)
   {
-   		$orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-		->join('products', 'orders.id', '=', 'products.id')
-    ->select("orders.*","orders.oid as orderno","products.*",
+    // echo "string";
+    //   dd($request->vid); die;
+     $vendor = $request->vid;
+   		$orders = DB::table("orders")
+  //     ->join('billings', 'orders.oid', '=', 'billings.order_id')
+		// ->join('products', 'orders.id', '=', 'products.id')
+      ->where('orders.vid','=',intval($vendor))
+  //   ->where('billings.vid','=',intval($vendor))
+  //   ->where('products.vid','=',intval($vendor))
+  //   ->where('line_items.vid','=',intval($vendor))
+     ->select("orders.*","orders.oid as orderno",
       DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
             WHERE line_items.order_id = orders.oid
             GROUP BY line_items.order_id) as quantity"),

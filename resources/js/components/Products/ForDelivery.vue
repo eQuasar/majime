@@ -50,7 +50,7 @@
                         <b-form-group class="mb-0"> Show <b-form-select id="per-page-select" v-model="perPage" :options="pageOptions" size="sm"></b-form-select> entries </b-form-group>
                     </b-col>
                     <b-col xl="7" lg="7" md="7">
-                        <button type="button" class="download-btn btn btn-primary" v-on:click="selectdownload" style="margin-left: 15px;">Download</button>
+                        <button type="button" class="download-btn btn btn-primary" v-on:click="fordeliverydownload" style="margin-left: 15px;">Download</button>
                         <button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button>
                     </b-col>
                 </b-row>
@@ -72,7 +72,9 @@
               <template v-slot:cell(oid)="row">
                 #{{(row.item.oid)}}
               </template>
-             
+              <template v-slot:cell(status)="row">
+                <span :class="row.item.status"> {{(row.item.status)}}</span>
+              </template>
               <template v-slot:cell(select)="row">
                 <input type="checkbox" :value="row.item.oid" v-model="selectall" >
               </template>
@@ -460,13 +462,12 @@ computed: {
           this.oid ='';
         },
 
-       selectdownload()
+       fordeliverydownload()
       {
-            alert(this.selectedval);
             let formData = new FormData();
             formData.append("selectall",this.selectall)
             formData.append("vid",this.vid)
-            order.downloadsheet(formData)
+            order.deliverysheet(formData)
              .then((response) => {
                   this.items2=response.data;
                   const data = XLSX.utils.json_to_sheet(this.items2)

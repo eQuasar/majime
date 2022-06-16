@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\ProductController;
 use App\Models\Billings;
@@ -9,6 +10,7 @@ use App\Models\line_items_metas;
 use App\Models\Orders;
 use App\Models\Products;
 use Illuminate\Support\Facades\DB;
+use PDF;
 
 
 
@@ -224,6 +226,25 @@ $users = DB::table('users')
 		        ->get();
 		        return $orders;
     }
+
+    function product_Sheet_download(Request $request){
+				if ($request->selectall)
+				 {
+					$listImp=explode(',',$request->selectall);
+		    		$orderItems[] =DB::table("line_items")
+		    		->whereIn('line_items.variation_id',$listImp)
+		    		// ->select("line_items.sku as SKU","line_items.name as Name","line_items.quantity as Qty","line_items.parent_name as Parent","line_items.variation_id as VariationID")
+		        	    ->where('vid',intval($request->vid)) 
+	        	       	                    ->get();
+	                   
+	                }else{
+	                	$orderItems[] =DB::table("line_items")
+	                	->whereIn('line_items.variation_id', $listImp)
+	                	->where('vid',intval($request->vid)) 
+	                    ->get();
+	                }
+	 	         return $orderItems;		
+		   	  	}
 }
 
 

@@ -15,14 +15,25 @@
                 <b-col xl="6" lg="6" md="6">
                      <b-form-group id="input-group-description" label="Description" label-for="input-name">
                   <b-form-select v-model="description" :options="descriptions" label="Description" label-for="input-city"></b-form-select>
-            
-                  </b-form-group>
+                     </b-form-group>
                 </b-form-select>
      
                 <b-form-group label="Type of Transaction" v-slot="{ ariaDescribedby }">
                   <b-form-radio v-model="tranType" :aria-describedby="ariaDescribedby" name="tranType" value="In">In</b-form-radio>
                   <b-form-radio v-model="tranType" :aria-describedby="ariaDescribedby" name="tranType" value="Out">Out</b-form-radio>
                </b-form-group>
+          
+           
+             <b-form-group id="input-group-Vendor" label="Choose Vendor" label-for="input-Vendor">
+                <b-form-select v-model="vendor" class="" :options="allvendors" value-field="id" text-field="name" >
+                      <template v-slot:first>
+                          <b-form-select-option :value="0" disabled>-- Select Vendor --</b-form-select-option>
+                      </template>
+                </b-form-select>
+            </b-form-group> 
+     
+        
+
 
                 <b-form-group id="input-group-amount" label="Amount" label-for="input-amount">
                   <b-form-input id="input-amount" :value="this.amount" v-model="amount" type="text" required placeholder="Enter Amount"></b-form-input>
@@ -48,13 +59,20 @@
 
 <script>
   import TransactionDetail from '../../api/TransactionDetail.js';
+  import vendors from '../../api/vendors.js';
+  import user from '../../api/user.js';
   // import apidata from '../../api/json.js';
   // import vendor from '../../api/vendors.js';
   export default {
     props: {
     },
     mounted() {
-      //this.AddTrasaction();
+      if(this.$route.query.vid){
+        this.getVendor();
+        this.getVidz();
+      }else{
+        this.getVendor();
+      }
     },
     data() 
     {
@@ -67,9 +85,11 @@
         city: "",
         date:"",
         pin:"",
+        allvendors: [],
         amount:"",
         description:"",
         tranType:"",
+        vendor:null,
         country:"",
         phone:"",
         add:"",
@@ -136,6 +156,13 @@
       }
     },
     methods: {
+
+    //     vendor_wise_detail(){
+    //   console.log(this.vendor);
+    //   window.location.assign("https://majime.nmf.im/admin/TransactionDetail?vid="+this.vendor);
+    //     // this.$router.push({name: 'adminlistOrders', params: {vid: this.vendor}})
+    // },
+
       isNumber: function(evt) {
         evt = (evt) ? evt : window.event;
         var charCode = (evt.which) ? evt.which : evt.keyCode;
@@ -162,9 +189,10 @@
         if (this.create_error != "") {
           return false;
         }
-        this.vid = JSON.parse(localStorage.getItem("ivid"));
+        // this.vid = JSON.parse(localStorage.getItem("ivid"));
         let formData = new FormData();
         formData.append("description", this.description);
+        formData.append("vid", this.vendor); 
         formData.append("type", this.tranType);
         formData.append("amount", this.amount);
         formData.append("date", this.date);
@@ -174,12 +202,13 @@
             this.successful = true;
             this.error = true;
             //this.getAWBLocation();
-            this.items=response.data;
-             this.items.push(response.data);
+            // this.items=response.data;
+             // this.items.push (response.data);
              this.description='';
              this.tranType='';
              this.amount='';
               this.date='';
+              this.vendor='';
             // this.country='';
             // this.phone='';
             // this.add='';
@@ -192,109 +221,21 @@
               }
           });
       },
-      // update() {
-      //   this.create_error = "";
-      //   if (!this.city) {
-      //     this.create_error += "Add city,";
-      //   }
-      //   if (!this.name) {
-      //     this.create_error += "Add Name,";
-      //   }
-      //   if (!this.pin) {
-      //     this.create_error += "Add Pincode,";
-      //   }
-      //   if (!this.country) {
-      //     this.create_error += "Add Country,";
-      //   }
-      //   if (!this.phone) {
-      //     this.create_error += "Add Phone,";
-      //   }
-      //   if (!this.add) {
-      //     this.create_error += "Add Address,";
-      //   }
-      //   if (!this.token) {
-      //     this.create_error += "Add Token,";
-      //   }
-      //   if (this.create_error != "") {
-      //     return false;
-      //   }
-      //   this.vid = JSON.parse(localStorage.getItem("ivid"));
-      //   let formData = new FormData();
-      //   formData.append("user_id", this.$userId);
-      //   formData.append("vid", this.vid);
-      //   formData.append("city", this.city);
-      //   formData.append("name", this.name);
-      //   formData.append("pin", this.pin);
-      //   formData.append("country", this.country);
-      //   formData.append("phone", this.phone);
-      //   formData.append("add", this.add);
-      //   formData.append("token", this.token);
-      //   formData.append("id", this.awb_id);
-        
-      //   awb.updateWayData(formData)
-      //     .then((response) => {
-      //       this.successful = true;
-      //       this.error = true;
-      //       this.getAWBLocation();
-      //       //this.items=response.data;
-      //       // this.items.push(response.data);
-      //       // this.city='';
-      //       // this.name='';
-      //       // this.pin='';
-      //       // this.country='';
-      //       // this.phone='';
-      //       // this.add='';
-      //       // this.token='';
-      //     })
-      //     .catch((error) => {
-      //         console.log(error);
-      //         if (error.response.status == 422) {
-      //             this.errors_create = error.response.data.errors;
-      //         }
-      //     });
-      // },
-      // import_data(id, url) {
-      //   // console.log(id);
-      //   // console.log(url);
-      //   let formData = new FormData();
-      //   formData.append("vid", id);
-      //   formData.append("url", url);
-        
-      //   apidata
-      //     .getJson(formData)
-      //     .then((response) => {
-      //         alert("Data imported successfully.");
-      //     })
-      //     .catch((error) => {
-      //         console.log(error);
-      //         if (error.response.status == 422) {
-      //             this.errors_create = error.response.data.errors;
-      //         }
-      //     });
-      // },
-    //   getAWBLocation() {
-    //     this.vid = JSON.parse(localStorage.getItem("ivid"));
-    //     let formData = new FormData();
-    //     formData.append("user_id", this.$userId);
-    //     formData.append("vid", this.vid);
-    //     awb.getAWBLocation(formData)
-    //     .then(( response ) => {
-    //       this.vid=response.data[0].vid;
-    //       this.user_id=response.data[0].user_id;
-    //       this.city=response.data[0].city;
-    //       this.name=response.data[0].name;
-    //       this.pin=response.data[0].pin;
-    //       this.country=response.data[0].country;
-    //       this.phone=response.data[0].phone;
-    //       this.add=response.data[0].add;
-    //       this.token=response.data[0].token;
-    //       this.awb_id=response.data[0].id;
-    //     })
-    //     .catch(response => {
-    //         this.successful = false;
-    //         alert('something went wrong');
-    //     })
-  //   //   }
+
+      getVendor(){
+  vendors.getVendors()
+  .then((response) => {
+      this.allvendors=response.data;
+    })
+    .catch((error) => {
+        // console.log(error);
+        if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+        }
+        // loader.hide();
+    });
+},
+      
     }
   };  
 </script>

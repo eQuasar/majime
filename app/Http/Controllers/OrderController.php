@@ -1408,16 +1408,43 @@ class OrderController extends Controller
   				}
 
 			function download_Sheet(Request $request){
- 
-		    $orderItems =DB::table("line_items")->where('line_items.vid',$request->vid)
-	        ->join('orders','orders.oid','=','line_items.order_id')
-	        	->select("line_items.sku as SKU","line_items.name as Name","line_items.quantity as Qty","line_items.parent_name as Parent","line_items.order_id as OrderID","orders.date_created as Date") 
+				if ($request->selectall) {
+					$listImp=explode(',',$request->selectall);
 
-	        	->whereIn('line_items.order_id', [$request->selectedval])
+					$vid = intval($request->vid);
+					$orderItems[] =DB::table("orders")
 
-	        ->orderBy('oid','DESC')
-	         ->get();
-	         return $orderItems;
+	  		       // ->join('billings','orders.oid','=','billings.order_id')
+			  		->where('orders.vid',$vid)
+			  		->whereIn('orders.oid', $listImp)
+		        	
+		       ->orderBy('oid','DESC')
+		        ->get();
+
+					// dd($listImp);
+				//   for($i=0;$i<count($listImp); $i++)
+				// {
+		    // $orderItems[] =DB::table("orders.*",
+		    // 			 // ->where('orders.oid',intval($listImp[$i]))
+		    // 		     	DB::raw("(SELECT line_items.name as Name, SUM(line_items.quantity) as Quantity FROM line_items WHERE line_items.order_id = orders.oid)"))
+	     //    	         // ->select("orders.oid as OrderID","orders.status as Status","line_items.quantity as Qty","line_items.parent_name as Parent","orders.date_created as Date")
+	     //    	        // ->where('orders.vid',intval($request->vid)) 
+	     //    	        ->whereIn('orders.oid', $listImp)
+	     //                ->get();
+
+
+	           // }
+
+	           // var_dump($orderItems); die;
+	                }else{
+	                	$orderItems[] =DB::table("orders")
+	                	->where('vid',intval($request->vid)) 
+	                    ->get();
+
+	                }
+	 
+	         return $orderItems;		
+
 	  	}
 
 	  	function changeProcessing_Status(Request $request){
@@ -1488,6 +1515,120 @@ class OrderController extends Controller
 	        return $orders;
 		}
 
-		
-  	
-	}
+	function processing_download_Sheet(Request $request){
+				if ($request->allSelected) 
+				{
+					$listImp=explode(',',$request->allSelected);
+					$vid = intval($request->vid);
+					$orders[] =DB::table("orders")
+	  		       ->join('billings','orders.oid','=','billings.order_id')
+	  		       ->select("orders.oid as OrderID","orders.date_created as OrderDate","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")    
+		  		   ->where('orders.vid',$vid)
+		           ->where('orders.status',"processing")
+		       	   ->where('orders.vid',$vid)
+			  	   ->whereIn('orders.oid', $listImp)
+		           ->orderBy('oid','DESC')
+		           ->get();
+			    }
+			    else
+			        {
+	                	$orders[] =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
+	                	->select("orders.oid as OrderID","orders.date_created as OrderDate","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")
+	                	->where('orders.vid',intval($request->vid)) 
+	                	 ->where('orders.status',"processing")
+						->where('billings.vid',intval($request->vid)) 
+	                    	                    ->get();
+
+	                }
+	 
+	         return $orders;		
+
+	  	}
+	  	function confirm_download_Sheet(Request $request){
+				if ($request->allSelected) 
+				{
+					$listImp=explode(',',$request->allSelected);
+					$vid = intval($request->vid);
+					$orders[] =DB::table("orders")
+	  		       ->join('billings','orders.oid','=','billings.order_id')
+	  		       ->select("orders.oid as OrderID","orders.date_created as OrderDate","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")    
+		  		   ->where('orders.vid',$vid)
+		  		     ->where('billings.vid',$vid)
+		           ->where('orders.status',"confirmed")
+			  	   ->whereIn('orders.oid', $listImp)
+		           ->orderBy('oid','DESC')
+		           ->get();
+			    }
+			    else
+			        {
+	                	$orders[] =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
+	                	->select("orders.oid as OrderID","orders.date_created as OrderDate","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")
+	                	->where('orders.vid',intval($request->vid)) 
+	                	 ->where('orders.status',"confirmed")
+						->where('billings.vid',intval($request->vid)) 
+	                    	                    ->get();
+
+	                }
+	 	         return $orders;		
+	  	}		
+
+	  	function pending_download_Sheet(Request $request){
+				if ($request->allSelected) 
+				{
+					$listImp=explode(',',$request->allSelected);
+					$vid = intval($request->vid);
+					$orders[] =DB::table("orders")
+	  		       ->join('billings','orders.oid','=','billings.order_id')
+	  		       ->select("orders.oid as OrderID","orders.date_created as OrderDate","orders.payment_method as Payment Method","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")    
+		  		   ->where('orders.vid',$vid)
+		           ->where('orders.status',"dtobooked")
+		       	   ->where('orders.vid',$vid)
+			  	   ->whereIn('orders.oid', $listImp)
+		           ->orderBy('oid','DESC')
+		           ->get();
+			    }
+			    else
+			        {
+	                	$orders[] =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
+	                	->select("orders.oid as OrderID","orders.date_created as OrderDate","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")
+	                	->where('orders.vid',intval($request->vid)) 
+	                	 ->where('orders.status',"dtobooked")
+						->where('billings.vid',intval($request->vid)) 
+	                    	                    ->get();
+
+	                }
+	 
+	         return $orders;		
+
+	  	}  		
+
+	  	function delivery_download_Sheet(Request $request){
+				if ($request->selectall) 
+				{
+					$listImp=explode(',',$request->selectall);
+					$vid = intval($request->vid);
+					$orders[] =DB::table("orders")
+	  		       ->join('billings','orders.oid','=','billings.order_id')
+	  		       ->select("orders.oid as OrderID","orders.date_created as OrderDate","orders.payment_method as Payment Method","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")    
+		  		   ->where('orders.vid',$vid)
+		           ->where('orders.status',"dispatched")
+		       	   ->where('orders.vid',$vid)
+			  	   ->whereIn('orders.oid', $listImp)
+		           ->orderBy('oid','DESC')
+		           ->get();
+			    }
+			    else
+			        {
+	                	$orders[] =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
+	                	->select("orders.oid as OrderID","orders.date_created as OrderDate","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")
+	                	->where('orders.vid',intval($request->vid)) 
+	                	 ->where('orders.status',"dispatched")
+						->where('billings.vid',intval($request->vid)) 
+	                    	                    ->get();
+
+	                }
+	 
+	         return $orders;		
+
+	  	}  		
+	  }

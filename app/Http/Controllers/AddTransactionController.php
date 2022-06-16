@@ -48,12 +48,17 @@ class AddTransactionController extends Controller
             $trans_data = new AddTransaction();
             
             $trans_data->id= $request->id;
+            $trans_data->vid= $request->vid;
             $trans_data->description=$request->description;
             $trans_data->type=$request->type;
             $trans_data->amount=$request->amount;
             $trans_data->date=$request->date;
         
             $trans_data->save();
+
+            $data=$trans_data->all();
+            dd($data);
+
             return response()->json(['error' => false,'data' => $trans_data],200);
     }
 

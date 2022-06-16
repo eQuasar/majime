@@ -15,6 +15,7 @@ class CreateAddTransactionsTable extends Migration
     {
         Schema::create('add_transactions', function (Blueprint $table) {
             $table->id();
+             $table->integer('vid');
             $table->string('description');
             $table->string('type');
             $table->decimal('amount', 10, 2);

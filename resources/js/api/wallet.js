@@ -2,8 +2,9 @@ import axios from './axios.js'
 
 export default {
 
-    getWalletdetail() {
-        return axios.get('walletdetail')
+
+	  getWalletdetail(data) {
+        return axios.post('walletDetail', data)
     },
-   
+
 }

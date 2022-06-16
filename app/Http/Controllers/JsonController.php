@@ -145,7 +145,7 @@ class JsonController extends Controller
 		    $this->Order_refunds($order->id,$order->refunds,$vid);
 			$this->Order_links($order->id,$order->_links,$vid);
 
-			$this->getWayBill($vid, $url);
+			// $this->getWayBill($vid, $url);
 	    
 	    	Orders::insert($Orders); 	
        }
@@ -522,7 +522,7 @@ class JsonController extends Controller
 	public function InsertOrder($InOrder, $vid, $url){
 		foreach($InOrder as $order)
 		{
-			// var_dump($order->id); die;
+			// var_dump($order); die;
           	$Orders[]=[
 				'oid'=>$order->id,
 				'vid'=>intval($vid),

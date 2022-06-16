@@ -48,6 +48,9 @@
             <template v-slot:cell(oid)="row">
               {{(row.item.Order_id)}}
             </template>
+            <template v-slot:cell(status)="row">
+              <span :class="row.item.status"> {{(row.item.status)}}</span>
+            </template>
               
           </b-table>
           <div class="text-center" v-if="seen">
@@ -65,12 +68,13 @@
 <script>
 
     import wallet from '../../api/wallet.js'; 
+    import user from '../../api/user.js';
   export default {
-
     props: {
     },
     mounted() {
-      this.getWalletDetail();
+      
+      this.getVidz();
     },
     data() 
     {
@@ -79,6 +83,7 @@
         time: "",
         date: "",
         oid:"",
+        vid: 0,
         time_slots: [],
         seen: false,
         date_from: '',
@@ -212,9 +217,28 @@ computed: {
               }
           });
     },
-  getWalletDetail() {
-      // this.seen = true;
-      wallet.getWalletdetail()
+  getVidz()
+           {
+            let formData= new FormData();
+            formData.append("user_id", this.$userId);
+            user.getVid(formData)
+             .then(( response ) => {
+                this.vid = response.data;
+                localStorage.setItem("ivid", this.vid);
+                this.getWalletDetail(this.vid);
+                // this.allSelected=-false;
+              })
+              .catch(response => {
+                  this.successful = false;
+                  alert('something went wrong');
+              })
+           },
+
+  getWalletDetail(vid) {
+        let formData = new FormData();
+            formData.append('vid', vid);
+            formData.append('type','get');
+      wallet.getWalletdetail(formData)
         .then(( response ) => {
           console.log(response);
           this.items=response.data;
