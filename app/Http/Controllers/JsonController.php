@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
@@ -143,7 +145,7 @@ class JsonController extends Controller
 		    $this->Order_refunds($order->id,$order->refunds,$vid);
 			$this->Order_links($order->id,$order->_links,$vid);
 
-			// $this->getWayBill($vid, $url);
+			$this->getWayBill($vid, $url);
 	    
 	    	Orders::insert($Orders); 	
        }
@@ -330,14 +332,16 @@ class JsonController extends Controller
  	}
 
  	public function cronOrderStatusUpdate($vid){
+		echo $vid;
  		$orders=DB::table("orders")
  				->join('waybill', 'orders.oid','=','waybill.order_id')
- 				->whereIn('orders.status',['intransit'])
- 				// ->whereIn('orders.status',['dtobooked','packed','intransit','on-hold','deliveredtocust','dtointransit'])
+ 				// ->whereIn('orders.status',['intransit'])
+ 				->whereIn('orders.status',['dispatched','dtobooked','packed','intransit','on-hold','deliveredtocust','dtointransit'])
  				->where('orders.vid',$vid)
  		        ->select("orders.oid","waybill.waybill_no")->get();
- 		        // print_r($orders);exit();
-		$this->getAWBStatus($orders,$vid);
+ 		        print_r($orders);exit();
+
+		echo $this->getAWBStatus($orders,$vid);
 		exit();
 
 // 		        https://staging-express.delhivery.com/api/v1/packages/json/?waybill=1325110000361&token=5235172eea087eda74de0cf82149fa8a419d5122
@@ -376,7 +380,10 @@ class JsonController extends Controller
     	$response = curl_exec($curl);
     	$response = json_decode($response,true);
 
-    	
+    	if (isset($response['Error'])){
+			return "Error: ".$response['Error'];
+		}
+
     	for($i=0; $i < sizeof($response['ShipmentData']) ; $i++){
 
     		// waybill table get orderId of awb = $response['ShipmentData'][$i]['Shipment']['AWB'];
