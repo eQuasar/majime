@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AddTransaction;
+use App\Models\WalletBalance;
 use Illuminate\Http\Request;
 
 class AddTransactionController extends Controller
@@ -58,13 +59,13 @@ class AddTransactionController extends Controller
 
        		if($trans_data->type=='In')
        		{
-       			 $wallet_data = new walletbalance ();
-       			 $wallet_data->id=$request->id;
-       			 $wallet_data->uid=$request->uid;
-       			 $wallet_data->oid=$request->oid;
+       			 $wallet_data = new WalletBalance();
+
+       			 $wallet_data->uid=$request->vid;
+       			 $wallet_data->oid=$request->vid;
        			 $wallet_data->vid=$request->vid;
-       			 $wallet_data->opening_bal=$request->opening_bal;
-       			 $wallet_data->closing_bal=$request->closing_bal;
+       			 $wallet_data->opening_bal=$request->amount;
+       			 $wallet_data->closing_bal=$request->amount;
        			 $wallet_data->save();
        		}
        		else
