@@ -263,9 +263,9 @@ class OrderController extends Controller
 	  	}
 
   	public function assignAWB(Request $request){
-				echo "strong"; die;
   		$main = explode(',', $request->allSelected);
-  		var_dump($request);
+  		// var_dump($request);
+				// echo "strong"; die;
   		for ($i=0; $i < count($main); $i++) { 
 	  		$orders =DB::table("orders")
 			  	->join('billings','orders.oid','=','billings.order_id')	
@@ -323,6 +323,7 @@ class OrderController extends Controller
 				$response2 = curl_exec($curl2);
 				curl_close($curl2);
 				$new_val2 = json_decode($response2, true);
+				var_dump($new_val2); die;
 				if(count($new_val2["delivery_codes"]) > 0){
 					$curl = curl_init();
 					if($order->payment_method == "cod"){

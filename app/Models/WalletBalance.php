@@ -7,5 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class WalletBalance extends Model
 {
-    use HasFactory;
+  protected $table = 'walletbalance';
+	public $timestamps = true;
+		protected $fillable = [
+	'id',
+	'uid',
+	'oid',
+	'vid',	
+	'opening_bal', 
+	'closing_bal',
+	
+	    
+	];
 }
