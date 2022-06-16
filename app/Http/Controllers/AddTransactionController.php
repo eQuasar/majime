@@ -56,8 +56,22 @@ class AddTransactionController extends Controller
         
             $trans_data->save();
 
-            $data=$trans_data->all();
-            dd($data);
+       		if($trans_data->type=='In')
+       		{
+       			 $wallet_data = new walletbalance ();
+       			 $wallet_data->id=$request->id;
+       			 $wallet_data->uid=$request->uid;
+       			 $wallet_data->oid=$request->oid;
+       			 $wallet_data->vid=$request->vid;
+       			 $wallet_data->opening_bal=$request->opening_bal;
+       			 $wallet_data->closing_bal=$request->closing_bal;
+       			 $wallet_data->save();
+       		}
+       		else
+       		{
+       			echo "hello";
+       		}
+
 
             return response()->json(['error' => false,'data' => $trans_data],200);
     }
