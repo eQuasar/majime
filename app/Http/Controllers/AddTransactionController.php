@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AddTransaction;
 use App\Models\WalletBalance;
+use APP\Models\OpeningClosingTables;
 use Illuminate\Http\Request;
 
 class AddTransactionController extends Controller
@@ -59,7 +60,7 @@ class AddTransactionController extends Controller
 
        		if($trans_data->type=='In')
        		{
-       			 $wallet_data = new WalletBalance();
+       			 $wallet_data = new OpeningClosingTables();
 
        			 $wallet_data->uid=$request->vid;
        			 $wallet_data->oid=$request->vid;

@@ -299,7 +299,7 @@ class OrderController extends Controller
 					$curlopt_url = "https://track.delhivery.com/api/cmu/create.json";
 					$del_url = "https://track.delhivery.com/c/api/pin-codes/json/";
 				}
-				var_dump($order->postcode);
+				// var_dump($order->postcode);
 				foreach( $order_items as $product ) {
 
 					$product_name = $product_name." | ".$product->name." - ".$product->quantity;
