@@ -323,7 +323,7 @@ class OrderController extends Controller
 				$response2 = curl_exec($curl2);
 				curl_close($curl2);
 				$new_val2 = json_decode($response2, true);
-				var_dump($new_val2); die;
+				// var_dump($new_val2); die;
 				if(count($new_val2["delivery_codes"]) > 0){
 					$curl = curl_init();
 					if($order->payment_method == "cod"){
