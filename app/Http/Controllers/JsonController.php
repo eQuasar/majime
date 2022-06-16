@@ -529,7 +529,7 @@ class JsonController extends Controller
 		{
 			// var_dump($order); die;
           	$Orders[]=[
-				'oid'=>$order->id,
+				'oid'=>intval($order->id),
 				'vid'=>intval($vid),
 				'parent_id'=>$order->parent_id,
 				'status'=>$order->status,

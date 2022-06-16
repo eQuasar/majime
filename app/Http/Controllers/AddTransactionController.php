@@ -6,6 +6,7 @@ use App\Models\AddTransaction;
 use App\Models\WalletBalance;
 use App\Models\OpeningClosingTable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AddTransactionController extends Controller
 {
@@ -55,22 +56,55 @@ class AddTransactionController extends Controller
             $trans_data->type=$request->type;
             $trans_data->amount=$request->amount;
             $trans_data->date=$request->date;
-        
             $trans_data->save();
 
        		if($trans_data->type=='In')
-       		{
-       			 $wallet_data = new OpeningClosingTable();
+       		{  
+                   $openclose_data =DB::table("opening_closing_tables")
+                  				->orderBy('id','DESC')
+                  				->limit(1)
+                  				->get();
+                     if(!empty($openclose_data))
+                    {
+               			$wallet_data = new OpeningClosingTable();
+			   	       	 $wallet_data->vid=$request->vid;
+    			   			 $wallet_data->opening_bal= $request->amount;
+    			   			 $wallet_data->closing_bal=$request->amount;
+    			   			 $wallet_data->save();  
 
-       	       	 $wallet_data->vid=$request->vid;
-       			 $wallet_data->opening_bal=$request->amount;
-       			 $wallet_data->closing_bal=$request->amount;
-       			 $wallet_data->save();
-       		}
-       		else
-       		{
-       			echo "hello";
-       		}
+                    } 
+                      else 
+                    {
+                    
+                    	$wallet_data = new OpeningClosingTable();
+		       	       	$wallet_data->vid=$request->vid;
+		       			$wallet_data->opening_bal =$openclose_data[0]->closing_bal;
+		       			$wallet_data->closing_bal= $openclose_data[0]->closing_bal+$request->amount;
+		       			$wallet_data->save();
+                    }           
+            }
+          else
+          {
+          		echo "hello";
+
+          }
+
+
+                       	     
+
+       			 // $wallet_data = new OpeningClosingTable();
+       	   //     	 $wallet_data->vid=$request->vid;
+       			 // $t_amunt  = $request->amount;
+       			 // $wallet_data->closing_bal=$request->amount;
+       			 // $wallet_data->save();
+           //  }else{
+           //      $opening_data = new OpeningClosingTable();
+           //      $opening_data->vid=$request->vid;
+           //      $opening_data->opening_bal=$wallet_data->opening_bal+$request->amount;
+           //      $opening_data->closing_bal=$opening_data->opening_bal;
+           //      $opening_data->save();
+                
+            
 
 
             return response()->json(['error' => false,'data' => $trans_data],200);
@@ -85,11 +119,10 @@ class AddTransactionController extends Controller
     public function show(AddTransaction $addTransaction)
     {
         //
-$data = AddTransaction::all();
+		$data = AddTransaction::all();
         return $data;
 
-        
-    }
+            }
 
     /**
      * Show the form for editing the specified resource.
