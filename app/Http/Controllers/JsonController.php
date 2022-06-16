@@ -339,7 +339,7 @@ class JsonController extends Controller
  				->whereIn('orders.status',['dispatched','dtobooked','packed','intransit','on-hold','deliveredtocust','dtointransit'])
  				->where('orders.vid',$vid)
  		        ->select("orders.oid","waybill.waybill_no")->get();
- 		        print_r($orders);exit();
+ 		        // print_r($orders);exit();
 
 		echo $this->getAWBStatus($orders,$vid);
 		exit();
