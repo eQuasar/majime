@@ -332,7 +332,7 @@ class JsonController extends Controller
  	}
 
  	public function cronOrderStatusUpdate($vid){
-		echo $vid;
+		// echo $vid;
  		$orders=DB::table("orders")
  				->join('waybill', 'orders.oid','=','waybill.order_id')
  				// ->whereIn('orders.status',['intransit'])
