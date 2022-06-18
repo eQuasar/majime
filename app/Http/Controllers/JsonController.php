@@ -145,7 +145,7 @@ class JsonController extends Controller
 		    $this->Order_refunds($order->id,$order->refunds,$vid);
 			$this->Order_links($order->id,$order->_links,$vid);
 
-			$this->getWayBill($vid, $url);
+			// $this->getWayBill($vid, $url);
 	    
 	    	Orders::insert($Orders); 	
        }

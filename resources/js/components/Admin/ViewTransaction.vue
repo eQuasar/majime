@@ -140,6 +140,11 @@
             sortable: true
           },
           {
+            key: 'vid',
+            label: 'VendorID',
+            sortable: true
+          },
+          {
             key: 'type',
             label: 'Transaction Type',
             sortable: true

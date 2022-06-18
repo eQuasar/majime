@@ -9,7 +9,7 @@
     <div class="content_bar">
       <div class="select-list">
     <b-row>
-    	
+      
         <b-col xl="3" lg="3" md="3">
             <select class="form-control custom-select" v-model="status" :options="allstatusdata" @change="onChangeStatus($event)">
                 <option disabled value="null">Select status</option>
@@ -483,7 +483,7 @@ computed: {
             formData.append("vid",this.vid)
             order.downloadsheet(formData)
              .then((response) => {
-             	console.log(response.data[0]);
+              console.log(response.data[0]);
                   this.items2=response.data[0];
                   const data = XLSX.utils.json_to_sheet(this.items2)
                 const wb = XLSX.utils.book_new()
