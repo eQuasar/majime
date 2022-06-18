@@ -809,6 +809,7 @@ class OrderController extends Controller
 	  		return response()->json(['error' => false, 'msg' => "Order Status successfully updated.","ErrorCode" => "000"],200);
 	  	}
   	function printSlip(Request $request){
+  		$listImp = explode(',', $request->allSelected);
   		$d = new DNS1D();
   		// create new PDF document
     	$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -844,6 +845,7 @@ class OrderController extends Controller
 		$orders =DB::table("orders")
 		  	->join('billings','orders.oid','=','billings.order_id')	
 		  	->where('orders.vid',$request->vid)
+	  	   	->whereIn('orders.oid', $listImp)
 			->where('orders.status','packed')->get();
 		// dd($orders); die;
 	    $i=1;

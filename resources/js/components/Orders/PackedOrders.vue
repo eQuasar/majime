@@ -337,18 +337,23 @@ computed: {
 
             printSlip(){
         // alert('Assigned Successfully');
-        this.vid = JSON.parse(localStorage.getItem("ivid"));
-        let formData= new FormData();
-      formData.append("vid", this.vid);
-        order.printSlip(formData)
-       .then(( response ) => {
-          alert(response.data.msg);
-          window.open(response.data.pdf_url);
-        })
-        .catch(response => {
-            this.successful = false;
-            alert('something went wrong');
-        })
+        if(this.allSelected != ''){
+            this.vid = JSON.parse(localStorage.getItem("ivid"));
+            let formData= new FormData();
+              formData.append("allSelected",this.allSelected);
+          formData.append("vid", this.vid);
+            order.printSlip(formData)
+           .then(( response ) => {
+              alert(response.data.msg);
+              window.open(response.data.pdf_url);
+            })
+            .catch(response => {
+                this.successful = false;
+                alert('something went wrong');
+            })
+          }else{
+            alert("Please choose at least one value from checkbox...");
+          }
       },
       printOrderSlip(oid){
         // alert('Assigned Successfully');
