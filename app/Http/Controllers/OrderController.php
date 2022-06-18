@@ -436,7 +436,7 @@ class OrderController extends Controller
 
 								    curl_setopt_array($curl, array(
 
-								    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$order_id.'?status=intransit',
+								    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$order_id.'?status=packed',
 								    CURLOPT_RETURNTRANSFER => true,
 								    CURLOPT_ENCODING => '',
 								    CURLOPT_MAXREDIRS => 10,
@@ -671,7 +671,7 @@ class OrderController extends Controller
 				              $curl = curl_init();
 				              $vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
 							    curl_setopt_array($curl, array(
-							    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$order_id.'?status=intransit',
+							    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$order_id.'?status=packed',
 							    CURLOPT_RETURNTRANSFER => true,
 							    CURLOPT_ENCODING => '',
 							    CURLOPT_MAXREDIRS => 10,
