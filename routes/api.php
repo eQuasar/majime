@@ -31,6 +31,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('get_orderProfile',[App\Http\Controllers\ReportController::class,'ReportProfile_detail']);
 	//Route::get('order_Search',[App\Http\Controllers\OrderController::class,'Order_Search']);
 	Route::post('order_Search', 'OrderController@Order_Search')->name('Order_Search');
+	Route::post('product_Order_Search', 'ProductController@product_Order_Search')->name('product_Order_Search');
 	Route::post('status_details', 'ReportController@status_details')->name('status_details');
 	Route::get('insertAllOrders',[App\Http\Controllers\OrderController::class,'insertAllOrders']);
 	 Route::get('order_Profile/{oid}',[App\Http\Controllers\OrderController::class,'OrdersProfile']);
@@ -89,7 +90,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('getDelivery_Details','ProductController@getDelivery_Details')->name('getDelivery_Details');
     Route::post('changeProcessing_Status', 'OrderController@changeProcessing_Status')->name('changeProcessing_Status');
     Route::post('getProcessingOrder_Details', 'OrderController@getProcessingOrder_Details')->name('getProcessingOrder_Details');
-    Route::get('get_processing_data/{vid}','OrderController@get_processing_data')->name('get_processing_data');
+    Route::get('get_processing_data/{vid}/{status}','OrderController@get_processing_data')->name('get_processing_data');
     Route::post('product_Sheet_download', 'ProductController@product_Sheet_download')->name('product_Sheet_download');
     Route::post('processing_download_Sheet', 'OrderController@processing_download_Sheet')->name('processing_download_Sheet');
     Route::post('confirm_download_Sheet', 'OrderController@confirm_download_Sheet')->name('confirm_download_Sheet');

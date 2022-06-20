@@ -319,7 +319,7 @@ computed: {
 
     getProcessingdata(vid) 
     {
-       order.getProcessing_data(vid)
+       order.getProcessing_data(vid, 'processing')
           .then(( response ) => {
             if(response.data)
             {

@@ -19,6 +19,8 @@
                 <h3>General</h3>
                 <p><strong>Order Date:</strong> {{date_created_gmt}}</p>
                 <p><strong>Status:</strong> {{status}}</p>
+                <p><strong>Name:</strong> {{first_name}} {{last_name}}</p>
+                <p><strong>Phone:</strong> {{phone}}</p>
                 <p><strong>Email:</strong> {{email}}</p>
                 <p><strong>Payment Method:</strong> {{payment_method}}</p>
           </b-col>
@@ -26,19 +28,13 @@
                 <h3>Billing</h3>
                 <p><strong>First Name:</strong> {{first_name}}</p>
                 <p><strong>Last Name:</strong> {{last_name}}</p>
-                <p><strong>Address 1:</strong> {{address_1}}</p>
-                <p><strong>Address 2:</strong> {{address_2}}</p>
-                <p><strong>State:</strong> {{state}}</p>
-                <p><strong>City:</strong> {{city}}</p>
+                <p><strong>Address:</strong> {{address_1}}<br>{{address_2}}<br> {{city}}, {{state}} {{postcode}}, {{country}}</p>
           </b-col>
           <b-col xl="4" lg="4" md="4">
                 <h3>Shipping</h3>
                 <p><strong>First Name:</strong> {{first_name}}</p>
                 <p><strong>Last Name:</strong> {{last_name}}</p>
-                <p><strong>Address 1:</strong> {{address_1}}</p>
-                <p><strong>Address 2:</strong> {{address_2}}</p>
-                <p><strong>State:</strong> {{state}}</p>
-                <p><strong>City:</strong> {{city}}</p>
+                <p><strong>Address:</strong> {{address_1}}<br>{{address_2}}<br> {{city}}, {{state}} {{postcode}}, {{country}}</p>
           </b-col>
         </b-row>
       </div>
@@ -94,9 +90,12 @@ import OrderProfile from '../../api/order.js';
         address_1:'',
         address_2:'',
         email:'',
+        phone:'',
         payment_method:'',
         state:'',
         city:'',
+        postcode:'',
+        country:'',
         status:'',
         total:'',
         filter: null,
@@ -168,6 +167,7 @@ import OrderProfile from '../../api/order.js';
               this.quantity=response.data[0].quantity;
               this.amount = response.data[0].total;
               this.email = response.data[0].email;
+              this.phone = response.data[0].phone;
               this.payment_method = response.data[0].payment_method;
               this.first_name = response.data[0].first_name;
               this.last_name = response.data[0].last_name;
@@ -175,6 +175,8 @@ import OrderProfile from '../../api/order.js';
               this.address_2 = response.data[0].address_2;
               this.state = response.data[0].state;
               this.city=response.data[0].city;
+              this.postcode=response.data[0].postcode;
+              this.country=response.data[0].country;
               this.date_created_gmt=response.data[0].date_created_gmt;
               this.status=response.data[0].status;
              

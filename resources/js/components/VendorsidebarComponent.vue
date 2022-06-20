@@ -44,14 +44,14 @@
                             {
                                 // href:{ name: 'readytopack_orders'},
                                 href:{ name: 'ProcessingOrders'},
-                                title: 'Confirm Orders',
+                                title: 'Processing Orders',
                                 // icon: 'fa fa-user',  
                                
                             },
                             {
                                 // href:{ name: 'readytopack_orders'},
                                 href:{ name: 'confirmedorders'},
-                                title: 'Ready to Pack',
+                                title: 'Ready2Pack/Confirmed',
                                 // icon: 'fa fa-user',  
                                
                             },
@@ -61,24 +61,31 @@
                                 // icon: 'fa fa-user',
                                
                             },
-                            {
-                                href:{ name: 'pendingrefunds'},
-                                title: 'Pending Refunds',
-                                // icon: 'fa fa-user',
+                            // {
+                            //     href:{ name: 'pendingrefunds'},
+                            //     title: 'Pending Refunds',
+                            //     // icon: 'fa fa-user',
                                
-                            },
+                            // },
                             {
                                 href:{ name: 'fordelivery'},
-                                title: 'For Delivery',
+                                title: 'Dispatched Orders',
                                 // icon: 'fa fa-user',
                                
                             },
                             {
-                                href:{ name: 'vendor_awbdata'},
-                                title: 'AWBData',
+                                href:{ name: 'onholdorders'},
+                                title: 'On-Hold Orders',
                                 // icon: 'fa fa-user',
                                
                             },
+
+                            // {
+                            //     href:{ name: 'vendor_awbdata'},
+                            //     title: 'Personal Information',
+                            //     // icon: 'fa fa-user',
+                               
+                            // },
                             // {
                             //     href:{ name: 'vendor_awbdata'},
                             //     title: 'Temp-VendorPickup',

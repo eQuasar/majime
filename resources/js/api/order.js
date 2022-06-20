@@ -93,8 +93,8 @@ export default {
        getProcessing_OrderDetails(data) {
         return axios.post('getProcessingOrder_Details', data)
     },
-      getProcessing_data(data) {
-        return axios.get('get_processing_data/' + data)
+      getProcessing_data(data, status) {
+        return axios.get('get_processing_data/' + data+'/'+status)
     },
        Processing_downloadsheet(data) {
         return axios.post('processing_download_Sheet', data)

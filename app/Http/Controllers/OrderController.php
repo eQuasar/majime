@@ -282,6 +282,7 @@ class OrderController extends Controller
 			$phone = $my_data[0]->phone;
 			$add = $my_data[0]->add;
 			$token = $my_data[0]->token;
+			$order_prefix = $my_data[0]->order_prefix;
 
 			foreach($orders as $order){
 
@@ -345,7 +346,7 @@ class OrderController extends Controller
 							  "name": "'.$order->first_name.' '.$order->last_name.'",
 							  "pin": '.$order->postcode.',
 							  "cod_amount":'.$order->total.',
-							  "order": "blah_'.$order->id.'",
+							  "order": "'.$order_prefix.$order->oid.'",
 							  "shipping_mode" : "Surface",
 							  "products_desc": "'.$product_name.'"
 							}
@@ -385,7 +386,7 @@ class OrderController extends Controller
 							  "name": "'.$order->first_name.' '.$order->last_name.'",
 							  "pin": '.$order->postcode.',
 							  "cod_amount":'.$order->total.',
-							  "order": "blah_'.$order->id.'",
+							  "order": "'.$order_prefix.$order->oid.'",
 							  "shipping_mode" : "Surface",
 							  "products_desc": "'.$product_name.'"
 							}
@@ -614,7 +615,7 @@ class OrderController extends Controller
 						  "name": "'.$order->first_name.' '.$order->last_name.'",
 						  "pin": '.$order->postcode.',
 						  "cod_amount":'.$order->total.',
-						  "order": "'.$order_prefix.$order->id.'",
+						  "order": "'.$order_prefix.$order->oid.'",
 						  "shipping_mode" : "Surface",
 						  "products_desc": "'.$product_name.'"
 						}
@@ -630,7 +631,7 @@ class OrderController extends Controller
 						}
 					}';
 				
-				//echo $postfields;
+				// echo $postfields;
 				
 					curl_setopt_array($curl, array(
 					  CURLOPT_URL => $curlopt_url,
@@ -651,7 +652,7 @@ class OrderController extends Controller
 					$response = curl_exec($curl);
 					curl_close($curl);
 				$new_val = json_decode($response, true);
-				// var_dump($new_val["packages"]); die;
+				// var_dump($response); die;
 
 				// if(isset($new_val["packages"])){
 					if(!empty($new_val["packages"])){
@@ -910,7 +911,7 @@ class OrderController extends Controller
 	                <tbody>
 	                    <tr>
 	                        <td rowspan="3" width="360"><p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p></td>
-	                        <td width="150">Order No. (REF) : '.$order->id.'</td>
+	                        <td width="150">Order No. (REF) : '.$order->oid.'</td>
 	                        <td width="150">GST-JR-3557</td>
 	                    </tr>
 	                    <tr>
@@ -1156,7 +1157,7 @@ class OrderController extends Controller
 	                <tbody>
 	                    <tr>
 	                        <td rowspan="3" width="360"><p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p></td>
-	                        <td width="150">Order No. (REF) : '.$order->id.'</td>
+	                        <td width="150">Order No. (REF) : '.$order->oid.'</td>
 	                        <td width="150">GST-JR-3557</td>
 	                    </tr>
 	                    <tr>
@@ -1318,12 +1319,13 @@ class OrderController extends Controller
 
         return $order;
     }
-    public function get_processing_data($vid)
+    public function get_processing_data($vid, $status)
 	    	{
+	    		// echo $status; die;
 	  		    $orders =DB::table("orders")
 	  		       ->join('billings','orders.oid','=','billings.order_id')
 			  		->where('orders.vid',$vid)
-		       ->where('orders.status',"processing")
+		       ->where('orders.status',$status)
 		       ->select("orders.*","billings.*",
 		        		DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vid)." GROUP BY line_items.order_id) as quantity"),
 		        		DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vid)." limit 1) as name"),

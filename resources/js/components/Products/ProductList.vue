@@ -11,6 +11,7 @@
             <b-col xl="3" lg="3" md="3">
                         <select class='form-control custom-select' v-model='name' :options="allproductdata" @change='onChangeproduct($event)'>
                              <option disabled value="null">Select Product</option>
+                             <option  value="allproducts">All Product</option>
                             <option v-for='data in allproductdata' :value='data.name'>{{data.name}}</option>
                         </select>
                </b-col>
@@ -179,6 +180,11 @@
             label: 'Product Id',
             sortable: true
           },
+           {
+            key: 'order_id',
+            label: 'Order Id',
+            sortable: true
+          },
           {
             key: 'variation_id',
             label: 'Variation Id',
@@ -203,6 +209,11 @@
           {
             key: 'color',
             label: 'Color',
+            sortable: true
+          },
+          {
+            key: 'date_created_gmt',
+            label: 'Order Date ',
             sortable: true
           },
           {
@@ -251,6 +262,8 @@ computed: {
           product.getProduct()
             .then((response) => {
                 this.allproductdata=response.data;
+                this.allproducts=response.data;
+
               })
                   .catch((error) => {
               if (error.response.status == 422) {
@@ -347,11 +360,11 @@ computed: {
       let formData = new FormData();
       formData.append("date_from", this.date_from);
       formData.append("date_to", this.date_to);
-      appointment
-          .appointmentSearch(formData)
+      product.ProductorderSearch(formData)
           .then((response) => {
               
-                  this.items=response.data.data;
+                  this.items=response.data;
+                    console.log(this.items);
          })
           .catch((error) => {
               console.log(error);

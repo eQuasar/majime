@@ -2,11 +2,33 @@
   <b-container fluid> 
     <div class="header_title">
       <div class="header_inner">
-        <h3><strong>For Delivery</strong></h3>
+        <h3><strong>Dispatched List</strong></h3>
       </div>
     </div> 
-    </br>
-    <div class="content_bar"> 
+         <b-row>
+            <b-col xl="12" lg="12" md="12">
+                <div class="list-appointments content_bar">
+                        <div class="card-body card">
+                            <b-row>
+                              <b-col xl="6" lg="6" md="6" class="search_field">
+                                    <b-form-input id="filter-input" v-model="filter" type="search" placeholder="Type to Search"></b-form-input>
+                                    <b-input-group-append><b-button :disabled="!filter" @click="filter = ''">Clear</b-button></b-input-group-append>
+                                </b-col>
+                                <b-col xl="6" lg="6" md="6">
+                                    <button type="button" class="download-btn btn btn-primary" v-on:click="fordeliverydownload" style=" margin-left: 15px;">Download</button>
+                    <!--                 <button type="button" class="download-btn btn btn-primary" v-on:click="confirmstatus">Confirm</button> -->                                    
+                                </b-col>                                
+                            </b-row>
+                          </div>
+                        </div>
+                     
+
+                          </div>
+                        </div>
+                         </b-col>
+                    </b-row>
+   <!--  </br> -->
+   <!--  <div class="content_bar"> 
       <div class="select-list">
     <b-row>
         <b-col xl="2" lg="2" md="2">
@@ -22,26 +44,26 @@
             </select>
         </b-col>
     </b-row>
-</div>
-</br>
-<div class="card-body card">
-    <div class="call-center-dashboard">
-        <b-row>
-            <b-col xl="8" lg="8" md="8">
-                <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
-                <b-form @submit="onSubmit" class="date_range">
+</div> -->
+<!-- </br>
+<div class="card-body card"> -->
+<!--     <div class="call-center-dashboard">
+ -->      <!--   <b-row>
+            <b-col xl="8" lg="8" md="8"> -->
+           <!--      <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert> -->
+               <!--  <b-form @submit="onSubmit" class="date_range">
                     <div class="datepiker-block">
                         <span>From:&nbsp;</span> <b-form-datepicker id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }" locale="en-IN"></b-form-datepicker>
                     </div>
                     <div class="datepiker-block"><span>To:&nbsp;</span> <b-form-datepicker id="to" v-model="date_to" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }" locale="en-IN"></b-form-datepicker></div>
                     <b-button type="submit" variant="primary">Submit</b-button>
-                </b-form>
-            </b-col>
-            <b-col xl="4" lg="4" md="4" class="search_field">
+                </b-form> -->
+     <!--        </b-col> -->
+          <!--   <b-col xl="4" lg="4" md="4" class="search_field">
               <b-form-input id="filter-input" v-model="filter" type="search" placeholder="Type to Search"></b-form-input>
               <b-input-group-append><b-button :disabled="!filter" @click="filter = ''">Clear</b-button></b-input-group-append>
-            </b-col>
-        </b-row>
+            </b-col> -->
+   <!--      </b-row>
         <div class="blue-bar"></div>
         <div class="content_bar card list-appointments space-bottom">
             <div class="col-sm-12">
@@ -49,15 +71,19 @@
                     <b-col xl="5" lg="5" md="5">
                         <b-form-group class="mb-0"> Show <b-form-select id="per-page-select" v-model="perPage" :options="pageOptions" size="sm"></b-form-select> entries </b-form-group>
                     </b-col>
-                    <b-col xl="7" lg="7" md="7">
+                       <b-col xl="5" lg="5" md="5" class="search_field">
+              <b-form-input id="filter-input" v-model="filter" type="search" placeholder="Type to Search"></b-form-input>
+              <b-input-group-append><b-button :disabled="!filter" @click="filter = ''">Clear</b-button></b-input-group-append>
+            </b-col>
+                    <b-col xl="2" lg="2" md="2">
                         <button type="button" class="download-btn btn btn-primary" v-on:click="fordeliverydownload" style="margin-left: 15px;">Download</button>
-                        <button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button>
-                    </b-col>
+                         <button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button> -->
+                 <!--    </b-col>
                 </b-row>
             </div>
         </div>
     </div>
-</div>
+</div> -->
       </br>
         <b-table striped hover responsive :items="items"
                   :sort-by.sync="sortBy"
@@ -469,11 +495,12 @@ computed: {
             formData.append("vid",this.vid)
             order.deliverysheet(formData)
              .then((response) => {
-                  this.items2=response.data;
+                console.log(response.data[0]);
+                  this.items2=response.data[0];
                   const data = XLSX.utils.json_to_sheet(this.items2)
                 const wb = XLSX.utils.book_new()
                 XLSX.utils.book_append_sheet(wb, data, 'data')
-                XLSX.writeFile(wb,'readytopack_orders.xlsx')
+                XLSX.writeFile(wb,'Dispacthed_orders.xlsx')
           })
           .catch((error) => {
               console.log(error);

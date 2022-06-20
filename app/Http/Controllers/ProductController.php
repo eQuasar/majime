@@ -33,15 +33,18 @@ class ProductController extends Controller
 		$vendor=$request->vid;
 		// $Order=DB::table("line_items")->where('line_items.vid','=',intVal($vendor))
 		// // ->get();
-		$order =DB::table('line_items')
+		$order =DB::table('line_items')->join('orders','orders.oid','=','line_items.order_id')
 						// ->distinct()
  	// 					->select('line_items.*',
  	// 							DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = 6726 AND line_items.vid = ".intval($vendor)." GROUP BY line_items.order_id) as quantity"))
+   			
    			->select(DB::raw('
 							name,
 							variation_id,
 							product_id,
-							SUM(quantity) as quantity
+							SUM(quantity) as quantity,
+							date_created_gmt,
+							order_id
 						')//,
    						// DB::raw("(SELECT categories FROM products WHERE products.product_id = line_items.product_id)")
 					)
@@ -52,6 +55,8 @@ class ProductController extends Controller
                     ->groupBy('line_items.variation_id')
                     ->groupBy('line_items.sku')
                     ->groupBy('line_items.name')
+                    ->groupBy('orders.date_created_gmt')
+                    ->groupBy('line_items.order_id')
 					->orderBy('line_items.name')
 						->get();     
 
@@ -142,7 +147,41 @@ $users = DB::table('users')
 
 
 
+      public function product_Order_Search(Request $request)
+		{
+			$vendor=$request->vid;
+			$range =[$request->date_from,$request->date_to];
+	       	// $order=orders::whereBetween('date_created_gmt',$range)->get();
+	       	$order = DB::table('line_items')->join('orders','orders.oid','=','line_items.order_id')
+		        ->select(DB::raw('
+							name,
+							variation_id,
+							product_id,
+							SUM(quantity) as quantity,
+							date_created_gmt
+						')//,
+   						// DB::raw("(SELECT categories FROM products WHERE products.product_id = line_items.product_id)")
+					)
+		        	
+                    // ->where('line_items.vid','=',intVal($vendor))
+                    ->whereNotIn('line_items.variation_id', [0])
+                    ->groupBy('line_items.product_id')
+                    ->groupBy('line_items.variation_id')
+                    ->groupBy('line_items.sku')
+                    ->groupBy('line_items.name')
+		              ->whereBetween('orders.date_created_gmt',$range)
+                    ->groupBy('orders.date_created_gmt')
+                    
 
+
+
+		          ->orderBy('orders.date_created_gmt','ASC')
+		          ->get();
+		          
+		                  
+	          
+	        return $order;
+  	    }
 
 
 	public function category_Search(Request $request)
@@ -166,11 +205,22 @@ $users = DB::table('users')
     }
     public function product_search(Request $request)
 	{         
+		if($request->name=="allproducts")
+		{
+			
+			$order = DB::table("orders")->join('line_items', 'orders.oid', '=', 'line_items.order_id')
+			->where('orders.vid',$request->vid)
+	         ->get();
+	         return $order;
+		}
+		else
+		{
        	$order = DB::table("orders")->join('line_items', 'orders.oid', '=', 'line_items.order_id')
 	         ->Where('line_items.name', 'like', '%' . $request->name . '%')
 	         ->where('orders.vid',$request->vid)
 	         ->get();
 	         return $order;
+	        }
     }
 
      public function product_Profile($variation_id)
@@ -230,12 +280,13 @@ $users = DB::table('users')
     function product_Sheet_download(Request $request){
 				if ($request->selectall)
 				 {
-					$listImp=explode(',',$request->selectall);
+				 	$listImp=explode(',',$request->selectall);
 		    		$orderItems[] =DB::table("line_items")
 		    		->whereIn('line_items.variation_id',$listImp)
-		    		// ->select("line_items.sku as SKU","line_items.name as Name","line_items.quantity as Qty","line_items.parent_name as Parent","line_items.variation_id as VariationID")
+		    		 ->select("line_items.sku as SKU","line_items.name as Name","line_items.quantity as Qty","line_items.parent_name as Parent","line_items.variation_id as VariationID")
 		        	    ->where('vid',intval($request->vid)) 
 	        	       	                    ->get();
+	        	     
 	                   
 	                }else{
 	                	$orderItems[] =DB::table("line_items")
