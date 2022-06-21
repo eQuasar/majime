@@ -360,7 +360,7 @@ class JsonController extends Controller
 	    }
 	    $waybill_nos = substr($waybill_nos, 1);
 	    
-	    $url = "https://staging-express.delhivery.com/api/v1/packages/json/?waybill=".$waybill_nos."&token=5235172eea087eda74de0cf82149fa8a419d5122";
+	    $url = "https://track.delhivery.com/api/cmu/create.json/?waybill=".$waybill_nos."&token=ed99803a18868406584c6d724f71ebccc80a89f9";
 		
 		$curl = curl_init();
 
@@ -416,7 +416,9 @@ class JsonController extends Controller
 			$statusDel[$i]['delivery_charged_weight_in_grams'] = (int) $response['ShipmentData'][$i]['Shipment']['ChargedWeight'] ;
 		
     	}
-    	$details = $this->updateStatusDelivary($statusDel,$vid);
+
+		print_r($statusDel);
+    	//$details = $this->updateStatusDelivary($statusDel,$vid);
 
     	
     	return  $response;

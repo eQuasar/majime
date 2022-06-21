@@ -114,7 +114,7 @@ class OrderController extends Controller
 	  		    $orders =DB::table("orders")
 	  		       ->join('billings','orders.oid','=','billings.order_id')
 			  		->where('orders.vid',$vid)
-		       ->where('orders.status',"dtobooked")
+		       ->where('orders.status',"dtodel2warehouse")
 		       ->select("orders.*","billings.*",
 		        		DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vid)." GROUP BY line_items.order_id) as quantity"),
 		        		DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($vid)." limit 1) as name"),

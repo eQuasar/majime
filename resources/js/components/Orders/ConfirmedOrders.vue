@@ -134,7 +134,7 @@
         fields: [
            {
             key: 'select',
-            label: 'Select All',
+            label: '',
             sortable: true
           },
         
