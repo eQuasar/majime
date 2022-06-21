@@ -781,16 +781,17 @@ class OrderController extends Controller
 	  	}
 
 	  	public function changeOrderStatus($vid,$oid,$status){
+
   				DB::table('orders')
 			          ->where('oid', intval($oid))
 			          ->where('vid', intval($vid))
 			          ->update(['status' => $status]);
 					// print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
 					// https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
-				$vendor =DB::table("vendors")->where('id','=',intval($oid))->get();
+				$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
 					          $curl = curl_init();
 				    curl_setopt_array($curl, array(
-				    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$oid.'?status='.$status,
+				    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.intval($oid).'?status='.$status,
 				    CURLOPT_RETURNTRANSFER => true,
 				    CURLOPT_ENCODING => '',
 				    CURLOPT_MAXREDIRS => 10,
@@ -807,6 +808,8 @@ class OrderController extends Controller
 				    $response = curl_exec($curl);
 				    curl_close($curl);
 				    $jsonResp = json_decode($response);
+
+				    // var_dump($response); die;
 	  		return response()->json(['error' => false, 'msg' => "Order Status successfully updated.","ErrorCode" => "000"],200);
 	  	}
   	function printSlip(Request $request){

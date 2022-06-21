@@ -334,15 +334,15 @@ class JsonController extends Controller
  	public function cronOrderStatusUpdate($vid){
 		// echo $vid;
  		$orders=DB::table("orders")
- 				->join('waybill', 'orders.oid','=','waybill.order_id')
+ 				// ->join('waybill', 'orders.oid','=','waybill.order_id')
  				// ->whereIn('orders.status',['dispatched'])
  				->whereIn('orders.status',['dispatched','intransit'])
  				->where('orders.vid',$vid)
- 		        ->select("orders.oid","waybill.waybill_no")
-				->limit('5')
+ 		        // ->select("orders.oid","waybill.waybill_no")
+				// ->limit('5')
 				->orderBy('orders.oid','desc')
 				->get();
-
+		// print_r($orders);
 		$countOfOrders = count($orders);
 		if($countOfOrders==0){          // If no record found
 			$Result['0'] = "No update required.";
@@ -368,10 +368,24 @@ class JsonController extends Controller
 
 		$waybill_nos = "";
 		foreach ($orders as $order) {
-			$waybill_nos = $waybill_nos.",".$order->waybill_no;
+			$waybillnos=DB::table("waybill")
+ 				
+ 				->where('order_id',$order->oid)
+				->where('vid',$vid)
+ 				// ->whereIn('orders.status',['dispatched','intransit'])
+ 				// ->where('orders.vid',$vid)
+ 		        // ->select("orders.oid","waybill.waybill_no")
+				->limit('1')
+				->orderBy('id','desc')
+				->get();
+
+				// var_dump($waybillnos); die;
+
+			$waybillno = $waybillnos[0]->waybill_no;
+
 			// $orderIds[$order->waybill_no] = $order->oid;
 	    
-			$url = $del_url."waybill=".$order->waybill_no."&token=ed99803a18868406584c6d724f71ebccc80a89f9";
+			$url = $del_url."waybill=".$waybillno."&token=ed99803a18868406584c6d724f71ebccc80a89f9";
 
 			$curl = curl_init();
 
@@ -486,9 +500,9 @@ class JsonController extends Controller
 			if( sizeof($statusCheck) == 0){
 				$Result[$status_update['awb']] = "AWB: ".$status_update['awb']." Updated Successfully.";
 				UpdateStatus::insert($data);
-				// if ($status_update['delivery_status_code'] == 'UD'){
+				// var_dump($status_update); die;
 				if($status_update['status'] != "undefined"){
-					OrderController::changeOrderStatus($vid,$status_update['oid'],$status_update['status']);
+					OrderController::changeOrderStatus(intval($vid),$status_update['oid'],$status_update['status']);
 				}
 
 				// call order status update method that will further update vendor's wordpress order status as well.
