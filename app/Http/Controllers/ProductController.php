@@ -225,8 +225,7 @@ $users = DB::table('users')
 
      public function product_Profile($variation_id)
 	    {	
-	    	dd($variation_id);
-
+	    	
          // 	 $order =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
 		      	// ->where('orders.oid','=',$oid)
 		       //  ->where('orders.vid','=',intval($_REQUEST['vid']))

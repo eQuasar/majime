@@ -1549,6 +1549,37 @@ class OrderController extends Controller
 	         return $orders;		
 
 	  	}
+
+	function onhold_download_Sheet(Request $request){
+				if ($request->allSelected) 
+				{
+					$listImp=explode(',',$request->allSelected);
+					$vid = intval($request->vid);
+					$orders[] =DB::table("orders")
+	  		       ->join('billings','orders.oid','=','billings.order_id')
+	  		       ->select("orders.oid as OrderID","orders.date_created as OrderDate","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")    
+		  		   ->where('orders.vid',$vid)
+		           ->where('orders.status',"on-hold")
+		       	   ->where('orders.vid',$vid)
+			  	   ->whereIn('orders.oid', $listImp)
+		           ->orderBy('oid','DESC')
+		           ->get();
+			    }
+			    else
+			        {
+	                	$orders[] =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
+	                	->select("orders.oid as OrderID","orders.date_created as OrderDate","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")
+	                	->where('orders.vid',intval($request->vid)) 
+	                	 ->where('orders.status',"on-hold")
+						->where('billings.vid',intval($request->vid)) 
+	                    	                    ->get();
+
+	                }
+	 
+	         return $orders;		
+
+	  	}
+
 	  	function confirm_download_Sheet(Request $request){
 				if ($request->allSelected) 
 				{

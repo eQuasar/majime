@@ -417,14 +417,14 @@ clearData()
             let formData = new FormData();
             formData.append("allSelected",this.allSelected)
             formData.append("vid",this.vid)
-            order.Processing_downloadsheet(formData)
+            order.OnHold_downloadsheet(formData)
              .then((response) => {
               console.log(response.data[0]);
                   this.items2=response.data[0];
                   const data = XLSX.utils.json_to_sheet(this.items2)
                 const wb = XLSX.utils.book_new()
                 XLSX.utils.book_append_sheet(wb, data, 'data')
-                XLSX.writeFile(wb,'ProcessingList_Downloads.xlsx')
+                XLSX.writeFile(wb,'OnHoldList_Downloads.xlsx')
           })
           .catch((error) => {
               console.log(error);
