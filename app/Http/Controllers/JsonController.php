@@ -337,9 +337,7 @@ class JsonController extends Controller
  				// ->join('waybill', 'orders.oid','=','waybill.order_id')
  				// ->whereIn('orders.status',['dispatched'])
  				->whereIn('orders.status',['dispatched','intransit'])
- 				->where('orders.vid',$vid)
- 		        // ->select("orders.oid","waybill.waybill_no")
-				// ->limit('5')
+ 				->where('orders.vid',intval($vid))
 				->orderBy('orders.oid','desc')
 				->get();
 		// print_r($orders);
@@ -497,7 +495,7 @@ class JsonController extends Controller
 							'update_statuses.delivery_brief_status' => $status_update['delivery_brief_status']
 					])->get();
 
-			if( sizeof($statusCheck) == 0){
+			// if( sizeof($statusCheck) == 0){
 				$Result[$status_update['awb']] = "AWB: ".$status_update['awb']." Updated Successfully.";
 				UpdateStatus::insert($data);
 				// var_dump($status_update); die;
@@ -507,9 +505,9 @@ class JsonController extends Controller
 
 				// call order status update method that will further update vendor's wordpress order status as well.
 				
-			}else{
-				$Result['0'] = "No update required.";
-			}
+			// }else{
+			// 	$Result['0'] = "No update required.";
+			// }
 	    }
 		return $Result;
 	}

@@ -104,12 +104,12 @@
           
           {
             key: 'id',
-            label: 'Discription',
+            label: 'Description',
             sortable: true
           },
           {
             key: 'discount_total',
-            label: 'Services Charges',
+            label: 'Service Charges',
             sortable: true
           },
           {

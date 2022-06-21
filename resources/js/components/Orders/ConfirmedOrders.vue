@@ -361,7 +361,7 @@ computed: {
                   const data = XLSX.utils.json_to_sheet(this.items2)
                 const wb = XLSX.utils.book_new()
                 XLSX.utils.book_append_sheet(wb, data, 'data')
-                XLSX.writeFile(wb,'Confirm_orders.xlsx')
+                XLSX.writeFile(wb,'PickupList.xlsx')
           })
           .catch((error) => {
               console.log(error);

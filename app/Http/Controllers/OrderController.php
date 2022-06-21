@@ -1589,10 +1589,10 @@ class OrderController extends Controller
 					$listImp=explode(',',$request->allSelected);
 					$vid = intval($request->vid);
 					$orders[] =DB::table("orders")
-	  		       ->join('billings','orders.oid','=','billings.order_id')
-	  		       ->select("orders.oid as OrderID","orders.date_created as OrderDate","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")    
+	  		       ->join('line_items','orders.oid','=','line_items.order_id')
+	  		       ->select("orders.oid as OrderID","orders.date_created as OrderDate","line_items.product_id as Item ID","line_items.name as Item Name","line_items.sku as SKU","line_items.quantity as Qty")    
 		  		   ->where('orders.vid',$vid)
-		  		     ->where('billings.vid',$vid)
+		  		     ->where('line_items.vid',$vid)
 		           ->where('orders.status',"confirmed")
 			  	   ->whereIn('orders.oid', $listImp)
 		           ->orderBy('oid','DESC')
@@ -1600,11 +1600,11 @@ class OrderController extends Controller
 			    }
 			    else
 			        {
-	                	$orders[] =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
-	                	->select("orders.oid as OrderID","orders.date_created as OrderDate","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")
+	                	$orders[] =DB::table("orders")->join('line_items','orders.oid','=','line_items.order_id')
+	                	 ->select("orders.oid as OrderID","orders.date_created as OrderDate","line_items.product_id as Item ID","line_items.name as Item Name","line_items.sku as SKU","line_items.quantity as Qty") 
 	                	->where('orders.vid',intval($request->vid)) 
 	                	 ->where('orders.status',"confirmed")
-						->where('billings.vid',intval($request->vid)) 
+						->where('line_items.vid',intval($request->vid)) 
 	                    	                    ->get();
 
 	                }
