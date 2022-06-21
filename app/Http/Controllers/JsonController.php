@@ -335,93 +335,122 @@ class JsonController extends Controller
 		// echo $vid;
  		$orders=DB::table("orders")
  				->join('waybill', 'orders.oid','=','waybill.order_id')
- 				// ->whereIn('orders.status',['intransit'])
- 				->whereIn('orders.status',['dispatched','dtobooked','packed','intransit','on-hold','deliveredtocust','dtointransit'])
+ 				// ->whereIn('orders.status',['dispatched'])
+ 				->whereIn('orders.status',['dispatched','intransit'])
  				->where('orders.vid',$vid)
- 		        ->select("orders.oid","waybill.waybill_no")->get();
- 		        // print_r($orders);exit();
+ 		        ->select("orders.oid","waybill.waybill_no")
+				->limit('5')
+				->orderBy('orders.oid','desc')
+				->get();
 
-		echo $this->getAWBStatus($orders,$vid);
+		$countOfOrders = count($orders);
+		if($countOfOrders==0){          // If no record found
+			$Result['0'] = "No update required.";
+			print_r($Result);
+		}else{
+			$result = $this->getAWBStatus($orders,$vid);
+			print_r($result);
+		}
 		exit();
-
-// 		        https://staging-express.delhivery.com/api/v1/packages/json/?waybill=1325110000361&token=5235172eea087eda74de0cf82149fa8a419d5122
- 		      return $orders;
-
-
 
  	}
 
  	public function getAWBStatus($orders,$vid)
 	{	
-		// dd($orders);
+		if($vid == 1){
+			$curlopt_url = "https://staging-express.delhivery.com/api/v1/packages/json/?";
+			$del_url = "https://staging-express.delhivery.com/api/v1/packages/json/?";
+			
+		}else{
+			$curlopt_url = "https://track.delhivery.com/api/v1/packages/json/?";
+			$del_url = "https://track.delhivery.com/api/v1/packages/json/?";
+		}
+
 		$waybill_nos = "";
 		foreach ($orders as $order) {
 			$waybill_nos = $waybill_nos.",".$order->waybill_no;
-	    }
-	    $waybill_nos = substr($waybill_nos, 1);
+			// $orderIds[$order->waybill_no] = $order->oid;
 	    
-	    $url = "https://track.delhivery.com/api/cmu/create.json/?waybill=".$waybill_nos."&token=ed99803a18868406584c6d724f71ebccc80a89f9";
+			$url = $del_url."waybill=".$order->waybill_no."&token=ed99803a18868406584c6d724f71ebccc80a89f9";
+
+			$curl = curl_init();
+
+			curl_setopt_array($curl, array(
+				CURLOPT_URL => $url,
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_ENCODING => '',
+				CURLOPT_MAXREDIRS => 10,
+				CURLOPT_TIMEOUT => 0,
+				CURLOPT_FOLLOWLOCATION => true,
+				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+				CURLOPT_CUSTOMREQUEST => 'GET' 
+			));
 		
-		$curl = curl_init();
+			$response = curl_exec($curl);
+			$response = json_decode($response,true);
 
-	    curl_setopt_array($curl, array(
+			if (isset($response['Error'])){
+				$data['0'] = "Error: ".$response['Error'];
+			}else{
+				$data[$order->oid] = $this->processAWBStatus($response,$vid,$order->oid);
+			}
+		}
+		return $data;
+	    // $waybill_nos = substr($waybill_nos, 1);
+	}
+	public function processAWBStatus($response,$vid,$order_id)
+	{
+		// print_r($response);
+		if (isset($response['ShipmentData'])){
+			
+			for($i=0; $i < sizeof($response['ShipmentData']) ; $i++){
 
-	    CURLOPT_URL => $url,
-	    CURLOPT_RETURNTRANSFER => true,
-	    CURLOPT_ENCODING => '',
-	    CURLOPT_MAXREDIRS => 10,
-	    CURLOPT_TIMEOUT => 0,
-	    CURLOPT_FOLLOWLOCATION => true,
-	    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	    CURLOPT_CUSTOMREQUEST => 'GET'
-	    
-	    ));
-
-    	$response = curl_exec($curl);
-    	$response = json_decode($response,true);
-
-    	if (isset($response['Error'])){
-			return "Error: ".$response['Error'];
+				// waybill table get orderId of awb = $response['ShipmentData'][$i]['Shipment']['AWB'];
+				$status = $response['ShipmentData'][$i]['Shipment']['Status']['Status'];
+				if ($status == "Manifested"){
+					$status = "dispatched";
+				}else if ($status == "In Transit"){
+					$status = "intransit";
+				}
+				else if ($status == "Delivered"){
+					$status = "deliveredtocust";
+				}else{
+					$status = "undefined";
+				}
+				// $order_id = $orderIds[$response['ShipmentData'][$i]['Shipment']['AWB']];
+				
+		// 		foreach ($orders as $order) {
+					// $waybill_nos = $waybill_nos.",".$order->waybill_no;
+			//   }
+			//   $waybill_nos = substr($waybill_nos, 1);
+				$statusDel[$i]['vid'] = addslashes( $vid );
+				$statusDel[$i]['awb'] = addslashes( $response['ShipmentData'][$i]['Shipment']['AWB'] );
+				$statusDel[$i]['oid'] = addslashes( $order_id );
+				$statusDel[$i]['status'] = addslashes( $status );
+				$statusDel[$i]['delivery_status_name'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] );
+				$statusDel[$i]['delivery_status_code'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusCode'] );
+				$statusDel[$i]['delivery_order_sno'] = addslashes( $response['ShipmentData'][$i]['Shipment']['ReferenceNo'] );
+				$statusDel[$i]['delivery_status_date_and_time'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusDateTime'] );
+				$statusDel[$i]['delivery_brief_status'] = strtolower( addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['Status'] ) );
+				$statusDel[$i]['delivery_instructions'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['Instructions'] );
+				$statusDel[$i]['delivery_dispatch_count'] = (int) $response['ShipmentData'][$i]['Shipment']['DispatchCount'];
+				$statusDel[$i]['delivery_invoice_amount'] =  $response['ShipmentData'][$i]['Shipment']['InvoiceAmount'];
+				$statusDel[$i]['delivery_scans'] = addslashes( json_encode($delivery_scans = $response['ShipmentData'][$i]['Shipment']['Scans'] ) );
+				$statusDel[$i]['delivery_destination_received_date'] = addslashes( str_replace( "T", " ", $response['ShipmentData'][$i]['Shipment']['DestRecieveDate'] ) );
+				$statusDel[$i]['delivery_pickup_date'] = addslashes( str_replace( "T", " ", $response['ShipmentData'][$i]['Shipment']['PickUpDate'] ) );
+				$statusDel[$i]['delivery_charged_weight_in_grams'] = (int) $response['ShipmentData'][$i]['Shipment']['ChargedWeight'] ;
+			}
+		}else{
+			return "No Data Found";
 		}
 
-    	for($i=0; $i < sizeof($response['ShipmentData']) ; $i++){
 
-    		// waybill table get orderId of awb = $response['ShipmentData'][$i]['Shipment']['AWB'];
-
-
-    		for($j=0; $j < sizeof($orders) ; $j++){
-    			if($orders[$i]->waybill_no == $response['ShipmentData'][$i]['Shipment']['AWB']){
-    				$order_id = $orders[$i]->oid;
-    				break;
-    			}
-    		}
-    // 		foreach ($orders as $order) {
-				// $waybill_nos = $waybill_nos.",".$order->waybill_no;
-		  //   }
-		  //   $waybill_nos = substr($waybill_nos, 1);
-    		$statusDel[$i]['vid'] = addslashes( $vid );
-    		$statusDel[$i]['awb'] = addslashes( $response['ShipmentData'][$i]['Shipment']['AWB'] );
-    		$statusDel[$i]['oid'] = addslashes( $order_id );
-			$statusDel[$i]['delivery_status_name'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] );
-			$statusDel[$i]['delivery_status_code'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] );
-			$statusDel[$i]['delivery_order_sno'] = addslashes( $response['ShipmentData'][$i]['Shipment']['ReferenceNo'] );
-			$statusDel[$i]['delivery_status_date_and_time'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusDateTime'] );
-			$statusDel[$i]['delivery_brief_status'] = strtolower( addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['Status'] ) );
-			$statusDel[$i]['delivery_instructions'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['Instructions'] );
-			$statusDel[$i]['delivery_dispatch_count'] = (int) $response['ShipmentData'][$i]['Shipment']['DispatchCount'];
-			$statusDel[$i]['delivery_invoice_amount'] =  $response['ShipmentData'][$i]['Shipment']['InvoiceAmount'];
-			$statusDel[$i]['delivery_scans'] = addslashes( json_encode($delivery_scans = $response['ShipmentData'][$i]['Shipment']['Scans'] ) );
-			$statusDel[$i]['delivery_destination_received_date'] = addslashes( str_replace( "T", " ", $response['ShipmentData'][$i]['Shipment']['DestRecieveDate'] ) );
-			$statusDel[$i]['delivery_pickup_date'] = addslashes( str_replace( "T", " ", $response['ShipmentData'][$i]['Shipment']['PickUpDate'] ) );
-			$statusDel[$i]['delivery_charged_weight_in_grams'] = (int) $response['ShipmentData'][$i]['Shipment']['ChargedWeight'] ;
-		
-    	}
-
-		print_r($statusDel);
-    	//$details = $this->updateStatusDelivary($statusDel,$vid);
+		// print_r($statusDel);
+		// die();
+    	$ResUpdateStatusDelivary = $this->updateStatusDelivary($statusDel,$vid);
 
     	
-    	return  $response;
+    	return  $ResUpdateStatusDelivary;
 
  	}
 
@@ -455,17 +484,20 @@ class JsonController extends Controller
 					])->get();
 
 			if( sizeof($statusCheck) == 0){
-				echo "AWB: ".$status_update['awb']." Updated Successfully.";
+				$Result[$status_update['awb']] = "AWB: ".$status_update['awb']." Updated Successfully.";
 				UpdateStatus::insert($data);
-				if ($status_update['delivery_status_code'] == 'UD'){
-					Order::changeOrderStatus($vid,$status_update['oid'],$status);
+				// if ($status_update['delivery_status_code'] == 'UD'){
+				if($status_update['status'] != "undefined"){
+					OrderController::changeOrderStatus($vid,$status_update['oid'],$status_update['status']);
 				}
-				
 
 				// call order status update method that will further update vendor's wordpress order status as well.
 				
+			}else{
+				$Result['0'] = "No update required.";
 			}
 	    }
+		return $Result;
 	}
 
 
