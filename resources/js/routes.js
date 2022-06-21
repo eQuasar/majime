@@ -24,6 +24,7 @@ import ViewTransaction from './components/Admin/ViewTransaction.vue'
 import PendingRefunds from './components/Orders/PendingRefunds.vue'
 import PackedOrders from './components/Orders/PackedOrders.vue'
 import ForDelivery from './components/Products/ForDelivery.vue'
+import OnHoldOrders from './components/Orders/OnHoldOrders.vue'
 
 
 
@@ -56,6 +57,8 @@ export const routes = [
      {path:'/admin/transaction',component:TransactionDetail ,props: true,name:'TransactionDetail',meta: { auth: true}},
      {path:'/admin/ViewTransaction',component:ViewTransaction ,props: true,name:'ViewTransaction',meta: { auth: true}},
      {path:'/vendor/ForDelivery',component:ForDelivery,name:'fordelivery',meta: { auth: true}},
+     {path:'/vendor/OnHoldOrders',component:OnHoldOrders,name:'onholdorders',meta: { auth: true}},
+    
     
     
 ];
