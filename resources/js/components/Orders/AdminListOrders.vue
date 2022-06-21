@@ -254,7 +254,7 @@ computed: {
   methods: {
     vendor_wise_detail(){
       console.log(this.vendor);
-      window.location.assign("https://majime.nmf.im/admin/listOrders?vid="+this.vendor);
+      window.location.assign("https://cl.majime.in/admin/listOrders?vid="+this.vendor);
         // this.$router.push({name: 'adminlistOrders', params: {vid: this.vendor}})
     },
   	 onChange(event) {

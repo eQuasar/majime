@@ -14,7 +14,8 @@
                            <div class="select-list">
                         </div>
                     <b-col>
-                      <button type="button" class="download-btn btn btn-primary" v-on:click="pendingdownload">Download</button>
+                      <button type="button" class="download-btn btn btn-primary" v-on:click="pendingdownload" style="margin-left: 15px;">Download</button>
+                      <button type="button" class="download-btn btn btn-primary" v-on:click="Refundstatus">Refund</button>
                     </b-col>
                         </b-row>
                   </div>
@@ -46,10 +47,10 @@
                                 {{((currentPage-1)*perPage)+(row.index)+1}} 
                             </template>
                             <template v-slot:cell(select)="row">   
-                                <input type="checkbox" :value="row.item.oid" v-model="selectall">
+                                <input type="checkbox" :value="row.item.oid" v-model="allSelected">
                             </template>
                               <template v-slot:cell(action)="row">
-                             <p class="h3 mb-2"><b-link @click="confirmstatusOID(row.item.oid)"><b-icon icon="check-square" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status" v-model="statusAssign"></b-icon></b-link>&nbsp;&nbsp;<router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link> </p>
+                             <p class="h3 mb-2"><b-link @click="RefundstatusOID(row.item.oid)"><b-icon icon="arrow-counterclockwise" animation="spin-reverse" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Refund Status" v-model="statusAssign"></b-icon></b-link>&nbsp;&nbsp;<router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link> </p>
                               </template>
                       
                          </b-table>
@@ -74,19 +75,21 @@
             <b-form-select-option value="null" disabled selected>-- Select Status --</b-form-select-option>
           </template>
             <b-form-select-option value="dtobooked">Change status to DTO Booked</b-form-select-option>
+            <b-form-select-option value="dispatched">Change status to Dispatched</b-form-select-option>
             <b-form-select-option value="intransit">Change status to Intransit</b-form-select-option>
             <b-form-select-option value="confirmed">Change status to Confirmed</b-form-select-option>
             <b-form-select-option value="processing">Change status to Processing</b-form-select-option>
             <b-form-select-option value="completed">Change status to Completed</b-form-select-option>
             <b-form-select-option value="cancelled">Change status to Cancelled</b-form-select-option>
-            <b-form-select-option value="cancelled">Change status to Packed</b-form-select-option>
-            <b-form-select-option value="cancelled">Change status to RTD-Online</b-form-select-option>
-            <b-form-select-option value="cancelled">Change status to RTD-COD</b-form-select-option>
-            <b-form-select-option value="cancelled">Change status to Refunded</b-form-select-option>
-            <b-form-select-option value="cancelled">Change status to DTO Delivery to Warehouse</b-form-select-option>
-            <b-form-select-option value="cancelled">Change status to DTO Intransit</b-form-select-option>
-            <b-form-select-option value="cancelled">Change status to Picked up</b-form-select-option>
-            <b-form-select-option value="cancelled">Change status to on-hold</b-form-select-option>
+            <b-form-select-option value="packed">Change status to Packed</b-form-select-option>
+            <b-form-select-option value="rtd-online">Change status to RTD-Online</b-form-select-option>
+            <b-form-select-option value="rtd-cod">Change status to RTD-COD</b-form-select-option>
+            <b-form-select-option value="refunded">Change status to Refunded</b-form-select-option>
+            <b-form-select-option value="deliveredtocust">Change status to delivered to customer</b-form-select-option>
+            <b-form-select-option value="dtodel2warehouse">Change status to DTO Delivery to Warehouse</b-form-select-option>
+            <b-form-select-option value="dtointransit">Change status to DTO Intransit</b-form-select-option>
+            <b-form-select-option value="pickedup">Change status to Picked up</b-form-select-option>
+            <b-form-select-option value="on-hold">Change status to on-hold</b-form-select-option>
         </b-form-select>
         <b-button type="submit" @click.prevent="assign_status" variant="primary">Submit</b-button>
       </b-form> 
@@ -294,6 +297,61 @@ computed: {
           console.log("Pack - 3");
     },
 
+     Refundstatus(){
+      if(this.allSelected != ''){
+        this.addstatus();
+      }else{
+        alert("Please choose at least one value from checkbox...")
+      }
+     },
+     RefundstatusOID(oid) {
+        this.oid = oid;
+        this.allSelected = false;
+        this.addstatus();
+      },
+      addstatus(){
+        const modalTimeoutSeconds = 3;
+      const modalId = 'confirm-modal'
+      let modalSetTimeout = null;      
+      this.$bvModal.msgBoxConfirm(`Are You Sure Want to Change Refund Status`, {
+        id: modalId
+      })
+      .then(wasOkPressed => {
+        if(wasOkPressed) {
+          this.vid = JSON.parse(localStorage.getItem("ivid"));
+          let formData = new FormData();
+          formData.append("oid",this.oid);
+          formData.append("status_assign",'refunded');
+          formData.append("allSelected",this.allSelected);
+          formData.append("vid",this.vid);
+          formData.append("status",this.status);
+          order.changeProcessingStatus(formData)
+              .then((response) => {
+                  alert('Status Update Successfully');
+                this.getVidz();
+              })
+              .catch((error) => {
+                  // console.log(error);
+                  if (error.response.status == 422) {
+                      this.errors_create = error.response.data.errors;
+                  }
+                  // loader.hide();
+              });
+        } else {
+          /* Do something else */
+        }
+      })
+      .catch(() => {
+        console.log('The modal closed unexpectedly')
+      })
+      .finally(() => {
+        clearTimeout(modalSetTimeout)
+      })
+      
+      modalSetTimeout = setTimeout(() => {
+        this.$bvModal.hide(modalId)
+      }, modalTimeoutSeconds * 2000)
+    },
     Pendingassign_status() 
     {
         this.vid = JSON.parse(localStorage.getItem("ivid"));
@@ -328,7 +386,7 @@ computed: {
  pendingdownload()
       {
             let formData = new FormData();
-            formData.append("selectall",this.selectall)
+            formData.append("allSelected",this.allSelected)
             formData.append("vid",this.vid)
             order.Pending_downloadsheet(formData)
              .then((response) => {
@@ -337,7 +395,7 @@ computed: {
                   const data = XLSX.utils.json_to_sheet(this.items2)
                 const wb = XLSX.utils.book_new()
                 XLSX.utils.book_append_sheet(wb, data, 'data')
-                XLSX.writeFile(wb,'Confirm_orders.xlsx')
+                XLSX.writeFile(wb,'DtoDelivery_orders.xlsx')
           })
           .catch((error) => {
               console.log(error);

@@ -9,8 +9,7 @@
     <div class="content_bar">
       <div class="select-list">
     <b-row>
-      
-        <b-col xl="3" lg="3" md="3">
+      <b-col xl="3" lg="3" md="3">
             <select class="form-control custom-select" v-model="status" :options="allstatusdata" @change="onChangeStatus($event)">
                 <option disabled value="null">Select status</option>
                 <option v-for="data in allstatusdata" :value="data.status">{{data.status}}</option>
@@ -76,7 +75,7 @@
               </template>
              
               <template v-slot:cell(select)="row">
-                <input type="checkbox" :value="row.item.oid" v-model="selectall" >
+                <input type="checkbox" :value="row.item.oid" v-model="allSelected" >
               </template>
               <template v-slot:cell(action)="row">
                <p class="h3 mb-2">   <router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
