@@ -780,7 +780,7 @@ class OrderController extends Controller
 	  		return response()->json(['error' => false, 'msg' => "Order Status successfully updated.","ErrorCode" => "000"],200);
 	  	}
 
-	  	function changeOrderStatus($vid,$oid,$status){
+	  	public function changeOrderStatus($vid,$oid,$status){
   				DB::table('orders')
 			          ->where('oid', intval($oid))
 			          ->where('vid', intval($vid))
@@ -1617,7 +1617,7 @@ class OrderController extends Controller
 	  		       ->join('billings','orders.oid','=','billings.order_id')
 	  		       ->select("orders.oid as OrderID","orders.date_created as OrderDate","orders.payment_method as Payment Method","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")    
 		  		   ->where('orders.vid',$vid)
-		           ->where('orders.status',"dtobooked")
+		           ->where('orders.status',"dtodel2warehouse")
 		       	   ->where('orders.vid',$vid)
 			  	   ->whereIn('orders.oid', $listImp)
 		           ->orderBy('oid','DESC')
@@ -1628,7 +1628,7 @@ class OrderController extends Controller
 	                	$orders[] =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
 	                	->select("orders.oid as OrderID","orders.date_created as OrderDate","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")
 	                	->where('orders.vid',intval($request->vid)) 
-	                	 ->where('orders.status',"dtobooked")
+	                	 ->where('orders.status',"dtodel2warehouse")
 						->where('billings.vid',intval($request->vid)) 
 	                    	                    ->get();
 
