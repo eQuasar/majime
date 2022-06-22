@@ -44,6 +44,55 @@
                             },
                         ]
                     },
+                    
+
+                     {
+                        title: 'Orders Mgt',
+                        icon: 'fas fa-calendar-alt',
+                        child: [
+                            {
+                                // href:{ name: 'readytopack_orders'},
+                                href:{ name: 'ProcessingOrders'},
+                                title: 'Processing Orders',
+                                // icon: 'fa fa-user',  
+                               
+                            },
+                            {
+                                // href:{ name: 'readytopack_orders'},
+                                href:{ name: 'confirmedorders'},
+                                title: 'Ready2Pack/Confirmed',
+                                // icon: 'fa fa-user',  
+                               
+                            },
+                            {
+                                href:{ name: 'packedorders'},
+                                title: 'Packed Orders',
+                                // icon: 'fa fa-user',
+                               
+                            },
+                            {
+                                href:{ name: 'fordelivery'},
+                                title: 'Dispatched Orders',
+                                // icon: 'fa fa-user',
+                               
+                            },
+
+                            {
+                                href:{ name: 'pendingrefunds'},
+                                title: 'Pending Refunds',
+                                // icon: 'fa fa-user',
+                               
+                            },
+                            
+                            {
+                                href:{ name: 'onholdorders'},
+                                title: 'On-Hold Orders',
+                                // icon: 'fa fa-user',
+                               
+                            },
+
+                        ]
+                    },
                     {
                         
                         title: 'Wallet',
@@ -51,6 +100,7 @@
                         href:{ name: 'wallet'}
                        
                     },
+
                     {
                         href:{ name: 'report'},
                         title: 'Reports',

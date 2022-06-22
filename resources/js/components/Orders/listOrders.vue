@@ -49,7 +49,7 @@
                     </b-col>
                     <b-col>
                         <button type="button" class="download-btn btn btn-primary" v-on:click="selectdownload" style="margin-left: 15px;">Download</button>
-                        <button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button>
+                      <!--   <button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button> -->
                     </b-col>
                 </b-row>
             </div>
@@ -241,7 +241,7 @@ computed: {
     methods: {
       async selectedAll() {
         if (this.allSelected) {
-          this.selectall = [];
+          this.selectall = [];0
         } else {
           const selected = this.items.map((u) => u.oid);
           this.selectall = selected;
@@ -285,9 +285,8 @@ computed: {
         getState(){
         	 this.vid = JSON.parse(localStorage.getItem("ivid"));
         	  let formData = new FormData();
-              formData.append('vid', this.vid);
-
-          order.getStates(formData)
+          formData.append('vid', this.vid);
+          order.getStates()
             .then((response) => {
                 this.allstatesdata=response.data;
          })
@@ -299,15 +298,15 @@ computed: {
         },
         getCity(){
         	 this.vid = JSON.parse(localStorage.getItem("ivid"));
-        	    console.log(event.target.value);
         	  let formData = new FormData();
-        	  formData.append('vid', this.vid);
-                 order.getCity(formData)
+          formData.append('vid', this.vid);
+          order.getCity(formData)
              .then((response) => {
                  this.allcitydata=response.data;
+                   console.log(this.allcitydata);
         })
         .catch((error) => {
-            if (error.response.status == 422) {
+            if (error.response.city == 422) {
               this.errors_create = error.response.data.errors;
               }
                  });
@@ -395,19 +394,27 @@ computed: {
           },
         getVidz()
            {
-            let formData= new FormData();
-            formData.append("user_id", this.$userId);
-            user.getVid(formData)
-             .then(( response ) => {
-                this.vid = response.data;
-                localStorage.setItem("ivid", this.vid);
-                this.getOrderDetails(this.vid);
-                this.allSelected=-false;
-              })
-              .catch(response => {
-                  this.successful = false;
-                  alert('something went wrong');
-              })
+            // alert("sss");
+            if(this.$userId == 1){
+              this.vid = JSON.parse(localStorage.getItem("ivid"));
+              localStorage.setItem("ivid", this.vid);
+              this.getOrderDetails(this.vid);
+                  this.allSelected=-false;
+            }else{
+              let formData= new FormData();
+              formData.append("user_id", this.$userId);
+              user.getVid(formData)
+               .then(( response ) => {
+                  this.vid = response.data;
+                  localStorage.setItem("ivid", this.vid);
+                  this.getOrderDetails(this.vid);
+                  this.allSelected=-false;
+                })
+                .catch(response => {
+                    this.successful = false;
+                    alert('something went wrong');
+                })
+            }
            },
 
      addstatusOID(oid) {

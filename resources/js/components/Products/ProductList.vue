@@ -75,7 +75,7 @@
             :sort-desc.sync="sortDesc"
             sort-icon-left :filter-included-fields="filterOn" :filter="filter" :fields="fields" :per-page="perPage" :current-page="currentPage" show-empty>
             <template #head(select)="data">
-              <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="allSelected">&nbsp;{{ data.label }}</span>
+              <span class="text-info"><input type="checkbox" v-model="allSelected" @click="selectedAll">&nbsp;{{ data.label }}</span>
             </template>
             <template v-slot:cell(action)="row">
                <p class="h3 mb-2">   <router-link :to="{ name: 'productprofile', params: { variation_id:(row.item.variation_id).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link></p>

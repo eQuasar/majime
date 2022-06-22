@@ -31,6 +31,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('get_orderProfile',[App\Http\Controllers\ReportController::class,'ReportProfile_detail']);
 	//Route::get('order_Search',[App\Http\Controllers\OrderController::class,'Order_Search']);
 	Route::post('order_Search', 'OrderController@Order_Search')->name('Order_Search');
+	Route::post('change_status_on_dispatch', 'OrderController@changeStatusDispatch')->name('change_status_on_dispatch');
 	Route::post('product_Order_Search', 'ProductController@product_Order_Search')->name('product_Order_Search');
 	Route::post('status_details', 'ReportController@status_details')->name('status_details');
 	Route::get('insertAllOrders',[App\Http\Controllers\OrderController::class,'insertAllOrders']);
@@ -82,8 +83,8 @@ Route::group(['prefix' => 'v1'], function () {
     //Route::get('export', [OrderController::class, 'export']);
     Route::post('state_Search_Select', 'OrderController@state_Search_Select')->name('state_Search_Select');
     Route::get('state_data', 'OrderController@state_data')->name('state_data');
-    Route::get('city_data', 'OrderController@city_data')->name('city_data');
-    Route::get('status_data', 'OrderController@status_data')->name('status_data');
+    Route::post('city_data', 'OrderController@city_data')->name('city_data');
+    Route::post('status_data', 'OrderController@status_data')->name('status_data');
     Route::get('get_packdetail_Refund/{vid}','OrderController@get_packdetail_Refund')->name('get_packdetail_Refund');
     Route::get('product_data','ProductController@product_data')->name('product_data');
     Route::get('order_items/{variation_id}',[App\Http\Controllers\OrderController::class,'order_items']);

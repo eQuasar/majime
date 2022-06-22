@@ -781,16 +781,20 @@ class OrderController extends Controller
 	  	}
 
 	  	public function changeOrderStatus($vid,$oid,$status){
+	  		// var_dump($vid);
+	  		// var_dump($oid);
+	  		// var_dump($status); die;
   				DB::table('orders')
 			          ->where('oid', intval($oid))
 			          ->where('vid', intval($vid))
 			          ->update(['status' => $status]);
+
 					// print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
 					// https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
-				$vendor =DB::table("vendors")->where('id','=',intval($oid))->get();
+				$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
 					          $curl = curl_init();
 				    curl_setopt_array($curl, array(
-				    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$oid.'?status='.$status,
+				    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.intval($oid).'?status='.$status,
 				    CURLOPT_RETURNTRANSFER => true,
 				    CURLOPT_ENCODING => '',
 				    CURLOPT_MAXREDIRS => 10,
@@ -1312,7 +1316,7 @@ class OrderController extends Controller
        	         ->select("orders.*","orders.status as orderstatus","billings.*",
 		                    DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = ".intval($request->vid)." GROUP BY line_items.order_id) as quantity"))
        	          // ->Where('billings.city', 'like', '%' . $request->city . '%')
-       	         ->Where('billings.city', '=', $request->city)
+       	         ->Where('billings.city', $request->city)
 
 		          	          ->get();
 	
@@ -1367,7 +1371,6 @@ class OrderController extends Controller
 			    }
 			public function city_data(Request $request)
 		    	{
-		    		dd($request);
 			       	$order =DB::table('billings')
 				       	     ->distinct()
 				       	     ->select('billings.city')
@@ -1380,14 +1383,18 @@ class OrderController extends Controller
 				       	$order = DB::table("orders")
 					       	     ->distinct()
 					       	     ->select('orders.status')
+					       	     ->where('orders.vid',$request->vid)
 				       		 	 ->get();     
 				        return $order;
 				    }
 		    public function status_Search(Request $request)
 				{
              	$order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-       	         ->Where('orders.status', 'like', '%' . $request->status . '%')
+       	         		->select("orders.*","orders.status as orderstatus","billings.*",
+		                    DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = ".intval($request->vid)." GROUP BY line_items.order_id) as quantity"))
+       	         ->Where('orders.status',$request->status)
        	         ->where('orders.vid',$request->vid)
+       	         ->where('billings.vid',$request->vid)
 	              ->get();
 	              return $order;
 			     }
@@ -1677,5 +1684,45 @@ class OrderController extends Controller
 	 
 	         return $orders;		
 
-	  	}  		
-	  }
+	  	}  	
+
+	  	function changeStatusDispatch(Request $request){
+	  		// echo $request->dispatch;
+	  		// echo $request->vid; die;
+	  		$order_item1 =DB::table("waybill")
+					->where('waybill.vid',intval($request->vid))
+                    ->Where('waybill.order_id',$request->dispatch)->get()->toArray();
+
+	  		$order_item2 =DB::table("waybill")
+					->where('waybill.vid',intval($request->vid))
+                    ->Where('waybill.waybill_no',$request->dispatch)->get()->toArray();
+
+            $order_items = array_merge($order_item1, $order_item2);
+
+            // var_dump($order_items); die;
+
+            if(!empty($order_items)){
+                    $order = DB::table("orders")
+	                	 ->where('orders.status',"packed")
+                     ->where('orders.oid', $order_items[0]->order_id)
+		           ->orderBy('oid','DESC')
+		           ->get();
+
+		           // var_dump($order); die;
+
+		           if(empty($order)){
+			            // foreach ($order_items as $order) {
+	                	$this->changeOrderStatus(intval($request->vid),intval($order_items[0]->order_id),"dispatched"); 
+	  					return response()->json(['error' => false, 'msg' => "Success, Your order number ". intval($order_items[0]->order_id) ." with AWB number is ". intval($order_items[0]->waybill_no), "ErrorCode" => "000"],200);
+	                }else{
+	                	return response()->json(['error' => true, 'msg' => "No record found", "ErrorCode" => -2],200);
+	                }
+	        }else{
+            	return response()->json(['error' => true, 'msg' => "No record found", "ErrorCode" => -2],200);
+            }
+
+            // }
+            // var_dump($order_items); die;
+	  	}	
+	  
+}

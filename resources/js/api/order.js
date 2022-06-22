@@ -76,10 +76,10 @@ export default {
         return axios.get('state_data', data)
     },
     getCity(data) {
-        return axios.get('city_data', data)
+        return axios.post('city_data', data)
     },
      getStatus(data) {
-        return axios.get('status_data',data)
+        return axios.post('status_data',data)
     },
      getPackdetail_Refund(data) {
         return axios.get('get_packdetail_Refund/' + data)
@@ -114,6 +114,7 @@ export default {
       OnHold_downloadsheet(data) {
         return axios.post('onhold_download_Sheet', data)
     },
-
-
+    changeStatusDispatch(data){
+        return axios.post('change_status_on_dispatch', data)
+    },
 }

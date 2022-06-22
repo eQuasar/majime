@@ -16,7 +16,7 @@
                                 </b-col>
                                 <b-col xl="6" lg="6" md="6">
                                     <button type="button" class="download-btn btn btn-primary" v-on:click="fordeliverydownload" style=" margin-left: 15px;">Download</button>
-                    <!--                 <button type="button" class="download-btn btn btn-primary" v-on:click="confirmstatus">Confirm</button> -->                                    
+                                    <button type="button" class="download-btn btn btn-primary" v-on:click="dispatchstatus">Dispatch</button>                                    
                                 </b-col>                                
                             </b-row>
                           </div>
@@ -148,6 +148,20 @@
                           <b-button type="submit" @click.prevent="assign_status" variant="primary">Submit</b-button>
                  </b-form> 
       </b-modal>
+
+       <b-modal id="modal-2" title="Set Dispatch Status:" hide-footer  size="lg">
+          <b-form>
+            <b-form-input
+              id="input-live"
+              v-model="dispatch"
+              aria-describedby="input-live-help input-live-feedback"
+              placeholder="Enter your Order ID / AWB Number"
+              trim
+            ></b-form-input>
+            <b-button type="submit" @click.prevent="assign_dispatch" variant="primary" style="display: none">Submit</b-button>
+          </b-form>
+          <p id="data_msg"></p>
+      </b-modal>
      </b-container>
     </template>
     <script>
@@ -169,6 +183,7 @@
     data() 
     {
       return {
+        dispatch:'',
         selected: [],
         allSelected: false,
         vendor:null,
@@ -263,6 +278,38 @@ computed: {
       }
     },
     methods: {
+      assign_dispatch() 
+        {
+          let formData = new FormData();
+           formData.append('vid', this.vid);
+          formData.append("dispatch", this.dispatch);
+          order.changeStatusDispatch(formData)
+              .then((response) => {
+                // alert(response.data.msg);
+                  // this.items=response.data;
+                  if(response.data.error == false){
+                    // data_msg.
+                    // this.$bvModal.hide("modal-2");
+                     // this.getDeliveryDetail();
+                     // response.data.msg
+                     document.getElementById("data_msg").textContent = response.data.msg;
+                    this.getDeliveryDetail();
+                  }else{
+                    document.getElementById("data_msg").textContent = response.data.msg;
+                  }
+            })
+          .catch((error) => {
+              console.log(error);
+              if (error.response.state == 422) {
+                  this.errors_create = error.response.data.errors;
+              }
+                });
+        },
+     dispatchstatus() {
+        // this.allSelected = "false";
+        this.$bvModal.show("modal-2");
+        // this.addstatus();
+      },
       async selectedAll() {
         if (this.allSelected) {
           this.selectall = [];
@@ -327,8 +374,8 @@ computed: {
               },
         onChangeState(event) {
           console.log(event.target.value);
-           formData.append('vid', vid);
           let formData = new FormData();
+           formData.append('vid', vid);
           formData.append("state", this.state);
           order.stateSearch(formData)
               .then((response) => {
