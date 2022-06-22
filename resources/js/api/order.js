@@ -72,14 +72,14 @@ export default {
      stateSearchSt(data) {
         return axios.post('state_Search_Select', data)
     },
-    getStates() {
-        return axios.get('state_data')
+    getStates(data) {
+        return axios.get('state_data', data)
     },
-    getCity() {
-        return axios.get('city_data')
+    getCity(data) {
+        return axios.get('city_data', data)
     },
-     getStatus() {
-        return axios.get('status_data')
+     getStatus(data) {
+        return axios.get('status_data',data)
     },
      getPackdetail_Refund(data) {
         return axios.get('get_packdetail_Refund/' + data)

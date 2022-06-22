@@ -75,7 +75,7 @@
               </template>
              
               <template v-slot:cell(select)="row">
-                <input type="checkbox" :value="row.item.oid" v-model="allSelected" >
+                <input type="checkbox" :value="row.item.oid" v-model="selectall" >
               </template>
               <template v-slot:cell(action)="row">
                <p class="h3 mb-2">   <router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
@@ -269,7 +269,10 @@ computed: {
                   });
           },
         getStatus(){
-          order.getStatus()
+        	 this.vid = JSON.parse(localStorage.getItem("ivid"));
+        	  let formData = new FormData();
+          formData.append('vid', this.vid);
+          order.getStatus(formData)
             .then((response) => {
                 this.allstatusdata=response.data;
               })
@@ -280,7 +283,11 @@ computed: {
                 });
       },
         getState(){
-          order.getStates()
+        	 this.vid = JSON.parse(localStorage.getItem("ivid"));
+        	  let formData = new FormData();
+              formData.append('vid', this.vid);
+
+          order.getStates(formData)
             .then((response) => {
                 this.allstatesdata=response.data;
          })
@@ -291,7 +298,11 @@ computed: {
         });
         },
         getCity(){
-          order.getCity()
+        	 this.vid = JSON.parse(localStorage.getItem("ivid"));
+        	    console.log(event.target.value);
+        	  let formData = new FormData();
+        	  formData.append('vid', this.vid);
+                 order.getCity(formData)
              .then((response) => {
                  this.allcitydata=response.data;
         })

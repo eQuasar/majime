@@ -1,18 +1,6 @@
 <template>
   <b-container fluid> 
-    <div v-if="this.$route.query.vid">
-      <b-form-group
-          id="input-group-Vendor"
-          label="Choose Vendor"
-          label-for="input-Vendor"
-          >
-          <b-form-select v-model="vendor" class="" :options="allvendors" value-field="id" text-field="name" @change="vendor_wise_detail">
-            <template v-slot:first>
-              <b-form-select-option :value="0" disabled>Select Vendor</b-form-select-option>
-           </template>
-          </b-form-select>
-      </b-form-group>
-      <br/>
+    <div>
       <div class="header_title">
         <div class="header_inner">
           <b-row>
@@ -106,19 +94,6 @@
         </b-pagination>
       </div>
     </div>
-    <div v-else>
-      <b-form-group
-          id="input-group-Vendor"
-          label="Choose Vendor"
-          label-for="input-Vendor"
-          >
-          <b-form-select v-model="vendor" class="" :options="allvendors" value-field="id" text-field="name" @change="vendor_wise_detail">
-            <template v-slot:first>
-              <b-form-select-option :value="0" disabled>-- Select Vendor --</b-form-select-option>
-           </template>
-          </b-form-select>
-      </b-form-group>
-    </div>
     <div v-if="this.$route.query.vid">
       <b-modal id="modal-1" title="Change Status:" hide-footer  size="lg">
         <b-form>
@@ -156,12 +131,7 @@
 
     },
     mounted() {
-      if(this.$route.query.vid){
-        this.getVendor();
-        this.getVidz();
-      }else{
-        this.getVendor();
-      }
+      this.getVidz();
     },
     data() 
     {
@@ -252,11 +222,6 @@ computed: {
       }
     },
   methods: {
-    vendor_wise_detail(){
-      console.log(this.vendor);
-      window.location.assign("https://cl.majime.in/admin/listOrders?vid="+this.vendor);
-        // this.$router.push({name: 'adminlistOrders', params: {vid: this.vendor}})
-    },
   	 onChange(event) {
             // console.log(event.target.value)
            // alert('something went wrong');
@@ -350,9 +315,8 @@ getVendor(){
 },
   getVidz()
      {
-      localStorage.setItem("ivid", this.$route.query.vid);
-      this.vid = this.$route.query.vid;
-      this.getOrderDetails(this.$route.query.vid);
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      this.getOrderDetails(this.vid);
      },
     addstatus(oid){
       //alert(oid);

@@ -8,11 +8,11 @@ import accounts from './components/Accounts/Accounts.vue'
 
 
 import ProductList from './components/Products/ProductList.vue'
-import AdminProductList from './components/Products/AdminProductList.vue'
+import AdminProductList from './components/Products/ProductList.vue'
 import vendorDashboard from './components/Vendor/Dashboard.vue'
 import listOrders from './components/Orders/listOrders.vue'
 import ProcessingOrders from './components/Orders/ProcessingOrders.vue'
-import AdminlistOrders from './components/Orders/AdminListOrders.vue'
+import AdminlistOrders from './components/Orders/listOrders.vue'
 //import ReportProfile from './components/Report/OrderDetail.vue'
 import OrderProfile2 from './components/Orders/OrderProfile.vue'
 import productprofile from './components/Products/productprofile.vue'

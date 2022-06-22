@@ -301,19 +301,24 @@ computed: {
 
   getVidz()
      {
-      let formData= new FormData();
-      formData.append("user_id", this.$userId);
-      user.getVid(formData)
-       .then(( response ) => {
-          this.vid = response.data;
-          localStorage.setItem("ivid", this.vid);
+      if(this.$userId == 1){
+        this.vid = JSON.parse(localStorage.getItem("ivid"));
+        localStorage.setItem("ivid", this.vid);
           this.getProcessingdata(this.vid);
-        })
-        .catch(response => {
-            this.successful = false;
-            //alert('something went wrong');
-        })
-
+      }else{
+        let formData= new FormData();
+        formData.append("user_id", this.$userId);
+        user.getVid(formData)
+         .then(( response ) => {
+            this.vid = response.data;
+            localStorage.setItem("ivid", this.vid);
+            this.getProcessingdata(this.vid);
+          })
+          .catch(response => {
+              this.successful = false;
+              //alert('something went wrong');
+          })
+      }
       // alert("aaa");
      },
 

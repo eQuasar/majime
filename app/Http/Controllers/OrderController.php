@@ -781,17 +781,16 @@ class OrderController extends Controller
 	  	}
 
 	  	public function changeOrderStatus($vid,$oid,$status){
-
   				DB::table('orders')
 			          ->where('oid', intval($oid))
 			          ->where('vid', intval($vid))
 			          ->update(['status' => $status]);
 					// print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
 					// https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
-				$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
+				$vendor =DB::table("vendors")->where('id','=',intval($oid))->get();
 					          $curl = curl_init();
 				    curl_setopt_array($curl, array(
-				    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.intval($oid).'?status='.$status,
+				    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$oid.'?status='.$status,
 				    CURLOPT_RETURNTRANSFER => true,
 				    CURLOPT_ENCODING => '',
 				    CURLOPT_MAXREDIRS => 10,
@@ -808,8 +807,6 @@ class OrderController extends Controller
 				    $response = curl_exec($curl);
 				    curl_close($curl);
 				    $jsonResp = json_decode($response);
-
-				    // var_dump($response); die;
 	  		return response()->json(['error' => false, 'msg' => "Order Status successfully updated.","ErrorCode" => "000"],200);
 	  	}
   	function printSlip(Request $request){
@@ -1306,11 +1303,19 @@ class OrderController extends Controller
 
     public function city_Search(Request $request)
 	{
+	
 		       	// $order=orders::whereBetween('date_created_gmt',$range)->get();                 
        	$order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-       	         ->Where('billings.city', 'like', '%' . $request->city . '%')
+       	        
        	         ->where('orders.vid',$request->vid)
-	              ->get();
+       	         ->where('billings.vid',$request->vid)
+       	         ->select("orders.*","orders.status as orderstatus","billings.*",
+		                    DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = ".intval($request->vid)." GROUP BY line_items.order_id) as quantity"))
+       	          // ->Where('billings.city', 'like', '%' . $request->city . '%')
+       	         ->Where('billings.city', '=', $request->city)
+
+		          	          ->get();
+	
 	          // ->select("orders.*","billings.*","line_items.*",
 
 	          //           DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
@@ -1356,14 +1361,17 @@ class OrderController extends Controller
 			       	$order =DB::table('billings')
 				       	     ->distinct()
 				       	     ->select('billings.state')
+				       	     ->where('billings.vid',$request->vid)
 			       		 	 ->get();     
 			        return $order;
 			    }
 			public function city_data(Request $request)
 		    	{
+		    		dd($request);
 			       	$order =DB::table('billings')
 				       	     ->distinct()
 				       	     ->select('billings.city')
+				       	     ->where('billings.vid',$request->vid)
 			       		 	 ->get();     
 			        return $order;
 			    }

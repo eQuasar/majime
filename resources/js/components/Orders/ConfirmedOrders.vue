@@ -271,28 +271,44 @@ computed: {
 
       getVidz()
      {
-      let formData= new FormData();
-      formData.append("user_id", this.$userId);
-      user.getVid(formData)
-       .then(( response ) => {
-          this.vid = response.data;
-          localStorage.setItem("ivid", this.vid);
-          order.getOrderOnStatus(this.vid,"confirmed")
-            .then(( response ) => {
-              if(response.data)
-              {
-                this.items=response.data;
-              }
-            })
-            .catch(error => {
-                console.log(error);
-                
-            });
-        })
-        .catch(response => {
-            this.successful = false;
-            alert('something went wrong');
-        })
+      if(this.$userId == 1){
+        this.vid = JSON.parse(localStorage.getItem("ivid"));
+        localStorage.setItem("ivid", this.vid);
+        order.getOrderOnStatus(this.vid,"confirmed")
+          .then(( response ) => {
+            if(response.data)
+            {
+              this.items=response.data;
+            }
+          })
+          .catch(error => {
+              console.log(error);
+              
+          });
+      }else{
+        let formData= new FormData();
+        formData.append("user_id", this.$userId);
+        user.getVid(formData)
+         .then(( response ) => {
+            this.vid = response.data;
+            localStorage.setItem("ivid", this.vid);
+            order.getOrderOnStatus(this.vid,"confirmed")
+              .then(( response ) => {
+                if(response.data)
+                {
+                  this.items=response.data;
+                }
+              })
+              .catch(error => {
+                  console.log(error);
+                  
+              });
+          })
+          .catch(response => {
+              this.successful = false;
+              alert('something went wrong');
+          })
+        }
      },
      confirmAssignAWB(){
       if(this.allSelected != ''){
