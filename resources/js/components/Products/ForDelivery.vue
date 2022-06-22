@@ -459,7 +459,7 @@ computed: {
             if(this.$userId == 1){
               this.vid = JSON.parse(localStorage.getItem("ivid"));
               localStorage.setItem("ivid", this.vid);
-                  this.getOrderDetails(this.vid);
+                  this.getDeliveryDetail();
             }else{
               let formData= new FormData();
               formData.append("user_id", this.$userId);
@@ -467,7 +467,7 @@ computed: {
                .then(( response ) => {
                   this.vid = response.data;
                   localStorage.setItem("ivid", this.vid);
-                  this.getOrderDetails(this.vid);
+                  this.getDeliveryDetail();
           
                 })
                 .catch(response => {
