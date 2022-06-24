@@ -51,7 +51,7 @@
                 <input type="checkbox" :value="row.item.oid" v-model="allSelected">
             </template>
             <template v-slot:cell(action)="row">
-                <p class="h3 mb-2"><b-link @click="assignAWBOrder(row.item.oid, row.index)"><b-icon icon="truck" aria-hidden="true" data-toggle="tooltip" title="Assign AWB Number"></b-icon></b-link>  &nbsp;&nbsp;<router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
+                <p class="h3 mb-2"><b-link @click="assignAWBOrder(row.item.oid, row.index)"><b-icon icon="truck" aria-hidden="true" data-toggle="tooltip" title="Assign AWB Number"></b-icon></b-link>  &nbsp;&nbsp;<router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link> &nbsp;<b-link @click="cancelstatusOID(row.item.oid)"><b-icon icon="x-square-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Cancel Status" v-model="statusAssign"></b-icon></b-link>
               </p>
             </template>
 
@@ -352,6 +352,55 @@ computed: {
               alert('something went wrong');
           })
       },
+
+      cancelstatusOID(oid) {
+        this.oid = oid;
+        this.allSelected = false;
+        this.cancelstatus();
+      },
+     cancelstatus(){
+        const modalTimeoutSeconds = 3;
+      const modalId = 'confirm-modal'
+      let modalSetTimeout = null;      
+      this.$bvModal.msgBoxConfirm(`Are You Sure Want to Change Cancel Status`, {
+        id: modalId
+      })
+      .then(wasOkPressed => {
+        if(wasOkPressed) {
+          this.vid = JSON.parse(localStorage.getItem("ivid"));
+          let formData = new FormData();
+          formData.append("oid",this.oid);
+          formData.append("status_assign",'cancelled');
+          formData.append("allSelected",this.allSelected);
+          formData.append("vid",this.vid);
+          formData.append("status",this.status);
+          order.changeProcessingStatus(formData)
+              .then((response) => {
+                  alert('Status Update Successfully');
+                this.getVidz();
+              })
+              .catch((error) => {
+                  // console.log(error);
+                  if (error.response.status == 422) {
+                      this.errors_create = error.response.data.errors;
+                  }
+                  // loader.hide();
+              });
+        } else {
+          /* Do something else */
+        }
+      })
+      .catch(() => {
+        console.log('The modal closed unexpectedly')
+      })
+      .finally(() => {
+        clearTimeout(modalSetTimeout)
+      })
+      
+      modalSetTimeout = setTimeout(() => {
+        this.$bvModal.hide(modalId)
+      }, modalTimeoutSeconds * 2000)
+    },
       clearData()
     {
       this.oid ='';

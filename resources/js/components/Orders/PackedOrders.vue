@@ -58,7 +58,11 @@
                                 {{row.item.name}}
                               </template>
                               <template v-slot:cell(action)="row">
-                                  <p class="h3 mb-2"><b-link @click="printOrderSlip(row.item.oid)"><b-icon icon="printer-fill" aria-hidden="true" data-toggle="tooltip" title="Print Order Slip"></b-icon></b-link>&nbsp;&nbsp;<router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link> &nbsp;&nbsp;<b-link @click="confirmstatusOID(row.item.oid)"><b-icon icon="check-square" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></p>  <!-- v-model="statusAssign" -->
+                                  <p class="h3 mb-2"><b-link @click="printOrderSlip(row.item.oid)"><b-icon icon="printer-fill" aria-hidden="true" data-toggle="tooltip" title="Print Order Slip"></b-icon></b-link>&nbsp;&nbsp;<router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link> &nbsp;&nbsp;<b-link @click="confirmstatusOID(row.item.oid)"><b-icon icon="check-square" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link>&nbsp;&nbsp;<b-link @click="cancelstatusOID(row.item.oid)"><b-icon icon="x-square-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Cancel Status" v-model="statusAssign"></b-icon></b-link>
+
+
+
+                                  </p>  <!-- v-model="statusAssign" -->
                               </template>
                           </b-table>
                         </div>
@@ -218,6 +222,55 @@ computed: {
               .then((response) => {
                   alert('Status Update Successfully');
                   this.getVidz();
+              })
+              .catch((error) => {
+                  // console.log(error);
+                  if (error.response.status == 422) {
+                      this.errors_create = error.response.data.errors;
+                  }
+                  // loader.hide();
+              });
+        } else {
+          /* Do something else */
+        }
+      })
+      .catch(() => {
+        console.log('The modal closed unexpectedly')
+      })
+      .finally(() => {
+        clearTimeout(modalSetTimeout)
+      })
+      
+      modalSetTimeout = setTimeout(() => {
+        this.$bvModal.hide(modalId)
+      }, modalTimeoutSeconds * 2000)
+    },
+    
+      cancelstatusOID(oid) {
+        this.oid = oid;
+        this.allSelected = false;
+        this.cancelstatus();
+      },
+     cancelstatus(){
+        const modalTimeoutSeconds = 3;
+      const modalId = 'confirm-modal'
+      let modalSetTimeout = null;      
+      this.$bvModal.msgBoxConfirm(`Are You Sure Want to Change Cancel Status`, {
+        id: modalId
+      })
+      .then(wasOkPressed => {
+        if(wasOkPressed) {
+          this.vid = JSON.parse(localStorage.getItem("ivid"));
+          let formData = new FormData();
+          formData.append("oid",this.oid);
+          formData.append("status_assign",'cancelled');
+          formData.append("allSelected",this.allSelected);
+          formData.append("vid",this.vid);
+          formData.append("status",this.status);
+          order.changeProcessingStatus(formData)
+              .then((response) => {
+                  alert('Status Update Successfully');
+                this.getVidz();
               })
               .catch((error) => {
                   // console.log(error);

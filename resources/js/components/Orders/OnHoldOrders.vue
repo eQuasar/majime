@@ -55,7 +55,7 @@
                               <span :class="row.item.status"> {{(row.item.status)}}</span>
                             </template>
                               <template v-slot:cell(action)="row">
-                               <p class="h3 mb-2"><b-link @click="confirmstatusOID(row.item.oid)"><b-icon icon="check-circle-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Confirm Status" v-model="statusAssign"></b-icon></b-link>
+                               <p class="h3 mb-2"><b-link @click="assignAWBOrder(row.item.oid)"><b-icon icon="check-circle-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Assign AWB Number" v-model="statusAssign"></b-icon></b-link>
                                 &nbsp;<b-link @click="cancelstatusOID(row.item.oid)"><b-icon icon="x-square-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Cancel Status" v-model="statusAssign"></b-icon></b-link>
                                </p>
                               </template>
@@ -412,6 +412,23 @@ computed: {
     //              //this.$bvModal.show("modal-1");
     //              // console.log(this.oid);
     // },
+    assignAWBOrder(oid){
+        // alert('Assigned Successfully');
+        this.vid = JSON.parse(localStorage.getItem("ivid"));
+        let formData= new FormData();
+        formData.append("vid", this.vid);
+        formData.append("oid", oid);
+          order.assignAWBOrder(formData)
+         .then(( response ) => {
+            alert(response.data.msg);
+            this.getVidz();
+             // this.items.splice(this.items.indexOf(index), 1);
+          })
+          .catch(response => {
+              this.successful = false;
+              alert('something went wrong');
+          })
+      },
 clearData()
     {
       this.oid ='';

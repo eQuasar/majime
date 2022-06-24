@@ -79,7 +79,7 @@
               </template>
               <template v-slot:cell(action)="row">
                <p class="h3 mb-2">   <router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
-                &nbsp;&nbsp; <b-link @click="addstatusOID(row.item.oid)"><b-icon icon="check-square-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></p>
+                &nbsp;&nbsp; <b-link @click="addstatusOID(row.item.oid, row.item.status)"><b-icon icon="check-square-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></p>
               </template>
       </b-table>
           <div class="text-center" v-if="seen">
@@ -98,6 +98,7 @@
                       <span v-if="successful" class="label label-sucess">Published!</span>
                   </div>
                      <b-form-input v-model="oid" id="oid_val" style="display:none"></b-form-input>
+                     <b-form-input v-model="status" id="status_val" style="display:none"></b-form-input>
                
                        <b-form-select v-model="status_assign">
                          <template v-slot:first>
@@ -417,9 +418,10 @@ computed: {
             }
            },
 
-     addstatusOID(oid) {
+     addstatusOID(oid,status) {
         this.allSelected=-false;
         this.oid = oid;
+        this.status = status;
         // this.allSelected = "false";
         this.$bvModal.show("modal-1");
         // this.addstatus();
@@ -432,9 +434,11 @@ computed: {
         },
        assign_status() 
         {
+
           this.vid = JSON.parse(localStorage.getItem("ivid"));
           let formData = new FormData();
           // formData.append("oid",this.oid);
+          formData.append("status",this.status);
           formData.append("status_assign",this.status_assign);
           if(this.oid != 0){
             formData.append("selectall",this.oid)
@@ -445,7 +449,7 @@ computed: {
           order.changeStatus(formData)
               .then((response) => {
                   this.$bvModal.hide("modal-1");
-                  alert('Status Update Successfully');
+                  alert(response.data.msg);
                   this.getVidz();
               })
               .catch((error) => {

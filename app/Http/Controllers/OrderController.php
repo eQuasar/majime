@@ -542,13 +542,14 @@ class OrderController extends Controller
   	}
 
   	function assignAWBOrder(Request $request){
+  		// dd($request); die;
    			$orders =DB::table("orders")
 			  	->join('billings','orders.oid','=','billings.order_id')	
-			  	->where('orders.vid',$request->vid)
-			  	->where('orders.oid',$request->oid)
-				->where('orders.status','confirmed')->get();
+			  	->where('orders.vid',intval($request->vid))
+			  	->where('orders.oid',intval($request->oid))->get();
+			  	// var_dump($orders); die;
 			$my_data =DB::table("way_data")
-				->where('vid',$request->vid)->get();
+				->where('vid', intval($request->vid))->get();
 			// var_dump($my_data); die;
 				$city = $my_data[0]->city;
 				$name = $my_data[0]->name;
@@ -573,8 +574,8 @@ class OrderController extends Controller
 					$order_id = $order->oid;
 					$product_name = "";
 					$order_items =DB::table("line_items")
-					->where('line_items.vid',$request->vid)
-					->where('line_items.order_id',$order_id)->get();
+					->where('line_items.vid',intval($request->vid))
+					->where('line_items.order_id',intval($order_id))->get();
 						foreach( $order_items as $product ) {
 							$product_name = $product_name." | ".$product->name." - ".$product->quantity;
 
@@ -745,20 +746,23 @@ class OrderController extends Controller
 			}
 		}
   	}
-	  	function changeStatus(Request $request){
-	  		$listImp=explode(',',$request->selectall);
-	  	  		for($i=0;$i<count($listImp); $i++)
-	  		          {
-		  				DB::table('orders')
-			          ->where('oid', intval($listImp[$i]))
+	  	function changeStatus(Request $request)
+	  	{
+	  		if($request->status_assign=='cancelled')
+	  		{	
+	  			// echo $request->status; die;
+	  			if($request->status == 'processing' || $request->status == 'on-hold')
+		  		{
+					DB::table('orders')
+			          ->where('oid', intval($request->selectall))
 			          ->where('vid', intval($request->vid))
 			          ->update(['status' => $request->status_assign]);
 					// print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
 					// https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
-				$vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
+					$vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
 					          $curl = curl_init();
 				    curl_setopt_array($curl, array(
-				    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$listImp[$i].'?status='.$request->status_assign,
+				    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.intval($request->selectall).'?status='.$request->status_assign,
 				    CURLOPT_RETURNTRANSFER => true,
 				    CURLOPT_ENCODING => '',
 				    CURLOPT_MAXREDIRS => 10,
@@ -775,9 +779,43 @@ class OrderController extends Controller
 				    $response = curl_exec($curl);
 				    curl_close($curl);
 				    $jsonResp = json_decode($response);
-					// var_dump($jsonResp);
-	  		}
-	  		return response()->json(['error' => false, 'msg' => "Order Status successfully updated.","ErrorCode" => "000"],200);
+							// var_dump($jsonResp);
+			  		return response()->json(['error' => false, 'msg' => "Order Status successfully updated.","ErrorCode" => "000"],200);
+				}
+				else
+				{
+					return response()->json(['error' => false, 'msg' => "Please Note :  Order Can Not Be Cancel.","ErrorCode" => "000"],200);
+				}
+  			}else{
+  					DB::table('orders')
+		          ->where('oid', intval($request->selectall))
+		          ->where('vid', intval($request->vid))
+		          ->update(['status' => $request->status_assign]);
+				// print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
+				// https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
+				$vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
+				          $curl = curl_init();
+			    curl_setopt_array($curl, array(
+			    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.intval($request->selectall).'?status='.$request->status_assign,
+			    CURLOPT_RETURNTRANSFER => true,
+			    CURLOPT_ENCODING => '',
+			    CURLOPT_MAXREDIRS => 10,
+			    CURLOPT_TIMEOUT => 0,
+			    CURLOPT_FOLLOWLOCATION => true,
+			    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			    CURLOPT_CUSTOMREQUEST => 'PUT',
+			    CURLOPT_HTTPHEADER => array(
+
+			        'Authorization: Basic '.$vendor[0]->token
+			      ),
+			    ));
+
+			    $response = curl_exec($curl);
+			    curl_close($curl);
+			    $jsonResp = json_decode($response);
+						// var_dump($jsonResp);
+		  		return response()->json(['error' => false, 'msg' => "Order Status successfully updated.","ErrorCode" => "000"],200);
+		  	}
 	  	}
 
 	  	public function changeOrderStatus($vid,$oid,$status){
@@ -1689,38 +1727,15 @@ class OrderController extends Controller
 	  	function changeStatusDispatch(Request $request){
 	  		// echo $request->dispatch;
 	  		// echo $request->vid; die;
-	  		$order_item1 =DB::table("waybill")
+	  		$order_items =DB::table("waybill")
 					->where('waybill.vid',intval($request->vid))
-                    ->Where('waybill.order_id',$request->dispatch)->get()->toArray();
+                    ->orWhere('waybill.order_id',$request->dispatch)
+                    ->orwhere('waybill.waybill_no',$request->dispatch)->get()->toArray();
 
-	  		$order_item2 =DB::table("waybill")
-					->where('waybill.vid',intval($request->vid))
-                    ->Where('waybill.waybill_no',$request->dispatch)->get()->toArray();
+            // foreach ($order_items as $order) {
+                $this->changeOrderStatus(intval($request->vid),intval($order_items[0]->order_id),"dispatched"); 
 
-            $order_items = array_merge($order_item1, $order_item2);
-
-            // var_dump($order_items); die;
-
-            if(!empty($order_items)){
-                    $order = DB::table("orders")
-	                	 ->where('orders.status',"packed")
-                     ->where('orders.oid', $order_items[0]->order_id)
-		           ->orderBy('oid','DESC')
-		           ->get();
-
-		           // var_dump($order); die;
-
-		           if(empty($order)){
-			            // foreach ($order_items as $order) {
-	                	$this->changeOrderStatus(intval($request->vid),intval($order_items[0]->order_id),"dispatched"); 
-	  					return response()->json(['error' => false, 'msg' => "Success, Your order number ". intval($order_items[0]->order_id) ." with AWB number is ". intval($order_items[0]->waybill_no), "ErrorCode" => "000"],200);
-	                }else{
-	                	return response()->json(['error' => true, 'msg' => "No record found", "ErrorCode" => -2],200);
-	                }
-	        }else{
-            	return response()->json(['error' => true, 'msg' => "No record found", "ErrorCode" => -2],200);
-            }
-
+	  		return response()->json(['error' => false, 'msg' => "Success, Your order number ". intval($order_items[0]->order_id) ." with AWB number is ". intval($order_items[0]->waybill_no), "ErrorCode" => "000"],200);
             // }
             // var_dump($order_items); die;
 	  	}	
