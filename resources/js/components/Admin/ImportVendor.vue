@@ -216,11 +216,11 @@
             label: 'URL',
             sortable: true
           },
-          // {
-          //   key: 'action',
-          //   label: 'Action',
-          //   sortable: false
-          // },
+          {
+            key: 'action',
+            label: 'Action',
+            sortable: false
+          },
         ],
         items: [],
         errors_create:[],
