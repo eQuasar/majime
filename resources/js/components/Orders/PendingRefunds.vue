@@ -393,6 +393,7 @@ computed: {
             let formData = new FormData();
             formData.append("allSelected",this.allSelected)
             formData.append("vid",this.vid)
+            formData.append("status",'dtodel2warehouse')
             order.Pending_downloadsheet(formData)
              .then((response) => {
               console.log(response.data[0]);
@@ -400,7 +401,7 @@ computed: {
                   const data = XLSX.utils.json_to_sheet(this.items2)
                 const wb = XLSX.utils.book_new()
                 XLSX.utils.book_append_sheet(wb, data, 'data')
-                XLSX.writeFile(wb,'DtoDelivery_orders.xlsx')
+                XLSX.writeFile(wb,'DtoDel2warehouse_orders.xlsx')
           })
           .catch((error) => {
               console.log(error);

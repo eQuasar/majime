@@ -98,5 +98,6 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('pending_download_Sheet', 'OrderController@pending_download_Sheet')->name('pending_download_Sheet');
     Route::post('delivery_download_Sheet', 'OrderController@delivery_download_Sheet')->name('delivery_download_Sheet');
     Route::post('onhold_download_Sheet', 'OrderController@onhold_download_Sheet')->name('onhold_download_Sheet');
+    Route::get('get_Status/{vid}/{status}','ReturnController@get_Status')->name('get_Status');
 }); 
 

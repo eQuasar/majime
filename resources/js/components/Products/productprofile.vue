@@ -72,10 +72,10 @@
                           <b-input-group-append><b-button :disabled="!filter" @click="filter = ''">Clear</b-button></b-input-group-append>
                     </b-col>
                   <b-col xl="2" lg="2" md="2">
-                      <button type="button" class="download-btn btn btn-primary" v-on:click="selectdownload">Download</button>
+                      <!-- <button type="button" class="download-btn btn btn-primary" v-on:click="selectdownload">Download</button> -->
                   </b-col>
                   <b-col xl="2" lg="2" md="2">
-                      <button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button>
+<!--                       <button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button> -->
                   </b-col>
         
               </b-row>
@@ -83,7 +83,7 @@
         </div>
     </div>
       </br>
-        <!-- <b-table striped hover responsive :items="items"
+        <b-table striped hover responsive :items="items"
                   :sort-by.sync="sortBy"
                   :sort-desc.sync="sortDesc"
                    sort-icon-left :filter-included-fields="filterOn" :filter="filter" :fields="fields" :per-page="perPage" :current-page="currentPage" show-empty>
@@ -100,7 +100,7 @@
               <template v-slot:cell(select)="row">
                 <input type="checkbox" :value="row.item.oid" v-model="selectall" >
               </template>
-            </b-table> -->
+            </b-table>
 
             <div class="profile_info">
                 <h3 class="own-heading"><router-link :to="{ name: 'productprofile', params: { variation_id: (this.variation_id).toString() }}"></router-link></strong></h3>
@@ -164,6 +164,7 @@ import ProductProfile from '../../api/Product.js';
         status: null,
         city: null,
         show: false,
+                allSelected: false,
         currentPage: 1,
         image:'',
         rowClass:'',
@@ -176,17 +177,25 @@ import ProductProfile from '../../api/Product.js';
         email:'',
         payment_method:'',
         state:'',
+          allstatesdata:[],
+        allcitydata: [],
+        allstatusdata: [],
+          statusAssign:'',
         // city:'',
         // status:'',
         total:'',
+         date_from: '',
         filter: null,
         filterOn: [],
+         date_to: '',
         date_created_gmt:'',
         amount:0,
         successful: false,
         sortBy: 'date',
+            sortDesc: true,
         errors_create:[],
         create_error:'',
+        pageOptions: [5, 10, 15, 20, 50, 100],
         selected: 'first',
         vid: 0,
         perPage: 10,
@@ -246,6 +255,43 @@ import ProductProfile from '../../api/Product.js';
       };
     },
     methods: {
+       async selectedAll() {
+        if (this.allSelected) {
+          this.selectall = [];
+        } else {
+          const selected = this.items.map((u) => u.oid);
+          this.selectall = selected;
+        }
+      },
+      onSubmit(event) {
+          event.preventDefault()
+          console.log(this.date_from);
+            this.create_error = "";
+                if (!this.date_from) {
+                  this.create_error += "Add date from,";
+                  }
+                if (!this.date_to) {
+                  this.create_error += "Add date to,";
+                  }
+                if (this.create_error != "") {
+            return false;
+        }
+          let formData = new FormData();
+          formData.append("date_from", this.date_from);
+          formData.append("date_to", this.date_to);
+            order.orderSearch(formData)
+              .then((response) => {    
+                      this.items=response.data;
+                      console.log(this.items);
+                               })
+              .catch((error) => {
+                  console.log(error);
+                  if (error.response.status == 422) {
+                      this.errors_create = error.response.data.errors;
+                  }
+                      });
+        
+          },
       getOrder() {
 
           this.vid = localStorage.getItem("ivid");

@@ -1509,8 +1509,11 @@ class OrderController extends Controller
 	  	}
 
 	  	function changeProcessing_Status(Request $request){
-	  		// var_dump($request->allSelected);
-	  		if($request->allSelected == "false"){
+	  		// var_dump($_REQUEST); die;
+	  		// echo $request->loc; die;
+	  		if($request->loc == "wp"){
+	  			$listImp['0'] = $request->oid;
+	  		}elseif($request->allSelected == "false"){
 	  			$listImp['0'] = $request->oid;
 	  		// var_dump($listImp); die;
 	  		}else{
@@ -1673,7 +1676,7 @@ class OrderController extends Controller
 	  		       ->join('billings','orders.oid','=','billings.order_id')
 	  		       ->select("orders.oid as OrderID","orders.date_created as OrderDate","orders.payment_method as Payment Method","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")    
 		  		   ->where('orders.vid',$vid)
-		           ->where('orders.status',"dtodel2warehouse")
+		           ->where('orders.status',$request->status)
 		       	   ->where('orders.vid',$vid)
 			  	   ->whereIn('orders.oid', $listImp)
 		           ->orderBy('oid','DESC')
@@ -1684,7 +1687,7 @@ class OrderController extends Controller
 	                	$orders[] =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
 	                	->select("orders.oid as OrderID","orders.date_created as OrderDate","billings.first_name as First Name","billings.last_name as Last Name","billings.city as City","billings.state as State","billings.email as Email","billings.email as Email")
 	                	->where('orders.vid',intval($request->vid)) 
-	                	 ->where('orders.status',"dtodel2warehouse")
+	                	 ->where('orders.status',$request->status)
 						->where('billings.vid',intval($request->vid)) 
 	                    	                    ->get();
 

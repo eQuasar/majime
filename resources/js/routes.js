@@ -25,6 +25,9 @@ import PendingRefunds from './components/Orders/PendingRefunds.vue'
 import PackedOrders from './components/Orders/PackedOrders.vue'
 import ForDelivery from './components/Products/ForDelivery.vue'
 import OnHoldOrders from './components/Orders/OnHoldOrders.vue'
+import DtoIntransit from './components/Orders/dtoIntransit.vue'
+import DtoBooked from './components/Orders/dtoBooked.vue'
+import DtoDelivered from './components/Orders/dtoDelivered.vue'
 
 
 
@@ -58,6 +61,9 @@ export const routes = [
      {path:'/admin/ViewTransaction',component:ViewTransaction ,props: true,name:'ViewTransaction',meta: { auth: true}},
      {path:'/vendor/ForDelivery',component:ForDelivery,name:'fordelivery',meta: { auth: true}},
      {path:'/vendor/OnHoldOrders',component:OnHoldOrders,name:'onholdorders',meta: { auth: true}},
+      {path:'/vendor/dtoIntransit',component:DtoIntransit,name:'dtoIntransit',meta: { auth: true}},
+      {path:'/vendor/dtoBooked',component:DtoBooked,name:'dtoBooked',meta: { auth: true}},
+           {path:'/vendor/dtoDelivered',component:DtoDelivered,name:'dtoDelivered',meta: { auth: true}},
     
     
     
