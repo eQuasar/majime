@@ -226,21 +226,18 @@ $users = DB::table('users')
      public function product_Profile($variation_id)
 	    {	
 	    	
-         // 	 $order =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
-		      	// ->where('orders.oid','=',$oid)
-		       //  ->where('orders.vid','=',intval($_REQUEST['vid']))
-		      	// ->where('billings.vid','=',intval($_REQUEST['vid']))
-		       //  ->select("orders.*","billings.*",
-		       //  		DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = ".intval($_REQUEST['vid'])." GROUP BY line_items.order_id) as quantity"))
-	        //  ->get();
-       	 //    return $order;
+         	 $orderItems =DB::table("orders")
+		        	->join("line_items",'line_items.order_id','=','orders.oid')
+		        	->where('orders.vid','=',intval($_REQUEST['vid']))
+		        ->where('line_items.variation_id','=',$variation_id)
+		        ->where('line_items.vid','=',$_REQUEST['vid'])->get();
+	       	 return $orderItems;
 	    }
 	    public function product_items($variation_id){
 
-		        $orderItems =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
+		        $orderItems =DB::table("orders")
 		        	->join("line_items",'line_items.order_id','=','orders.oid')
 		        	->where('orders.vid','=',intval($_REQUEST['vid']))
-		      	 ->where('billings.vid','=',intval($_REQUEST['vid']))
 		        ->where('line_items.variation_id','=',$variation_id)
 		        ->where('line_items.vid','=',$_REQUEST['vid'])->get();
 	       	 return $orderItems;

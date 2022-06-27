@@ -1,108 +1,34 @@
 <template>
-  <b-container fluid> 
-    <div class="header_title">
-      <div class="header_inner">
+  <b-container fluid>  
+    <div class="content_bar card">
+      <div class="card-body">
         <b-row>
-          <b-col xl="6" lg="6" md="6">
-        <h3><strong>List Orders For Variation Id:{{variation_id}}</strong></h3>
-      </b-col>
-      <b-col xl="6" lg="6" md="6">
-        <template>
-          <b-button pill variant="download-btn btn btn-primary" @click="goBack">Go Back</b-button>
-       </template>
-     </b-col>
-       </b-row>
-      </div>
-    </div> 
-    </br>
-    <!-- <div class="content_bar"> 
-        <div class="card-body card">
-           <div class="call-center-dashboard">
-            <div class="select-list">
-          <b-row>
-            <b-col xl="2" lg="2" md="2">
-                <select class='form-control custom-select' v-model='status' :options="allstatusdata" @change='onChangeStatus($event)'>
-                    <option disabled value="null">Select status</option>
-                    <option v-for='data in allstatusdata' :value='data.status'>{{data.status}}</option>
-                </select>
-               </b-col>
-               <b-col xl="2" lg="2" md="2">
-                <select class='form-control custom-select' v-model='city' :options="allcitydata" @change='onChangeCity($event)'>
-                    <option disabled value="null">Select city</option>
-                    <option v-for='data in allcitydata' :value='data.city'>{{data.city}}</option>
-                </select>
-               </b-col>
-            <b-col xl="2" lg="2" md="2">
-            </b-col>
-            <b-col xl="6" lg="6" md="6">
-                             <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
-                                 <b-form @submit="onSubmit" class="date_range">
-                       <div class="datepiker-block">
-                         <span>From:&nbsp;</span>  <b-form-datepicker  id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"  locale="en-IN"></b-form-datepicker>
-                       </div>
-                    <div class="datepiker-block">
-                        <span>To:&nbsp;</span> <b-form-datepicker id="to" v-model="date_to" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"  locale="en-IN"></b-form-datepicker>
-                      </div>
-                          <b-button type="submit" variant="primary">Submit</b-button>
-                                </b-form>
-            </b-col>
-          </b-row>
-      </div>
-    </div>
-  </div> -->
-      </br>
-      <!-- <div class="card-body card">
-           <div class="call-center-dashboard">
-               <b-row>
-                    
-                </b-row>
-            </div>
-    </div> -->
-    <div class="card-body card">
-      <div class="card list-appointments">
-          <div class="col-sm-12">
-              <b-row>
-                  <b-col xl="4" lg="4" md="4">
-                   <!--  <b-form-group class="mb-0">Show <b-form-select id="per-page-select" v-model="perPage" :options="pageOptions"size="sm">
-                      </b-form-select> entries
-                    </b-form-group> -->
-                  </b-col>
-                  <b-col xl="4" lg="4" md="4" class="search_field">
-                        <b-form-input id="filter-input" v-model="filter" type="search" placeholder="Type to Search"></b-form-input>
-                          <b-input-group-append><b-button :disabled="!filter" @click="filter = ''">Clear</b-button></b-input-group-append>
-                    </b-col>
-                 
-        
-              </b-row>
-          </div>
-        </div>
-    </div>
-      </br>
-        <!-- <b-table striped hover responsive :items="items"
-                  :sort-by.sync="sortBy"
-                  :sort-desc.sync="sortDesc"
-                   sort-icon-left :filter-included-fields="filterOn" :filter="filter" :fields="fields" :per-page="perPage" :current-page="currentPage" show-empty>
-              <template #empty="scope">
-                  <p style="text-align:center;">No record found, choose date filter to found the result.</p>
-              </template>
-              <template #head(select)="data">
-                  <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="allSelected"> {{ data.label }}</span>
-              </template>
-              <template v-slot:cell(variation_id)="row">
-                #{{(row.item.variation_id)}}
-              </template>
-             
-              <template v-slot:cell(select)="row">
-                <input type="checkbox" :value="row.item.oid" v-model="selectall" >
-              </template>
-            </b-table> -->
-
+          <b-col xl="12" lg="12" md="12">
+             <template>
+                <b-button pill variant="download-btn btn btn-primary" @click="goBack">Go Back</b-button>
+             </template>
             <div class="profile_info">
-                <h3 class="own-heading"><router-link :to="{ name: 'productprofile', params: { variation_id: (this.variation_id).toString() }}"></router-link></strong></h3>
+            
+               <h3 class="own-heading"><p class="h2 mb-2"><strong>Variation ID:{{variation_id}}</strong></p> <router-link :to="{ name: 'productprofile', params: { variation_id: (this.variation_id).toString() }}"></router-link></strong></h3>
+
+
             </div>
           </b-col>
         </b-row>
-        
+        <b-row>
+          <b-col xl="4" lg="4" md="4">
+              
+                <p><strong>Product ID</strong> {{product_id}}</p>
+                <p><strong>Product Name:</strong> {{name}}</p>              
+          </b-col>
+          <b-col xl="4" lg="4" md="4">
+                   <p><strong>SKU:</strong> {{sku}} </p>
+                <p><strong>Parent Name:</strong> {{parent_name}}</p>
+          </b-col>
+          <b-col xl="4" lg="4" md="4">
+                <p><strong>Price:</strong> {{price}}</p> 
+          </b-col>
+        </b-row>
       </div>
     </div>
     <div class="tenpxdiv"></div>
@@ -118,46 +44,35 @@
                   <template v-slot:cell(sr)="row">
                     {{((currentPage-1)*perPage)+(row.index)+1}}
                   </template>
-                  <template #empty="scope">
-                  <p style="text-align:center;">No record found, choose date filter to found the result.</p>
-              </template>
-                 <!--  <template #head(select)="data">
-                  <span class="text-info"><input type="checkbox" @click="selectedAll" v-model="allSelected"> {{ data.label }}</span>
-              </template> -->
-              <template v-slot:cell(variation_id)="row">
-                #{{(row.item.variation_id)}}
-              </template>
-            <!--   <template v-slot:cell(select)="row">
-                <input type="checkbox" :value="row.item.oid" v-model="selectall" >
-              </template>
- -->
-           </b-table>
+                  
+
+            </b-table>
           </b-col>
         </b-row>
       </div>
     </div>
-  		
+      
   </b-container>
 </template>
 
 <script>
 import ProductProfile from '../../api/Product.js';
-  export default {
+import OrderProfile from '../../api/order.js';
 
+  export default {
     props: {
         variation_id: {
         type: String,
         required: true
       },
     },
+
     mounted() {
       this.getOrder();
       this.getOrderItems();
     },
     data() {
       return {
-        status: null,
-        city: null,
         show: false,
         currentPage: 1,
         image:'',
@@ -169,10 +84,18 @@ import ProductProfile from '../../api/Product.js';
         address_1:'',
         address_2:'',
         email:'',
+        phone:'',
         payment_method:'',
         state:'',
-        // city:'',
-        // status:'',
+        city:'',
+        postcode:'',
+        product_id:'',
+        name:'',
+        country:'',
+        status:'',
+        sku:'',
+        price:'',
+        parent_name:'',
         total:'',
         filter: null,
         filterOn: [],
@@ -188,53 +111,52 @@ import ProductProfile from '../../api/Product.js';
 
         options: [],
         fields: [
-        //   {
-        //   key:'select',
-        //   label: 'Select all',
-        //   sortable:true
-        // }, 
-
           {
-            key: 'order_id',
+            key: 'sr',
+            label: 'S.No.',
+        
+          },
+          // {
+          //   key: 'product_id',
+          //   label: 'Product ID',
+          //   sortable: true
+          // },
+          {
+            key: 'oid',
             label: 'Order ID',
             sortable: true
           },
+          
+          {
+            key: 'variation_id',
+            label: 'Variation ID',
+            sortable: true
+          },
+          {
+            key: 'name',
+            label: 'Name',
+            sortable: true
+          },
+          // {
+          //   key: 'parent_name',
+          //   label: 'Parent Name',
+          //   sortable: true
+          // },
           {
             key: 'quantity',
-            label: 'Qty',
+            label: 'Quantity',
+            sortable: true
+          },
+          {
+            key: 'price',
+            label: 'Price',
             sortable: true
           },
           {
             key: 'total',
-            label: 'Amount',
+            label: 'Total',
             sortable: true
           },
-          {
-            key: 'state',
-            label: 'State',
-            sortable: true
-          },
-          {
-            key: 'city',
-            label: 'City',
-            sortable: true
-          },
-       
-          {
-            key: 'date_created_gmt',
-            label: 'Order Date ',
-            sortable: true
-          },
-          {
-            key: 'status',
-            label: 'Status',
-            sortable: true
-          },
-          {
-            key: 'action',
-            label: 'Action',
-            sortable: false
-          }
           
         ],
         items: [],
@@ -248,11 +170,29 @@ import ProductProfile from '../../api/Product.js';
           .then(( response ) => {
             if(response.data)
             {
-              this.order_id=response.data[0].order_id;
-              this.product_id = response.data[0].product_id;
-              this.quantity = response.data[0].quantity;
-              this.sku = response.data[0].sku;
-              this.total = response.data[0].total;
+                this.order_id=response.data[0].order_id;
+                this.product_id = response.data[0].product_id;
+                this.sku = response.data[0].sku;
+                this.name = response.data[0].name;
+                this.parent_name = response.data[0].parent_name;
+                this.price = response.data[0].price;
+                this.total = response.data[0].total;
+                this.quantity=response.data[0].quantity;
+                this.amount = response.data[0].total;
+                this.email = response.data[0].email;
+                this.phone = response.data[0].phone;
+                this.payment_method = response.data[0].payment_method;
+                this.first_name = response.data[0].first_name;
+                this.last_name = response.data[0].last_name;
+                this.address_1 = response.data[0].address_1;
+                this.address_2 = response.data[0].address_2;
+                this.state = response.data[0].state;
+                this.city=response.data[0].city;
+                this.postcode=response.data[0].postcode;
+                this.country=response.data[0].country;
+                this.date_created_gmt=response.data[0].date_created_gmt;
+                this.status=response.data[0].status;
+             
             }
           })
           .catch(error => {
@@ -263,7 +203,7 @@ import ProductProfile from '../../api/Product.js';
       goBack(){
         return this.$router.go(-1);
       },
-      getOrderItems() {
+     getOrderItems() {
           ProductProfile.getProductItems(this.variation_id,this.vid) 
           .then(( response ) => {
             if(response.data)
