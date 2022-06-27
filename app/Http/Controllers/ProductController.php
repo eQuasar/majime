@@ -237,7 +237,12 @@ $users = DB::table('users')
 	    }
 	    public function product_items($variation_id){
 
-		        $orderItems =DB::table("line_items")->where('line_items.variation_id','=',$variation_id)->where('vid','=',$_REQUEST['vid'])->get();
+		        $orderItems =DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
+		        	->join("line_items",'line_items.order_id','=','orders.oid')
+		        	->where('orders.vid','=',intval($_REQUEST['vid']))
+		      	 ->where('billings.vid','=',intval($_REQUEST['vid']))
+		        ->where('line_items.variation_id','=',$variation_id)
+		        ->where('line_items.vid','=',$_REQUEST['vid'])->get();
 	       	 return $orderItems;
 	    }
 
