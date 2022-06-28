@@ -1,5 +1,6 @@
 <template>
   <b-container fluid> 
+        <b-overlay :show="show" rounded="sm">
     <div class="header_title">
       <div class="header_inner">
         <h3><strong>List Orders</strong></h3>
@@ -22,6 +23,7 @@
             </select>
         </b-col>
     </b-row>
+  </div>
 </div>
 <br>
 <div class="card-body card">
@@ -49,7 +51,7 @@
                     </b-col>
                     <b-col>
                         <button type="button" class="download-btn btn btn-primary" v-on:click="selectdownload" style="margin-left: 15px;">Download</button>
-                      <!--   <button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button> -->
+                        <button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button>
                     </b-col>
                 </b-row>
             </div>
@@ -79,7 +81,7 @@
               </template>
               <template v-slot:cell(action)="row">
                <p class="h3 mb-2">   <router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
-              <!--   &nbsp;&nbsp; <b-link @click="addstatusOID(row.item.oid, row.item.status)"><b-icon icon="check-square-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link> --></p>
+                &nbsp;&nbsp; <b-link @click="addstatusOID(row.item.oid, row.item.status)"><b-icon icon="check-square-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></p>
               </template>
       </b-table>
           <div class="text-center" v-if="seen">
@@ -124,8 +126,8 @@
       
                           <b-button type="submit" @click.prevent="assign_status" variant="primary">Submit</b-button>
                  </b-form> 
-
      </b-modal>
+      </b-overlay>
      </b-container>
     </template>
     <script>
@@ -145,6 +147,7 @@
     data() 
     {
       return {
+        show: false,
         selected: [],
         allSelected: false,
         vendor:null,
@@ -284,6 +287,7 @@ computed: {
                 });
       },
         getState(){
+          this.show=true;
         	 this.vid = JSON.parse(localStorage.getItem("ivid"));
         	  let formData = new FormData();
           formData.append('vid', this.vid);
@@ -296,6 +300,7 @@ computed: {
             this.errors_create = error.response.data.errors;
         }
         });
+       this.show=false;
         },
         getCity(){
         	 this.vid = JSON.parse(localStorage.getItem("ivid"));
@@ -499,6 +504,7 @@ computed: {
 
        selectdownload()
       {
+        this.show=true;
             let formData = new FormData();
             formData.append("selectall",this.selectall)
             formData.append("vid",this.vid)
@@ -511,13 +517,16 @@ computed: {
                 XLSX.utils.book_append_sheet(wb, data, 'data')
                 XLSX.writeFile(wb,'List_orders.xlsx')
           })
+
           .catch((error) => {
               console.log(error);
               if (error.response.status == 422) {
                   this.errors_create = error.response.data.errors;
               }
+               
               // loader.hide();
           });
+          this.show=false;
       }, 
 
   },

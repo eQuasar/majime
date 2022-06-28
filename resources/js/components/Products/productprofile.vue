@@ -8,10 +8,8 @@
                 <b-button pill variant="download-btn btn btn-primary" @click="goBack">Go Back</b-button>
              </template>
             <div class="profile_info">
-            
                <h3 class="own-heading"><p class="h2 mb-2"><strong>Variation ID:{{variation_id}}</strong></p> <router-link :to="{ name: 'productprofile', params: { variation_id: (this.variation_id).toString() }}"></router-link></strong></h3>
-
-
+                 </b-overlay>
             </div>
           </b-col>
         </b-row>
@@ -51,7 +49,7 @@
         </b-row>
       </div>
     </div>
-      
+
   </b-container>
 </template>
 
@@ -164,7 +162,7 @@ import OrderProfile from '../../api/order.js';
     },
     methods: {
       getOrder() {
-
+          this.show=true;
           this.vid = localStorage.getItem("ivid");
           ProductProfile.getProductProfile(this.variation_id,this.vid)
           .then(( response ) => {
@@ -194,6 +192,7 @@ import OrderProfile from '../../api/order.js';
                 this.status=response.data[0].status;
              
             }
+              this.show=false;
           })
           .catch(error => {
               console.log(error);
@@ -204,12 +203,14 @@ import OrderProfile from '../../api/order.js';
         return this.$router.go(-1);
       },
      getOrderItems() {
+          this.show=true;
           ProductProfile.getProductItems(this.variation_id,this.vid) 
           .then(( response ) => {
             if(response.data)
             {
               this.items=response.data;
             }
+             this.show=false;
           })
           .catch(error => {
               console.log(error);
