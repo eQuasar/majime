@@ -335,12 +335,13 @@ class JsonController extends Controller
 		// echo $vid;
  		$orders=DB::table("orders")
  				// ->join('waybill', 'orders.oid','=','waybill.order_id')
- 				// ->whereIn('orders.status',['dispatched'])
- 				->whereIn('orders.status',['dispatched','intransit'])
+ 				->whereIn('orders.status',['dtobooked'])
+ 				// ->whereIn('orders.status',['dispatched','intransit'])
  				->where('orders.vid',intval($vid))
 				->orderBy('orders.oid','desc')
 				->get();
-		// print_r($orders);
+		// print_r($orders); exit();
+
 		$countOfOrders = count($orders);
 		if($countOfOrders==0){          // If no record found
 			$Result['0'] = "No update required.";
@@ -426,7 +427,11 @@ class JsonController extends Controller
 				}
 				else if ($status == "Delivered"){
 					$status = "deliveredtocust";
-				}else{
+				// }else if(){
+				// 	delivery_status_name     DL
+				// 	delivery_brief_status    delivered
+				}
+				else{
 					$status = "undefined";
 				}
 				// $order_id = $orderIds[$response['ShipmentData'][$i]['Shipment']['AWB']];
@@ -440,6 +445,7 @@ class JsonController extends Controller
 				$statusDel[$i]['oid'] = addslashes( $order_id );
 				$statusDel[$i]['status'] = addslashes( $status );
 				$statusDel[$i]['delivery_status_name'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] );
+				$statusDel[$i]['delivery_status'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['Status'] );
 				$statusDel[$i]['delivery_status_code'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusCode'] );
 				$statusDel[$i]['delivery_order_sno'] = addslashes( $response['ShipmentData'][$i]['Shipment']['ReferenceNo'] );
 				$statusDel[$i]['delivery_status_date_and_time'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusDateTime'] );
