@@ -18,15 +18,17 @@ class CreateUpdateStatusesTable extends Migration
             $table->integer('orderid');
             $table->integer('vid');
             $table->string('awb');
+            $table->string('status');
             $table->string('delivery_status_name');
             $table->string('delivery_status_code');
             $table->string('delivery_order_sno');
             $table->dateTime('delivery_status_date_and_time');
             $table->string('delivery_brief_status');
+            $table->string('delivery_status');
             $table->string('delivery_instructions');
             $table->integer('delivery_dispatch_count');
             $table->integer('delivery_invoice_amount');
-            $table->string('delivery_scans');
+            $table->text('delivery_scans');
             $table->dateTime('delivery_destination_received_date');
             $table->dateTime('delivery_pickup_date');
             $table->intdiv(dividend, divisor)eger('delivery_charged_weight_in_grams');

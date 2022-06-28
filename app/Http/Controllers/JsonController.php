@@ -335,12 +335,13 @@ class JsonController extends Controller
 		// echo $vid;
  		$orders=DB::table("orders")
  				// ->join('waybill', 'orders.oid','=','waybill.order_id')
- 				// ->whereIn('orders.status',['dispatched'])
- 				->whereIn('orders.status',['dispatched','intransit'])
+ 				// ->whereIn('orders.status',['dtobooked'])
+ 				->whereIn('orders.status',['dispatched','intransit','dtobooked'])
  				->where('orders.vid',intval($vid))
 				->orderBy('orders.oid','desc')
 				->get();
-		// print_r($orders);
+		// print_r($orders); exit();
+
 		$countOfOrders = count($orders);
 		if($countOfOrders==0){          // If no record found
 			$Result['0'] = "No update required.";
@@ -423,10 +424,15 @@ class JsonController extends Controller
 					$status = "dispatched";
 				}else if ($status == "In Transit"){
 					$status = "intransit";
-				}
-				else if ($status == "Delivered"){
+				} else if ($status == "RTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
+					$status = "rto-delivered";
+				} else if ($status == "Delivered"){
 					$status = "deliveredtocust";
-				}else{
+				// }else if(){
+				// 	delivery_status_name     DL
+				// 	delivery_brief_status    delivered
+				}
+				else{
 					$status = "undefined";
 				}
 				// $order_id = $orderIds[$response['ShipmentData'][$i]['Shipment']['AWB']];
@@ -440,6 +446,7 @@ class JsonController extends Controller
 				$statusDel[$i]['oid'] = addslashes( $order_id );
 				$statusDel[$i]['status'] = addslashes( $status );
 				$statusDel[$i]['delivery_status_name'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] );
+				$statusDel[$i]['delivery_status'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['Status'] );
 				$statusDel[$i]['delivery_status_code'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusCode'] );
 				$statusDel[$i]['delivery_order_sno'] = addslashes( $response['ShipmentData'][$i]['Shipment']['ReferenceNo'] );
 				$statusDel[$i]['delivery_status_date_and_time'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusDateTime'] );
@@ -474,16 +481,18 @@ class JsonController extends Controller
 				'vid'=>intval($vid),
 				'orderid'=>$status_update['oid'],
 				'awb'=>$status_update['awb'],
+				'status'=>$status_update['status'],
 				'delivery_status_name'=>$status_update['delivery_status_name'],
 				'delivery_status_code'=>$status_update['delivery_status_code'],
 				'delivery_order_sno'=>$status_update['delivery_order_sno'],
 				 'delivery_status_date_and_time'=>$status_update['delivery_status_date_and_time'],
 				 'delivery_brief_status'=>$status_update['delivery_brief_status'],
+				 'delivery_status'=>$status_update['delivery_status'],
 				 'delivery_instructions'=>$status_update['delivery_instructions'],
 				 'delivery_dispatch_count'=>$status_update['delivery_dispatch_count'],
 				 'delivery_invoice_amount'=>$status_update['delivery_invoice_amount'],
-				  'delivery_scans'=>$status_update['delivery_scans'],
-				  'delivery_destination_received_date'=>$status_update['delivery_destination_received_date'],
+				 'delivery_scans'=>$status_update['delivery_scans'],
+				//  'delivery_destination_received_date'=>$status_update['delivery_destination_received_date'],
 				 'delivery_pickup_date'=>$status_update['delivery_pickup_date'],
 				 'delivery_charged_weight_in_grams'=>$status_update['delivery_charged_weight_in_grams'],
 				 			
@@ -499,9 +508,11 @@ class JsonController extends Controller
 				$Result[$status_update['awb']] = "AWB: ".$status_update['awb']." Updated Successfully.";
 				UpdateStatus::insert($data);
 				// var_dump($status_update); die;
+				/*
 				if($status_update['status'] != "undefined"){
 					OrderController::changeOrderStatus(intval($vid),$status_update['oid'],$status_update['status']);
 				}
+				*/
 
 				// call order status update method that will further update vendor's wordpress order status as well.
 				
