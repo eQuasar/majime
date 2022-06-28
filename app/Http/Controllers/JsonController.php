@@ -482,8 +482,8 @@ class JsonController extends Controller
 				 'delivery_instructions'=>$status_update['delivery_instructions'],
 				 'delivery_dispatch_count'=>$status_update['delivery_dispatch_count'],
 				 'delivery_invoice_amount'=>$status_update['delivery_invoice_amount'],
-				 // 'delivery_scans'=>$status_update['delivery_scans'],
-				 // 'delivery_destination_received_date'=>$status_update['delivery_destination_received_date'],
+				  'delivery_scans'=>$status_update['delivery_scans'],
+				  'delivery_destination_received_date'=>$status_update['delivery_destination_received_date'],
 				 'delivery_pickup_date'=>$status_update['delivery_pickup_date'],
 				 'delivery_charged_weight_in_grams'=>$status_update['delivery_charged_weight_in_grams'],
 				 			

@@ -1,5 +1,6 @@
 <template>
   <b-container fluid> 
+    <b-overlay :show="show" rounded="sm">
     <div class="header_title">
     <div class="header_inner">
         <h3><strong>Ready to Pack</strong></h3><br/>
@@ -83,6 +84,7 @@
       aria-controls="my-table"
     ></b-pagination>
   </div>
+  </b-overlay>
 </b-container>
 </template>
 
@@ -103,9 +105,11 @@
     data() 
     {
       return {
+        show:false,
         vendor:null,
         status_assign:0,
         oid:0,
+        statusAssign:'',
         selected: null,
         options: [
           { value: null, text: 'Vendor Wise Detail' },
@@ -319,6 +323,7 @@ computed: {
      },
       assignAWB(){
         // alert('Assigned Successfully');
+        this.show=true;
         this.vid = JSON.parse(localStorage.getItem("ivid"));
         let formData= new FormData();
       // formData.append("oid", this.oid);
@@ -327,6 +332,7 @@ computed: {
         order.assignAWB(formData)
        .then(( response ) => {
           alert(response.data.msg);
+          this.show=false;
       this.getVidz();
 
         })
@@ -336,6 +342,7 @@ computed: {
         })
       },
       assignAWBOrder(oid, index){
+        this.show=true;
         // alert('Assigned Successfully');
         this.vid = JSON.parse(localStorage.getItem("ivid"));
         let formData= new FormData();
@@ -344,6 +351,7 @@ computed: {
           order.assignAWBOrder(formData)
          .then(( response ) => {
             alert(response.data.msg);
+            this.show=false;
             this.getVidz();
              // this.items.splice(this.items.indexOf(index), 1);
           })
@@ -366,6 +374,7 @@ computed: {
         id: modalId
       })
       .then(wasOkPressed => {
+        this.show=true;
         if(wasOkPressed) {
           this.vid = JSON.parse(localStorage.getItem("ivid"));
           let formData = new FormData();
@@ -377,6 +386,7 @@ computed: {
           order.changeProcessingStatus(formData)
               .then((response) => {
                   alert('Status Update Successfully');
+                  this.show=false;
                 this.getVidz();
               })
               .catch((error) => {

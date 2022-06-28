@@ -1,5 +1,6 @@
 <template>
   <b-container fluid>
+   <b-overlay :show="show" rounded="sm">
     <!-- header -->
     <div class="header_title">
       <div class="header_inner">
@@ -73,6 +74,7 @@
                 </div>
             </b-col>
         </b-row>
+       </b-overlay>
     </b-container>
 </template>
 
@@ -91,7 +93,7 @@
     data() 
     {
       return {
-
+         show:false,
         vendor:null,
         status:"dispatched",
         status_assign:0,
@@ -209,6 +211,7 @@ computed: {
         id: modalId
       })
       .then(wasOkPressed => {
+        this.show=true;
         if(wasOkPressed) {
           this.vid = JSON.parse(localStorage.getItem("ivid"));
           let formData = new FormData();
@@ -221,6 +224,7 @@ computed: {
           order.changeProcessingStatus(formData)
               .then((response) => {
                   alert('Status Update Successfully');
+                  this.show=false;
                   this.getVidz();
               })
               .catch((error) => {
@@ -259,6 +263,7 @@ computed: {
         id: modalId
       })
       .then(wasOkPressed => {
+        this.show=true;
         if(wasOkPressed) {
           this.vid = JSON.parse(localStorage.getItem("ivid"));
           let formData = new FormData();
@@ -270,6 +275,7 @@ computed: {
           order.changeProcessingStatus(formData)
               .then((response) => {
                   alert('Status Update Successfully');
+                  this.show=false;
                 this.getVidz();
               })
               .catch((error) => {
@@ -394,8 +400,8 @@ computed: {
             },
 
             printSlip(){
-        // alert('Assigned Successfully');
         if(this.allSelected != ''){
+          this.show=true;
             this.vid = JSON.parse(localStorage.getItem("ivid"));
             let formData= new FormData();
               formData.append("allSelected",this.allSelected);
@@ -403,6 +409,7 @@ computed: {
             order.printSlip(formData)
            .then(( response ) => {
               alert(response.data.msg);
+              this.show=false;
               window.open(response.data.pdf_url);
             })
             .catch(response => {
@@ -414,6 +421,7 @@ computed: {
           }
       },
       printOrderSlip(oid){
+        this.show=true;
         // alert('Assigned Successfully');
         this.vid = JSON.parse(localStorage.getItem("ivid"));
         let formData= new FormData();
@@ -422,6 +430,7 @@ computed: {
           order.printOrderSlip(formData)
          .then(( response ) => {
             alert(response.data.msg);
+            this.show=false;
           window.open(response.data.pdf_url);
           })
           .catch(response => {

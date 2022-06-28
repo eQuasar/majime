@@ -122,6 +122,8 @@
                               <b-form-select-option value="dtointransit">Change status to DTO Intransit</b-form-select-option>
                               <b-form-select-option value="pickedup">Change status to Picked up</b-form-select-option>
                               <b-form-select-option value="on-hold">Change status to on-hold</b-form-select-option>
+                              <b-form-select-option value="rtodelivered">Change status to on-hold</b-form-select-option>
+                              <b-form-select-option value="dtodelivered">Change status to on-hold</b-form-select-option>
                           </b-form-select>
       
                           <b-button type="submit" @click.prevent="assign_status" variant="primary">Submit</b-button>

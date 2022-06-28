@@ -268,6 +268,7 @@ computed: {
         id: modalId
       })
       .then(wasOkPressed => {
+          this.show=true;
         if(wasOkPressed) {
           this.vid = JSON.parse(localStorage.getItem("ivid"));
           let formData = new FormData();
@@ -279,6 +280,7 @@ computed: {
           order.changeProcessingStatus(formData)
               .then((response) => {
                   alert('Status Update Successfully');
+                  this.show=false;
                 this.getVidz();
               })
               .catch((error) => {
