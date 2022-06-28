@@ -1,5 +1,6 @@
   <template>
     <b-container fluid>
+             <b-overlay :show="show" rounded="sm">
         <div class="header_title">
             <div class="header_inner">
                 <h2><strong>Confirm Orders</strong></h2>
@@ -69,7 +70,7 @@
                 </div>
             </b-col>
           </b-row>
-          
+           </b-overlay>
   </b-container>
 </template>
 
@@ -88,6 +89,7 @@
     data() 
     {
       return {
+        show:false,
         vendor:null,
         status_assign:"",
         oid:0,
@@ -210,6 +212,7 @@ computed: {
         id: modalId
       })
       .then(wasOkPressed => {
+        this.show=true;
         if(wasOkPressed) {
           this.vid = JSON.parse(localStorage.getItem("ivid"));
           let formData = new FormData();
@@ -221,18 +224,24 @@ computed: {
           order.changeProcessingStatus(formData)
               .then((response) => {
                   alert('Status Update Successfully');
+                     this.show=false;
                 this.getVidz();
+
               })
+
               .catch((error) => {
                   // console.log(error);
                   if (error.response.status == 422) {
                       this.errors_create = error.response.data.errors;
                   }
+             
                   // loader.hide();
               });
+
         } else {
           /* Do something else */
         }
+
       })
       .catch(() => {
         console.log('The modal closed unexpectedly')
@@ -244,6 +253,7 @@ computed: {
       modalSetTimeout = setTimeout(() => {
         this.$bvModal.hide(modalId)
       }, modalTimeoutSeconds * 2000)
+
     },
     cancelstatusOID(oid) {
         this.oid = oid;
