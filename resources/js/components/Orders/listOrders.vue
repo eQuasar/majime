@@ -51,7 +51,7 @@
                     </b-col>
                     <b-col>
                         <button type="button" class="download-btn btn btn-primary" v-on:click="selectdownload" style="margin-left: 15px;">Download</button>
-                        <button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button>
+                        <!-- <button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button> -->
                     </b-col>
                 </b-row>
             </div>
@@ -80,8 +80,8 @@
                 <input type="checkbox" :value="row.item.oid" v-model="selectall" >
               </template>
               <template v-slot:cell(action)="row">
-               <p class="h3 mb-2">   <router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
-                &nbsp;&nbsp; <b-link @click="addstatusOID(row.item.oid, row.item.status)"><b-icon icon="check-square-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></p>
+               <p class="h3 mb-2">   <router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link></p>
+                <!-- &nbsp;&nbsp; <b-link @click="addstatusOID(row.item.oid, row.item.status)"><b-icon icon="check-square-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></p> -->
               </template>
       </b-table>
           <div class="text-center" v-if="seen">
@@ -122,8 +122,8 @@
                               <b-form-select-option value="dtointransit">Change status to DTO Intransit</b-form-select-option>
                               <b-form-select-option value="pickedup">Change status to Picked up</b-form-select-option>
                               <b-form-select-option value="on-hold">Change status to on-hold</b-form-select-option>
-                              <b-form-select-option value="rtodelivered">Change status to on-hold</b-form-select-option>
-                              <b-form-select-option value="dtodelivered">Change status to on-hold</b-form-select-option>
+                              <b-form-select-option value="rtodelivered">Change status to RTO Delivered</b-form-select-option>
+                              <b-form-select-option value="dtodelivered">Change status to DTO Delivered </b-form-select-option>
                           </b-form-select>
       
                           <b-button type="submit" @click.prevent="assign_status" variant="primary">Submit</b-button>
@@ -133,6 +133,7 @@
      </b-container>
     </template>
     <script>
+      
     import uniq from 'lodash/uniq';
     import order from '../../api/order.js';
     import user from '../../api/user.js';
@@ -255,6 +256,7 @@ computed: {
       },
          onChangeCity(event)
          {
+           this.show=true;
           this.vid = JSON.parse(localStorage.getItem("ivid"));
           console.log(event.target.value);
           let formData = new FormData();
@@ -264,6 +266,7 @@ computed: {
               .then((response) => 
                    {
                   this.items=response.data;
+                  this.show=false;
                   console.log(this.items);
                     })
           .catch((error) => 
@@ -320,6 +323,7 @@ computed: {
                  });
               },
         onChangeState(event) {
+          this.show=true;
           console.log(event.target.value);
            formData.append('vid', vid);
           let formData = new FormData();
@@ -327,6 +331,7 @@ computed: {
           order.stateSearch(formData)
               .then((response) => {
                   this.items=response.data;
+                  this.show=false;
                   console.log(this.items);
             })
           .catch((error) => {
@@ -337,6 +342,7 @@ computed: {
                 });
               },
         onChangeStatus(event) {
+          this.show=true;
          this.vid = JSON.parse(localStorage.getItem("ivid"));
           console.log(event.target.value);
           let formData = new FormData();
@@ -346,6 +352,7 @@ computed: {
               .then((response) => 
                    {
                   this.items=response.data;
+                  this.show=false;
                   console.log(this.items);
                     })
           .catch((error) => 
@@ -372,6 +379,7 @@ computed: {
             })
         },
         onSubmit(event) {
+          this.show=true;
           event.preventDefault()
           console.log(this.date_from);
             this.create_error = "";
@@ -390,6 +398,7 @@ computed: {
             order.orderSearch(formData)
               .then((response) => {    
                       this.items=response.data;
+                      this.show=false;
                       console.log(this.items);
                                })
               .catch((error) => {
@@ -441,7 +450,7 @@ computed: {
         },
        assign_status() 
         {
-
+          this.show=true;
           this.vid = JSON.parse(localStorage.getItem("ivid"));
           let formData = new FormData();
           // formData.append("oid",this.oid);
@@ -457,6 +466,7 @@ computed: {
               .then((response) => {
                   this.$bvModal.hide("modal-1");
                   alert(response.data.msg);
+                  this.show=false;
                   this.getVidz();
               })
               .catch((error) => {

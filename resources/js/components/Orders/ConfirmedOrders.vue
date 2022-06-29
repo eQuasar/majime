@@ -426,6 +426,7 @@ computed: {
 // };  
  Confirmdownload()
       {
+        this.show=true;
             let formData = new FormData();
             formData.append("allSelected",this.allSelected)
             formData.append("vid",this.vid)
@@ -445,6 +446,7 @@ computed: {
               }
               // loader.hide();
           });
+          this.show=false;
       }, 
 
   },

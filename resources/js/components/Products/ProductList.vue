@@ -1,5 +1,6 @@
 <template>
   <b-container fluid> 
+    <b-overlay :show="show" rounded="sm">
     <div class="header_title">
       <div class="header_inner">
         <h3><strong>Product List</strong></h3><br/>
@@ -119,6 +120,7 @@
     ></b-pagination>
   
     </div>
+      </b-overlay>
 </b-container>
 </template>
 
@@ -142,6 +144,7 @@
     data() 
     {
       return {
+        show: false,
         ariaDescribedby: "",
         time: "",
         date: "",
@@ -285,6 +288,7 @@ computed: {
       },
     onChangeproduct(event) 
          {
+           this.show=true;
            this.vid = JSON.parse(localStorage.getItem("ivid"));
           console.log(event.target.value);
           let formData = new FormData();
@@ -295,6 +299,7 @@ computed: {
                    {
                   this.items=response.data;
                   console.log(this.items);
+                  this.show=false;
                     })
           .catch((error) => 
                   {
@@ -346,6 +351,7 @@ computed: {
       return this.pro_cat = "sss";
     },
     onSubmit(event) {
+      this.show=true;
       event.preventDefault()
       this.create_error = "";
       if (!this.date_from) {
@@ -365,6 +371,7 @@ computed: {
               
                   this.items=response.data;
                     console.log(this.items);
+                    this.show=false;
          })
           .catch((error) => {
               console.log(error);
@@ -412,6 +419,7 @@ computed: {
     },
         ProductList_download()
         {
+          this.show=true;
            let formData = new FormData();
             formData.append("selectall",this.selectall)
             formData.append("vid",this.vid)
@@ -431,6 +439,7 @@ computed: {
               }
               // loader.hide();
           });
+          this.show=false;
         },
     }
 };  

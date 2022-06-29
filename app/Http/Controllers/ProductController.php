@@ -284,14 +284,12 @@ $users = DB::table('users')
 				 	$listImp=explode(',',$request->selectall);
 		    		$orderItems[] =DB::table("line_items")
 		    		->whereIn('line_items.variation_id',$listImp)
-		    		 ->select("line_items.sku as SKU","line_items.name as Name","line_items.quantity as Qty","line_items.parent_name as Parent","line_items.variation_id as VariationID")
-		        	    ->where('vid',intval($request->vid)) 
-	        	       	                    ->get();
-	        	     
-	                   
+		    		->select("line_items.sku as SKU","line_items.name as Name","line_items.quantity as Qty","line_items.parent_name as Parent","line_items.variation_id as VariationID")
+		        	->where('vid',intval($request->vid)) 
+	        	    ->get();
 	                }else{
 	                	$orderItems[] =DB::table("line_items")
-	                	->whereIn('line_items.variation_id', $listImp)
+	                	// ->whereIn('line_items.variation_id',$listImp)
 	                	->where('vid',intval($request->vid)) 
 	                    ->get();
 	                }

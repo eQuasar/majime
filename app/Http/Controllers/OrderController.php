@@ -1424,6 +1424,7 @@ class OrderController extends Controller
 					       	     ->where('orders.vid',$request->vid)
 				       		 	 ->get();     
 				        return $order;
+						
 				    }
 		    public function status_Search(Request $request)
 				{

@@ -18,7 +18,7 @@ export default {
         return axios.get('product_data', data)
     },
       getStatus(data) {
-        return axios.get('status_data', data)
+        return axios.post('status_data', data)
     },
      getProductProfile(variation_id, vid) {
         return axios.get('product_Profile/' + variation_id+'?vid='+vid)
