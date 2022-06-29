@@ -56,6 +56,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('getJson', 'JsonController@getJson')->name('getJson');
 	Route::post('changeStatus', 'OrderController@changeStatus')->name('changeStatus');
 	Route::post('assignAWB', 'OrderController@assignAWB')->name('assignAWB');
+	Route::post('return_awb', 'OrderController@return_awb')->name('return_awb');
 	Route::post('assignAWBOrder', 'OrderController@assignAWBOrder')->name('assignAWBOrder');
 	Route::get('return_order', 'OrderController@return_order')->name('return_order');
 	Route::post('printSlip', 'OrderController@printSlip')->name('printSlip');

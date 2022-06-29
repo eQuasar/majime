@@ -117,4 +117,7 @@ export default {
     changeStatusDispatch(data){
         return axios.post('change_status_on_dispatch', data)
     },
+    returnAWB(data){
+        return axios.post('return_awb', data)
+    }
 }

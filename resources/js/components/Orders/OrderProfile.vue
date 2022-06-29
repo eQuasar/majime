@@ -5,12 +5,10 @@
         <b-row>
           <b-col xl="12" lg="12" md="12">
              <template>
-                <b-button pill variant="download-btn btn btn-primary" @click="goBack">Go Back</b-button>
+                <span v-if="this.status != 'dtobooked'"><span v-if="this.status != 'delivered-to-customer'"><b-button pill variant="download-btn btn btn-primary" @click="returnAWB">Return Order</b-button></span></span>&nbsp;&nbsp;<b-button pill variant="download-btn btn btn-primary" @click="goBack">Go Back</b-button>
              </template>
             <div class="profile_info">
                 <h3 class="own-heading"><p class="h2 mb-2"><strong>Order ID:{{oid}}</strong></p> <strong><router-link :to="{ name: 'OrderProfile', params: { oid: (this.oid).toString() }}"></router-link></strong></h3>
-
-
             </div>
           </b-col>
         </b-row>
@@ -49,11 +47,9 @@
                   sort-icon-left :filter-included-fields="filterOn" 
                   :filter="filter" :fields="fields" :per-page="perPage" 
                   :current-page="currentPage" show-empty>
-                  <template v-slot:cell(sr)="row">
-                    {{((currentPage-1)*perPage)+(row.index)+1}}
-                  </template>
-                  
-
+              <template v-slot:cell(sr)="row">
+                {{((currentPage-1)*perPage)+(row.index)+1}}
+              </template>
             </b-table>
           </b-col>
         </b-row>
@@ -64,9 +60,8 @@
 </template>
 
 <script>
-import OrderProfile from '../../api/order.js';
+import order from '../../api/order.js';
   export default {
-
     props: {
       oid: {
         type: String,
@@ -109,7 +104,6 @@ import OrderProfile from '../../api/order.js';
         selected: 'first',
         vid: 0,
         perPage: 10,
-
         options: [],
         fields: [
           {
@@ -160,7 +154,7 @@ import OrderProfile from '../../api/order.js';
     methods: {
       getOrder() {
           this.vid = localStorage.getItem("ivid");
-          OrderProfile.getOrderProfile(this.oid,this.vid)
+          order.getOrderProfile(this.oid,this.vid)
           .then(( response ) => {
             if(response.data)
             {
@@ -179,7 +173,7 @@ import OrderProfile from '../../api/order.js';
               this.country=response.data[0].country;
               this.date_created_gmt=response.data[0].date_created_gmt;
               this.status=response.data[0].status;
-             
+              this.oid=response.data[0].oid;
             }
           })
           .catch(error => {
@@ -187,11 +181,30 @@ import OrderProfile from '../../api/order.js';
               
           });
       },
+      returnAWB(){
+        // alert("asdas");
+        // alert(this.oid);
+        // this.show=true;
+        // // alert('Assigned Successfully');
+        this.vid = JSON.parse(localStorage.getItem("ivid"));
+        let formData= new FormData();
+        formData.append("vid", this.vid);
+        formData.append("oid", this.oid);
+          order.returnAWB(formData)
+         .then(( response ) => {
+            alert(response.data.msg);
+            // this.show=false;
+          })
+          .catch(response => {
+              this.successful = false;
+              alert('something went wrong');
+          })
+      },
       goBack(){
         return this.$router.go(-1);
       },
       getOrderItems() {
-          OrderProfile.getOrderItems(this.oid,this.vid) 
+          order.getOrderItems(this.oid,this.vid) 
           .then(( response ) => {
             if(response.data)
             {

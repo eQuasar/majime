@@ -51,7 +51,7 @@
                     </b-col>
                     <b-col>
                         <button type="button" class="download-btn btn btn-primary" v-on:click="selectdownload" style="margin-left: 15px;">Download</button>
-                        <!-- <button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button> -->
+                         <span v-if="saw5"><button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button></span>
                     </b-col>
                 </b-row>
             </div>
@@ -80,8 +80,8 @@
                 <input type="checkbox" :value="row.item.oid" v-model="selectall" >
               </template>
               <template v-slot:cell(action)="row">
-               <p class="h3 mb-2">   <router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link></p>
-                <!-- &nbsp;&nbsp; <b-link @click="addstatusOID(row.item.oid, row.item.status)"><b-icon icon="check-square-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></p> -->
+               <p class="h3 mb-2">   <router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>&nbsp;&nbsp;<span v-if="saw5">
+                &nbsp;&nbsp; <b-link @click="addstatusOID(row.item.oid, row.item.status)"><b-icon icon="check-square-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></span></p>
               </template>
       </b-table>
           <div class="text-center" v-if="seen">
@@ -133,7 +133,6 @@
      </b-container>
     </template>
     <script>
-      
     import uniq from 'lodash/uniq';
     import order from '../../api/order.js';
     import user from '../../api/user.js';
@@ -150,6 +149,8 @@
     data() 
     {
       return {
+        saw5: false,
+        seen: false,
         show: false,
         selected: [],
         allSelected: false,
@@ -170,7 +171,6 @@
         allstatusdata:[],
         time_slots: [],
         status_assign_array:[],
-        seen: false,
         date_from: '',
         statusAssign:'',
         selectall:[],
@@ -413,11 +413,13 @@ computed: {
            {
             // alert("sss");
             if(this.$userId == 1){
+              this.saw5 = true;
               this.vid = JSON.parse(localStorage.getItem("ivid"));
               localStorage.setItem("ivid", this.vid);
               this.getOrderDetails(this.vid);
                   this.allSelected=-false;
             }else{
+              this.saw5 = false;
               let formData= new FormData();
               formData.append("user_id", this.$userId);
               user.getVid(formData)
@@ -433,6 +435,7 @@ computed: {
                 })
             }
            },
+    
 
      addstatusOID(oid,status) {
         this.allSelected=-false;
