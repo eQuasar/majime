@@ -1196,9 +1196,15 @@ class OrderController extends Controller {
         $order_items2 = DB::table("waybill")->where('waybill.vid', intval($request->vid))->where('waybill.waybill_no', intval($request->dispatch))->limit(1)->get()->toArray();
         $order_items = array_merge($order_items1,$order_items2);
         // var_dump($order_items); die;
+        $orders = DB::table("orders")->where('orders.oid', intval($order_items[0]->order_id))->get()->toArray();
+        // echo $orders[0]->status; die;
         // foreach ($order_items as $order) {
-        $this->changeOrderStatus(intval($request->vid), intval($order_items[0]->order_id), "dispatched");
-        return response()->json(['error' => false, 'msg' => "Success, Your order number " . intval($order_items[0]->order_id) . " with AWB number is " . intval($order_items[0]->waybill_no), "ErrorCode" => "000"], 200);
+        if($orders[0]->status == "packed"){
+            $this->changeOrderStatus(intval($request->vid), intval($order_items[0]->order_id), "dispatched");
+            return response()->json(['error' => false, 'msg' => "Success, Your order number " . intval($order_items[0]->order_id) . " with AWB number is " . intval($order_items[0]->waybill_no), "ErrorCode" => "000"], 200);
+        }else{
+            return response()->json(['error' => true, 'msg' => "Order is not Packed.", "ErrorCode" => "000"], 200);
+        }
         // }
         // var_dump($order_items); die;
         
