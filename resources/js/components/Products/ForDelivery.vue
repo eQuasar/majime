@@ -292,12 +292,13 @@ computed: {
                     // this.$bvModal.hide("modal-2");
                      // this.getDeliveryDetail();
                      // response.data.msg
+                      this.dispatch = '';
                      document.getElementById("data_msg").textContent = response.data.msg;
-                    this.getDeliveryDetail();
                     setTimeout(function(){
                       this.dispatch = '';
                       // document.getElementById("data_msg").textContent = '';
                     }, 1000);
+                    this.getDeliveryDetail();
                   }else{
                       this.dispatch = '';
                     document.getElementById("data_msg").textContent = response.data.msg;
