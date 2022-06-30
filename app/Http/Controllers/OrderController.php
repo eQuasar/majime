@@ -241,7 +241,7 @@ class OrderController extends Controller {
 							{
 							  "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
 							  "phone": ' . $order->phone . ',
-							  "payment_mode": "COD",
+							  "payment_mode": "Prepaid",
 							  "name": "' . $order->first_name . ' ' . $order->last_name . '",
 							  "pin": ' . $order->postcode . ',
 							  "cod_amount":' . $order->total . ',
