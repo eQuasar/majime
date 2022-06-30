@@ -669,27 +669,27 @@ class JsonController extends Controller
 		    $this->Order_refunds($order->id,$order->refunds,$vid);
 			$this->Order_links($order->id,$order->_links,$vid);
 
-			$this->getWayBill($vid, $url);
-			
-			$jsonResponse=$this->getProductWP($url, intval($vid));
-			$this->InsertProduct($jsonResponse, $vid);
-			// dd($jsonResponse);
-
-			$jsonResponsecat=$this->getProductCatWP($url, intval($vid));
-			$this->InsertProductCat($jsonResponsecat, $vid);
-			// dd($jsonResponsecat);
-
-			$jsonResponseTag=$this->getProductTagWp($url, intval($vid));
-			$this->InsertProductTag($jsonResponseTag, $vid);
-			//dd($jsonResponseTag);
-
-			$jsonResponseAtt=$this->getProductAttWp($url, intval($vid));
-			$this->InsertProductAtt($jsonResponseAtt, $vid);
-			// dd($jsonResponseAtt);
-			
-
 	    }
        	Orders::insert($Orders); 	
+
+       	$this->getWayBill($vid, $url);
+			
+		$jsonResponse=$this->getProductWP($url, intval($vid));
+		$this->InsertProduct($jsonResponse, $vid);
+		// dd($jsonResponse);
+
+		$jsonResponsecat=$this->getProductCatWP($url, intval($vid));
+		$this->InsertProductCat($jsonResponsecat, $vid);
+		// dd($jsonResponsecat);
+
+		$jsonResponseTag=$this->getProductTagWp($url, intval($vid));
+		$this->InsertProductTag($jsonResponseTag, $vid);
+		//dd($jsonResponseTag);
+
+		$jsonResponseAtt=$this->getProductAttWp($url, intval($vid));
+		$this->InsertProductAtt($jsonResponseAtt, $vid);
+		// dd($jsonResponseAtt);
+		
     }
 
 	public function InsertProduct($ProductData,$vid)

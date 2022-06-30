@@ -547,24 +547,24 @@ class OrderController extends Controller {
         }
     }
     function changeStatus(Request $request) {
-        if ($request->status_assign == 'cancelled') {
-            // echo $request->status; die;
-            if ($request->status == 'processing' || $request->status == 'on-hold') {
-                DB::table('orders')->where('oid', intval($request->selectall))->where('vid', intval($request->vid))->update(['status' => $request->status_assign]);
-                // print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
-                // https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
-                $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
-                $curl = curl_init();
-                curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . intval($request->selectall) . '?status=' . $request->status_assign, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
-                $response = curl_exec($curl);
-                curl_close($curl);
-                $jsonResp = json_decode($response);
-                // var_dump($jsonResp);
-                return response()->json(['error' => false, 'msg' => "Order Status successfully updated.", "ErrorCode" => "000"], 200);
-            } else {
-                return response()->json(['error' => false, 'msg' => "Please Note :  Order Can Not Be Cancel.", "ErrorCode" => "000"], 200);
-            }
-        } else {
+        // if ($request->status_assign == 'cancelled') {
+        //     // echo $request->status; die;
+        //     if ($request->status == 'processing' || $request->status == 'on-hold') {
+        //         DB::table('orders')->where('oid', intval($request->selectall))->where('vid', intval($request->vid))->update(['status' => $request->status_assign]);
+        //         // print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
+        //         // https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
+        //         $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+        //         $curl = curl_init();
+        //         curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . intval($request->selectall) . '?status=' . $request->status_assign, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
+        //         $response = curl_exec($curl);
+        //         curl_close($curl);
+        //         $jsonResp = json_decode($response);
+        //         // var_dump($jsonResp);
+        //         return response()->json(['error' => false, 'msg' => "Order Status successfully updated.", "ErrorCode" => "000"], 200);
+        //     } else {
+        //         return response()->json(['error' => false, 'msg' => "Please Note :  Order Can Not Be Cancel.", "ErrorCode" => "000"], 200);
+        //     }
+        // } else {
             DB::table('orders')->where('oid', intval($request->selectall))->where('vid', intval($request->vid))->update(['status' => $request->status_assign]);
             // print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
             // https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
@@ -576,7 +576,7 @@ class OrderController extends Controller {
             $jsonResp = json_decode($response);
             // var_dump($jsonResp);
             return response()->json(['error' => false, 'msg' => "Order Status successfully updated.", "ErrorCode" => "000"], 200);
-        }
+    //    } 
     }
     public function changeOrderStatus($vid, $oid, $status) {
         // var_dump($vid);
