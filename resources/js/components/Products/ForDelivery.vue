@@ -292,14 +292,16 @@ computed: {
                     // this.$bvModal.hide("modal-2");
                      // this.getDeliveryDetail();
                      // response.data.msg
+                      this.dispatch = '';
                      document.getElementById("data_msg").textContent = response.data.msg;
                     this.getDeliveryDetail();
                   }else{
-                    document.getElementById("data_msg").textContent = response.data.msg;
-                    setTimeout(function(){
                       this.dispatch = '';
-                      document.getElementById("data_msg").textContent = '';
-                    }, 2000);
+                    document.getElementById("data_msg").textContent = response.data.msg;
+                    // setTimeout(function(){
+                    //   this.dispatch = '';
+                    //   document.getElementById("data_msg").textContent = '';
+                    // }, 2000);
                   }
             })
           .catch((error) => {
