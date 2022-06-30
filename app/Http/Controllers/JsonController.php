@@ -332,29 +332,50 @@ class JsonController extends Controller
  	}
 
  	public function cronOrderStatusUpdate($vid){
-		// echo $vid;
+
+
+// /*		
+		// Forward Orders
  		$orders=DB::table("orders")
  				// ->join('waybill', 'orders.oid','=','waybill.order_id')
- 				// ->whereIn('orders.status',['dtobooked'])
- 				->whereIn('orders.status',['dispatched','intransit','dtobooked'])
+				->whereIn('orders.status',['dispatched','intransit'])
+				// ->where('orders.oid',intval('6907'))
+ 				// ->whereIn('orders.status',['dtointransit']) 
+				 
  				->where('orders.vid',intval($vid))
 				->orderBy('orders.oid','desc')
 				->get();
 		// print_r($orders); exit();
-
-		$countOfOrders = count($orders);
+		echo "Forward Orders: ".$countOfOrders = count($orders);
 		if($countOfOrders==0){          // If no record found
 			$Result['0'] = "No update required.";
-			print_r($Result);
+			echo "<pre>";print_r($Result);echo "</pre>";
 		}else{
-			$result = $this->getAWBStatus($orders,$vid);
-			print_r($result);
+			$result = $this->getAWBStatus($orders,$vid,"fwd");
+			echo "<pre>";print_r($result);echo "</pre>";
+		}
+// */
+
+		// Return Orders
+		$orders=DB::table("orders")
+			->whereIn('orders.status',['dtobooked','dtointransit'])
+			// ->where('orders.oid',intval('7107'))
+			->where('orders.vid',intval($vid))
+			->orderBy('orders.oid','desc')
+			->get();
+		echo "Reverse Orders: ".$countOfOrders = count($orders);
+		if($countOfOrders==0){          // If no record found
+			$Result['0'] = "No update required.";
+			echo "<pre>";print_r($Result);echo "</pre>";
+		}else{
+			$result = $this->getAWBStatus($orders,$vid,"rev");
+			echo "<pre>";print_r($result);echo "</pre>";
 		}
 		exit();
 
  	}
 
- 	public function getAWBStatus($orders,$vid)
+ 	public function getAWBStatus($orders,$vid,$fwdOrReturn)
 	{	
 		if($vid == 1){
 			$curlopt_url = "https://staging-express.delhivery.com/api/v1/packages/json/?";
@@ -368,28 +389,27 @@ class JsonController extends Controller
 		$waybill_nos = "";
 		foreach ($orders as $order) {
 			$waybillnos=DB::table("waybill")
- 				
  				->where('order_id',$order->oid)
 				->where('vid',$vid)
- 				// ->whereIn('orders.status',['dispatched','intransit'])
- 				// ->where('orders.vid',$vid)
- 		        // ->select("orders.oid","waybill.waybill_no")
 				->limit('1')
 				->orderBy('id','desc')
 				->get();
-
 				// var_dump($waybillnos); die;
+				if($fwdOrReturn == "fwd"){
+					$waybillno = $waybillnos[0]->waybill_no;
+				}else{
+					$waybillno = $waybillnos[0]->return_waybill_no ;
+				}
+				
 
-			$waybillno = $waybillnos[0]->waybill_no;
-
-			// $orderIds[$order->waybill_no] = $order->oid;
+			
 	    
 			$url = $del_url."waybill=".$waybillno."&token=ed99803a18868406584c6d724f71ebccc80a89f9";
 
 			$curl = curl_init();
 
 			curl_setopt_array($curl, array(
-				CURLOPT_URL => $url,
+				CURLOPT_URL => $url, 
 				CURLOPT_RETURNTRANSFER => true,
 				CURLOPT_ENCODING => '',
 				CURLOPT_MAXREDIRS => 10,
@@ -419,13 +439,26 @@ class JsonController extends Controller
 			for($i=0; $i < sizeof($response['ShipmentData']) ; $i++){
 
 				// waybill table get orderId of awb = $response['ShipmentData'][$i]['Shipment']['AWB'];
+				
 				$status = $response['ShipmentData'][$i]['Shipment']['Status']['Status'];
-				if ($status == "Manifested"){
+
+
+				if ($status == "Manifested" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "dispatched";
-				}else if ($status == "In Transit"){
+				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
+					$status = "intransit";
+				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == TRUE && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType']!="RT"){
+					$status = "dtointransit";
+				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == TRUE && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType']=="RT"){
 					$status = "intransit";
 				} else if ($status == "RTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "rto-delivered";
+				} else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
+					$status = "dtodelivered";
+				} else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] != "DL" ){
+					$status = "dtointransit";
+				} else if ( ($status == "Closed" || $status == "Canceled" ) && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] != "CN" ){
+					$status = "deliveredtocust";
 				} else if ($status == "Delivered"){
 					$status = "deliveredtocust";
 				// }else if(){
@@ -445,6 +478,7 @@ class JsonController extends Controller
 				$statusDel[$i]['awb'] = addslashes( $response['ShipmentData'][$i]['Shipment']['AWB'] );
 				$statusDel[$i]['oid'] = addslashes( $order_id );
 				$statusDel[$i]['status'] = addslashes( $status );
+				$statusDel[$i]['ReverseInTransit'] = addslashes( $response['ShipmentData'][$i]['Shipment']['ReverseInTransit']);
 				$statusDel[$i]['delivery_status_name'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] );
 				$statusDel[$i]['delivery_status'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['Status'] );
 				$statusDel[$i]['delivery_status_code'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusCode'] );
@@ -504,21 +538,22 @@ class JsonController extends Controller
 							'update_statuses.delivery_brief_status' => $status_update['delivery_brief_status']
 					])->get();
 
-			// if( sizeof($statusCheck) == 0){
+		
+			if( sizeof($statusCheck) == 0){
 				$Result[$status_update['awb']] = "AWB: ".$status_update['awb']." Updated Successfully.";
 				UpdateStatus::insert($data);
 				// var_dump($status_update); die;
-				/*
+				
 				if($status_update['status'] != "undefined"){
-					OrderController::changeOrderStatus(intval($vid),$status_update['oid'],$status_update['status']);
+					OrderController::changeOrderStatus(intval($vid),$status_update['oid'],$status_update['status']); 
 				}
-				*/
+				
 
 				// call order status update method that will further update vendor's wordpress order status as well.
 				
-			// }else{
-			// 	$Result['0'] = "No update required.";
-			// }
+			}else{
+				$Result['0'] = "No update required.";
+			}
 	    }
 		return $Result;
 	}
