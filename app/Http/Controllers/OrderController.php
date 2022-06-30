@@ -1192,7 +1192,10 @@ class OrderController extends Controller {
     function changeStatusDispatch(Request $request) {
         // echo $request->dispatch;
         // echo $request->vid; die;
-        $order_items = DB::table("waybill")->where('waybill.vid', intval($request->vid))->orWhere('waybill.order_id', $request->dispatch)->orwhere('waybill.waybill_no', $request->dispatch)->get()->toArray();
+        $order_items1 = DB::table("waybill")->where('waybill.vid', intval($request->vid))->where('waybill.order_id', intval($request->dispatch))->limit(1)->get()->toArray();
+        $order_items2 = DB::table("waybill")->where('waybill.vid', intval($request->vid))->where('waybill.waybill_no', intval($request->dispatch))->limit(1)->get()->toArray();
+        $order_items = array_merge($order_items1,$order_items2);
+        // var_dump($order_items); die;
         // foreach ($order_items as $order) {
         $this->changeOrderStatus(intval($request->vid), intval($order_items[0]->order_id), "dispatched");
         return response()->json(['error' => false, 'msg' => "Success, Your order number " . intval($order_items[0]->order_id) . " with AWB number is " . intval($order_items[0]->waybill_no), "ErrorCode" => "000"], 200);
