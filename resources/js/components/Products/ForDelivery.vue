@@ -296,6 +296,10 @@ computed: {
                     this.getDeliveryDetail();
                   }else{
                     document.getElementById("data_msg").textContent = response.data.msg;
+                    setTimeout(function(){
+                      this.dispatch = '';
+                      document.getElementById("data_msg").textContent = '';
+                    }, 2000);
                   }
             })
           .catch((error) => {
