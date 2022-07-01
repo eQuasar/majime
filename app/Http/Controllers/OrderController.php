@@ -93,7 +93,7 @@ class OrderController extends Controller {
         $phone = $my_data[0]->phone;
         $add = $my_data[0]->add;
         $token = $my_data[0]->token;
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->join('products', 'orders.id', '=', 'products.id')->where('orders.vid', '=', $vid)->where('orders.oid', '=', $oid)->select("orders.*", "billings.*", "products.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', '=', $vid)->where('orders.oid', '=', $oid)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
 		                                WHERE line_items.order_id = orders.oid
 		                                GROUP BY line_items.order_id) as quantity"))->get();
         $curl = curl_init();
@@ -285,26 +285,25 @@ class OrderController extends Controller {
                                 $jsonResp2 = json_decode($response2);
                                 $error = false;
                                 $msg = "WayBill successfully added.";
-                                // return response()->json(['error' => false, 'msg' => "WayBill successfully added.","ErrorCode" => "000"],200);
+                                // return response()->json(['error' => false, 'msg' => "WayBill successfully added.", "ErrorCode" => "000"],200);
                                 
                             } else {
                                 DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "packed"]);
                                 $error = false;
                                 $msg = "Already Assign AWB No.";
                                 // return response()->json(['error' => true, 'msg' => "Already Assign AWB No.","ErrorCode" => -2],200);
-                                
                             }
                         } else {
                             $error = true;
+                            DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
                             $msg = $new_val['rmk'];
                             // return response()->json(['error' => true, 'msg' => $new_val['rmk'],"ErrorCode" => -2],200);
-                            
                         }
                     } else {
                         $error = true;
+                        DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
                         $msg = $new_val['detail'];
                         // return response()->json(['error' => true, 'msg' => $new_val['detail'],"ErrorCode" => -2],200);
-                        
                     }
                 } else {
                     DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
@@ -363,6 +362,7 @@ class OrderController extends Controller {
             $response2 = curl_exec($curl2);
             curl_close($curl2);
             $new_val2 = json_decode($response2, true);
+            // var_dump($new_val2); die;
             if ($new_val2 != NULL) {
                 $curl = curl_init();
                 if ($order->payment_method == "cod") {
@@ -394,7 +394,8 @@ class OrderController extends Controller {
 						  "add": "' . $add . '"
 						}
 					}';
-                // echo $postfields;
+                //     echo $token; echo "<br>";
+                // echo $postfields; die;
                 curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => $postfields, CURLOPT_HTTPHEADER => array('Authorization: Token ' . $token, 'Content-Type: application/json', 'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'),));
                 $response = curl_exec($curl);
                 curl_close($curl);
@@ -422,9 +423,10 @@ class OrderController extends Controller {
                         return response()->json(['error' => false, 'msg' => "WayBill successfully added.", "ErrorCode" => "000"], 200);
                     } else {
                         DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "packed"]);
-                        return response()->json(['error' => true, 'msg' => "Already Assign AWB No.", "ErrorCode" => - 2], 200);
+                        return response()->json(['error' => false, 'msg' => "Already Assign AWB No.", "ErrorCode" => - 2], 200);
                     }
                 } else {
+                    DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
                     return response()->json(['error' => true, 'msg' => $new_val['rmk'], "ErrorCode" => - 2], 200);
                 }
                 // }else{
@@ -445,8 +447,8 @@ class OrderController extends Controller {
     }
 
     function return_awb(Request $request) {
-        $oid = intval($request->oid);
-        $vid = intval($request->vid);
+        $oid = $request->oid;
+        $vid = $request->vid;
         $my_data = DB::table("way_data")->where('vid', intval($request->vid))->get();
         $city = $my_data[0]->city;
         $name = $my_data[0]->name;
@@ -455,7 +457,7 @@ class OrderController extends Controller {
         $phone = $my_data[0]->phone;
         $add = $my_data[0]->add;
         $token = $my_data[0]->token;
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->join('products', 'orders.id', '=', 'products.id')->where('orders.vid', '=', $vid)->where('orders.oid', '=', $oid)->select("orders.*", "billings.*", "products.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', '=', intval($vid))->where('orders.oid', '=', intval($oid))->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
                                         GROUP BY line_items.order_id) as quantity"))->get();
         if ($request->vid == 1) {
@@ -465,6 +467,7 @@ class OrderController extends Controller {
             $curlopt_url = "https://track.delhivery.com/api/cmu/create.json";
             $del_url = "https://track.delhivery.com/c/api/pin-codes/json/";
         }
+        // var_dump($orders); die;
         $curl = curl_init();
         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
