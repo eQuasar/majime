@@ -25,16 +25,16 @@ use \Milon\Barcode\DNS1D;
 class OrderController extends Controller {
     public function OrderDetail(Request $request) {
         $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->join('products', 'orders.id', '=', 'products.id')->where('orders.vid', '=', $request->vid)->select("orders.*", "billings.*", "products.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-	                    WHERE line_items.order_id = orders.oid
-	                    GROUP BY line_items.order_id) as quantity"))->get();
+                        WHERE line_items.order_id = orders.oid
+                        GROUP BY line_items.order_id) as quantity"))->get();
         return $orders;
     }
     public function Order_Search(Request $request) {
         $range = [$request->date_from, $request->date_to];
         // $order=orders::whereBetween('date_created_gmt',$range)->get();
         $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->whereBetween('date_created_gmt', $range)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-		                                WHERE line_items.order_id = orders.oid
-		                                GROUP BY line_items.order_id) as quantity"))->get();
+                                        WHERE line_items.order_id = orders.oid
+                                        GROUP BY line_items.order_id) as quantity"))->get();
         return $order;
     }
     public function order_Profile($oid) {
@@ -55,8 +55,8 @@ class OrderController extends Controller {
             ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
         } else {
             $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-		                                WHERE line_items.order_id = orders.oid
-		                                GROUP BY line_items.order_id) as quantity"))->get();
+                                        WHERE line_items.order_id = orders.oid
+                                        GROUP BY line_items.order_id) as quantity"))->get();
         }
         return $orders;
     }
@@ -93,40 +93,40 @@ class OrderController extends Controller {
         $phone = $my_data[0]->phone;
         $add = $my_data[0]->add;
         $token = $my_data[0]->token;
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->join('products', 'orders.id', '=', 'products.id')->where('orders.vid', '=', $vid)->where('orders.oid', '=', $oid)->select("orders.*", "billings.*", "products.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-		                                WHERE line_items.order_id = orders.oid
-		                                GROUP BY line_items.order_id) as quantity"))->get();
+        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', '=', $vid)->where('orders.oid', '=', $oid)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                                        WHERE line_items.order_id = orders.oid
+                                        GROUP BY line_items.order_id) as quantity"))->get();
         $curl = curl_init();
         curl_setopt_array($curl, array(CURLOPT_URL => 'https://track.delhivery.com/api/cmu/create.json', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
-						  "shipments": [
-							{
-							  "add": "' . $orders[0]->address_1 . ', ' . $orders[0]->address_2 . '",
-							  "phone": ' . $orders[0]->phone . ',
-							  "payment_mode": "Pickup",
-							  "name": "' . $orders[0]->first_name . '",
-							  "pin": ' . $orders[0]->postcode . ',
-							  "order": "bbb_' . $oid . '",
-							  "return_state": "' . $city . '",
-								"return_city": "' . $city . '",
-								"return_phone": "' . $phone . '",
-								"return_add": "' . $add . '",
-								"return_pin": "' . $pin . '",
-								"extra_parameters": { 
-								  "return_reason": "Return Order"
-								},
-								"return_name": "' . $name . '"
-							}
-						  ],
-						  "pickup_location": 
-							{
-							  "city": "' . $city . '",
-							  "name": "' . $name . '",
-							  "pin": "' . $pin . '",
-							  "country": "' . $country . '",
-							  "phone": "' . $phone . '",
-							  "add": "' . $add . '"
-							}
-						}', CURLOPT_HTTPHEADER => array('Authorization: Token ' . $token, 'Content-Type: application/json', 'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'),));
+                          "shipments": [
+                            {
+                              "add": "' . $orders[0]->address_1 . ', ' . $orders[0]->address_2 . '",
+                              "phone": ' . $orders[0]->phone . ',
+                              "payment_mode": "Pickup",
+                              "name": "' . $orders[0]->first_name . '",
+                              "pin": ' . $orders[0]->postcode . ',
+                              "order": "bbb_' . $oid . '",
+                              "return_state": "' . $city . '",
+                                "return_city": "' . $city . '",
+                                "return_phone": "' . $phone . '",
+                                "return_add": "' . $add . '",
+                                "return_pin": "' . $pin . '",
+                                "extra_parameters": { 
+                                  "return_reason": "Return Order"
+                                },
+                                "return_name": "' . $name . '"
+                            }
+                          ],
+                          "pickup_location": 
+                            {
+                              "city": "' . $city . '",
+                              "name": "' . $name . '",
+                              "pin": "' . $pin . '",
+                              "country": "' . $country . '",
+                              "phone": "' . $phone . '",
+                              "add": "' . $add . '"
+                            }
+                        }', CURLOPT_HTTPHEADER => array('Authorization: Token ' . $token, 'Content-Type: application/json', 'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'),));
         $response = curl_exec($curl);
         $new_val = json_decode($response, true);
         $wbill = $new_val["packages"][0]["waybill"];
@@ -212,54 +212,54 @@ class OrderController extends Controller {
                     $curl = curl_init();
                     if ($order->payment_method == "cod") {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
-						  "shipments": [
-							{
-							  "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
-							  "phone": ' . $order->phone . ',
-							  "payment_mode": "COD",
-							  "name": "' . $order->first_name . ' ' . $order->last_name . '",
-							  "pin": ' . $order->postcode . ',
-							  "cod_amount":' . $order->total . ',
-							  "order": "' . $order_prefix . $order->oid . '",
-							  "shipping_mode" : "Surface",
-							  "products_desc": "' . $product_name . '"
-							}
-						  ],
-						  "pickup_location": 
-							{
-							  "city": "' . $city . '",
-							  "name": "' . $name . '",
-							  "pin": "' . $pin . '",
-							  "country": "' . $country . '",
-							  "phone": "' . $phone . '",
-							  "add": "' . $add . '"
-							}
-						}', CURLOPT_HTTPHEADER => array('Authorization: Token ' . $token, 'Content-Type: application/json', 'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'),));
+                          "shipments": [
+                            {
+                              "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
+                              "phone": ' . $order->phone . ',
+                              "payment_mode": "COD",
+                              "name": "' . $order->first_name . ' ' . $order->last_name . '",
+                              "pin": ' . $order->postcode . ',
+                              "cod_amount":' . $order->total . ',
+                              "order": "' . $order_prefix . $order->oid . '",
+                              "shipping_mode" : "Surface",
+                              "products_desc": "' . $product_name . '"
+                            }
+                          ],
+                          "pickup_location": 
+                            {
+                              "city": "' . $city . '",
+                              "name": "' . $name . '",
+                              "pin": "' . $pin . '",
+                              "country": "' . $country . '",
+                              "phone": "' . $phone . '",
+                              "add": "' . $add . '"
+                            }
+                        }', CURLOPT_HTTPHEADER => array('Authorization: Token ' . $token, 'Content-Type: application/json', 'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'),));
                     } else {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
-						  "shipments": [
-							{
-							  "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
-							  "phone": ' . $order->phone . ',
-							  "payment_mode": "Prepaid",
-							  "name": "' . $order->first_name . ' ' . $order->last_name . '",
-							  "pin": ' . $order->postcode . ',
-							  "cod_amount":' . $order->total . ',
-							  "order": "' . $order_prefix . $order->oid . '",
-							  "shipping_mode" : "Surface",
-							  "products_desc": "' . $product_name . '"
-							}
-						  ],
-						  "pickup_location": 
-							{
-							  "city": "' . $city . '",
-							  "name": "' . $name . '",
-							  "pin": "' . $pin . '",
-							  "country": "' . $country . '",
-							  "phone": "' . $phone . '",
-							  "add": "' . $add . '"
-							}
-						}', CURLOPT_HTTPHEADER => array('Authorization: Token ' . $token, 'Content-Type: application/json', 'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'),));
+                          "shipments": [
+                            {
+                              "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
+                              "phone": ' . $order->phone . ',
+                              "payment_mode": "Prepaid",
+                              "name": "' . $order->first_name . ' ' . $order->last_name . '",
+                              "pin": ' . $order->postcode . ',
+                              "cod_amount":' . $order->total . ',
+                              "order": "' . $order_prefix . $order->oid . '",
+                              "shipping_mode" : "Surface",
+                              "products_desc": "' . $product_name . '"
+                            }
+                          ],
+                          "pickup_location": 
+                            {
+                              "city": "' . $city . '",
+                              "name": "' . $name . '",
+                              "pin": "' . $pin . '",
+                              "country": "' . $country . '",
+                              "phone": "' . $phone . '",
+                              "add": "' . $add . '"
+                            }
+                        }', CURLOPT_HTTPHEADER => array('Authorization: Token ' . $token, 'Content-Type: application/json', 'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'),));
                     }
                     $response = curl_exec($curl);
                     curl_close($curl);
@@ -363,6 +363,7 @@ class OrderController extends Controller {
             $response2 = curl_exec($curl2);
             curl_close($curl2);
             $new_val2 = json_decode($response2, true);
+            // var_dump($new_val2); die;
             if ($new_val2 != NULL) {
                 $curl = curl_init();
                 if ($order->payment_method == "cod") {
@@ -371,30 +372,31 @@ class OrderController extends Controller {
                     $payment_mode = "Prepaid";
                 }
                 $postfields = 'format=json&data={
-					  "shipments": [
-						{
-						  "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
-						  "phone": ' . $order->phone . ',
-						  "payment_mode": "' . $payment_mode . '",
-						  "name": "' . $order->first_name . ' ' . $order->last_name . '",
-						  "pin": ' . $order->postcode . ',
-						  "cod_amount":' . $order->total . ',
-						  "order": "' . $order_prefix . $order->oid . '",
-						  "shipping_mode" : "Surface",
-						  "products_desc": "' . $product_name . '"
-						}
-					  ],
-					  "pickup_location": 
-						{
-						  "city": "' . $city . '",
-						  "name": "' . $name . '",
-						  "pin": "' . $pin . '",
-						  "country": "' . $country . '",
-						  "phone": "' . $phone . '",
-						  "add": "' . $add . '"
-						}
-					}';
-                // echo $postfields;
+                      "shipments": [
+                        {
+                          "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
+                          "phone": ' . $order->phone . ',
+                          "payment_mode": "' . $payment_mode . '",
+                          "name": "' . $order->first_name . ' ' . $order->last_name . '",
+                          "pin": ' . $order->postcode . ',
+                          "cod_amount":' . $order->total . ',
+                          "order": "' . $order_prefix . $order->oid . '",
+                          "shipping_mode" : "Surface",
+                          "products_desc": "' . $product_name . '"
+                        }
+                      ],
+                      "pickup_location": 
+                        {
+                          "city": "' . $city . '",
+                          "name": "' . $name . '",
+                          "pin": "' . $pin . '",
+                          "country": "' . $country . '",
+                          "phone": "' . $phone . '",
+                          "add": "' . $add . '"
+                        }
+                    }';
+                //     echo $token; echo "<br>";
+                // echo $postfields; die;
                 curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => $postfields, CURLOPT_HTTPHEADER => array('Authorization: Token ' . $token, 'Content-Type: application/json', 'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'),));
                 $response = curl_exec($curl);
                 curl_close($curl);
@@ -428,7 +430,7 @@ class OrderController extends Controller {
                     return response()->json(['error' => true, 'msg' => $new_val['rmk'], "ErrorCode" => - 2], 200);
                 }
                 // }else{
-                // 	return response()->json(['error' => true, 'msg' => $new_val['detail'],"ErrorCode" => -2],200);
+                //  return response()->json(['error' => true, 'msg' => $new_val['detail'],"ErrorCode" => -2],200);
                 // }
                 
             } else {
@@ -445,8 +447,8 @@ class OrderController extends Controller {
     }
 
     function return_awb(Request $request) {
-        $oid = intval($request->oid);
-        $vid = intval($request->vid);
+        $oid = $request->oid;
+        $vid = $request->vid;
         $my_data = DB::table("way_data")->where('vid', intval($request->vid))->get();
         $city = $my_data[0]->city;
         $name = $my_data[0]->name;
@@ -455,7 +457,7 @@ class OrderController extends Controller {
         $phone = $my_data[0]->phone;
         $add = $my_data[0]->add;
         $token = $my_data[0]->token;
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->join('products', 'orders.id', '=', 'products.id')->where('orders.vid', '=', $vid)->where('orders.oid', '=', $oid)->select("orders.*", "billings.*", "products.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', '=', intval($vid))->where('orders.oid', '=', intval($oid))->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
                                         GROUP BY line_items.order_id) as quantity"))->get();
         if ($request->vid == 1) {
@@ -465,6 +467,7 @@ class OrderController extends Controller {
             $curlopt_url = "https://track.delhivery.com/api/cmu/create.json";
             $del_url = "https://track.delhivery.com/c/api/pin-codes/json/";
         }
+        // var_dump($orders); die;
         $curl = curl_init();
         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
@@ -630,91 +633,91 @@ class OrderController extends Controller {
                 $img_base64_encoded2 = 'data:image/png;base64,' . $d->getBarcodePNG($order->oid, 'C128', 3, 33, array(1, 1, 1));
                 $params2 = '<img src="@' . preg_replace('#^data:image/[^;]+;base64,#', '', $img_base64_encoded2) . '">';
             }
-            // 	    $pdf::Cell(0, 0, 'CODABAR', 0, 1);
+            //      $pdf::Cell(0, 0, 'CODABAR', 0, 1);
             //         $params = $pdf::write1DBarcode($order->id, 'CODABAR', '', '', '', 18, 0.4, $style, 'N');
             // $params_d = $pdf::serializeTCPDFtagParameters(array($wbill, 'C128', '', '', '', 18, 1.0, $style, 'N'));
             // $params2_d = $pdf::serializeTCPDFtagParameters(array($order->oid, 'C128', '', '', '', 18, 1.0, $style, 'N'));
             // echo $params2; die;
             // define some HTML content with style
             $html2 = '<style type="text/css">
-	@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap");
-	table, th, td, p, div, h1, h2, h3, h4, h5, h6 {font-family: "Poppins", sans-serif;}
-	table, th, td {  border:1px solid black; border-collapse: collapse; margin: 0 auto;}
-	div, table{
-	    padding:0;
-	    margin:0;   
-	}
-	h1, h2, h3, h4, h5, h6 {
-	    margin: 0;padding:0;
-	}
-	.tax_invoice_text{font-size:16pt;font-weight:bold;}
-	.parent_table p{margin:0;padding:0}
-	.parent_table{border:none;}
-	.company_info td{font-size: 8pt;}
-	.product_info th{font-size: 9pt;font-weight:bold;}
-	.product_info td{font-size: 9pt;}
-	.currency_text{font-size: 13pt;font-weight:bold;}
-	.tax_invoice_val{font-size: 11pt;font-weight:bold;}
-	.tax_value p{font-size: 8pt;margin:0;padding:0;}
-	.customer_info p, .customer_info td{font-size: 8pt;}
-	.customer_info h2{width:100%;}
-	td.bottom_barcode{font-size: 11pt;font-weight:bold;}
-	.c_name{font-size: 12pt;font-weight:bold;margin-bottom:5px;}
-	.cus_name{font-size: 13pt;font-weight:bold;}
-	.awb_text{font-size: 13pt;font-weight:bold;}
-	</style>
-	<div class="parent_table">
-	            <table width="100%" cellpadding="5" class="child_table company_info">
-	                <tbody>
-	                    <tr>
-	                        <td rowspan="3" width="360"><p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p></td>
-	                        <td width="150">Order No. (REF) : ' . $order->oid . '</td>
-	                        <td width="150">GST-JR-3557</td>
-	                    </tr>
-	                    <tr>
-	                        <td width="150">Mode : ' . $order->payment_method_title . ' </td>
-	                        <td width="150">Amount : Rs.' . $order->total . '</td>
-	                    </tr>
-	                    <tr>
-	                        <td colspan="2" align="center">Courier Partner : DIRECT_DELHIVERY</td>
-	                    </tr>
-	                </tbody>
-	            </table>
-				<table width="100%" cellpadding="5" class="child_table customer_info">
-	                <tbody>
-	                    <tr>
-	                        <td width="660"><p><span class="c_name">' . strtoupper($order->first_name) . ' ' . strtoupper($order->last_name) . ' <span>(M) ' . $order->phone . '</span></span><br>Address : ' . $order->address_1;
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap");
+    table, th, td, p, div, h1, h2, h3, h4, h5, h6 {font-family: "Poppins", sans-serif;}
+    table, th, td {  border:1px solid black; border-collapse: collapse; margin: 0 auto;}
+    div, table{
+        padding:0;
+        margin:0;   
+    }
+    h1, h2, h3, h4, h5, h6 {
+        margin: 0;padding:0;
+    }
+    .tax_invoice_text{font-size:16pt;font-weight:bold;}
+    .parent_table p{margin:0;padding:0}
+    .parent_table{border:none;}
+    .company_info td{font-size: 8pt;}
+    .product_info th{font-size: 9pt;font-weight:bold;}
+    .product_info td{font-size: 9pt;}
+    .currency_text{font-size: 13pt;font-weight:bold;}
+    .tax_invoice_val{font-size: 11pt;font-weight:bold;}
+    .tax_value p{font-size: 8pt;margin:0;padding:0;}
+    .customer_info p, .customer_info td{font-size: 8pt;}
+    .customer_info h2{width:100%;}
+    td.bottom_barcode{font-size: 11pt;font-weight:bold;}
+    .c_name{font-size: 12pt;font-weight:bold;margin-bottom:5px;}
+    .cus_name{font-size: 13pt;font-weight:bold;}
+    .awb_text{font-size: 13pt;font-weight:bold;}
+    </style>
+    <div class="parent_table">
+                <table width="100%" cellpadding="5" class="child_table company_info">
+                    <tbody>
+                        <tr>
+                            <td rowspan="3" width="360"><p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p></td>
+                            <td width="150">Order No. (REF) : ' . $order->oid . '</td>
+                            <td width="150">GST-JR-3557</td>
+                        </tr>
+                        <tr>
+                            <td width="150">Mode : ' . $order->payment_method_title . ' </td>
+                            <td width="150">Amount : Rs.' . $order->total . '</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="center">Courier Partner : DIRECT_DELHIVERY</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table width="100%" cellpadding="5" class="child_table customer_info">
+                    <tbody>
+                        <tr>
+                            <td width="660"><p><span class="c_name">' . strtoupper($order->first_name) . ' ' . strtoupper($order->last_name) . ' <span>(M) ' . $order->phone . '</span></span><br>Address : ' . $order->address_1;
             if ($order->address_2 != '') {
                 $html2.= '<br>Landmark : ' . $order->address_2;
             } else {
                 $html2.= '<br>Landmark : N/A';
             }
             $html2.= '<br>Pincode : ' . $order->postcode . ', ' . $order->city . ', ' . $order->state . ', ' . $order->country . '</p>
-							</td>
-	                    </tr>
-	                </tbody>
-				</table>
-				<table width="100%" cellpadding="5" class="child_table customer_awb">
-	                <tbody>
-	                    <tr>
-	                        <td width="660" align="center"><span class="awb_text">AWB : ' . $wbill . '</span><br/>' . $params . '</td>
-	                    </tr>
-	                </tbody>
-				</table>
-	            <table width="100%" cellpadding="5" class="child_table product_info">
-	                <thead>
-	                    <tr>
-	                        <th width="40">S.No.</th>
-	                        <th width="250">Product(s)</th>
-	                        <th width="100">SL Price</th>
-	                        <th width="80" align="center">QTY (Pcs)</th>
-	                        <th width="90">Discount</th>
-	                        <th width="100">Net Amount</th>
-	                    </tr>
-	                </thead>
-				</table>
-				<table width="100%" cellpadding="5" class="child_table product_info">
-	                <tbody>';
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table width="100%" cellpadding="5" class="child_table customer_awb">
+                    <tbody>
+                        <tr>
+                            <td width="660" align="center"><span class="awb_text">AWB : ' . $wbill . '</span><br/>' . $params . '</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table width="100%" cellpadding="5" class="child_table product_info">
+                    <thead>
+                        <tr>
+                            <th width="40">S.No.</th>
+                            <th width="250">Product(s)</th>
+                            <th width="100">SL Price</th>
+                            <th width="80" align="center">QTY (Pcs)</th>
+                            <th width="90">Discount</th>
+                            <th width="100">Net Amount</th>
+                        </tr>
+                    </thead>
+                </table>
+                <table width="100%" cellpadding="5" class="child_table product_info">
+                    <tbody>';
             $order_items = DB::table("line_items")->where('order_id', '=', $oid)->where('vid', '=', $request->vid)->get();
             $j = 1;
             $itm = 0;
@@ -730,45 +733,45 @@ class OrderController extends Controller {
                 $itm = $itm + $product->quantity;
                 $itm_sub = $itm_sub + $product->subtotal;
                 $html2.= '<tr>
-								<td width="40" height="' . $height . '">' . $j . '</td>
-								<td width="250">' . $product->name . '</td>
-								<td width="100">Rs.' . $product->subtotal . '</td>
-								<td width="80" align="center">' . $product->quantity . '</td>
-								<td width="90">Rs.0</td>
-								<td width="100">Rs.' . $product->total . '</td>
-								</tr>';
+                                <td width="40" height="' . $height . '">' . $j . '</td>
+                                <td width="250">' . $product->name . '</td>
+                                <td width="100">Rs.' . $product->subtotal . '</td>
+                                <td width="80" align="center">' . $product->quantity . '</td>
+                                <td width="90">Rs.0</td>
+                                <td width="100">Rs.' . $product->total . '</td>
+                                </tr>';
                 $j++;
             }
             $html2.= '</tbody></table><table width="100%" cellpadding="5" class="child_table product_info">
-	                <tbody>
-						<tr>
-	                        <td width="40">T1</td>
-	                        <td width="250">T1</td>
-	                        <td width="100">Rs.' . $itm_sub . '</td>
-	                        <td width="80" align="center">' . $itm . '</td>
-	                        <td width="90">Rs.' . $order->discount_total . '</td>
-	                        <td width="100">Rs.' . $order->total . '</td>
-	                    </tr>
-	                    <tr>
-	                        <td rowspan="2" colspan="4" class="bottom_barcode">
-	                            ' . $order->oid . '<br>' . $params2;
+                    <tbody>
+                        <tr>
+                            <td width="40">T1</td>
+                            <td width="250">T1</td>
+                            <td width="100">Rs.' . $itm_sub . '</td>
+                            <td width="80" align="center">' . $itm . '</td>
+                            <td width="90">Rs.' . $order->discount_total . '</td>
+                            <td width="100">Rs.' . $order->total . '</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2" colspan="4" class="bottom_barcode">
+                                ' . $order->oid . '<br>' . $params2;
             // $html2 .= '<tcpdf method="write1DBarcode" params="' . $params2 . '" />';
             $html2.= '</td>
-	                        <td width="90">Serv.Charges</td>
-	                        <td width="100">Payable AMT.</td>
-	                    </tr>
-	                    <tr>
-	                        <td width="90">Rs.' . $order->total_tax . '</td>
-	                        <td width="100">Rs.' . $order->total . '</td>
-	                    </tr>
-	                </tbody>
-	            </table>
-				
-				<table width="100%" cellpadding="5" class="child_table">
-	                <tr>
-	                    <td width="660" align="center"><div class="currency_text">' . strtoupper($order->total) . '</div></td>
-	                </tr>
-				</table>';
+                            <td width="90">Serv.Charges</td>
+                            <td width="100">Payable AMT.</td>
+                        </tr>
+                        <tr>
+                            <td width="90">Rs.' . $order->total_tax . '</td>
+                            <td width="100">Rs.' . $order->total . '</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <table width="100%" cellpadding="5" class="child_table">
+                    <tr>
+                        <td width="660" align="center"><div class="currency_text">' . strtoupper($order->total) . '</div></td>
+                    </tr>
+                </table>';
             //             <table width="100%" cellpadding="5" class="child_table tax_value">
             //                 <tr>
             //                     <td width="132" align="center"><p><span class="tax_invoice_val">Taxable Value</span><br>Rs.'.$order->total.'</p></td>
@@ -779,11 +782,11 @@ class OrderController extends Controller {
             //                 </tr>
             //             </table>
             $html2.= '<table width="100%" cellpadding="5" class="child_table">
-	                <tr>
-	                    <td width="660" align="center"><p><span class="tax_invoice_text">TAX INVOICE - Style by NansJ</span><br>This is computer generated tax invoice.</p></td>
-	                </tr>
-				</table>
-	</div>';
+                    <tr>
+                        <td width="660" align="center"><p><span class="tax_invoice_text">TAX INVOICE - Style by NansJ</span><br>This is computer generated tax invoice.</p></td>
+                    </tr>
+                </table>
+    </div>';
             // add a page
             $pdf::AddPage();
             // output the HTML content
@@ -839,93 +842,93 @@ class OrderController extends Controller {
         // echo $params2; die;
         // var_dump($pdf::write1DBarcode($wbill, 'C128', '', '', '', 18, 1.0, $style, 'N')); die;
         foreach ($orders as $order) {
-            // 	    $pdf::Cell(0, 0, 'CODABAR', 0, 1);
+            //      $pdf::Cell(0, 0, 'CODABAR', 0, 1);
             //         $params = $pdf::write1DBarcode($order->id, 'CODABAR', '', '', '', 18, 0.4, $style, 'N');
             // $params = $pdf::serializeTCPDFtagParameters(array($wbill, 'C128', '', '', '', 18, 1.0, $style, 'N'));
             // $params2 = $pdf::serializeTCPDFtagParameters(array($oid, 'C128', '', '', '', 18, 1.0, $style, 'N'));
             // define some HTML content with style
             $html2 = '<style type="text/css">
 
-	@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap");
-	table, th, td, p, div, h1, h2, h3, h4, h5, h6 {font-family: "Poppins", sans-serif;}
-	table, th, td {  border:1px solid black; border-collapse: collapse; margin: 0 auto;}
-	div, table{
-	    padding:0;
-	    margin:0;   
-	}
-	h1, h2, h3, h4, h5, h6 {
-	    margin: 0;padding:0;
-	}
-	.tax_invoice_text{font-size:16pt;font-weight:bold;}
-	.parent_table p{margin:0;padding:0}
-	.parent_table{border:none;}
-	.company_info td{font-size: 8pt;}
-	.product_info th{font-size: 9pt;font-weight:bold;}
-	.product_info td{font-size: 9pt;}
-	.currency_text{font-size: 13pt;font-weight:bold;}
-	.tax_invoice_val{font-size: 11pt;font-weight:bold;}
-	.tax_value p{font-size: 8pt;margin:0;padding:0;}
-	.customer_info p, .customer_info td{font-size: 8pt;}
-	.customer_info h2{width:100%;}
-	td.bottom_barcode{font-size: 11pt;font-weight:bold;}
-	.c_name{font-size: 12pt;font-weight:bold;margin-bottom:5px;}
-	.cus_name{font-size: 13pt;font-weight:bold;}
-	.awb_text{font-size: 13pt;font-weight:bold;}
-	</style>
-	<div class="parent_table">
-	            <table width="100%" cellpadding="5" class="child_table company_info">
-	                <tbody>
-	                    <tr>
-	                        <td rowspan="3" width="360"><p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p></td>
-	                        <td width="150">Order No. (REF) : ' . $order->oid . '</td>
-	                        <td width="150">GST-JR-3557</td>
-	                    </tr>
-	                    <tr>
-	                        <td width="150">Mode : ' . $order->payment_method_title . ' </td>
-	                        <td width="150">Amount : Rs.' . $order->total . '</td>
-	                    </tr>
-	                    <tr>
-	                        <td colspan="2" align="center">Courier Partner : DIRECT_DELHIVERY</td>
-	                    </tr>
-	                </tbody>
-	            </table>
-				<table width="100%" cellpadding="5" class="child_table customer_info">
-	                <tbody>
-	                    <tr>
-	                        <td width="660"><p><span class="c_name">' . strtoupper($order->first_name) . ' ' . strtoupper($order->last_name) . ' <span>(M) ' . $order->phone . '</span></span><br>Address : ' . $order->address_1;
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap");
+    table, th, td, p, div, h1, h2, h3, h4, h5, h6 {font-family: "Poppins", sans-serif;}
+    table, th, td {  border:1px solid black; border-collapse: collapse; margin: 0 auto;}
+    div, table{
+        padding:0;
+        margin:0;   
+    }
+    h1, h2, h3, h4, h5, h6 {
+        margin: 0;padding:0;
+    }
+    .tax_invoice_text{font-size:16pt;font-weight:bold;}
+    .parent_table p{margin:0;padding:0}
+    .parent_table{border:none;}
+    .company_info td{font-size: 8pt;}
+    .product_info th{font-size: 9pt;font-weight:bold;}
+    .product_info td{font-size: 9pt;}
+    .currency_text{font-size: 13pt;font-weight:bold;}
+    .tax_invoice_val{font-size: 11pt;font-weight:bold;}
+    .tax_value p{font-size: 8pt;margin:0;padding:0;}
+    .customer_info p, .customer_info td{font-size: 8pt;}
+    .customer_info h2{width:100%;}
+    td.bottom_barcode{font-size: 11pt;font-weight:bold;}
+    .c_name{font-size: 12pt;font-weight:bold;margin-bottom:5px;}
+    .cus_name{font-size: 13pt;font-weight:bold;}
+    .awb_text{font-size: 13pt;font-weight:bold;}
+    </style>
+    <div class="parent_table">
+                <table width="100%" cellpadding="5" class="child_table company_info">
+                    <tbody>
+                        <tr>
+                            <td rowspan="3" width="360"><p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p></td>
+                            <td width="150">Order No. (REF) : ' . $order->oid . '</td>
+                            <td width="150">GST-JR-3557</td>
+                        </tr>
+                        <tr>
+                            <td width="150">Mode : ' . $order->payment_method_title . ' </td>
+                            <td width="150">Amount : Rs.' . $order->total . '</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="center">Courier Partner : DIRECT_DELHIVERY</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table width="100%" cellpadding="5" class="child_table customer_info">
+                    <tbody>
+                        <tr>
+                            <td width="660"><p><span class="c_name">' . strtoupper($order->first_name) . ' ' . strtoupper($order->last_name) . ' <span>(M) ' . $order->phone . '</span></span><br>Address : ' . $order->address_1;
             if ($order->address_2 != '') {
                 $html2.= '<br>Landmark : ' . $order->address_2;
             } else {
                 $html2.= '<br>Landmark : N/A';
             }
             $html2.= '<br>Pincode : ' . $order->postcode . ', ' . $order->city . ', ' . $order->state . ', ' . $order->country . '</p>
-							</td>
-	                    </tr>
-	                </tbody>
-				</table>
-				<table width="100%" cellpadding="5" class="child_table customer_awb">
-	                <tbody>
-	                    <tr>
-	                        <td width="660" align="center"><span class="awb_text">AWB : ' . $wbill . '</span><br/>' . $params;
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table width="100%" cellpadding="5" class="child_table customer_awb">
+                    <tbody>
+                        <tr>
+                            <td width="660" align="center"><span class="awb_text">AWB : ' . $wbill . '</span><br/>' . $params;
             //<tcpdf method="write1DBarcode" params="' . $params . '" />
             $html2.= '</td>
-	                    </tr>
-	                </tbody>
-				</table>
-	            <table width="100%" cellpadding="5" class="child_table product_info">
-	                <thead>
-	                    <tr>
-	                        <th width="40">S.No.</th>
-	                        <th width="250">Product(s)</th>
-	                        <th width="100">SL Price</th>
-	                        <th width="80" align="center">QTY (Pcs)</th>
-	                        <th width="90">Discount</th>
-	                        <th width="100">Net Amount</th>
-	                    </tr>
-	                </thead>
-				</table>
-				<table width="100%" cellpadding="5" class="child_table product_info">
-	                <tbody>';
+                        </tr>
+                    </tbody>
+                </table>
+                <table width="100%" cellpadding="5" class="child_table product_info">
+                    <thead>
+                        <tr>
+                            <th width="40">S.No.</th>
+                            <th width="250">Product(s)</th>
+                            <th width="100">SL Price</th>
+                            <th width="80" align="center">QTY (Pcs)</th>
+                            <th width="90">Discount</th>
+                            <th width="100">Net Amount</th>
+                        </tr>
+                    </thead>
+                </table>
+                <table width="100%" cellpadding="5" class="child_table product_info">
+                    <tbody>';
             $order_items = DB::table("line_items")->where('order_id', '=', $oid)->where('vid', '=', $request->vid)->get();
             $j = 1;
             $itm = 0;
@@ -941,45 +944,45 @@ class OrderController extends Controller {
                 $itm = $itm + $product->quantity;
                 $itm_sub = $itm_sub + $product->subtotal;
                 $html2.= '<tr>
-								<td width="40" height="' . $height . '">' . $j . '</td>
-								<td width="250">' . $product->name . '</td>
-								<td width="100">Rs.' . $product->subtotal . '</td>
-								<td width="80" align="center">' . $product->quantity . '</td>
-								<td width="90">Rs.0</td>
-								<td width="100">Rs.' . $product->total . '</td>
-								</tr>';
+                                <td width="40" height="' . $height . '">' . $j . '</td>
+                                <td width="250">' . $product->name . '</td>
+                                <td width="100">Rs.' . $product->subtotal . '</td>
+                                <td width="80" align="center">' . $product->quantity . '</td>
+                                <td width="90">Rs.0</td>
+                                <td width="100">Rs.' . $product->total . '</td>
+                                </tr>';
                 $j++;
             }
             $html2.= '</tbody></table><table width="100%" cellpadding="5" class="child_table product_info">
-	                <tbody>
-						<tr>
-	                        <td width="40">T1</td>
-	                        <td width="250">T1</td>
-	                        <td width="100">Rs.' . $itm_sub . '</td>
-	                        <td width="80" align="center">' . $itm . '</td>
-	                        <td width="90">Rs.' . $order->discount_total . '</td>
-	                        <td width="100">Rs.' . $order->total . '</td>
-	                    </tr>
-	                    <tr>
-	                        <td rowspan="2" colspan="4" class="bottom_barcode">
-	                            ' . $oid . '<br/>' . $params2;
+                    <tbody>
+                        <tr>
+                            <td width="40">T1</td>
+                            <td width="250">T1</td>
+                            <td width="100">Rs.' . $itm_sub . '</td>
+                            <td width="80" align="center">' . $itm . '</td>
+                            <td width="90">Rs.' . $order->discount_total . '</td>
+                            <td width="100">Rs.' . $order->total . '</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2" colspan="4" class="bottom_barcode">
+                                ' . $oid . '<br/>' . $params2;
             // $html2 .= '<tcpdf method="write1DBarcode" params="' . $params2 . '" />';
             $html2.= '</td>
-	                        <td width="90">Serv.Charges</td>
-	                        <td width="100">Payable AMT.</td>
-	                    </tr>
-	                    <tr>
-	                        <td width="90">Rs.' . $order->total_tax . '</td>
-	                        <td width="100">Rs.' . $order->total . '</td>
-	                    </tr>
-	                </tbody>
-	            </table>
-				
-				<table width="100%" cellpadding="5" class="child_table">
-	                <tr>
-	                    <td width="660" align="center"><div class="currency_text">' . strtoupper($order->total) . '</div></td>
-	                </tr>
-				</table>';
+                            <td width="90">Serv.Charges</td>
+                            <td width="100">Payable AMT.</td>
+                        </tr>
+                        <tr>
+                            <td width="90">Rs.' . $order->total_tax . '</td>
+                            <td width="100">Rs.' . $order->total . '</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <table width="100%" cellpadding="5" class="child_table">
+                    <tr>
+                        <td width="660" align="center"><div class="currency_text">' . strtoupper($order->total) . '</div></td>
+                    </tr>
+                </table>';
             //             <table width="100%" cellpadding="5" class="child_table tax_value">
             //                 <tr>
             //                     <td width="132" align="center"><p><span class="tax_invoice_val">Taxable Value</span><br>Rs.'.$order->total.'</p></td>
@@ -990,11 +993,11 @@ class OrderController extends Controller {
             //                 </tr>
             //             </table>
             $html2.= '<table width="100%" cellpadding="5" class="child_table">
-	                <tr>
-	                    <td width="660" align="center"><p><span class="tax_invoice_text">TAX INVOICE - Style by NansJ</span><br>This is computer generated tax invoice.</p></td>
-	                </tr>
-				</table>
-	</div>';
+                    <tr>
+                        <td width="660" align="center"><p><span class="tax_invoice_text">TAX INVOICE - Style by NansJ</span><br>This is computer generated tax invoice.</p></td>
+                    </tr>
+                </table>
+    </div>';
             // add a page
             $pdf::AddPage();
             // output the HTML content
@@ -1083,11 +1086,11 @@ class OrderController extends Controller {
             //   for($i=0;$i<count($listImp); $i++)
             // {
             // $orderItems[] =DB::table("orders.*",
-            // 			 // ->where('orders.oid',intval($listImp[$i]))
-            // 		     	DB::raw("(SELECT line_items.name as Name, SUM(line_items.quantity) as Quantity FROM line_items WHERE line_items.order_id = orders.oid)"))
-            //    	         // ->select("orders.oid as OrderID","orders.status as Status","line_items.quantity as Qty","line_items.parent_name as Parent","orders.date_created as Date")
-            //    	        // ->where('orders.vid',intval($request->vid))
-            //    	        ->whereIn('orders.oid', $listImp)
+            //           // ->where('orders.oid',intval($listImp[$i]))
+            //              DB::raw("(SELECT line_items.name as Name, SUM(line_items.quantity) as Quantity FROM line_items WHERE line_items.order_id = orders.oid)"))
+            //               // ->select("orders.oid as OrderID","orders.status as Status","line_items.quantity as Qty","line_items.parent_name as Parent","orders.date_created as Date")
+            //              // ->where('orders.vid',intval($request->vid))
+            //              ->whereIn('orders.oid', $listImp)
             //                ->get();
             // }
             // var_dump($orderItems); die;
@@ -1134,8 +1137,8 @@ class OrderController extends Controller {
             ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
         } else {
             $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-		                                WHERE line_items.order_id = orders.oid
-		                                GROUP BY line_items.order_id) as quantity"))->get();
+                                        WHERE line_items.order_id = orders.oid
+                                        GROUP BY line_items.order_id) as quantity"))->get();
         }
         return $orders;
     }
