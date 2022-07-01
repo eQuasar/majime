@@ -28,6 +28,7 @@ import { TablePlugin } from 'bootstrap-vue'
 import { ModalPlugin } from 'bootstrap-vue'
 import { SpinnerPlugin } from 'bootstrap-vue'
 import { BFormTimepicker } from 'bootstrap-vue'
+import VueSimpleAlert from "vue-simple-alert";
 
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -62,6 +63,7 @@ Vue.use(PopoverPlugin)
 Vue.use(TablePlugin)
 Vue.use(ModalPlugin)
 Vue.use(SpinnerPlugin)
+Vue.use(VueSimpleAlert);
 
 /* add font awesome icon component */
 Vue.component('font-awesome-icon', FontAwesomeIcon)

@@ -1,12 +1,12 @@
 <template>
   <b-container fluid> 
-        <b-overlay :show="show" rounded="sm">
+        <b-overlay :show="show" rounded="sm" spinner-type="grow" spinner-variant="primary" spinner-small>
     <div class="header_title">
       <div class="header_inner">
         <h3><strong>List Orders</strong></h3>
       </div>
     </div> 
-    </br>
+   
     <div class="content_bar">
       <div class="select-list">
     <b-row>
@@ -28,36 +28,39 @@
 <br>
 <div class="card-body card">
     <div class="call-center-dashboard">
-        <b-row>
-            <b-col xl="8" lg="8" md="8">
-                <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
-                <b-form @submit="onSubmit" class="date_range">
-                    <div class="datepiker-block"><span>From:&nbsp;</span> <b-form-datepicker id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }" locale="en-IN"></b-form-datepicker></div>
-                    <div class="datepiker-block"><span>To:&nbsp;</span> <b-form-datepicker id="to" v-model="date_to" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }" locale="en-IN"></b-form-datepicker></div>
-                    <b-button type="submit" variant="primary">Submit</b-button>
-                </b-form>
-            </b-col>
-            <b-col xl="4" lg="4" md="4" class="search_field">
-                <b-form-input id="filter-input" v-model="filter" type="search" placeholder="Type to Search"></b-form-input>
-                  <b-input-group-append><b-button :disabled="!filter" @click="filter = ''">Clear</b-button></b-input-group-append>
-            </b-col>
-        </b-row>
-        <div class="blue-bar"></div>
-        <div class="content_bar card list-appointments space-bottom">
-            <div class="col-sm-12">
                 <b-row>
-                    <b-col xl="5" lg="5" md="5">
-                        <b-form-group class="mb-0"> Show <b-form-select id="per-page-select" v-model="perPage" :options="pageOptions" size="sm"></b-form-select> entries </b-form-group>
+                    <b-col xl="8" lg="8" md="8">
+                        <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
+                          <b-form @submit="onSubmit" class="date_range">
+                            <div class="datepiker-block"><span>From:&nbsp;</span> <b-form-datepicker id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
+                                locale="en"></b-form-datepicker></div>
+                            <div class="datepiker-block"><span>To:&nbsp;</span> <b-form-datepicker id="to" v-model="date_to" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }" locale="en"></b-form-datepicker></div>
+                            <b-button type="submit" variant="primary">Submit</b-button>
+                          </b-form>
                     </b-col>
-                    <b-col>
-                        <button type="button" class="download-btn btn btn-primary" v-on:click="selectdownload" style="margin-left: 15px;">Download</button>
-                         <span v-if="saw5"><button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button></span>
+                    <b-col xl="4" lg="4" md="4" class="search_field">
+                        <b-form-input id="filter-input" v-model="filter" type="search" placeholder="Type to Search"></b-form-input>
+                          <b-input-group-append><b-button :disabled="!filter" @click="filter = ''">Clear</b-button></b-input-group-append>
                     </b-col>
-                </b-row>
-            </div>
-        </div>
+                  </b-row>
+                <div class="blue-bar"></div>
+                  <div class="content_bar card list-appointments space-bottom">
+                    <div class="col-sm-12">
+                        <b-row>
+                            <b-col xl="5" lg="5" md="5">
+                                <b-form-group class="mb-0"> Show <b-form-select id="per-page-select" v-model="perPage" :options="pageOptions" size="sm"></b-form-select> entries </b-form-group>
+                            </b-col>
+                            <b-col>
+                                <button type="button" class="download-btn btn btn-primary" v-on:click="selectdownload" style="margin-left: 15px;">Download</button>
+                                <span v-if="saw5"><button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button></span>
+                            </b-col>
+                        </b-row>
+                    </div>
+                </div>
+              </div>
     </div>
-</div>
+  </div>
+
       </br>
         <b-table striped hover responsive :items="items"
                   :sort-by.sync="sortBy"
@@ -92,8 +95,8 @@
                   :per-page="perPage"
                   aria-controls="my-table">
              </b-pagination>
-          </div>
-       <b-modal id="modal-1" title="Change Status:" hide-footer  size="lg">
+       
+       <b-modal id="modal-1" title="Change Status:" hide-footer  size="lg" >
              <b-form>
                 <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
                   <div :class="['form-group m-1 p-3', (successful ? 'alert-success' : '')]" v-show="successful">
@@ -137,6 +140,7 @@
     import order from '../../api/order.js';
     import user from '../../api/user.js';
     import * as XLSX from 'xlsx/xlsx.mjs';
+
   export default {
     props: {
     },
@@ -449,11 +453,13 @@ computed: {
         {
           let formData= new FormData();
           this.$bvModal.show("modal-1");
+          
           // console.log(this.oid);
         },
        assign_status() 
         {
           this.show=true;
+          this.$bvModal.hide("modal-1");
           this.vid = JSON.parse(localStorage.getItem("ivid"));
           let formData = new FormData();
           // formData.append("oid",this.oid);
@@ -467,8 +473,12 @@ computed: {
           formData.append("vid",this.vid);
           order.changeStatus(formData)
               .then((response) => {
-                  this.$bvModal.hide("modal-1");
-                  alert(response.data.msg);
+                  
+                  // alert(response.data.msg);
+//                   this.$confirm("Are you sure?").then(() => {
+//   //do something...
+// });
+this.$alert("Order Successfully Updated");
                   this.show=false;
                   this.getVidz();
               })

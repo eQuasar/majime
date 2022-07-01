@@ -133,6 +133,12 @@ class OrderController extends Controller {
         $order_items = DB::table("waybill")->where('waybill.vid', $vid)->where('waybill.order_id', $oid)->get()->toArray();
         // var_dump($order_items); die;
         if (!empty($order_items)) {
+            $curl = curl_init();
+            $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+            curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=dtobooked', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
+            $response = curl_exec($curl);
+            curl_close($curl);
+            $jsonResp = json_decode($response);
             DB::table('waybill')->where('order_id', $_REQUEST['order_id'])->where('vid', $_REQUEST['vid'])->update(['return_waybill_no' => $wbill]);
             DB::table('orders')->where('oid', $_REQUEST['order_id'])->where('vid', $_REQUEST['vid'])->update(['status' => "dtobooked"]);
             //           $curl = curl_init();
@@ -288,6 +294,12 @@ class OrderController extends Controller {
                                 // return response()->json(['error' => false, 'msg' => "WayBill successfully added.", "ErrorCode" => "000"],200);
                                 
                             } else {
+                                $curl = curl_init();
+                                $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+                                curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=packed', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
+                                $response = curl_exec($curl);
+                                curl_close($curl);
+                                $jsonResp = json_decode($response);
                                 DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "packed"]);
                                 $error = false;
                                 $msg = "Already Assign AWB No.";
@@ -295,12 +307,24 @@ class OrderController extends Controller {
                             }
                         } else {
                             $error = true;
+                            $curl = curl_init();
+                            $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+                            curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=on-hold', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
+                            $response = curl_exec($curl);
+                            curl_close($curl);
+                            $jsonResp = json_decode($response);
                             DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
                             $msg = $new_val['rmk'];
                             // return response()->json(['error' => true, 'msg' => $new_val['rmk'],"ErrorCode" => -2],200);
                         }
                     } else {
                         $error = true;
+                        $curl = curl_init();
+                        $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+                        curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=on-hold', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
+                        $response = curl_exec($curl);
+                        curl_close($curl);
+                        $jsonResp = json_decode($response);
                         DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
                         $msg = $new_val['detail'];
                         // return response()->json(['error' => true, 'msg' => $new_val['detail'],"ErrorCode" => -2],200);
@@ -422,10 +446,22 @@ class OrderController extends Controller {
                         $jsonResp2 = json_decode($response2);
                         return response()->json(['error' => false, 'msg' => "WayBill successfully added.", "ErrorCode" => "000"], 200);
                     } else {
+                        $curl = curl_init();
+                        $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+                        curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=packed', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
+                        $response = curl_exec($curl);
+                        curl_close($curl);
+                        $jsonResp = json_decode($response);
                         DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "packed"]);
                         return response()->json(['error' => false, 'msg' => "Already Assign AWB No.", "ErrorCode" => - 2], 200);
                     }
                 } else {
+                    $curl = curl_init();
+                    $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+                    curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=on-hold', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
+                    $response = curl_exec($curl);
+                    curl_close($curl);
+                    $jsonResp = json_decode($response);
                     DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
                     return response()->json(['error' => true, 'msg' => $new_val['rmk'], "ErrorCode" => - 2], 200);
                 }
