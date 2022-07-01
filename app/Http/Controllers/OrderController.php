@@ -94,8 +94,8 @@ class OrderController extends Controller {
         $add = $my_data[0]->add;
         $token = $my_data[0]->token;
         $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', '=', $vid)->where('orders.oid', '=', $oid)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-                                        WHERE line_items.order_id = orders.oid
-                                        GROUP BY line_items.order_id) as quantity"))->get();
+		                                WHERE line_items.order_id = orders.oid
+		                                GROUP BY line_items.order_id) as quantity"))->get();
         $curl = curl_init();
         curl_setopt_array($curl, array(CURLOPT_URL => 'https://track.delhivery.com/api/cmu/create.json', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
@@ -285,26 +285,25 @@ class OrderController extends Controller {
                                 $jsonResp2 = json_decode($response2);
                                 $error = false;
                                 $msg = "WayBill successfully added.";
-                                // return response()->json(['error' => false, 'msg' => "WayBill successfully added.","ErrorCode" => "000"],200);
+                                // return response()->json(['error' => false, 'msg' => "WayBill successfully added.", "ErrorCode" => "000"],200);
                                 
                             } else {
                                 DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "packed"]);
                                 $error = false;
                                 $msg = "Already Assign AWB No.";
                                 // return response()->json(['error' => true, 'msg' => "Already Assign AWB No.","ErrorCode" => -2],200);
-                                
                             }
                         } else {
                             $error = true;
+                            DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
                             $msg = $new_val['rmk'];
                             // return response()->json(['error' => true, 'msg' => $new_val['rmk'],"ErrorCode" => -2],200);
-                            
                         }
                     } else {
                         $error = true;
+                        DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
                         $msg = $new_val['detail'];
                         // return response()->json(['error' => true, 'msg' => $new_val['detail'],"ErrorCode" => -2],200);
-                        
                     }
                 } else {
                     DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
@@ -372,29 +371,29 @@ class OrderController extends Controller {
                     $payment_mode = "Prepaid";
                 }
                 $postfields = 'format=json&data={
-                      "shipments": [
-                        {
-                          "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
-                          "phone": ' . $order->phone . ',
-                          "payment_mode": "' . $payment_mode . '",
-                          "name": "' . $order->first_name . ' ' . $order->last_name . '",
-                          "pin": ' . $order->postcode . ',
-                          "cod_amount":' . $order->total . ',
-                          "order": "' . $order_prefix . $order->oid . '",
-                          "shipping_mode" : "Surface",
-                          "products_desc": "' . $product_name . '"
-                        }
-                      ],
-                      "pickup_location": 
-                        {
-                          "city": "' . $city . '",
-                          "name": "' . $name . '",
-                          "pin": "' . $pin . '",
-                          "country": "' . $country . '",
-                          "phone": "' . $phone . '",
-                          "add": "' . $add . '"
-                        }
-                    }';
+					  "shipments": [
+						{
+						  "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
+						  "phone": ' . $order->phone . ',
+						  "payment_mode": "' . $payment_mode . '",
+						  "name": "' . $order->first_name . ' ' . $order->last_name . '",
+						  "pin": ' . $order->postcode . ',
+						  "cod_amount":' . $order->total . ',
+						  "order": "' . $order_prefix . $order->oid . '",
+						  "shipping_mode" : "Surface",
+						  "products_desc": "' . $product_name . '"
+						}
+					  ],
+					  "pickup_location": 
+						{
+						  "city": "' . $city . '",
+						  "name": "' . $name . '",
+						  "pin": "' . $pin . '",
+						  "country": "' . $country . '",
+						  "phone": "' . $phone . '",
+						  "add": "' . $add . '"
+						}
+					}';
                 //     echo $token; echo "<br>";
                 // echo $postfields; die;
                 curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => $postfields, CURLOPT_HTTPHEADER => array('Authorization: Token ' . $token, 'Content-Type: application/json', 'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'),));
@@ -424,9 +423,10 @@ class OrderController extends Controller {
                         return response()->json(['error' => false, 'msg' => "WayBill successfully added.", "ErrorCode" => "000"], 200);
                     } else {
                         DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "packed"]);
-                        return response()->json(['error' => true, 'msg' => "Already Assign AWB No.", "ErrorCode" => - 2], 200);
+                        return response()->json(['error' => false, 'msg' => "Already Assign AWB No.", "ErrorCode" => - 2], 200);
                     }
                 } else {
+                    DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
                     return response()->json(['error' => true, 'msg' => $new_val['rmk'], "ErrorCode" => - 2], 200);
                 }
                 // }else{
