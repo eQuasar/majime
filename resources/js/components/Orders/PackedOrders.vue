@@ -164,7 +164,7 @@ export default {
   },
   data() {
     return {
-      statusAssign:'',
+      statusAssign: "",
       show: false,
       vendor: null,
       status: "dispatched",
@@ -295,7 +295,7 @@ export default {
             order
               .changeProcessingStatus(formData)
               .then((response) => {
-                this.$alert(response.data.msg);
+                this.$alert("", response.data.msg);
                 this.show = false;
                 this.getVidz();
               })
@@ -308,6 +308,7 @@ export default {
               });
           } else {
             /* Do something else */
+            this.show = false;
           }
         })
         .catch(() => {
@@ -349,7 +350,7 @@ export default {
               .changeProcessingStatus(formData)
               .then((response) => {
                 // alert("Status Update Successfully");
-                this.$alert(response.data.msg);
+                this.$alert("", response.data.msg);
                 this.show = false;
                 this.getVidz();
               })
@@ -362,6 +363,7 @@ export default {
               });
           } else {
             /* Do something else */
+            this.show = false;
           }
         })
         .catch(() => {
@@ -445,7 +447,7 @@ export default {
           })
           .catch((response) => {
             this.successful = false;
-            alert("something went wrong");
+            this.$alert("something went wrong");
           });
       }
       // alert("aaa");
@@ -482,16 +484,16 @@ export default {
         order
           .printSlip(formData)
           .then((response) => {
-            this.$alert(response.data.msg);
+            this.$alert("", response.data.msg);
             this.show = false;
             window.open(response.data.pdf_url);
           })
           .catch((response) => {
             this.successful = false;
-            alert("something went wrong");
+            this.$alert("something went wrong");
           });
       } else {
-        this.$alert("Please choose at least one value from checkbox...");
+        this.$alert("", "Please choose at least one value from checkbox...");
       }
     },
     printOrderSlip(oid) {
@@ -504,14 +506,14 @@ export default {
       order
         .printOrderSlip(formData)
         .then((response) => {
-          this.$alert(response.data.msg);
+          this.$alert("", response.data.msg);
           // alert(response.data.msg);
           this.show = false;
           window.open(response.data.pdf_url);
         })
         .catch((response) => {
           this.successful = false;
-          alert("something went wrong");
+          this.$alert("something went wrong");
         });
     },
   },

@@ -379,7 +379,7 @@ computed: {
             })
             .catch(response => {
                 this.successful = false;
-                alert('something went wrong');
+                this.$alert("",'something went wrong');
             })
         },
         onSubmit(event) {
@@ -435,7 +435,7 @@ computed: {
                 })
                 .catch(response => {
                     this.successful = false;
-                    alert('something went wrong');
+                    this.$alert("",'something went wrong');
                 })
             }
            },
@@ -473,7 +473,7 @@ computed: {
           formData.append("vid",this.vid);
           order.changeStatus(formData)
               .then((response) => {
-                  this.$alert("","Order Sucessfully Updated","success");
+                  this.$alert("","Order Sucessfully Updated");
                   // alert(response.data.msg);
 //                   this.$confirm("Are you sure?").then(() => {
 //   //do something...

@@ -400,7 +400,7 @@ export default {
       if (this.allSelected != "") {
         this.addstatus();
       } else {
-        this.$alert("Please choose at least one value from checkbox...");
+        this.$alert("", "Please choose at least one value from checkbox...");
       }
     },
     RefundstatusOID(oid) {
@@ -429,7 +429,7 @@ export default {
             order
               .changeProcessingStatus(formData)
               .then((response) => {
-                this.$alert("Status Update Successfully");
+                this.$alert("", response.data.msg);
                 this.show = false;
                 this.getVidz();
               })
@@ -442,6 +442,7 @@ export default {
               });
           } else {
             /* Do something else */
+            this.show = false;
           }
         })
         .catch(() => {
@@ -464,7 +465,7 @@ export default {
       order
         .PendingRefund_changeStatus(formData)
         .then((response) => {
-          this.$alert(response.data.msg);
+          this.$alert("", response.data.msg);
           window.location.reload();
         })
         .catch((response) => {

@@ -276,7 +276,7 @@ export default {
             order
               .changeProcessingStatus(formData)
               .then((response) => {
-                alert("Status Update Successfully");
+                this.$alert("", response.data.msg);
                 this.show = false;
                 this.getVidz();
               })
@@ -288,7 +288,7 @@ export default {
                 // loader.hide();
               });
           } else {
-            /* Do something else */
+            this.show = false;
           }
         })
         .catch(() => {
@@ -328,7 +328,7 @@ export default {
             order
               .changeProcessingStatus(formData)
               .then((response) => {
-                alert("Status Update Successfully");
+                this.$alert("", response.data.msg);
                 this.show = false;
                 this.getVidz();
               })
@@ -340,7 +340,7 @@ export default {
                 // loader.hide();
               });
           } else {
-            /* Do something else */
+            this.show = false;
           }
         })
         .catch(() => {
@@ -453,7 +453,7 @@ export default {
       order
         .PendingRefund_changeStatus(formData)
         .then((response) => {
-          alert(response.data.msg);
+          this.$alert("", response.data.msg);
           this.getVidz();
         })
         .catch((response) => {
@@ -481,14 +481,14 @@ export default {
       order
         .assignAWBOrder(formData)
         .then((response) => {
-          alert(response.data.msg);
+          this.$alert("", response.data.msg);
           this.show = false;
           this.getVidz();
           // this.items.splice(this.items.indexOf(index), 1);
         })
         .catch((response) => {
           this.successful = false;
-          alert("something went wrong");
+          this.$alert("something went wrong");
         });
     },
     clearData() {

@@ -411,7 +411,7 @@ export default {
       if (this.allSelected != "") {
         this.assignAWB();
       } else {
-        this.$alert("Please choose at least one value from checkbox...");
+        this.$alert("", "Please choose at least one value from checkbox...");
       }
     },
     assignAWB() {
@@ -425,7 +425,7 @@ export default {
       order
         .assignAWB(formData)
         .then((response) => {
-          this.$alert("", response.data.msg, "success");
+          this.$alert("", response.data.msg);
           this.show = false;
           this.getVidz();
         })
@@ -444,7 +444,7 @@ export default {
       order
         .assignAWBOrder(formData)
         .then((response) => {
-          this.$alert("", response.data.msg, "success");
+          this.$alert("", response.data.msg);
           this.show = false;
           this.getVidz();
           // this.items.splice(this.items.indexOf(index), 1);
@@ -481,7 +481,7 @@ export default {
             order
               .changeProcessingStatus(formData)
               .then((response) => {
-                this.$alert(response.data.msg);
+                this.$alert("", response.data.msg);
                 this.show = false;
                 this.getVidz();
               })
@@ -493,7 +493,7 @@ export default {
                 // loader.hide();
               });
           } else {
-            /* Do something else */
+            this.show = false;
           }
         })
         .catch(() => {

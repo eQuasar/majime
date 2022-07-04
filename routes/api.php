@@ -34,7 +34,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('change_status_on_dispatch', 'OrderController@changeStatusDispatch')->name('change_status_on_dispatch');
 	Route::post('product_Order_Search', 'ProductController@product_Order_Search')->name('product_Order_Search');
 	Route::post('status_details', 'ReportController@status_details')->name('status_details');
-	Route::get('insertAllOrders',[App\Http\Controllers\OrderController::class,'insertAllOrders']);
+	// Route::get('insertAllOrders',[App\Http\Controllers\OrderController::class,'insertAllOrders']);
 	 Route::get('order_Profile/{oid}',[App\Http\Controllers\OrderController::class,'OrdersProfile']);
     Route::get('order_Profile/{oid}', 'OrderController@order_Profile')->name('order_Profile');
     // Route::get('order_Profile/{oid}', 'OrderController@order_Profile')->name('order_Profile');
