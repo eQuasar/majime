@@ -164,6 +164,7 @@ export default {
   },
   data() {
     return {
+      statusAssign:'',
       show: false,
       vendor: null,
       status: "dispatched",
