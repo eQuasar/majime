@@ -1,5 +1,12 @@
 <template>
   <b-container fluid> 
+     <b-overlay
+      :show="show"
+      rounded="sm"
+      spinner-type="grow"
+      spinner-variant="primary"
+      spinner-small
+    >
     <div class="header_title">
       <div class="header_inner">
         <h3><strong>Dispatched List</strong></h3>
@@ -162,6 +169,7 @@
           </b-form>
           <p id="data_msg"></p>
       </b-modal>
+      </b-overlay>
      </b-container>
     </template>
     <script>
@@ -317,7 +325,11 @@ computed: {
         },
      dispatchstatus() {
         // this.allSelected = "false";
-        this.$bvModal.show("modal-2");
+        // this.$prompt("modal-2").then(text => {
+  // do somthing with text
+// });
+
+         this.$bvModal.show("modal-2");
         // this.addstatus();
       },
       async selectedAll() {
@@ -553,6 +565,7 @@ computed: {
 
        fordeliverydownload()
       {
+        this.show=true;
             let formData = new FormData();
             formData.append("selectall",this.selectall)
             formData.append("vid",this.vid)
@@ -572,6 +585,7 @@ computed: {
               }
               // loader.hide();
           });
+          this.show=false;
       }, 
 
   },

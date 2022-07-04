@@ -638,7 +638,7 @@ class OrderController extends Controller {
             curl_close($curl);
             $jsonResp = json_decode($response);
             // var_dump($jsonResp);
-            return response()->json(['error' => false, 'msg' => "Order Status successfully updated.", "ErrorCode" => "000"], 200);
+            return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
     //    } 
     }
     public function changeOrderStatus($vid, $oid, $status) {
@@ -654,7 +654,7 @@ class OrderController extends Controller {
         $response = curl_exec($curl);
         curl_close($curl);
         $jsonResp = json_decode($response);
-        return response()->json(['error' => false, 'msg' => "Order Status successfully updated.", "ErrorCode" => "000"], 200);
+        return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
     }
     function printSlip(Request $request) {
         $listImp = explode(',', $request->allSelected);
@@ -858,7 +858,7 @@ class OrderController extends Controller {
         $pdf::lastPage();
         $pdf::Output(public_path($filename), 'F');
         $file_url = url('/all_order_' . time() . '.pdf');
-        return response()->json(['error' => false, 'msg' => "PDF generated successfully.", "pdf_url" => $file_url, "ErrorCode" => "000"], 200); //response()->download(public_path($filename));
+        return response()->json(['error' => false, 'msg' => "PDF Generated Successfully.", "pdf_url" => $file_url, "ErrorCode" => "000"], 200); //response()->download(public_path($filename));
         
     }
     function printOrderSlip(Request $request) {
@@ -1069,7 +1069,7 @@ class OrderController extends Controller {
         $pdf::lastPage();
         $pdf::Output(public_path($filename), 'F');
         $file_url = url('/order' . $request->oid . '_' . time() . '.pdf');
-        return response()->json(['error' => false, 'msg' => "PDF generated successfully.", "pdf_url" => $file_url, "ErrorCode" => "000"], 200); //response()->download(public_path($filename));
+        return response()->json(['error' => false, 'msg' => "PDF Generated Successfully.", "pdf_url" => $file_url, "ErrorCode" => "000"], 200); //response()->download(public_path($filename));
         
     }
     public function delete($id) {
@@ -1133,7 +1133,7 @@ class OrderController extends Controller {
             curl_close($curl);
             $jsonResp = json_decode($response);
         }
-        return response()->json(['error' => false, 'msg' => "Order Status successfully updated.", "ErrorCode" => "000"], 200);
+        return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
     }
     function download_Sheet(Request $request) {
         if ($request->selectall) {
@@ -1185,7 +1185,7 @@ class OrderController extends Controller {
             // var_dump($jsonResp);
             
         }
-        return response()->json(['error' => false, 'msg' => "Order Status successfully updated.", "ErrorCode" => "000"], 200);
+        return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
     }
     public function getProcessingOrder_Details(Request $request) {
         $vendor = $request->vid;

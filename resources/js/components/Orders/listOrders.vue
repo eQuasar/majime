@@ -473,12 +473,12 @@ computed: {
           formData.append("vid",this.vid);
           order.changeStatus(formData)
               .then((response) => {
-                  
+                  this.$alert("","Order Sucessfully Updated","success");
                   // alert(response.data.msg);
 //                   this.$confirm("Are you sure?").then(() => {
 //   //do something...
 // });
-this.$alert("Order Successfully Updated");
+// this.$alert("Order Successfully Updated");
                   this.show=false;
                   this.getVidz();
               })

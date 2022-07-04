@@ -1,6 +1,12 @@
 <template>
   <b-container fluid>
-    <b-overlay :show="show" rounded="sm">
+    <b-overlay
+      :show="show"
+      rounded="sm"
+      spinner-type="grow"
+      spinner-variant="primary"
+      spinner-small
+    >
       <div class="header_title">
         <div class="header_inner">
           <h2><strong>Pending Refunds</strong></h2>
@@ -394,7 +400,7 @@ export default {
       if (this.allSelected != "") {
         this.addstatus();
       } else {
-        alert("Please choose at least one value from checkbox...");
+        this.$alert("Please choose at least one value from checkbox...");
       }
     },
     RefundstatusOID(oid) {
@@ -423,7 +429,7 @@ export default {
             order
               .changeProcessingStatus(formData)
               .then((response) => {
-                alert("Status Update Successfully");
+                this.$alert("Status Update Successfully");
                 this.show = false;
                 this.getVidz();
               })
@@ -458,7 +464,7 @@ export default {
       order
         .PendingRefund_changeStatus(formData)
         .then((response) => {
-          alert(response.data.msg);
+          this.$alert(response.data.msg);
           window.location.reload();
         })
         .catch((response) => {

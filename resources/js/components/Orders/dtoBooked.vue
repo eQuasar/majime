@@ -1,6 +1,12 @@
 <template>
   <b-container fluid>
-    <b-overlay :show="show" rounded="sm">
+    <b-overlay
+      :show="show"
+      rounded="sm"
+      spinner-type="grow"
+      spinner-variant="primary"
+      spinner-small
+    >
       <div class="header_title">
         <div class="header_inner">
           <h2><strong>DTO-Booked</strong></h2>
