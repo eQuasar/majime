@@ -72,7 +72,7 @@ class OrderController extends Controller {
         return $orderItems;
     }
     public function get_packdetail_Refund($vid) {
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)->where('orders.status', "dtodel2warehouse")->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
+        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)->where('orders.status', "dtodelivered")->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
         return $orders;
     }
     public function getOrderOnStatus($vid, $status) {
@@ -80,6 +80,15 @@ class OrderController extends Controller {
         $orderItems = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)
         // ->where('billings.vid',$vid)
         ->where('orders.status', $status)->get();
+        return $orderItems;
+    }
+    public function getComplete_OrdersStatus($vid, $statrto,$statdto,$statcomp) 
+    {
+        // echo "string"; die;
+        $orderItems = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)
+        ->whereIn('orders.status',[$statrto,$statdto,$statcomp])->get();
+        // ->where('billings.vid',$vid)
+        // ->where('orders.status',$status)->where('orders.status',$state)->get();
         return $orderItems;
     }
     public function return_order() {
@@ -1122,6 +1131,11 @@ class OrderController extends Controller {
         $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"))->Where('orders.status', $request->status)->where('orders.vid', $request->vid)->where('billings.vid', $request->vid)->get();
         return $order;
     }
+    public function zone_Search(Request $request) {
+        $data=DB::table('zonedetails')->distinct()->select('zonedetails.zoneno')->get();
+        // $order = DB::table("orders")->distinct()->select('orders.status')->where('orders.vid', $request->vid)->get();
+        return $data;
+    }
     function Refundchange_Status(Request $request) {
         $imp = explode(',', $request->allSelected);
         for ($i = 0;$i < count($imp);$i++) {
@@ -1161,6 +1175,7 @@ class OrderController extends Controller {
         return $orderItems;
     }
     function changeProcessing_Status(Request $request) {
+       
         // var_dump($_REQUEST); die;
         // echo $request->loc; die;
         if ($request->loc == "wp") {

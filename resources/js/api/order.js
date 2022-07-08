@@ -26,6 +26,9 @@ export default {
     getOrderOnStatus(vid,status) {
         return axios.get('getOrderOnStatus/'+vid+'/'+status)
     },
+    getCompleteOrdersStatus(vid,statrto,statdto,statcomp) {
+        return axios.get('getComplete_OrdersStatus/'+vid+'/'+statrto+'/'+statdto+'/'+statcomp)
+    },
     assignAWB(data){
         return axios.post('assignAWB', data)
     },
@@ -119,5 +122,8 @@ export default {
     },
     returnAWB(data){
         return axios.post('return_awb', data)
+    },
+    getzone(data){
+        return axios.get('zone_Search', data)
     }
 }

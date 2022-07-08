@@ -31,7 +31,7 @@ class CreateUpdateStatusesTable extends Migration
             $table->text('delivery_scans');
             $table->dateTime('delivery_destination_received_date');
             $table->dateTime('delivery_pickup_date');
-            $table->intdiv(dividend, divisor)eger('delivery_charged_weight_in_grams');
+            $table->intdiv(dividend, divisor)('delivery_charged_weight_in_grams');
             $table->timestamps();
         });
     }

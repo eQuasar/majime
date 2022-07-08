@@ -42,6 +42,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('product_items/{variation_id}', 'ProductController@product_items')->name('product_items');
 	Route::get('get_order_data', 'JsonController@get_order_data')->name('get_order_data');
 	Route::get('getOrderOnStatus/{vid}/{status}', 'OrderController@getOrderOnStatus')->name('getOrderOnStatus');
+	Route::get('getComplete_OrdersStatus/{vid}/{statrto}/{statdto}/{statcomp}', 'OrderController@getComplete_OrdersStatus')->name('getComplete_OrdersStatus');
 	Route::get('getpackdetail/{vid}', 'OrderController@getPackdetail')->name('getpackdetail'); 
 	// Route::get('getConfirmeddetail/{vid}', 'OrderController@getConfirmeddetail')->name('getConfirmeddetail');
 	
@@ -100,5 +101,10 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('delivery_download_Sheet', 'OrderController@delivery_download_Sheet')->name('delivery_download_Sheet');
     Route::post('onhold_download_Sheet', 'OrderController@onhold_download_Sheet')->name('onhold_download_Sheet');
     Route::get('get_Status/{vid}/{status}','ReturnController@get_Status')->name('get_Status');
+	Route::post('addZone_Deatil','ZonedetailController@store')->name('addZone_Deatil');
+	Route::get('get_zone','ZonedetailController@show')->name('get_zone');
+	Route::get('zone_Search', 'OrderController@zone_Search')->name('zone_Search');
+	Route::post('zonerate_card','ZoneratecardController@store')->name('zonerate_card');
+	Route::post('vendor_rate_card','VendorRatecardController@store')->name('vendor_rate_card');
 }); 
 

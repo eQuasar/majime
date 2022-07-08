@@ -1,4 +1,3 @@
-ƒcandel
 <template>
   <b-container fluid>
     <b-overlay

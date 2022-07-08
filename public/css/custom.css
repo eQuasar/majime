@@ -316,4 +316,7 @@ tbody tr {
     border: 1px solid #d5e3d6;
 }
 
-
+.d-table .table td{
+    line-height: 1.6;
+    padding: 1.125rem 1vh;
+}

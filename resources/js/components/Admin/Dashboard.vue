@@ -1,169 +1,211 @@
 <template>
-  <b-container fluid> 
-    <div class="header_title">
-      <div class="header_inner">
-        <h3><strong></strong></h3><br/>
+  <b-container fluid>
+    <b-overlay
+      :show="show"
+      rounded="sm"
+      spinner-type="grow"
+      spinner-variant="primary"
+      spinner-small
+    >
+      <div class="header_title">
+        <div class="header_inner">
+          <h3><strong></strong></h3>
+          <br />
+        </div>
       </div>
-    </div>
-    
-    <div class="content_bar card">
+
+      <div class="content_bar card">
         <div class="card-body">
           <div class="call-center-dashboard">
-          <b-col xl="10" lg="10" md="10">
-            <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
-            <b-form @submit="onSubmit" class="date_range">
-              <div class="datepiker-block">
-                <span>From:&nbsp;</span>  <b-form-datepicker  id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"  locale="en-IN"></b-form-datepicker>
+            <b-col xl="10" lg="10" md="10">
+              <b-alert show variant="danger" v-if="create_error">{{
+                create_error
+              }}</b-alert>
+              <b-form @submit="onSubmit" class="date_range">
+                <div class="datepiker-block">
+                  <span>From:&nbsp;</span>
+                  <b-form-datepicker
+                    id="from"
+                    v-model="date_from"
+                    :date-format-options="{
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                    }"
+                    locale="en-IN"
+                  ></b-form-datepicker>
+                </div>
+                <div class="datepiker-block">
+                  <span>To:&nbsp;</span>
+                  <b-form-datepicker
+                    id="to"
+                    v-model="date_to"
+                    :date-format-options="{
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                    }"
+                    locale="en-IN"
+                  ></b-form-datepicker>
+                </div>
+                <b-button type="submit" variant="primary">Submit</b-button>
+              </b-form>
+            </b-col>
+            <div class="blue-bar"></div>
+            <div class="content_bar card list-appointments space-bottom">
+              <div class="col-sm-12">
+                <b-row>
+                  <b-col xl="5" lg="5" md="5">
+                    <b-form-group class="mb-0">
+                      Show
+                      <b-form-select
+                        id="per-page-select"
+                        v-model="perPage"
+                        :options="pageOptions"
+                        size="sm"
+                      ></b-form-select>
+                      entries
+                    </b-form-group>
+                  </b-col>
+                  <b-col xl="7" lg="7" md="7" class="search_field">
+                    <b-form-input
+                      id="filter-input"
+                      v-model="filter"
+                      type="search"
+                      placeholder="Type to Search"
+                    ></b-form-input>
+                    <b-input-group-append>
+                      <b-button :disabled="!filter" @click="filter = ''"
+                        >Clear</b-button
+                      >
+                    </b-input-group-append>
+                  </b-col>
+                </b-row>
               </div>
-              <div class="datepiker-block">
-                <span>To:&nbsp;</span> <b-form-datepicker  id="to" v-model="date_to" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"  locale="en-IN"></b-form-datepicker>
-              </div>
-              <b-button type="submit" variant="primary">Submit</b-button>
-            </b-form>
-          </b-col>
-         <div class="blue-bar"></div>
-        <div class="content_bar card list-appointments space-bottom">
-          <div class="col-sm-12">
-            <b-row>
-              <b-col xl="5" lg="5" md="5">
-                <b-form-group
-                  class="mb-0"
-                >
-                 Show <b-form-select
-                    id="per-page-select"
-                    v-model="perPage"
-                    :options="pageOptions"
-                    size="sm"
-                  ></b-form-select> entries
-                </b-form-group>
-              </b-col>
-              <b-col xl="7" lg="7" md="7" class="search_field">
-                <b-form-input
-                    id="filter-input"
-                    v-model="filter"
-                    type="search"
-                    placeholder="Type to Search"
-                  ></b-form-input>
-                  <b-input-group-append>
-                    <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
-                  </b-input-group-append>
-              </b-col>
-            </b-row>
+            </div>
           </div>
-        </div>
-        </div>
-         <b-table striped hover responsive :items="items"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
-      sort-icon-left :filter-included-fields="filterOn" :filter="filter" :fields="fields" :per-page="perPage" :current-page="currentPage" show-empty>
+          <b-table
+            striped
+            hover
+            responsive
+            :items="items"
+            :sort-by.sync="sortBy"
+            :sort-desc.sync="sortDesc"
+            sort-icon-left
+            :filter-included-fields="filterOn"
+            :filter="filter"
+            :fields="fields"
+            :per-page="perPage"
+            :current-page="currentPage"
+            show-empty
+          >
             <template #empty="scope">
-                <p style="text-align:center;">No record found, choose date filter to found the result.</p>
+              <p style="text-align: center">
+                No record found, choose date filter to found the result.
+              </p>
             </template>
-            <template v-slot:cell(oid)="row">
-               #{{(row.item.oid)}}
-            </template>
+            <template v-slot:cell(oid)="row"> #{{ row.item.oid }} </template>
           </b-table>
           <div class="text-center" v-if="seen">
-  <b-spinner variant="primary" label="Text Centered"></b-spinner>
-</div>
-  <b-pagination v-model="currentPage"
-       :total-rows="rows"
-      :per-page="perPage"
-      aria-controls="my-table"
-    ></b-pagination>
-  </div>
-    </div>
-</b-container>
+            <b-spinner variant="primary" label="Text Centered"></b-spinner>
+          </div>
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+            aria-controls="my-table"
+          ></b-pagination>
+        </div>
+      </div>
+    </b-overlay>
+  </b-container>
 </template>
 
 <script>
-    import order from '../../api/order.js';
-  export default {
-
-    props: {
-    },
-    mounted() {
-      this.getOrderdetail();
-    },
-    data() 
-    {
-      return {
-        ariaDescribedby: "",
-        time: "",
-        date: "",
-        time_slots: [],
+import order from "../../api/order.js";
+export default {
+  props: {},
+  mounted() {
+    this.getOrderdetail();
+  },
+  data() {
+    return {
+      show: false,
+      ariaDescribedby: "",
+      time: "",
+      date: "",
+      time_slots: [],
       seen: false,
-        date_from: '',
-        date_to: '',
-        sortBy: 'date',
-        sortDesc: true,
-         perPage: 10,
-        currentPage: 1,
-        pageOptions: [5, 10, 15, 20, 50, 100],
-        filter: null,
-        filterOn: [],
-        fields: [
-          {
-            key: 'oid',
-            label: 'Order No',
-            sortable: true
-          },
-          {
-            key: 'quantity',
-            label: 'Sale',
-            sortable: true
-          },
-          {
-            key: 'subtotal',
-            label: 'Product Cost',
-            sortable: true
-          },
-          {
-            key: 'state',
-            label: 'Market Cost',
-            sortable: true
-          },
-          {
-            key: 'city',
-            label: 'Logistic Cost',
-            sortable: true
-          },
-          {
-            key: 'value',
-            label: 'Comission',
-            sortable: true
-          },
-          {
-            key: 'date_created_gmt',
-            label: 'Sms/Others',
-            sortable: true
-          },
-          {
-            key: 'currency',
-            label: 'Margin',
-            sortable: true
-          },
-          {
-            key: 'status',
-            label: 'Status',
-            sortable: false
-          }
-        ],
-        items: [],
-        errors_create:[],
-        successful: false,
-        create_error:'',
-      };
+      date_from: "",
+      date_to: "",
+      sortBy: "date",
+      sortDesc: true,
+      perPage: 10,
+      currentPage: 1,
+      pageOptions: [5, 10, 15, 20, 50, 100],
+      filter: null,
+      filterOn: [],
+      fields: [
+        {
+          key: "oid",
+          label: "Order No",
+          sortable: true,
+        },
+        {
+          key: "quantity",
+          label: "Sale",
+          sortable: true,
+        },
+        {
+          key: "subtotal",
+          label: "Product Cost",
+          sortable: true,
+        },
+        {
+          key: "state",
+          label: "Market Cost",
+          sortable: true,
+        },
+        {
+          key: "city",
+          label: "Logistic Cost",
+          sortable: true,
+        },
+        {
+          key: "value",
+          label: "Comission",
+          sortable: true,
+        },
+        {
+          key: "date_created_gmt",
+          label: "Sms/Others",
+          sortable: true,
+        },
+        {
+          key: "currency",
+          label: "Margin",
+          sortable: true,
+        },
+        {
+          key: "status",
+          label: "Status",
+          sortable: false,
+        },
+      ],
+      items: [],
+      errors_create: [],
+      successful: false,
+      create_error: "",
+    };
+  },
+  computed: {
+    rows() {
+      return this.items.length;
     },
-computed: {
-      rows() {
-        return this.items.length
-      }
-    },
+  },
   methods: {
-    
     onSubmit(event) {
-      event.preventDefault()
+      event.preventDefault();
       this.create_error = "";
       if (!this.date_from) {
         this.create_error += "Add date from,";
@@ -177,41 +219,41 @@ computed: {
       let formData = new FormData();
       formData.append("date_from", this.date_from);
       formData.append("date_to", this.date_to);
-      
+
       appointment
-          .appointmentSearch(formData)
-          .then((response) => {
-              
-                  this.items=response.data.data;
-                  
-              // }
-          })
-          .catch((error) => {
-              console.log(error);
-              if (error.response.status == 422) {
-                  this.errors_create = error.response.data.errors;
-              }
-              // loader.hide();
-          });
+        .appointmentSearch(formData)
+        .then((response) => {
+          this.items = response.data.data;
+
+          // }
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+          // loader.hide();
+        });
       // console.log(this.date_from);
       // console.log(this.date_to);
       // alert(JSON.stringify(this.form))
     },
     getOrderdetail() {
       // this.seen = true;
-      order.getOrderDetail()
-        .then(( response ) => {
+      order
+        .getOrderDetail()
+        .then((response) => {
           console.log(response);
-          this.items=response.data;
+          this.items = response.data;
           // this.countrys = response.data.data;
           console.log(this.items);
           //this.seen = false;
         })
-        .catch(response => {
-            this.successful = false;
-            alert('something went wrong');
-        })
-    }
-  }
-};  
+        .catch((response) => {
+          this.successful = false;
+          alert("something went wrong");
+        });
+    },
+  },
+};
 </script>

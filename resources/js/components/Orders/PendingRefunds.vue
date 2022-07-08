@@ -422,7 +422,7 @@ export default {
             this.vid = JSON.parse(localStorage.getItem("ivid"));
             let formData = new FormData();
             formData.append("oid", this.oid);
-            formData.append("status_assign", "refunded");
+            formData.append("status_assign", "dto-refunded");
             formData.append("allSelected", this.allSelected);
             formData.append("vid", this.vid);
             formData.append("status", this.status);

@@ -18,6 +18,7 @@ import OrderProfile2 from './components/Orders/OrderProfile.vue'
 import productprofile from './components/Products/productprofile.vue'
 import ReadytopackOrders from './components/Orders/ReadytopackOrders.vue'
 import ConfirmedOrders from './components/Orders/ConfirmedOrders.vue'
+import CompleteOrders from './components/Orders/CompleteOrders.vue'
 import PrintSlip from './components/Orders/PrintSlip.vue'
 import TransactionDetail from './components/Admin/TransactionDetail.vue'
 import ViewTransaction from './components/Admin/ViewTransaction.vue'
@@ -28,14 +29,18 @@ import OnHoldOrders from './components/Orders/OnHoldOrders.vue'
 import DtoIntransit from './components/Orders/dtoIntransit.vue'
 import DtoBooked from './components/Orders/dtoBooked.vue'
 import DtoDelivered from './components/Orders/dtoDelivered.vue'
-
-
+import ZoneDetail from './components/Master/zoneDetail.vue'
+import ZoneRateCard from './components/Master/zonerateCard.vue'
+import VendorRateCard from './components/Master/vendorrateCard.vue'
 
 export const routes = [ 
     {path: '/',component: App},
 	{path: '/home',component: App},
     {path:'/vendor/ProductList',component: ProductList,name:'ProductList',meta: { auth: true}},
     {path:'/admin/ProductList',component: AdminProductList,name:'adminProductList',meta: { auth: true}},
+    {path:'/admin/ZoneDetail',component: ZoneDetail,name:'zoneDetail',meta: { auth: true}},
+    {path:'/admin/ZoneRateCard',component: ZoneRateCard,name:'zonerateCard',meta: { auth: true}},
+    {path:'/admin/VendorRateCard',component: VendorRateCard,name:'vendorrateCard',meta: { auth: true}},
    //  {path:'/vendor/OrderProfile',component: OrderProfile,name:'OrderProfile',meta: { auth: true}},
 
     {path:'/vendor/listOrders',component: listOrders,name:'listOrders',meta: { auth: true}},
@@ -45,6 +50,7 @@ export const routes = [
     {path:'/vendor/PackedOrders',component: PackedOrders,name:'packedorders',meta: { auth: true}},
     {path:'/vendor/PendingRefunds',component: PendingRefunds,name:'pendingrefunds',meta: { auth: true}},
     {path:'/vendor/ConfirmedOrders',component: ConfirmedOrders,name:'confirmedorders',meta: { auth: true}},
+     {path:'/admin/CompleteOrders',component: CompleteOrders,name:'CompleteOrders',meta: { auth: true}},
     {path:'/vendor/print-slip',component: PrintSlip,name:'printslip',meta: { auth: true}},
     {path:'/vendor/dashboard',component: vendorDashboard,name:'vendorDashboard',meta: { auth: true}},
     {path:'/admin/dashboard',component: AdminDashboard,name:'admindashboard',meta: { auth: true}},

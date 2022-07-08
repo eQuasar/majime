@@ -153,9 +153,8 @@ class AuthController extends Controller
 
      public function getVid(Request $request)
      {
-        //dd($request)
         $vendor = $request->user_id;
-        $vid = DB::table("vendors")->where('vendors.user_id','=',$vendor)->get();
+        $vid = DB::table("vendors")->where('vendors.user_id','=',intval($vendor))->get();
         if(isset($vid)){
             return $vid[0]->id;
         }else{

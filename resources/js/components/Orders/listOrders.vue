@@ -119,7 +119,7 @@
                               <b-form-select-option value="packed">Change status to Packed</b-form-select-option>
                               <b-form-select-option value="rtd-online">Change status to RTD-Online</b-form-select-option>
                               <b-form-select-option value="rtd-cod">Change status to RTD-COD</b-form-select-option>
-                              <b-form-select-option value="refunded">Change status to Refunded</b-form-select-option>
+                              <b-form-select-option value="dto-refunded">Change status to DTO Refunded</b-form-select-option>
                               <b-form-select-option value="deliveredtocust">Change status to delivered to customer</b-form-select-option>
                               <b-form-select-option value="dtodel2warehouse">Change status to DTO Delivery to Warehouse</b-form-select-option>
                               <b-form-select-option value="dtointransit">Change status to DTO Intransit</b-form-select-option>

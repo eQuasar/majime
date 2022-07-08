@@ -34,11 +34,11 @@ class WalletController extends Controller
   //   ->where('line_items.vid','=',intval($vendor))
      ->select("orders.*","orders.oid as orderno",
       DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-            WHERE line_items.order_id = orders.oid
-            GROUP BY line_items.order_id) as quantity"),
+            WHERE line_items.order_id = orders.oid 
+            GROUP BY line_items.order_id) as Quantity"),
           (DB::raw('(total*(5/100)) AS m_cost')),(DB::raw('(total*(5/100)) AS v_cost')),
           (DB::raw('(total*(2/100)) AS gateway_cost')),(DB::raw('(total*(2/100)) AS s_cost')),
-          (DB::raw('(total*(93/100)) AS net_amount')),(DB::raw('(total*(93/100)) AS a_cost'))
+          (DB::raw('(total*(93/100)) AS net_amount')),(DB::raw('(Quantity*(0.250)) AS logistics_cost'))
           )
           ->get();
         return $orders;
