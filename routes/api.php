@@ -25,7 +25,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('getOrderDetails', 'OrderController@getOrderDetails')->name('getOrderDetails');
 	Route::post('getProductdetail',[App\Http\Controllers\ProductController::class,'productDetail']);
 	Route::get('getDashbaord',[App\Http\Controllers\DashboardController::class,'Dashboard_Detail']);
-	Route::post('walletDetail', 'WalletController@walletDetail')->name('walletDetail'); 
+	Route::post('walletDetail', 'WalletprocessedController@show')->name('walletDetail'); 
 	Route::get('reportdetail',[App\Http\Controllers\ReportController::class,'Report_detail']);
 	Route::get('Accountdetail',[App\Http\Controllers\AccountController::class,'Account_detail']);
 	Route::get('get_orderProfile',[App\Http\Controllers\ReportController::class,'ReportProfile_detail']);
@@ -42,7 +42,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('product_items/{variation_id}', 'ProductController@product_items')->name('product_items');
 	Route::get('get_order_data', 'JsonController@get_order_data')->name('get_order_data');
 	Route::get('getOrderOnStatus/{vid}/{status}', 'OrderController@getOrderOnStatus')->name('getOrderOnStatus');
-	Route::get('getComplete_OrdersStatus/{vid}/{statrto}/{statdto}/{statcomp}', 'OrderController@getComplete_OrdersStatus')->name('getComplete_OrdersStatus');
+	Route::get('getComplete_OrdersStatus/{vid}/{statrto}/{statdto}/{statcomp}/{closed}', 'OrderController@getComplete_OrdersStatus')->name('getComplete_OrdersStatus');
 	Route::get('getpackdetail/{vid}', 'OrderController@getPackdetail')->name('getpackdetail'); 
 	// Route::get('getConfirmeddetail/{vid}', 'OrderController@getConfirmeddetail')->name('getConfirmeddetail');
 	
@@ -106,5 +106,10 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('zone_Search', 'OrderController@zone_Search')->name('zone_Search');
 	Route::post('zonerate_card','ZoneratecardController@store')->name('zonerate_card');
 	Route::post('vendor_rate_card','VendorRatecardController@store')->name('vendor_rate_card');
+	// Route::post('assign_wallet', 'OrderController@assign_wallet')->name('assign_wallet');
+	Route::post('assign_wallet', 'WalletprocessedController@store')->name('assign_wallet'); 
+	Route::post('complete_download_sheet', 'WalletprocessedController@index')->name('complete_download_sheet');
+	Route::get('zone_rate','ZoneratecardController@show')->name('zone_rate');
+	Route::get('Vendor_rate','VendorRatecardController@show')->name('Vendor_rate');
 }); 
 

@@ -35,12 +35,13 @@ class VendorRatecardController extends Controller
      */
     public function store(Request $request)
     {
-
+        // dd($request);die();
         $request->validate([
             // 'id' => 'required',
             'cod' => 'required',
             'codper' => 'required',
             'above' => 'required',
+            'sms' => 'required',
             
          ]);
         
@@ -50,6 +51,8 @@ class VendorRatecardController extends Controller
         $vendorrate_data->cod= $request->cod;
         $vendorrate_data->codper= $request->codper;
         $vendorrate_data->after500gm= $request->above;
+        $vendorrate_data->sms_charges= $request->sms;
+
         $vendorrate_data->save();
     }
 
@@ -61,7 +64,8 @@ class VendorRatecardController extends Controller
      */
     public function show(vendor_ratecard $vendor_ratecard)
     {
-        //
+        $data = vendor_ratecard::all();
+        return $data;
     }
 
     /**

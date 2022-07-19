@@ -2,7 +2,7 @@
   <b-container fluid>
     <div>
       <div class="card-body">
-        <h3><strong>Transaction Detail</strong></h3>
+        <h3><strong>Vendor Rate Card</strong></h3>
         <br />
         <b-form>
           <b-alert show variant="danger" v-if="create_error">{{
@@ -13,7 +13,7 @@
             v-show="successful"
           >
             <span v-if="successful" class="label label-sucess"
-              >Transaction Detail Enter Sucessfully</span
+              >Vendor Rate Card Detail Enter Sucessfully</span
             >
           </div>
           <b-overlay :show="show" rounded="sm">
@@ -59,6 +59,20 @@
                     type="text"
                     required
                     placeholder="Enter Above 500gm "
+                  ></b-form-input>
+                </b-form-group>
+                 <b-form-group
+                  id="input-group-sms"
+                  label="SMS Charges"
+                  label-for="input-sms"
+                >
+                  <b-form-input
+                    id="input-sms"
+                    :value="this.sms"
+                    v-model="sms"
+                    type="text"
+                    required
+                    placeholder="SMS Charges"
                   ></b-form-input>
                 </b-form-group>
 
@@ -109,6 +123,7 @@ export default {
       cod: "",
       codper: "",
       above: "",
+      sms: "",
       description: "",
       tranType: "",
       vendor: null,
@@ -210,6 +225,8 @@ export default {
       formData.append("cod", this.cod);
       formData.append("codper", this.codper);
       formData.append("above", this.above);
+      formData.append("sms", this.sms);
+
       master
         .vendor_ratecard(formData)
         .then((response) => {

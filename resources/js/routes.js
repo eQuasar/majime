@@ -32,6 +32,8 @@ import DtoDelivered from './components/Orders/dtoDelivered.vue'
 import ZoneDetail from './components/Master/zoneDetail.vue'
 import ZoneRateCard from './components/Master/zonerateCard.vue'
 import VendorRateCard from './components/Master/vendorrateCard.vue'
+import ZRCView from './components/Master/ZRCView.vue'
+import VRCView from './components/Master/VRCView.vue'
 
 export const routes = [ 
     {path: '/',component: App},
@@ -41,6 +43,8 @@ export const routes = [
     {path:'/admin/ZoneDetail',component: ZoneDetail,name:'zoneDetail',meta: { auth: true}},
     {path:'/admin/ZoneRateCard',component: ZoneRateCard,name:'zonerateCard',meta: { auth: true}},
     {path:'/admin/VendorRateCard',component: VendorRateCard,name:'vendorrateCard',meta: { auth: true}},
+    {path:'/admin/ZRCView',component: ZRCView,name:'ZRCView',meta: { auth: true}},
+    {path:'/admin/VRCView',component: VRCView,name:'VRCView',meta: { auth: true}},
    //  {path:'/vendor/OrderProfile',component: OrderProfile,name:'OrderProfile',meta: { auth: true}},
 
     {path:'/vendor/listOrders',component: listOrders,name:'listOrders',meta: { auth: true}},
@@ -69,7 +73,7 @@ export const routes = [
      {path:'/vendor/OnHoldOrders',component:OnHoldOrders,name:'onholdorders',meta: { auth: true}},
       {path:'/vendor/dtoIntransit',component:DtoIntransit,name:'dtoIntransit',meta: { auth: true}},
       {path:'/vendor/dtoBooked',component:DtoBooked,name:'dtoBooked',meta: { auth: true}},
-           {path:'/vendor/dtoDelivered',component:DtoDelivered,name:'dtoDelivered',meta: { auth: true}},
+    {path:'/vendor/dtoDelivered',component:DtoDelivered,name:'dtoDelivered',meta: { auth: true}},
     
     
     

@@ -82,11 +82,12 @@ class OrderController extends Controller {
         ->where('orders.status', $status)->get();
         return $orderItems;
     }
-    public function getComplete_OrdersStatus($vid, $statrto,$statdto,$statcomp) 
+    public function getComplete_OrdersStatus($vid, $statrto,$statdto,$statcomp,$closed) 
     {
         // echo "string"; die;
-        $orderItems = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)
-        ->whereIn('orders.status',[$statrto,$statdto,$statcomp])->get();
+        $int_check = 0;
+        $orderItems = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)
+        ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$closed])->get();
         // ->where('billings.vid',$vid)
         // ->where('orders.status',$status)->where('orders.status',$state)->get();
         return $orderItems;
@@ -1286,5 +1287,19 @@ class OrderController extends Controller {
         // }
         // var_dump($order_items); die;
         
+    }
+
+    public function assign_wallet(Request $request) {
+         $main = explode(',', $request->allSelected);
+        //  var_dump($main);
+         $wallet=$request->walletvalue;
+         for ($i = 0;$i < count($main);$i++) 
+          {
+           DB::table('orders')->where('orders.oid', intval($main[$i]))->where('vid', intval($request->vid))->update(['wallet_processed' => $wallet]);
+           
+         }
+         return response()->json(['error' => true, 'msg' => " Wallet Data Processed", "ErrorCode" => "000"], 200);
+        
+       
     }
 }

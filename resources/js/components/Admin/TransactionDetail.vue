@@ -19,7 +19,7 @@
                 </b-form-select>
      
                 <b-form-group label="Type of Transaction" v-slot="{ ariaDescribedby }">
-                  <b-form-radio v-model="tranType" :aria-describedby="ariaDescribedby" name="tranType" value="In">In</b-form-radio>
+                  <b-form-radio v-model="tranType" v-if="login" :aria-describedby="ariaDescribedby"  name="tranType" value="In">In</b-form-radio>
                   <b-form-radio v-model="tranType" :aria-describedby="ariaDescribedby" name="tranType" value="Out">Out</b-form-radio>
                </b-form-group>
           
@@ -31,10 +31,10 @@
                       </template>
                 </b-form-select>
             </b-form-group> 
-     
-        
 
 
+
+            
                 <b-form-group id="input-group-amount" label="Amount" label-for="input-amount">
                   <b-form-input id="input-amount" :value="this.amount" v-model="amount" type="text" required placeholder="Enter Amount"></b-form-input>
                   </b-form-group>
@@ -77,6 +77,7 @@
     data() 
     {
       return {
+      	login: false,
         show: false,
          ariaDescribedby: "",
         name: "",
@@ -89,7 +90,7 @@
         amount:"",
         description:"",
         tranType:"",
-        vendor:null,
+        vendor:0,
         country:"",
         phone:"",
         add:"",
@@ -107,7 +108,7 @@
          description: null,
          descriptions: [
           { value: null, text: 'Please select an option' },
-          { value: 'Setup Charges', text: 'Setup Charges' },
+          { value: 'Setup Charges', change:'listChanger();', text: 'Setup Charges' },
           { value: 'Design Charges', text: 'Design Charges' },
           { value: 'PhotoShot Charges', text: 'Photo Shoot Charges'},
           { value: 'SMS Charges', text: 'SMS Charges' },
@@ -149,6 +150,7 @@
         successful: false,
         create_error:'',
       };
+      
     },
     computed: {
       rows() {
@@ -223,19 +225,24 @@
       },
 
       getVendor(){
-  vendors.getVendors()
-  .then((response) => {
-      this.allvendors=response.data;
-    })
-    .catch((error) => {
-        // console.log(error);
-        if (error.response.status == 422) {
-            this.errors_create = error.response.data.errors;
-        }
-        // loader.hide();
-    });
-},
-      
+		  vendors.getVendors()
+		  .then((response) => {
+		      this.allvendors=response.data;
+		    })
+		    .catch((error) => {
+		        // console.log(error);
+		        if (error.response.status == 422) {
+		            this.errors_create = error.response.data.errors;
+		        }
+		        // loader.hide();
+		    });
+		},
+
+		listChanger(){
+	    if(this.In == true){
+	        this.Out = false;
+	    	}
+		},
     }
   };  
 </script>

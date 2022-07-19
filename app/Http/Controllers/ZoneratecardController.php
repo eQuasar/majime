@@ -64,7 +64,8 @@ class ZoneratecardController extends Controller
      */
     public function show(zoneratecard $zoneratecard)
     {
-        //
+        $data = zoneratecard::all();
+        return $data;
     }
 
     /**

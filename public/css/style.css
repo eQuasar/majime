@@ -1,4 +1,5 @@
--------------------------------------------------------------------*/
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+/*-------------------------------------------------------------------*/
 /* === Boostrap Main SCSS === */
 /*!
  * Bootstrap v4.6.0 (https://getbootstrap.com/)
@@ -7336,6 +7337,7 @@ button.bg-dark:focus,
 
 .d-table {
   display: table !important;
+  padding: 0px;
 }
 
 .d-table-row {
@@ -10801,7 +10803,7 @@ input:focus {
 /* Typography */
 body {
   font-size: 1rem;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-weight: initial;
   line-height: normal;
   -webkit-font-smoothing: antialiased;
@@ -11059,7 +11061,7 @@ pre {
 code {
   padding: 5px;
   color: #FF4747;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-weight: 300;
   font-size: 0.875rem;
   border-radius: 4px;
@@ -11074,7 +11076,7 @@ code {
   -webkit-transition: all 0.25s ease;
   -ms-transition: all 0.25s ease;
   font-size: calc(0.875rem - 0.05rem);
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-weight: 400;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
@@ -15125,7 +15127,7 @@ dl li {
   padding-left: 0;
   position: relative;
   margin-bottom: 0;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Ubuntu', sans-serif;
 }
 
 .icon-data-list li {
@@ -17785,7 +17787,7 @@ table.dataTable tbody td.select-checkbox:after {
 
 .datepicker.datepicker-dropdown .datepicker-days table.table-condensed thead tr th.dow,
 .datepicker.datepicker-inline .datepicker-days table.table-condensed thead tr th.dow {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   color: #1F1F1F;
   font-size: 0.875rem;
   font-weight: initial;
@@ -19850,7 +19852,7 @@ div.tagsinput span.tag a {
 .sidebar {
   min-height: calc(100vh - 60px);
   background: #fff;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-weight: 500;
   padding: 0;
   width: 235px;
@@ -20148,6 +20150,7 @@ div.tagsinput span.tag a {
   -moz-box-shadow: 0px 5px 21px -5px #4747a11a;
   box-shadow: 0px 5px 21px -5px #4747a11a;*/
   /* Navbar color variations */
+  flex-wrap: nowrap!important;
 }
 
 .sidebar-dark .navbar {
@@ -20155,12 +20158,12 @@ div.tagsinput span.tag a {
 }
 
 .navbar .navbar-brand-wrapper {
-  background: #ffffff;
+  background: #232227 !important;
   transition: width 0.25s ease, background 0.25s ease;
   -webkit-transition: width 0.25s ease, background 0.25s ease;
   -moz-transition: width 0.25s ease, background 0.25s ease;
   -ms-transition: width 0.25s ease, background 0.25s ease;
-  width: 235px;
+  width: 260px;
   height: 60px;
 }
 
@@ -20169,7 +20172,7 @@ div.tagsinput span.tag a {
 }
 
 .navbar .navbar-brand-wrapper .navbar-brand {
-  color: #4B49AC;
+  color: #fff;
   font-size: 1.5rem;
   margin-right: 0;
   padding: .25rem 0;
@@ -20193,7 +20196,7 @@ div.tagsinput span.tag a {
   color: #6C7383;
   padding-right: 2.375rem;
   padding-left: 2.375rem;
-  width: calc(100% - 235px);
+  width: calc(99% - 235px);
   height: 60px;
 }
 
@@ -20297,7 +20300,7 @@ div.tagsinput span.tag a {
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group .tt-hint,
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap .tt-hint {
   margin-left: .7rem;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Ubuntu', sans-serif;
 }
 
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group .form-control::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap .form-control::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group .asColorPicker-input::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap .asColorPicker-input::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group .dataTables_wrapper select::-webkit-input-placeholder, .dataTables_wrapper .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group select::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap .dataTables_wrapper select::-webkit-input-placeholder, .dataTables_wrapper .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap select::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group .jsgrid .jsgrid-table .jsgrid-filter-row input[type=text]::-webkit-input-placeholder, .jsgrid .jsgrid-table .jsgrid-filter-row .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .input-group input[type=text]::-webkit-input-placeholder, .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap .jsgrid .jsgrid-table .jsgrid-filter-row input[type=text]::-webkit-input-placeholder, .jsgrid .jsgrid-table .jsgrid-filter-row .navbar .navbar-menu-wrapper .navbar-nav .nav-item.nav-search .asColorPicker-wrap input[type=text]::-webkit-input-placeholder,
@@ -21657,7 +21660,7 @@ div.tagsinput span.tag a {
 .settings-panel .settings-heading {
   padding: 16px 0 13px 35px;
   font-size: 0.875rem;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-weight: 500;
   line-height: 1;
   color: rgba(0, 0, 0, 0.9);
@@ -21852,7 +21855,7 @@ div.tagsinput span.tag a {
 }
 
 .settings-panel .events p {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-weight: 400;
 }
 
@@ -22065,7 +22068,7 @@ label{
 
 
 .v-sidebar-menu {
-    background-color: #000!important;
+    background-color: #232227 !important;
 }
 
 .navbar .nav-search {
@@ -22129,7 +22132,7 @@ label{
     -webkit-align-items: center;
     align-items: center;
     white-space: nowrap;
-    padding: 10px 10px;
+    padding: 6px 15px;
     color: #fff;
     border-radius: 8px;
     -webkit-transition-duration: 0.45s;
@@ -22139,10 +22142,25 @@ label{
     transition-property: color;
     -webkit-transition-property: color;
     text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.v-sidebar-menu .vsm--dropdown .vsm--item .vsm--link{
+    padding: 0px 10px;
+    font-size: 13px;
+}
+
+.v-sidebar-menu .vsm--dropdown{
+  padding-bottom: 10px;
+}
+
+.v-sidebar-menu .vsm--arrow{
+  display: none;
 }
 
 .vsm--list {
-    padding: 0px 10px;
+    padding: 0px 20px;
 }
 
 .vsm--link {
@@ -22153,7 +22171,7 @@ label{
 .v-sidebar-menu .vsm--item .vsm--link i.vsm--icon {
     font-size: 1rem;
     line-height: 1;
-    margin-right: 1rem;
+    margin-right: 0.4rem;
     color: #fff;
 }
 
@@ -22221,23 +22239,22 @@ label{
 }
 
 .vsm--dropdown {
-    padding: 0.25rem 0 0 2.0rem;
+    padding: 0.25rem 0 0 2.4rem;
     margin: 0px 15px;
     border-radius: 10px;
 }
 
-.vsm--dropdown .vsm--item a::before {
+/*.vsm--dropdown .vsm--item a::before {
 content: '\f105';
     width: 5px;
     height: 5px;
     position: absolute;
     margin-top: 0px;
     border-radius: 50%;
-    /* background: #fff; */
     left: -2px;
     font-family: 'Font Awesome 5 Free';
     top: 10px;
-}
+}*/
 
 .v-sidebar-menu .vsm--toggle-btn {
     position: absolute;
@@ -22601,7 +22618,7 @@ content: '\f105';
     right: 6vh;
 }
 
-.navbar .btn-primary{ display: flex!important; align-items: center!important;}
+.navbar .btn-primary{ display: flex!important; align-items: center!important;flex-wrap: nowrap;}
 .navbar .btn-primary::after{ margin-left: 10px;}
 
 .view-appointment h4{ font-size: 20px; margin: 10px 0px 20px;}
@@ -22688,6 +22705,7 @@ td span{
 .rtd-online{background: #E0EBFE; color: #00008B;}
 .rtd-cod{background: #E0EBFE; color: #00FFFF;}
 .dto-refunded{background: #FFECE8; color: #FF6347;}
+.rtodelivered{background: #0000FF1F; color: #0000FFD9;}
 .deliveredtocust{background: #E0EBFE; color: #808000;}
 .dtodel2warehouse{background: #E0EBFE; color: #008000;}
 .dtointransit{background: #E0EBFE; color: #800080;}
@@ -22718,6 +22736,48 @@ td span{
 .maps iframe{
   border-radius: 20px;
   border: 2px solid #ccc!important;
+}
+
+
+.onebar {
+  width: 100%;
+  float: left;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.onebar .header_title {
+  width: 200px;
+  float: left;
+}
+
+.onebar .content_bar{
+  width: 100%;
+}
+
+.rounded-pill {
+    padding: 15px 0px;
+    width: 150px;
+    margin-left: 11px;
+    border-radius: 8px!important;
+}
+
+.order-info h3{
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.order-info p {
+  color: #7f7f7f;
+  margin-left: 5px;
+  font-size:  16px!important;
+  line-height: 1.6rem!important;
+}
+
+.order-info p strong{
+    font-weight: 500;
+    color: #000;
 }
 
 

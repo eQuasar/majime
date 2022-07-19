@@ -1,5 +1,5 @@
 <template>
-  <sidebar-menu :menu="menu" />
+  <sidebar-menu :menu="menu" @update:collapsed="onToggleCollapse" @item-click="onItemClick"/>
 </template>
 
 <script>
@@ -42,7 +42,16 @@ export default {
         //     ]
         // }
       ],
-    };
+    }
   },
+  methods: {
+    onToggleCollapse(collapsed) {
+      console.log(collapsed);
+    },
+    onItemClick(event, item) {
+      console.log(event);
+      console.log(item);
+    }
+  }
 };
 </script>
