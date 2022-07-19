@@ -13,7 +13,6 @@
           <br />
         </div>
       </div>
-
       <div class="content_bar d-table">
         <div class="card-body card">
           <div class="call-center-dashboard">
@@ -49,6 +48,7 @@
                       locale="en-IN"
                     ></b-form-datepicker>
                   </div>
+
                   <b-button type="submit" variant="primary">Submit</b-button>
                 </b-form>
               </b-col>
@@ -143,7 +143,6 @@ export default {
       time: "",
       date: "",
       oid: "",
-      vid: 0,
       time_slots: [],
       seen: false,
       date_from: "",
@@ -161,24 +160,18 @@ export default {
           label: "Date",
           sortable: true,
         },
-
         {
           key: "id",
-          label: "Description",
-          sortable: true,
-        },
-        {
-          key: "discount_total",
-          label: "Service Charges",
+          label: "Txn Id",
           sortable: true,
         },
         {
           key: "orderno",
-          label: "Order No",
+          label: "Order Id",
           sortable: true,
         },
         {
-          key: "payment_method_title",
+          key: "payment_mode",
           label: "Pay Mode",
           sortable: true,
         },
@@ -188,32 +181,32 @@ export default {
           sortable: true,
         },
         {
-          key: "total",
+          key: "sale_amount",
           label: "Sale Amount",
           sortable: true,
         },
         {
-          key: "cart_tax",
+          key: "Wallet_used",
           label: "Wallet Used",
           sortable: true,
         },
         {
-          key: "shipping_tax",
+          key: "logistic_cost",
           label: "Logistic Cost",
           sortable: true,
         },
         {
-          key: "gateway_cost",
-          label: "Payment Gateway Charges",
+          key: "payment_gateway_charges",
+          label: "Gateway Charges",
           sortable: true,
         },
         {
-          key: "prices_include_tax",
+          key: "sms_cost",
           label: "SMS Cost",
           sortable: true,
         },
         {
-          key: "m_cost",
+          key: "majime_charges",
           label: "Majime Charges",
           sortable: true,
         },
@@ -223,15 +216,16 @@ export default {
           sortable: true,
         },
         {
-          key: "subtotal_tax",
-          label: "Current Wallet Balance",
+          key: "current_wallet_bal",
+          label: "Closing Balance",
           sortable: true,
         },
-        {
-          key: "quantity",
-          label: "Order Count",
-          sortable: true,
-        },
+
+        // {
+        //   key: "starting_amount",
+        //   label: "Closing Balance",
+        //   sortable: true,
+        // },
       ],
       items: [],
       errors_create: [],

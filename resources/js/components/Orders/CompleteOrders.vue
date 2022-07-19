@@ -34,18 +34,18 @@
                 <button
                   type="button"
                   class="download-btn btn btn-primary"
-                  v-on:click="confirmAssignAWB"
+                  v-on:click="WalletAssign"
                   style="margin-left: 15px"
                 >
-                  Assign AWB
+                  Process Wallet
                 </button>
-                <button
+                <!-- <button
                   type="button"
                   class="download-btn btn btn-primary"
                   v-on:click="Confirmdownload"
                 >
-                  Download Pickup List
-                </button>
+                  Download Complete List
+                </button> -->
               </b-col>
             </b-row>
             <div class="blue-bar"></div>
@@ -110,14 +110,37 @@
               v-model="allSelected"
             />
           </template>
+
           <template v-slot:cell(action)="row">
             <p class="h3 mb-2">
-              <b-link @click="assignAWBOrder(row.item.oid, row.index)"
+              <router-link
+                :to="{
+                  name: 'OrderProfile',
+                  params: { oid: row.item.oid.toString() },
+                }"
+                ><b-icon icon="eye-fill" aria-hidden="true"></b-icon
+              ></router-link>
+              &nbsp;&nbsp;<b-link @click="WalletstatusOID(row.item.oid)"
                 ><b-icon
-                  icon="truck"
+                  icon="wallet2"
+                  variant="primary"
                   aria-hidden="true"
                   data-toggle="tooltip"
-                  title="Assign AWB Number"
+                  title="Assign Wallet Status"
+                  v-model="statusAssign"
+                ></b-icon
+              ></b-link>
+            </p>
+          </template>
+
+          <!-- <template v-slot:cell(action)="row">
+            <p class="h3 mb-2">
+              <b-link @click="WalletstatusOID(row.item.oid)"
+                ><b-icon
+                  icon="wallet2"
+                  aria-hidden="true"
+                  data-toggle="tooltip"
+                  title="Assign Wallet Status"
                 ></b-icon
               ></b-link>
               &nbsp;&nbsp;<router-link
@@ -127,18 +150,8 @@
                 }"
                 ><b-icon icon="eye-fill" aria-hidden="true"></b-icon
               ></router-link>
-              &nbsp;<b-link @click="cancelstatusOID(row.item.oid)"
-                ><b-icon
-                  icon="x-square-fill"
-                  variant="primary"
-                  aria-hidden="true"
-                  data-toggle="tooltip"
-                  title="Cancel Status"
-                  v-model="statusAssign"
-                ></b-icon
-              ></b-link>
             </p>
-          </template>
+          </template> -->
 
           <b-modal id="modal-1" title="Change Status:" hide-footer size="lg">
             <b-form>
@@ -400,7 +413,13 @@ export default {
             this.vid = response.data;
             localStorage.setItem("ivid", this.vid);
             order
-              .getCompleteOrdersStatus(this.vid, "confirmed")
+              .getCompleteOrdersStatus(
+                this.vid,
+                "completed",
+                "dto-refunded",
+                "rtodelivered",
+                "closed"
+              )
               .then((response) => {
                 if (response.data) {
                   this.items = response.data;
@@ -416,65 +435,25 @@ export default {
           });
       }
     },
-    confirmAssignAWB() {
+    WalletAssign() {
       if (this.allSelected != "") {
-        this.assignAWB();
+        this.Wallet_assign();
       } else {
         this.$alert("", "Please choose at least one value from checkbox...");
       }
     },
-    assignAWB() {
-      // alert('Assigned Successfully');
-      this.show = true;
-      this.vid = JSON.parse(localStorage.getItem("ivid"));
-      let formData = new FormData();
-      // formData.append("oid", this.oid);
-      formData.append("allSelected", this.allSelected);
-      formData.append("vid", this.vid);
-      order
-        .assignAWB(formData)
-        .then((response) => {
-          this.$alert("", response.data.msg);
-          this.show = false;
-          this.getVidz();
-        })
-        .catch((response) => {
-          this.successful = false;
-          alert("something went wrong");
-        });
-    },
-    assignAWBOrder(oid, index) {
-      this.show = true;
-      // alert('Assigned Successfully');
-      this.vid = JSON.parse(localStorage.getItem("ivid"));
-      let formData = new FormData();
-      formData.append("vid", this.vid);
-      formData.append("oid", oid);
-      order
-        .assignAWBOrder(formData)
-        .then((response) => {
-          this.$alert("", response.data.msg);
-          this.show = false;
-          this.getVidz();
-          // this.items.splice(this.items.indexOf(index), 1);
-        })
-        .catch((response) => {
-          this.successful = false;
-          alert("something went wrong");
-        });
-    },
-
-    cancelstatusOID(oid) {
+    WalletstatusOID(oid) {
       this.oid = oid;
       this.allSelected = false;
-      this.cancelstatus();
+      this.Wallet_assign();
     },
-    cancelstatus() {
+
+    Wallet_assign() {
       const modalTimeoutSeconds = 3;
       const modalId = "confirm-modal";
       let modalSetTimeout = null;
       this.$bvModal
-        .msgBoxConfirm(`Are You Sure Want to Change Cancel Status`, {
+        .msgBoxConfirm(`Are You Sure Want to Assign Wallet Status`, {
           id: modalId,
         })
         .then((wasOkPressed) => {
@@ -483,25 +462,26 @@ export default {
             this.vid = JSON.parse(localStorage.getItem("ivid"));
             let formData = new FormData();
             formData.append("oid", this.oid);
-            formData.append("status_assign", "cancelled");
             formData.append("allSelected", this.allSelected);
             formData.append("vid", this.vid);
-            formData.append("status", this.status);
+            formData.append("walletvalue", "1");
             order
-              .changeProcessingStatus(formData)
+              .assignwallet(formData)
               .then((response) => {
-                this.$alert("", response.data.msg);
-                this.show = false;
                 this.getVidz();
+                this.$alert("", response.data.msg, "Sucessfully Done");
+                this.show = false;
               })
               .catch((error) => {
                 // console.log(error);
                 if (error.response.status == 422) {
                   this.errors_create = error.response.data.errors;
                 }
+
                 // loader.hide();
               });
           } else {
+            /* Do something else */
             this.show = false;
           }
         })
@@ -516,25 +496,38 @@ export default {
         this.$bvModal.hide(modalId);
       }, modalTimeoutSeconds * 2000);
     },
+    assignAWBOrder(oid) {
+      this.show = true;
+      // alert('Assigned Successfully');
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      formData.append("oid", oid);
+      formData.append("WalletProcess", "1");
+      order
+        .assignwallet(formData)
+        .then((response) => {
+          this.$alert(response.data.msg, "");
+          this.show = false;
+          this.getVidz();
+          // this.items.splice(this.items.indexOf(index), 1);
+        })
+        .catch((response) => {
+          this.successful = false;
+          alert("something went wrong");
+        });
+    },
     clearData() {
       this.oid = "";
     },
-    //       download : function() {
-    //             const data = XLSX.utils.json_to_sheet(this.packedItems)
-    //             const wb = XLSX.utils.book_new()
-    //             XLSX.utils.book_append_sheet(wb, data, 'data')
-    //             XLSX.writeFile(wb,'readytopack_orders.xlsx')
-    //         },
-    //   },
 
-    // };
     Confirmdownload() {
       this.show = true;
       let formData = new FormData();
       formData.append("allSelected", this.allSelected);
       formData.append("vid", this.vid);
-      order
-        .Confirm_downloadsheet(formData)
+      wallet
+        .complete_downloadsheet(formData)
         .then((response) => {
           console.log(response.data[0]);
           this.items2 = response.data[0];

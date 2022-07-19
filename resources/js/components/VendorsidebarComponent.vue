@@ -1,5 +1,5 @@
 <template>
-  <sidebar-menu :menu="menu" />
+  <sidebar-menu :menu="menu" @update:collapsed="onToggleCollapse" @item-click="onItemClick" />
 </template>
 
 <script>
@@ -9,7 +9,7 @@ export default {
       menu: [
         {
           title: "Sales",
-          icon: "fas fa-calendar-alt",
+          icon: "fas fa-chart-bar",
           child: [
             {
               href: { name: "ProductList" },
@@ -36,7 +36,7 @@ export default {
         // },
         {
           title: "Orders Mgt",
-          icon: "fas fa-calendar-alt",
+          icon: "fas fa-tasks",
           child: [
             {
               // href:{ name: 'readytopack_orders'},
@@ -70,7 +70,7 @@ export default {
         },
         {
           title: "Return Mgt",
-          icon: "fas fa-calendar-alt",
+          icon: "fas fa-undo-alt",
           child: [
             {
               // href:{ name: 'readytopack_orders'},
@@ -99,5 +99,14 @@ export default {
       ],
     };
   },
+  methods: {
+    onToggleCollapse(collapsed) {
+      console.log(collapsed);
+    },
+    onItemClick(event, item) {
+      console.log(event);
+      console.log(item);
+    }
+  }
 };
 </script>

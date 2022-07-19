@@ -26,8 +26,8 @@ export default {
     getOrderOnStatus(vid,status) {
         return axios.get('getOrderOnStatus/'+vid+'/'+status)
     },
-    getCompleteOrdersStatus(vid,statrto,statdto,statcomp) {
-        return axios.get('getComplete_OrdersStatus/'+vid+'/'+statrto+'/'+statdto+'/'+statcomp)
+    getCompleteOrdersStatus(vid,statrto,statdto,statcomp,closed) {
+        return axios.get('getComplete_OrdersStatus/'+vid+'/'+statrto+'/'+statdto+'/'+statcomp+'/'+closed)
     },
     assignAWB(data){
         return axios.post('assignAWB', data)
@@ -125,5 +125,8 @@ export default {
     },
     getzone(data){
         return axios.get('zone_Search', data)
+    },
+    assignwallet(data){
+        return axios.post('assign_wallet', data)
     }
 }

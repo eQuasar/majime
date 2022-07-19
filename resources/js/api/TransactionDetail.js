@@ -15,4 +15,11 @@ export default {
         return axios.get('view_Transaction', data)
     },
 
+    zonerate(data) {
+        return axios.get('zone_rate', data)
+    },
+    Vendorrate(data) {
+        return axios.get('Vendor_rate', data)
+    }
+
 }

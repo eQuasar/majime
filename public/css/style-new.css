@@ -2,18 +2,34 @@
 .nav-pills{padding-bottom: 0 !important;}
 .vsm--list .vsm--item a{display:block; padding:5px 10px;}
     .back_logon {
-  background: #fff;
+  background: #F5F7FF;
   width: 100%;
   position: absolute;
   top: 0;
   bottom: 0;
 }
 
+.back_logon div.content {
+  display: table-cell;
+  vertical-align: middle;
+}   
+
+.main_booking .card-header ul{padding-bottom:0 !important}
+.main_booking .card-header, .main_booking .card-footer, .main_booking .card-header ul{background:#fff !important; border:none !important}
+
+
+/*=======================*/
+/*=======================*/
+/*============ 18 july 2022 ===========*/
+/*=======================*/
+/*=======================*/
+
+
 .back_logon .div-center {
-  max-width: 440px !important;
-	width:100%;
+  max-width: 500px !important;
+  width:100%;
   height: 400px;
-  background-color: #fff;
+  background-color: transparent;
   position: absolute;
   left: 0;
   right: 0;
@@ -26,12 +42,35 @@
   display: table;
 }
 
-.back_logon div.content {
-  display: table-cell;
-  vertical-align: middle;
-}   
+.back_logon .card-header {
+  background: transparent;
+  border: none;
+  font-size: 26px;
+  font-weight: 500;
+  color: #4B49AC;
+}
 
-.main_booking .card-header ul{padding-bottom:0 !important}
-.main_booking .card-header, .main_booking .card-footer, .main_booking .card-header ul{background:#fff !important; border:none !important}
+.back_logon form input {
+  background: transparent;
+  border-radius: 0;
+  padding: 12px 25px;
+  border-color: #CED4DA;
+  color: #797979;
+}
 
+.back_logon .card{
+  padding: 25px;
+  border: none;
+}
 
+#remember {
+  padding: unset;
+  border-color: #4B49AC;
+}
+
+.login-btn {
+  width: 150px;
+  padding: 9px 0px;
+  margin-bottom: 20px;
+  background: #4B49AC;
+}

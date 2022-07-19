@@ -1,5 +1,5 @@
 <template>
-  <sidebar-menu :menu="menu" />
+  <sidebar-menu :menu="menu" @update:collapsed="onToggleCollapse" @item-click="onItemClick" />
 </template>
 
 <script>
@@ -52,10 +52,18 @@ export default {
               href: { name: "zonerateCard" },
               title: "Zone Rate Card",
             },
+              {
+                href: { name: "ZRCView" },
+                title: "ZRCView",
+          },
             {
               href: { name: "vendorrateCard" },
               title: "Vendor Rate Card",
-            },
+              },
+              {
+                href: { name: "VRCView" },
+                title: "VRCView",
+          },
           ],
         },
 
@@ -129,5 +137,14 @@ export default {
       ],
     };
   },
+  methods: {
+    onToggleCollapse(collapsed) {
+      console.log(collapsed);
+    },
+    onItemClick(event, item) {
+      console.log(event);
+      console.log(item);
+    }
+  }
 };
 </script>
