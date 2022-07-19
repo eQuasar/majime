@@ -685,6 +685,24 @@ class OrderController extends Controller {
         $style = array('position' => 'C', 'align' => 'C', 'stretch' => false, 'fitwidth' => true, 'cellfitalign' => '', 'border' => false, 'hpadding' => '0', 'vpadding' => '0', 'fgcolor' => array(0, 0, 0), 'bgcolor' => false, //array(255,255,255),
         'text' => true, 'font' => 'helvetica', 'fontsize' => 8, 'stretchtext' => 4);
         $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $request->vid)->whereIn('orders.oid', $listImp)->where('orders.status', 'packed')->get();
+
+        if($request->vid == 1){
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
+        }elseif($request->vid == 2){
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
+        }elseif($request->vid == 3){
+            $address_store = '<p><span class="c_name">M/s Hemkunt Industries<br>GST NO : 03ADVPS8590F1ZV</span><br>E-207, Phase-IV A,<br>Focal Point, Dhandari Kalan <br>141010 - Ludhiana, Punjab, India</p>';
+            $industry_name = "M/s Hemkunt Industries";
+        }elseif($request->vid == 4){
+            $address_store = '<p><span class="c_name">INDRA HOSIERY MILLS<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "INDRA HOSIERY MILLS";
+        }else{
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
+        }
+
         // dd($orders); die;
         $i = 1;
         foreach ($orders as $order) {
@@ -739,7 +757,7 @@ class OrderController extends Controller {
                 <table width="100%" cellpadding="5" class="child_table company_info">
                     <tbody>
                         <tr>
-                            <td rowspan="3" width="360"><p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p></td>
+                            <td rowspan="3" width="360">'.$address_store.'</td>
                             <td width="150">Order No. (REF) : ' . $order->oid . '</td>
                             <td width="150">GST-JR-3557</td>
                         </tr>
@@ -852,7 +870,7 @@ class OrderController extends Controller {
             //             </table>
             $html2.= '<table width="100%" cellpadding="5" class="child_table">
                     <tr>
-                        <td width="660" align="center"><p><span class="tax_invoice_text">TAX INVOICE - Style by NansJ</span><br>This is computer generated tax invoice.</p></td>
+                        <td width="660" align="center"><p><span class="tax_invoice_text">TAX INVOICE - '.$industry_name.'</span><br>This is computer generated tax invoice.</p></td>
                     </tr>
                 </table>
     </div>';
@@ -889,6 +907,24 @@ class OrderController extends Controller {
         $style = array('position' => 'C', 'align' => 'C', 'stretch' => false, 'fitwidth' => true, 'cellfitalign' => '', 'border' => false, 'hpadding' => '0', 'vpadding' => '0', 'fgcolor' => array(0, 0, 0), 'bgcolor' => false, //array(255,255,255),
         'text' => true, 'font' => 'helvetica', 'fontsize' => 8, 'stretchtext' => 4);
         $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $request->vid)->where('orders.oid', $request->oid)->where('orders.status', 'packed')->get();
+
+        if($request->vid == 1){
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
+        }elseif($request->vid == 2){
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
+        }elseif($request->vid == 3){
+            $address_store = '<p><span class="c_name">M/s Hemkunt Industries<br>GST NO : 03ADVPS8590F1ZV</span><br>E-207, Phase-IV A,<br>Focal Point, Dhandari Kalan <br>141010 - Ludhiana, Punjab, India</p>';
+            $industry_name = "M/s Hemkunt Industries";
+        }elseif($request->vid == 4){
+            $address_store = '<p><span class="c_name">INDRA HOSIERY MILLS<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "INDRA HOSIERY MILLS";
+        }else{
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
+        }
+
         $oid = $request->oid;
         $results2 = DB::table("waybill")->where('vid', $request->vid)->where('order_id', $oid)->get()->toArray();
         if (!empty($results2)) {
@@ -948,7 +984,7 @@ class OrderController extends Controller {
                 <table width="100%" cellpadding="5" class="child_table company_info">
                     <tbody>
                         <tr>
-                            <td rowspan="3" width="360"><p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p></td>
+                            <td rowspan="3" width="360">'.$address_store.'</td>
                             <td width="150">Order No. (REF) : ' . $order->oid . '</td>
                             <td width="150">GST-JR-3557</td>
                         </tr>
@@ -1063,7 +1099,7 @@ class OrderController extends Controller {
             //             </table>
             $html2.= '<table width="100%" cellpadding="5" class="child_table">
                     <tr>
-                        <td width="660" align="center"><p><span class="tax_invoice_text">TAX INVOICE - Style by NansJ</span><br>This is computer generated tax invoice.</p></td>
+                        <td width="660" align="center"><p><span class="tax_invoice_text">TAX INVOICE - '.$industry_name.'</span><br>This is computer generated tax invoice.</p></td>
                     </tr>
                 </table>
     </div>';

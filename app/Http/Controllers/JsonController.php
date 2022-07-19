@@ -154,7 +154,7 @@ class JsonController extends Controller
     public function getWayBill($vid, $url){
     	// https://isdemo.in/fc/wp-json/waybill_import/waybill_import_data
     	$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
-		
+		var_dump($vendor);
     	$curl = curl_init();
 
 	    curl_setopt_array($curl, array(
@@ -184,7 +184,7 @@ class JsonController extends Controller
 		{
 			
 			DB::table('waybill')->insert(
-			    ['vid' => $vid, 'order_id' => $jsonResp[$i]['order_id'], 'waybill_no' => $jsonResp[$i]['waybill_no'], 'return_waybill_no' => $jsonResp[$i]['return_waybill_no'], 'date_created' => $jsonResp[$i]['date_created']]
+			    ['vid' => intval($vid), 'order_id' => $jsonResp[$i]['order_id'], 'waybill_no' => $jsonResp[$i]['waybill_no'], 'return_waybill_no' => $jsonResp[$i]['return_waybill_no'], 'date_created' => $jsonResp[$i]['date_created']]
 			);
 
 	    }
@@ -649,6 +649,7 @@ class JsonController extends Controller
 				 'customer_user_agent'=>'',
 				 'created_via'=>$order->created_via,
 				 // 'customer_note'=>$order->customer_note,
+				 'customer_note'=>'NA',
 				 'date_completed'=>$order->date_completed,
 				 'date_paid'=>$order->date_paid,
 				 'cart_hash'=>$order->cart_hash,
