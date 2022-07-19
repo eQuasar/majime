@@ -71,7 +71,9 @@ class WalletprocessedController extends Controller
             {
             $zone_rate=DB::table("zoneratecards")->where('zoneratecards.zoneno','=',$zone[0]->zoneno)->get(); 
             }
-            $line_items=DB::table("line_items")->where('line_items.order_id','=',intval($orders[$y]))->get();  
+            // $line_items=DB::table("line_items")->where('line_items.order_id','=',intval($orders[$y]))->select(DB::raw("(SELECT SUM(line_items.quantity) FROM line_items as quantity"))->get();  
+$line_items=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = $orders[$y] AND line_items.vid = " . intval($order_table[0]->vid) . " GROUP BY line_items.order_id) as quantity"))->get(); 
+                dd($line_items);
             $product_weight=DB::table("products")->where('products.product_id','=',$line_items[0]->product_id)->get();    
             $vendor_rate=DB::table("vendor_ratecards")->get();
             $oc_balance=DB::table("opening_closing_tables")->where('opening_closing_tables.vid','=',$order_table[0]->vid)->orderBy('id','DESC')->limit(1)->get();

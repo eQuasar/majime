@@ -82,12 +82,12 @@ class OrderController extends Controller {
         ->where('orders.status', $status)->get();
         return $orderItems;
     }
-    public function getComplete_OrdersStatus($vid, $statrto,$statdto,$statcomp,$closed) 
+    public function getComplete_OrdersStatus($vid, $statrto,$statdto,$statcomp,$clos) 
     {
         // echo "string"; die;
         $int_check = 0;
         $orderItems = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)
-        ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$closed])->get();
+        ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])->get();
         // ->where('billings.vid',$vid)
         // ->where('orders.status',$status)->where('orders.status',$state)->get();
         return $orderItems;

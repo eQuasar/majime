@@ -26,8 +26,8 @@ export default {
     getOrderOnStatus(vid,status) {
         return axios.get('getOrderOnStatus/'+vid+'/'+status)
     },
-    getCompleteOrdersStatus(vid,statrto,statdto,statcomp,closed) {
-        return axios.get('getComplete_OrdersStatus/'+vid+'/'+statrto+'/'+statdto+'/'+statcomp+'/'+closed)
+    getCompleteOrdersStatus(vid,statrto,statdto,statcomp,clos) {
+        return axios.get('getComplete_OrdersStatus/'+vid+'/'+statrto+'/'+statdto+'/'+statcomp+'/'+clos)
     },
     assignAWB(data){
         return axios.post('assignAWB', data)

@@ -42,7 +42,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('product_items/{variation_id}', 'ProductController@product_items')->name('product_items');
 	Route::get('get_order_data', 'JsonController@get_order_data')->name('get_order_data');
 	Route::get('getOrderOnStatus/{vid}/{status}', 'OrderController@getOrderOnStatus')->name('getOrderOnStatus');
-	Route::get('getComplete_OrdersStatus/{vid}/{statrto}/{statdto}/{statcomp}/{closed}', 'OrderController@getComplete_OrdersStatus')->name('getComplete_OrdersStatus');
+	Route::get('getComplete_OrdersStatus/{vid}/{statrto}/{statdto}/{statcomp}/{clos}', 'OrderController@getComplete_OrdersStatus')->name('getComplete_OrdersStatus');
 	Route::get('getpackdetail/{vid}', 'OrderController@getPackdetail')->name('getpackdetail'); 
 	// Route::get('getConfirmeddetail/{vid}', 'OrderController@getConfirmeddetail')->name('getConfirmeddetail');
 	
