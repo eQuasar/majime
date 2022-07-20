@@ -35,14 +35,14 @@
                   >
                 </b-col>
                 <b-col xl="6" lg="6" md="6">
-                  <button
+                  <!-- <button
                     type="button"
                     class="download-btn btn btn-primary"
                     v-on:click="confirmstatus"
                     style="margin-left: 15px"
                   >
                     Dispatch
-                  </button>
+                  </button> -->
                   <button
                     type="button"
                     class="download-btn btn btn-primary"
@@ -113,15 +113,15 @@
                       }"
                       ><b-icon icon="eye-fill" aria-hidden="true"></b-icon
                     ></router-link>
-                    &nbsp;&nbsp;<b-link @click="confirmstatusOID(row.item.oid)"
-                      ><b-icon
+                    &nbsp;&nbsp;<b-link @click="confirmstatusOID(row.item.oid)">
+                      <!-- <b-icon
                         icon="check-square"
                         variant="primary"
                         aria-hidden="true"
                         data-toggle="tooltip"
                         title="Change Status"
-                      ></b-icon></b-link
-                    >&nbsp;&nbsp;<b-link @click="cancelstatusOID(row.item.oid)"
+                      ></b-icon> --> </b-link
+                    ><b-link @click="cancelstatusOID(row.item.oid)"
                       ><b-icon
                         icon="x-square-fill"
                         variant="primary"
