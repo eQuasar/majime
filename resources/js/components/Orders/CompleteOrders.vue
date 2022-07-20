@@ -394,7 +394,7 @@ export default {
             this.vid,
             "completed",
             "dto-refunded",
-            "rtodelivered",
+            "rto-delivered",
             "closed"
           )
           .then((response) => {
