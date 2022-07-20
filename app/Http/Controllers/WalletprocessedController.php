@@ -71,10 +71,9 @@ class WalletprocessedController extends Controller
             {
             $zone_rate=DB::table("zoneratecards")->where('zoneratecards.zoneno','=',$zone[0]->zoneno)->get(); 
             }
-            // $line_items=DB::table("line_items")->where('line_items.order_id','=',intval($orders[$y]))->select(DB::raw("(SELECT SUM(line_items.quantity) FROM line_items as quantity"))->get();  
-$line_items=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = $orders[$y] AND line_items.vid = " . intval($order_table[0]->vid) . " GROUP BY line_items.order_id) as quantity"))->get(); 
-                dd($line_items);
-            $product_weight=DB::table("products")->where('products.product_id','=',$line_items[0]->product_id)->get();    
+            $line_items=DB::table("line_items")->where('line_items.order_id','=',intval($orders[$y]))->get();    
+            $line_items_qty=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = $orders[$y] AND line_items.vid = " . intval($order_table[0]->vid) . " GROUP BY line_items.order_id) as quantity"))->get(); 
+            $product_weight=DB::table("products")->where('products.product_id','=',$line_items[0]->product_id)->get();   
             $vendor_rate=DB::table("vendor_ratecards")->get();
             $oc_balance=DB::table("opening_closing_tables")->where('opening_closing_tables.vid','=',$order_table[0]->vid)->orderBy('id','DESC')->limit(1)->get();
             $sms_cost=2;
@@ -140,6 +139,7 @@ $line_items=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quan
                 {   
                     $Vcodper = $vendor_rate[0]->codper;
                     $getval = ceil($sale_Amount*($Vcodper/100));
+
                     if($getval > $zone_price){
                         $cod_charges = $getval;
                     }
@@ -148,8 +148,9 @@ $line_items=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quan
                     {   
                         $pw=250;
                     }
-                    $qty=$line_items[0]->quantity; 
-                    $total_weight=$pw*$qty;
+                    //  $qty=$line_items[0]->quantity; 
+                    $qty=$line_items_qty[0]->quantity;
+                    $total_weight=($pw)*($qty);
                     if($total_weight>500)
                     {
                         // $cod_cost=$vendor_rate[0]->cod;
@@ -164,11 +165,11 @@ $line_items=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quan
                     if($order_table[0]->status== 'dto-refunded'){
                        
                         $net_amount=$logistic_cost+$majime_cost+$sms_cost+$payment_gateway;
-                        $closing_bal=$opening_balance+$net_amount;
+                        $closing_bal=$opening_balance-$net_amount;
                     }else{
                         
                          $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
-                        $closing_bal=$net_amount+ $opening_balance;
+                        $closing_bal=$opening_balance-$net_amount;
                     }
                 }
                 else{
@@ -183,9 +184,8 @@ $line_items=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quan
                     {   
                         $pw=250;
                     }
-                    $qty=$line_items[0]->quantity;
-                     
-                    $total_weight=$pw*$qty;
+                    $qty=$line_items_qty[0]->quantity;
+                    $total_weight=($pw)*($qty);
                     if($total_weight>500)
                     {
                         $cod_cost=$zone_price;
@@ -199,17 +199,17 @@ $line_items=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quan
                     }
                     if($order_table[0]->status== 'dto-refunded'){
                         $net_amount=$logistic_cost+$majime_cost+$sms_cost+$payment_gateway;
-                        $closing_bal=$opening_balance+$net_amount;
+                        $closing_bal=$opening_balance-$net_amount;
                     }else{
                         $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
-                        $closing_bal=$net_amount+ $opening_balance;
+                        $closing_bal=$opening_balance-$net_amount;
                     }
                 }
             }else{
                 $logistic_cost=$zone_price*2;
                 $sms_cost=2*2;
                 $net_amount=$logistic_cost+$sms_cost;
-                $closing_bal=$opening_balance+ $net_amount;
+                $closing_bal=$opening_balance-$net_amount;
                 $majime_cost=0;
             }
             // echo $cod_cost;
@@ -241,7 +241,10 @@ $line_items=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quan
             DB::table('opening_closing_tables')->insert(
                 ['vid' => $request->vid, 'opening_bal' => $opening_balance, 'closing_bal' => $closing_bal, 'created_at' => date('Y-m-d h:m:s'), 'updated_at' => date('Y-m-d h:m:s')]
             );
+
+
         }   
+        return response()->json(['error' => false, 'msg' => "Wallet Processed Successfully", "ErrorCode" => "000"], 200);
         // if ($request->allSelected == "false")
         // {
         //     $wallet=$request->walletvalue;

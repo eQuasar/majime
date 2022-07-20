@@ -107,7 +107,7 @@
          description: null,
          descriptions: [
           { value: null, text: 'Please select an option' },
-          { value: 'Setup Charges', change:'listChanger();', text: 'Setup Charges' },
+          { value: 'Setup Charges', click:'listChanger', text: 'Setup Charges' },
           { value: 'Design Charges', text: 'Design Charges' },
           { value: 'PhotoShot Charges', text: 'Photo Shoot Charges'},
           { value: 'SMS Charges', text: 'SMS Charges' },
@@ -238,9 +238,7 @@
 		},
 
 		listChanger(){
-	    if(this.In == true){
-	        this.Out = false;
-	    	}
+	    	this.$alert("Hello Vue Simple Alert.");	
 		},
     }
   };  

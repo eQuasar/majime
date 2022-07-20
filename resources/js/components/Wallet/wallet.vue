@@ -156,7 +156,7 @@ export default {
       filterOn: [],
       fields: [
         {
-          key: "date_created",
+          key: "created_at",
           label: "Date",
           sortable: true,
         },

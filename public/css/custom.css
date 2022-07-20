@@ -35,7 +35,9 @@ margin: 0 auto;}
 .pet_info_main p{font-size:12px;}
 .search_field{position:relative;}
 .search_field .input-group-append{position:absolute; top:0;right: 15px;}
+
 .search_field .input-group-append button{border-radius:10px;}
+
 #per-page-select{  width: auto !important;}
 
 .b-nav-dropdown ul{top:100% !important}
@@ -310,6 +312,15 @@ float:left;
 /*=========== Work Date 12 may ============*/
 /*=========== Work Date 12 may ============*/
 /*=========== Work Date 12 may ============*/
+
+.search_field .btn-secondary {
+    padding: 0;
+    width: 100px;
+    border-radius: 8px!important;
+    font-weight: 600;
+    background: #4b49ac;
+    color: #fff;
+}
 
 tbody tr {
     background: #fff;

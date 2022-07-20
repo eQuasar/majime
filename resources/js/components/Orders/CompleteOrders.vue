@@ -470,7 +470,7 @@ export default {
               .assignwallet(formData)
               .then((response) => {
                 this.getVidz();
-                this.$alert("", response.data.msg, "Sucessfully Done");
+                this.$alert("", response.data.msg);
                 this.show = false;
               })
               .catch((error) => {
@@ -508,7 +508,7 @@ export default {
       order
         .assignwallet(formData)
         .then((response) => {
-          this.$alert(response.data.msg, "");
+          this.$alert("", response.data.msg);
           this.show = false;
           this.getVidz();
           // this.items.splice(this.items.indexOf(index), 1);
