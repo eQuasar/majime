@@ -49,13 +49,10 @@
                     class=""
                     :options="allzone"
                     value-field="id"
-                    text-field="name"
+                    text-field="zoneno"
                   >
                     <template v-slot:first>
                       <option disabled value="null">Select Zone</option>
-                      <option v-for="zonen in allzone" :value="zonen.zoneno">
-                        {{ zonen.zoneno }}
-                      </option>
                     </template>
                   </b-form-select>
                 </b-form-group>

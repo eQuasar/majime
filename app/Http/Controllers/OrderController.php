@@ -88,6 +88,7 @@ class OrderController extends Controller {
         $int_check = 0;
         $orderItems = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)
         ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])->get();
+        
         // ->where('billings.vid',$vid)
         // ->where('orders.status',$status)->where('orders.status',$state)->get();
         return $orderItems;
