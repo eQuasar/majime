@@ -13,7 +13,7 @@
             <b-overlay :show="show" rounded="sm">
               <b-row style="margin-bottom: 10px;">
                 <b-col xl="6" lg="6" md="6">
-                     <b-form-group id="input-group-description" label="Description" label-for="input-name">
+                     <b-form-group id="input-group-description" label="Description" label-for="input-name" '>
                   <b-form-select v-model="description" :options="descriptions" label="Description" label-for="input-city"></b-form-select>
                      </b-form-group>
                 </b-form-select>
@@ -106,8 +106,8 @@
         filter: null,
          description: null,
          descriptions: [
-          { value: null, text: 'Please select an option' },
-          { value: 'Setup Charges', click:'listChanger', text: 'Setup Charges' },
+          { value: null, text: 'Please select an option'},
+          { value: 'Setup Charges',  text: 'Setup Charges' },
           { value: 'Design Charges', text: 'Design Charges' },
           { value: 'PhotoShot Charges', text: 'Photo Shoot Charges'},
           { value: 'SMS Charges', text: 'SMS Charges' },
@@ -237,9 +237,7 @@
 		    });
 		},
 
-		listChanger(){
-	    	this.$alert("Hello Vue Simple Alert.");	
-		},
+		
     }
   };  
 </script>

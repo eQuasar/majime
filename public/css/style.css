@@ -22694,7 +22694,7 @@ td span{
   text-transform: capitalize;
 }
 
-.processing, .dtobooked, .dispatched, .intransit, .confirmed, .completed, .cancelled, .packed, .rtd-online, .rtd-cod, .refunded, .deliveredtocust, .dtodel2warehouse, .dtointransit, .pickedup, .on-hold, .rtodelivered, .dto-refunded{
+.processing, .dtobooked, .dispatched, .intransit, .confirmed, .completed, .cancelled, .packed, .rtd-online, .rtd-cod, .refunded, .deliveredtocust, .dtodel2warehouse, .dtointransit, .pickedup, .on-hold, .rtodelivered, .dto-refunded, .closed{
     border-radius: 3px;
     padding: 8px 15px;
     font-weight: 600;
@@ -22718,6 +22718,7 @@ td span{
 .dtointransit{background: #E0EBFE; color: #800080;}
 .pickedup{background: #E0EBFE; color: #800000;}
 .on-hold{background: #E0EBFE; color: #A52A2A;}
+.closed{background: #E0EBFE; color: #A52A2A;}
 
 @media (max-width: 1600px) {
 

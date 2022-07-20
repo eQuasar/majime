@@ -83,7 +83,7 @@
                 <input type="checkbox" :value="row.item.oid" v-model="selectall" >
               </template>
               <template v-slot:cell(action)="row">
-               <p class="h3 mb-2">   <router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>&nbsp;&nbsp;<span v-if="saw5">
+               <p class="h3 mb-2">   <router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="person-lines-fill" aria-hidden="true"></b-icon></router-link>&nbsp;&nbsp;<span v-if="saw5">
                 &nbsp;&nbsp; <b-link @click="addstatusOID(row.item.oid, row.item.status)"><b-icon icon="check-square-fill" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></span></p>
               </template>
       </b-table>

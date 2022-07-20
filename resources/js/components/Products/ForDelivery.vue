@@ -191,6 +191,7 @@
     data() 
     {
       return {
+        show: false,
         dispatch:'',
         selected: [],
         allSelected: false,
