@@ -22,6 +22,7 @@ Route::group(['prefix' => 'v1'], function () {
     // Route::apiResource('billing', 'BillingController');
 	Route::get('insertAllOrders',[App\Http\Controllers\OrderController::class,'insertAllOrders']);
 	
+    Route::get('my_orders', 'OrderController@my_orders')->name('my_orders');
     Route::post('getOrderDetails', 'OrderController@getOrderDetails')->name('getOrderDetails');
 	Route::post('getProductdetail',[App\Http\Controllers\ProductController::class,'productDetail']);
 	Route::get('getDashbaord',[App\Http\Controllers\DashboardController::class,'Dashboard_Detail']);

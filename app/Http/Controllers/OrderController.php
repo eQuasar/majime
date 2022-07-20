@@ -1346,4 +1346,51 @@ class OrderController extends Controller {
         
        
     }
+
+    // get my orders - http://majime.nmf.im/api/v1/my_orders?vid=1
+    public function my_orders(){
+
+        $vendor = DB::table("vendors")->where('id', '=', intval($_REQUEST['vid']))->get();
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders?status=processing',
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'GET',
+          CURLOPT_HTTPHEADER => array(
+            'Authorization: Basic ' . $vendor[0]->token
+          ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        $jsonResp = json_decode($response);
+        foreach ($jsonResp as $jp) {
+            $curl_data[] = $jp->id;
+        }
+
+        $orders = DB::table("orders")->where('vid', '=', intval($_REQUEST['vid']))->where('status', '=', "processing")->get();
+        foreach ($orders as $order) {
+            $order_data[] = $order->oid;
+        }
+
+        // var_dump($curl_data);
+        // var_dump($order_data);
+        $result=array_diff($curl_data,$order_data);
+        // var_dump($result);
+        if (count($result) >= 1) {
+            for ($i=0; $i < count($result); $i++) { 
+                // echo "<a href='#' target='_blank'>Click here (ORDER ID - ".$result[$i].")</a><br><br>";
+                echo "<a href='https://cl.majime.in/api/v1/get_order_data?api_url=".$vendor[0]->url."/wp-json/wc/v3/orders/".$result[$i]."&vid=".$_REQUEST['vid']."' target='_blank'>Click here (ORDER ID - ".$result[$i].")</a><br><br>";
+            }
+        }else{
+            echo "No record found.";
+        }
+    }
 }
