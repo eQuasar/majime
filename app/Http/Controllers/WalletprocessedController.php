@@ -222,6 +222,7 @@ class WalletprocessedController extends Controller
             DB::table('orders')->where('orders.oid', intval($orders[$y]))->where('vid', intval($request->vid))->update(['wallet_processed' => $wallet]);
             $Wallet_order_data[]=[     
                 'date_created'=>$order_table[0]->date_created,
+                'transaction_id'=>"N/A",
                 'oid'=>$order_table[0]->oid,
                 'vid'=>$request->vid,
                 'payment_mode'=>$order_table[0]->payment_method,

@@ -69,7 +69,6 @@
     mounted() {
       if(this.$route.query.vid){
         this.getVendor();
-        this.getVidz();
       }else{
         this.getVendor();
       }

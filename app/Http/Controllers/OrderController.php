@@ -639,15 +639,22 @@ class OrderController extends Controller {
         //         return response()->json(['error' => false, 'msg' => "Please Note :  Order Can Not Be Cancel.", "ErrorCode" => "000"], 200);
         //     }
         // } else {
-            DB::table('orders')->where('oid', intval($request->selectall))->where('vid', intval($request->vid))->update(['status' => $request->status_assign]);
+
+            $listImp = explode(',', $request->selectall);
+            for ($i=0; $i < count($listImp); $i++) { 
+                DB::table('orders')->where('oid', intval($listImp[$i]))->where('vid', intval($request->vid))->update(['status' => $request->status_assign]);
+                $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+                $curl = curl_init();
+                curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . intval($listImp[$i]) . '?status=' . $request->status_assign, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
+                $response = curl_exec($curl);
+                curl_close($curl);
+                $jsonResp = json_decode($response);
+            }
+
+
             // print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
             // https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
-            $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
-            $curl = curl_init();
-            curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . intval($request->selectall) . '?status=' . $request->status_assign, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
-            $response = curl_exec($curl);
-            curl_close($curl);
-            $jsonResp = json_decode($response);
+            
             // var_dump($jsonResp);
             return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
     //    } 

@@ -90,10 +90,11 @@ class AddTransactionController extends Controller
 
             $Wallet_order_data[]=[     
                 'date_created'=> $request->date,
+                'transaction_id'=>"N/A",
                 'oid'=>0,
                 'vid'=>$request->vid,
-                'payment_mode'=>"cash",
-                'status'=>"N/A",
+                'payment_mode'=>$request->description,
+                'status'=>"In",
                 'sale_amount'=>0,
                 'Wallet_used'=>0,
                 'logistic_cost'=>0,
@@ -112,10 +113,11 @@ class AddTransactionController extends Controller
 
             $Wallet_order_data[]=[     
                 'date_created'=> $request->date,
+                'transaction_id'=>"N/A",
                 'oid'=>0,
                 'vid'=>$request->vid,
-                'payment_mode'=>"cash",
-                'status'=>"N/A",
+                'payment_mode'=>$request->description,
+                'status'=>"Out",
                 'sale_amount'=>0,
                 'Wallet_used'=>0,
                 'logistic_cost'=>0,
