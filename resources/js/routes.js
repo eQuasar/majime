@@ -54,7 +54,7 @@ export const routes = [
     {path:'/vendor/PackedOrders',component: PackedOrders,name:'packedorders',meta: { auth: true}},
     {path:'/vendor/PendingRefunds',component: PendingRefunds,name:'pendingrefunds',meta: { auth: true}},
     {path:'/vendor/ConfirmedOrders',component: ConfirmedOrders,name:'confirmedorders',meta: { auth: true}},
-     {path:'/admin/CompleteOrders',component: CompleteOrders,name:'CompleteOrders',meta: { auth: true}},
+    {path:'/admin/CompleteOrders',component: CompleteOrders,name:'CompleteOrders',meta: { auth: true}},
     {path:'/vendor/print-slip',component: PrintSlip,name:'printslip',meta: { auth: true}},
     {path:'/vendor/dashboard',component: vendorDashboard,name:'vendorDashboard',meta: { auth: true}},
     {path:'/admin/dashboard',component: AdminDashboard,name:'admindashboard',meta: { auth: true}},
