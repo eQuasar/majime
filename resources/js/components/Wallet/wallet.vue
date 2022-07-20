@@ -13,7 +13,7 @@
           <br />
         </div>
       </div>
-      <div class="content_bar d-table">
+      <div class="content_bar">
         <div class="card-body card">
           <div class="call-center-dashboard">
             <b-row>

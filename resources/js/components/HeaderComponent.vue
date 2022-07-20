@@ -12,7 +12,7 @@
           >
             <b-form-select v-model="vendor" class="" :options="allvendors" value-field="id" text-field="name" @change="vendor_wise_detail">
               <template v-slot:first>
-                <b-form-select-option :value="null" disabled>Select Vendor</b-form-select-option>
+                <b-form-select-option :value="0" disabled>Select Vendor</b-form-select-option>
              </template>
             </b-form-select>
           </b-form-group>
@@ -47,6 +47,8 @@ export default {
       //   this.getVidz();
       // }else{
         this.getVendor();
+        const ivid = localStorage.getItem('ivid');
+        this.vendor = ivid;
       // }
     },
   computed: {
@@ -66,8 +68,6 @@ export default {
 
       // this.$router.go("?vid="+this.vendor);
        window.location.assign("?vid="+this.vendor);
-      
-
        
         // this.$router.push({name: 'adminlistOrders', params: {vid: this.vendor}})
     },

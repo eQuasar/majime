@@ -64,17 +64,17 @@ class WalletprocessedController extends Controller
         // $orders = DB::table("walletprocesseds")->get();
         for($y = 0;$y < count($orders);$y++) 
         {
-            $order_table=DB::table("orders")->where('orders.oid','=',intval($orders[$y]))->get();
-            $data=DB::table("billings")->where('billings.order_id','=',intval($orders[$y]))->get();
+            $order_table=DB::table("orders")->where('orders.oid','=',intval($orders[$y]))->where('orders.vid','=',$request->vid)->get();
+            $data=DB::table("billings")->where('billings.order_id','=',intval($orders[$y]))->where('billings.vid','=',$order_table[0]->vid)->get();
             $zone=DB::table("zonedetails")->where('zonedetails.pincode','=',$data[0]->postcode)->get();
             if(count($zone)>=1)
             {
             $zone_rate=DB::table("zoneratecards")->where('zoneratecards.zoneno','=',$zone[0]->zoneno)->get(); 
             }
-            $line_items=DB::table("line_items")->where('line_items.order_id','=',intval($orders[$y]))->get();    
+            $line_items=DB::table("line_items")->where('line_items.order_id','=',intval($orders[$y]))->where('line_items.vid','=',$order_table[0]->vid)->get();    
             $line_items_qty=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = $orders[$y] AND line_items.vid = " . intval($order_table[0]->vid) . " GROUP BY line_items.order_id) as quantity"))->get(); 
             $product_weight=DB::table("products")->where('products.product_id','=',$line_items[0]->product_id)->get();   
-            $vendor_rate=DB::table("vendor_ratecards")->get();
+            $vendor_rate=DB::table("vendor_ratecards")->where('vendor_ratecards.vid','=',$order_table[0]->vid)->get();
             $oc_balance=DB::table("opening_closing_tables")->where('opening_closing_tables.vid','=',$order_table[0]->vid)->orderBy('id','DESC')->limit(1)->get();
             $sms_cost=2;
             $sale_Amount=$order_table[0]->total;

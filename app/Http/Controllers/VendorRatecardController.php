@@ -41,6 +41,7 @@ class VendorRatecardController extends Controller
             'cod' => 'required',
             'codper' => 'required',
             'above' => 'required',
+            'vendor' => 'required',
             'sms' => 'required',
             
          ]);
@@ -51,6 +52,7 @@ class VendorRatecardController extends Controller
         $vendorrate_data->cod= $request->cod;
         $vendorrate_data->codper= $request->codper;
         $vendorrate_data->after500gm= $request->above;
+        $vendorrate_data->vid= $request->vendor;
         $vendorrate_data->sms_charges= $request->sms;
 
         $vendorrate_data->save();

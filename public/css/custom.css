@@ -281,6 +281,7 @@ float:left;
 .search_field input{
     height: auto!important;
     font-size: 14px!important;
+    padding: 10px 10px;
 }
 .search_field .input-group-append,
 .search_field .input-group-append button{

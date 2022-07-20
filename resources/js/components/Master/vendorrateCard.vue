@@ -20,6 +20,26 @@
             <b-row style="margin-bottom: 10px">
               <b-col xl="6" lg="6" md="6">
                 <b-form-group
+                  id="input-group-Vendor"
+                  label="Choose Vendor"
+                  label-for="input-Vendor"
+                >
+                  <b-form-select
+                    v-model="vendor"
+                    class=""
+                    :options="allvendors"
+                    value-field="id"
+                    text-field="name"
+                  >
+                    <template v-slot:first>
+                      <b-form-select-option :value="0" disabled
+                        >-- Select Vendor --</b-form-select-option
+                      >
+                    </template>
+                  </b-form-select>
+                </b-form-group>
+
+                <b-form-group
                   id="input-group-cod"
                   label="COD"
                   label-for="input-cod"
@@ -61,7 +81,7 @@
                     placeholder="Enter Above 500gm "
                   ></b-form-input>
                 </b-form-group>
-                 <b-form-group
+                <b-form-group
                   id="input-group-sms"
                   label="SMS Charges"
                   label-for="input-sms"
@@ -216,7 +236,9 @@ export default {
       if (!this.above) {
         this.create_error += "Enter Above 500gm ,";
       }
-
+      if (!this.vendor) {
+        this.create_error += "Choose Vendor  ,";
+      }
       if (this.create_error != "") {
         return false;
       }
@@ -225,6 +247,7 @@ export default {
       formData.append("cod", this.cod);
       formData.append("codper", this.codper);
       formData.append("above", this.above);
+      formData.append("vendor", this.vendor);
       formData.append("sms", this.sms);
 
       master
