@@ -50,6 +50,7 @@ class WalletprocessedController extends Controller
      */
     public function store(Request $request)
     {
+        $pw=0;
         if ($request->allSelected == "false")
         {
             $orders[]=$request->oid;
@@ -79,14 +80,14 @@ class WalletprocessedController extends Controller
             $oc_balance=DB::table("opening_closing_tables")->where('opening_closing_tables.vid','=',$order_table[0]->vid)->orderBy('id','DESC')->limit(1)->get();
             $sms_cost=2;
             $sale_Amount=$order_table[0]->total;
-            $majime_cost=(($order_table[0]->total)*5/100);
+            $majime_cost=(($order_table[0]->total)*5.9/100);
            
 
             if($order_table[0]->payment_method == 'cod')
             {
                 $payment_gateway=0;
             }else{
-                $payment_gateway=(($order_table[0]->total)*2/100);
+                $payment_gateway=(($order_table[0]->total)*2.36/100);
             }
              
             if(count($oc_balance) >= 1){
@@ -115,7 +116,7 @@ class WalletprocessedController extends Controller
                 }
 
             }
-            elseif($order_table[0]->status== 'rtodelivered')
+            elseif($order_table[0]->status== 'rto-delivered')
             {
                 if(count($zone)>=1){
                 $zone_price=$zone_rate[0]->rto;
@@ -134,7 +135,7 @@ class WalletprocessedController extends Controller
             //         $cod_charges = 0;
             // }
           
-            if($order_table[0]->status != 'rtodelivered')
+            if($order_table[0]->status != 'rto-delivered')
             {
                 if($order_table[0]->payment_method == 'cod')
                 {   
@@ -163,15 +164,15 @@ class WalletprocessedController extends Controller
                     else{
                         $logistic_cost=$vendor_rate[0]->cod+($vendor_rate[0]->cod*2/100);
                     }
-                    if($order_table[0]->status== 'dto-refunded'){
+                    // if($order_table[0]->status== 'dto-refunded' || $order_table[0]->status== 'dto-refunded'){
                        
-                        $net_amount=$logistic_cost+$majime_cost+$sms_cost+$payment_gateway;
-                        $closing_bal=$opening_balance-$net_amount;
-                    }else{
+                    //     $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                    //     $closing_bal=$opening_balance+$net_amount;
+                    // }else{
                         
-                         $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
-                        $closing_bal=$opening_balance-$net_amount;
-                    }
+                        $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                        $closing_bal=$opening_balance+$net_amount;
+                    // }
                 }
                 else{
                    
@@ -180,7 +181,7 @@ class WalletprocessedController extends Controller
                     if($getval > $zone_price){
                         $cod_charges = $getval;
                     }
-                    $pw=$product_weight[0]->weight;
+                    // $pw=$product_weight[0]->weight;
                     if($pw==0)
                     {   
                         $pw=250;
@@ -198,20 +199,24 @@ class WalletprocessedController extends Controller
                     else{
                         $logistic_cost=$vendor_rate[0]->cod+($vendor_rate[0]->cod*2/100);
                     }
-                    if($order_table[0]->status== 'dto-refunded'){
-                        $net_amount=$logistic_cost+$majime_cost+$sms_cost+$payment_gateway;
-                        $closing_bal=$opening_balance-$net_amount;
-                    }else{
-                        $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
-                        $closing_bal=$opening_balance-$net_amount;
-                    }
+                    $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                    $closing_bal=$opening_balance+$net_amount;
+                    // if($order_table[0]->status== 'dto-refunded'){
+                    //     $net_amount=$logistic_cost+$majime_cost+$sms_cost+$payment_gateway;
+                    //     $closing_bal=$opening_balance-$net_amount;
+                    // }else{
+                    //     $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                    //     $closing_bal=$opening_balance-$net_amount;
+                    // }
                 }
             }else{
-                $logistic_cost=$zone_price*2;
-                $sms_cost=2*2;
-                $net_amount=$logistic_cost+$sms_cost;
-                $closing_bal=$opening_balance-$net_amount;
+                $logistic_cost=$zone_price;
+                // $sms_cost=2*2;       
+                // $net_amount=$logistic_cost+$sms_cost;
                 $majime_cost=0;
+                $net_amount=0-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                $closing_bal=$opening_balance+$net_amount;
+                
             }
             // echo $cod_cost;
             // echo $pp_amount;
