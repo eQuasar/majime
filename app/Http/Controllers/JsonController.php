@@ -459,15 +459,16 @@ class JsonController extends Controller
 					$status = "dtodelivered";
 				} else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] != "DL" ){
 					$status = "dtointransit";
-				} else if ($status == "Closed" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] != "CN" ){
+				} else if ($status == "Closed" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
 					$status = "deliveredtocust";
-				} else if ($status == "Delivered" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] != "DL" ){
+				} else if ($status == "Delivered" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "deliveredtocust";
-				} else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] != "DL" ){
+				} else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "dtodelivered";
-				} else if ($status == "Canceled" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] != "CN" ){
-					$status = "deliveredtocust";
 				}
+				//  else if ($status == "Canceled" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
+				// 	$status = "deliveredtocust";
+				// }
 				//  else if ($status == "Delivered"){
 				// 	$status = "deliveredtocust";
 				// // }else if(){
