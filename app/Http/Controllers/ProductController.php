@@ -173,7 +173,7 @@ class ProductController extends Controller {
         $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dtobook,$intrans,$dtointrans])->get();
         $intransit_saleAmount=$orders->sum('total');
         $order_count=count($orders);
-        $unprocessed_orders=DB::table("orders")->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)->whereIn('orders.status',[$Comple, $rto_del,$dto_ref,$clos])->get();
+        $unprocessed_orders=DB::table("orders")->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)->whereIn('orders.status',[$Comple,$dto_ref,$clos])->get();
         $unprocessed_saleAmount=$unprocessed_orders->sum('total');
         $unprocess_count=count($unprocessed_orders);
         $due_amount=DB::table("opening_closing_tables")->where('opening_closing_tables.vid','=',$vid)->orderBy('id', 'DESC')->first();
