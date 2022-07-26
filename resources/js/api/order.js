@@ -128,5 +128,8 @@ export default {
     },
     assignwallet(data){
         return axios.post('assign_wallet', data)
+    },
+    walletSearch(data) {
+        return axios.post('wallet_Search',data)
     }
 }

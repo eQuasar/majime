@@ -5437,6 +5437,10 @@ input::placeholder{text-align: left;}
   margin-bottom: 0;
 }
 
+.pagination{
+  margin-top: 0px;
+}
+
 .page-link, .jsgrid .jsgrid-pager .jsgrid-pager-nav-button a,
 .jsgrid .jsgrid-pager .jsgrid-pager-page a {
   position: relative;
@@ -22725,6 +22729,7 @@ td span{
 .rtd-cod{background: #E0EBFE; color: #00FFFF;}
 .dto-refunded{background: #FFECE8; color: #FF6347;}
 .rtodelivered{background: #0000FF1F; color: #0000FFD9;}
+.rto-delivered{background: #0000FF1F; color: #0000FFD9;}
 .deliveredtocust{background: #E0EBFE; color: #808000;}
 .dtodel2warehouse{background: #E0EBFE; color: #008000;}
 .dtointransit{background: #E0EBFE; color: #800080;}
@@ -22767,6 +22772,10 @@ td span{
   align-items: center;
 }
 
+.tbl-blk .table td {
+    padding: 20px 10px;
+} 
+
 .onebar .header_title {
   width: 200px;
   float: left;
@@ -22800,5 +22809,30 @@ td span{
     color: #000;
 }
 
+.In {
+  color: green;
+  background: #0080001c;
+  padding: 6px;
+  border-radius: 4px;
+}
 
-/* CSS by Ritik - End 
+
+/* CSS by Ritik - End */
+
+
+.balance{
+    width: 100%;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px;
+    background: #fcfcfc;
+    border-radius: 6px;
+}
+.balance span{
+  text-align: right;
+  float: right;
+}
+.my_tag span:nth-child(2) {
+  display: none;
+}

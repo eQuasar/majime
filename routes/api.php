@@ -32,6 +32,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('get_orderProfile',[App\Http\Controllers\ReportController::class,'ReportProfile_detail']);
 	//Route::get('order_Search',[App\Http\Controllers\OrderController::class,'Order_Search']);
 	Route::post('order_Search', 'OrderController@Order_Search')->name('Order_Search');
+	Route::post('wallet_Search', 'OrderController@wallet_Search')->name('wallet_Search');
 	Route::post('change_status_on_dispatch', 'OrderController@changeStatusDispatch')->name('change_status_on_dispatch');
 	Route::post('product_Order_Search', 'ProductController@product_Order_Search')->name('product_Order_Search');
 	Route::post('status_details', 'ReportController@status_details')->name('status_details');
@@ -112,5 +113,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('complete_download_sheet', 'WalletprocessedController@index')->name('complete_download_sheet');
 	Route::get('zone_rate','ZoneratecardController@show')->name('zone_rate');
 	Route::get('Vendor_rate','VendorRatecardController@show')->name('Vendor_rate');
+	Route::get('pco/{vid}', 'OrderController@Complete_orders')->name('Complete_orders');
+	// Route::get('Complete_orders','OrderController@show')->name('Complete_orders');
 }); 
 

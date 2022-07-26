@@ -449,10 +449,8 @@ class JsonController extends Controller
 					$status = "intransit";
 				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "intransit";
-				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == TRUE && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType']!="RT"){
+				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == TRUE && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType']=="PU"){
 					$status = "dtointransit";
-				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == TRUE && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType']=="RT"){
-					$status = "intransit";
 				} else if ($status == "RTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "rto-delivered";
 				} else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
@@ -463,9 +461,10 @@ class JsonController extends Controller
 					$status = "deliveredtocust";
 				} else if ($status == "Delivered" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "deliveredtocust";
-				} else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
-					$status = "dtodelivered";
-				}
+				} 
+				// else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
+				// 	$status = "dtodelivered";
+				// }
 				//  else if ($status == "Canceled" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
 				// 	$status = "deliveredtocust";
 				// }

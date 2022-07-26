@@ -1,5 +1,9 @@
 <template>
-  <sidebar-menu :menu="menu" @update:collapsed="onToggleCollapse" @item-click="onItemClick" />
+  <sidebar-menu
+    :menu="menu"
+    @update:collapsed="onToggleCollapse"
+    @item-click="onItemClick"
+  />
 </template>
 
 <script>
@@ -44,26 +48,26 @@ export default {
           title: "Master",
           icon: "fas fa-calendar-alt",
           child: [
-            {
-              href: { name: "zoneDetail" },
-              title: "Zone Detail",
-            },
+            // {
+            //   href: { name: "zoneDetail" },
+            //   title: "Zone Detail",
+            // },
             {
               href: { name: "zonerateCard" },
               title: "Zone Rate Card",
             },
-              {
-                href: { name: "ZRCView" },
-                title: "ZRCView",
-          },
+            {
+              href: { name: "ZRCView" },
+              title: "ZRCView",
+            },
             {
               href: { name: "vendorrateCard" },
               title: "Vendor Rate Card",
-              },
-              {
-                href: { name: "VRCView" },
-                title: "VRCView",
-          },
+            },
+            {
+              href: { name: "VRCView" },
+              title: "VRCView",
+            },
           ],
         },
 
@@ -114,9 +118,9 @@ export default {
           ],
         },
         {
+          href: { name: "wallet" },
           title: "Wallet",
           icon: "fa fa-user",
-          href: { name: "wallet" },
         },
 
         {
@@ -144,7 +148,7 @@ export default {
     onItemClick(event, item) {
       console.log(event);
       console.log(item);
-    }
-  }
+    },
+  },
 };
 </script>
