@@ -165,18 +165,26 @@ class ProductController extends Controller {
         $dtobook='dtobooked';
         $intrans='intransit';
         $dtointrans='dtointransit';
+        $Comple='completed';
+        $rto_del='rto-delivered';
+        $dto_ref='dto-refunded';
+        $clos='closed';
+        $int_check = 0;
         $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dtobook,$intrans,$dtointrans])->get();
-        // dd($orders);die();
+        $intransit_saleAmount=$orders->sum('total');
         $order_count=count($orders);
-        $unprocessed_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dtobook,$intrans,$dtointrans])->get();
+        $unprocessed_orders=DB::table("orders")->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)->whereIn('orders.status',[$Comple, $rto_del,$dto_ref,$clos])->get();
+        $unprocessed_saleAmount=$unprocessed_orders->sum('total');
+        $unprocess_count=count($unprocessed_orders);
+        $due_amount=DB::table("opening_closing_tables")->where('opening_closing_tables.vid','=',$vid)->orderBy('id', 'DESC')->first();
+        $due_closing_bal=$due_amount->closing_bal;
         $tomorrow = date("Y-m-d", strtotime('tomorrow'));
         $stats['inTransitCount'] = $order_count;
-        // dd($stats);die();
-        $stats['inTransitSaleAmount'] = "12345";
-        $stats['unProcessedCount'] =  "1234";
-        $stats['unProcessedSaleAmount'] =  "123";
+        $stats['inTransitSaleAmount'] = $intransit_saleAmount;
+        $stats['unProcessedCount'] =  $unprocess_count;
+        $stats['unProcessedSaleAmount'] =  $unprocessed_saleAmount;
         $stats['nextDate'] = $tomorrow;
-        $stats['dueAmount'] = "1111";
+        $stats['dueAmount'] =$due_closing_bal;
         return $stats;
         
     }

@@ -18,19 +18,19 @@
         <div class="stats">
           <h3>In Transit Orders</h3>
           <span>Total Orders: {{ stats.inTransitCount }}</span>
-          <p>Sale Amount: <i>Rs </i>{{ stats.inTransitSaleAmount }}</p>
+          <p>Sale Amount: <i>₹ </i>{{ stats.inTransitSaleAmount }}</p>
         </div>
 
         <div class="stats">
           <h3>Unprocessed</h3>
           <span>Total Orders: {{ stats.unProcessedCount }}</span>
-          <p>Sale Amount: <i>Rs </i>{{ stats.unProcessedSaleAmount }}</p>
+          <p>Sale Amount: <i>₹ </i>{{ stats.unProcessedSaleAmount }}</p>
         </div>
 
         <div class="stats">
           <h3>Next Remittance</h3>
-          <span>Due Date {{ stats.nextDate }}</span>
-          <p><i>Due Amount</i>{{ stats.dueAmount }}</p>
+          <span>Due Date: {{ stats.nextDate }}</span>
+          <p>Closing Balance:<i>₹ </i>{{ stats.dueAmount }}</p>
         </div>
       </div>
       <br />
