@@ -38,18 +38,16 @@
                       <b-button type="submit" variant="primary">Submit</b-button>
                     </b-form>
               </b-col>
-              <b-col xl="4" lg="4" md="4" class="search_field">
-
-                  <!-- <b-form-input id="filter-input"  type="text" placeholder="Type to Search"></b-form-input>
-                    <b-input-group-append><b-button :disabled="!filter" @click="filter">Search</b-button></b-input-group-append> -->
-                    
-					    <b-form-input  type="search" placeholder="Type to Search"></b-form-input>
-					    <b-input-group-append>
-					      <b-button  v-model="filter" @click="Search">Search</b-button>
-					    </b-input-group-append>
-					
-              </b-col>
-               
+               <b-col xl="4" lg="4" md="4" class="search_field">
+                    <b-form-input
+                        id="filter-input"
+                        v-model="filter"
+                        placeholder="Type to Search"
+                      ></b-form-input>
+                      <b-input-group-append>
+                        <b-button :disabled="!filter" @click="filter = ''">Search</b-button>
+                      </b-input-group-append>
+                  </b-col>
             </b-row>
           <div class="blue-bar"></div>
             <div class="content_bar card list-appointments">
@@ -170,6 +168,7 @@
         vendor:null,
         status_assign:"",
         allStateData: [],
+        filter:"",
         key: "",
         oid:0,
         status: null,

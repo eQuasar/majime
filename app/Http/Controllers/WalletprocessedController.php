@@ -108,14 +108,7 @@ class WalletprocessedController extends Controller
             $jsonResp = json_decode($response);
             $zone=$jsonResp[0]->zone;
             $zone=substr($zone, 0, 1);
-		// var_dump($jsonResp[0]->zone);die();
 
-            //     curl_close($curl);
-            // $jsonResp = json_decode($response);
-            // foreach ($jsonResp as $jp) {
-            //     // $curl_data[] = $jp->id;
-            //     $get_zone=$jp->zone;
-            // }
             $zone_rate=DB::table("zoneratecards")->where('zoneratecards.zoneno','like',$zone)->get();
             $line_items=DB::table("line_items")->where('line_items.order_id','=',intval($orders[$y]))->where('line_items.vid','=',$order_table[0]->vid)->get();
             $line_items_qty=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = $orders[$y] AND line_items.vid = " . intval($order_table[0]->vid) . " GROUP BY line_items.order_id) as quantity"))->get(); 
@@ -139,8 +132,7 @@ class WalletprocessedController extends Controller
             }else{
                 $opening_balance=0;
             }
-//              print_r($zone); 
-//              die;
+
             if($mystatus= 'Delivered')
             {
                 $zone_price=$zone_rate[0]->fwd;
@@ -153,15 +145,8 @@ class WalletprocessedController extends Controller
             {
                 $zone_price=$zone_rate[0]->rto;
             }
-            // if($order_table[0]->payment_method == 'cod'){
-            //     // If wallet is in COD order you can use here
-            //     $payment_gateway=0;
-               
-            // }else if($order_table[0]->payment_method == 'cashfree' || $order_table[0]->payment_method == 'prepaid'){
-            //     // If wallet is in Prepaid order you can use here
-            //         $payment_gateway=(($order_table[0]->total)*2/100);
-            //         $cod_charges = 0;
-            // }
+            
+            $zone_rate = $zone_rate*1.18;
           
             if($order_table[0]->status != 'rto-delivered')
             {
