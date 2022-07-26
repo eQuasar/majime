@@ -107,7 +107,8 @@ class WalletprocessedController extends Controller
             curl_close($curl);
             $jsonResp = json_decode($response);
             $zone=$jsonResp[0]->zone;
-            // var_dump($jsonResp[0]->zone);die();
+            $zone=substr($zone, 0, 1);
+		// var_dump($jsonResp[0]->zone);die();
 
             //     curl_close($curl);
             // $jsonResp = json_decode($response);
@@ -115,7 +116,7 @@ class WalletprocessedController extends Controller
             //     // $curl_data[] = $jp->id;
             //     $get_zone=$jp->zone;
             // }
-            $zone_rate=DB::table("zoneratecards")->where('zoneratecards.zoneno','=',$zone)->get();
+            $zone_rate=DB::table("zoneratecards")->where('zoneratecards.zoneno','like',$zone)->get();
             $line_items=DB::table("line_items")->where('line_items.order_id','=',intval($orders[$y]))->where('line_items.vid','=',$order_table[0]->vid)->get();
             $line_items_qty=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = $orders[$y] AND line_items.vid = " . intval($order_table[0]->vid) . " GROUP BY line_items.order_id) as quantity"))->get(); 
             $product_weight=DB::table("products")->where('products.product_id','=',$line_items[0]->product_id)->get();  
@@ -138,8 +139,8 @@ class WalletprocessedController extends Controller
             }else{
                 $opening_balance=0;
             }
-            //  echo $opening_balance; 
-            //  die;
+//              print_r($zone); 
+//              die;
             if($mystatus= 'Delivered')
             {
                 $zone_price=$zone_rate[0]->fwd;
