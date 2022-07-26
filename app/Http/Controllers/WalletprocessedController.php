@@ -146,7 +146,7 @@ class WalletprocessedController extends Controller
                 $zone_price=$zone_rate[0]->rto;
             }
             
-            $zone_rate = $zone_rate*1.18;
+            $zone_price = $zone_price*1.18;
           
             if($order_table[0]->status != 'rto-delivered')
             {
