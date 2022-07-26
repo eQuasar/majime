@@ -1402,12 +1402,17 @@ class OrderController extends Controller {
         }
 
         $orders = DB::table("orders")->where('vid', '=', intval($_REQUEST['vid']))->where('status', '=', "processing")->get();
-        foreach ($orders as $order) {
-            $order_data[] = $order->oid;
+        // var_dump($orders);
+        if (count($orders) >= 1) {
+            foreach ($orders as $order) {
+                $order_data[] = $order->oid;
+            }
+        }else{
+            $order_data = array();
         }
 
         // var_dump($curl_data);
-        // var_dump($order_data);
+        // var_dump($order_data); die;
         $result=array_diff($curl_data,$order_data);
         // var_dump($result);
         if (count($result) >= 1) {
