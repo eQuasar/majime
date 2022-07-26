@@ -18,13 +18,13 @@
         <div class="stats">
           <h3>In Transit Orders</h3>
           <span>Total Orders: {{ stats.inTransitCount }}</span>
-          <p>Sale Amount: <i>₹ </i>{{ stats.inTransitSaleAmount }}</p>
+          <p><i>₹ </i>{{ stats.inTransitSaleAmount }}</p>
         </div>
 
         <div class="stats">
           <h3>Unprocessed</h3>
           <span>Total Orders: {{ stats.unProcessedCount }}</span>
-          <p>Sale Amount: <i>₹ </i>{{ stats.unProcessedSaleAmount }}</p>
+          <p><i>₹ </i>{{ stats.unProcessedSaleAmount }}</p>
         </div>
 
         <div class="stats">
