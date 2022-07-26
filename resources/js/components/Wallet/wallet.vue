@@ -30,7 +30,7 @@
         <div class="stats">
           <h3>Next Remittance</h3>
           <span>Due Date: {{ stats.nextDate }}</span>
-          <p>Closing Balance:<i>₹ </i>{{ stats.dueAmount }}</p>
+          <p><i>₹ </i>{{ stats.dueAmount }}</p>
         </div>
       </div>
       <br />
