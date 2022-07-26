@@ -14,7 +14,7 @@ class CreateVendorRatecardsTable extends Migration
     public function up()
     {
         Schema::create('vendor_ratecards', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->bigIncrements('id')->primary();
             $table->integer('vid');
             $table->integer('cod');
             $table->integer('codper');

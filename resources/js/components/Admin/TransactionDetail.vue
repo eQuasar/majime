@@ -19,7 +19,7 @@
                 </b-form-select>
      
                 <b-form-group label="Type of Transaction" v-slot="{ ariaDescribedby }">
-                  <b-form-radio v-model="tranType" :aria-describedby="ariaDescribedby"  name="tranType" value="In"><span claa="in">In</span></b-form-radio>
+                  <b-form-radio v-model="tranType" :aria-describedby="ariaDescribedby"  name="tranType" value="In"><span class="in">In</span></b-form-radio>
                   <b-form-radio v-model="tranType" :aria-describedby="ariaDescribedby" name="tranType" value="Out"><span claa="out">Out</span></b-form-radio>
                </b-form-group>
           

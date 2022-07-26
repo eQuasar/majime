@@ -33,12 +33,12 @@
     <div class="content_bar">
       <div class="card-body">
         <b-row>
-          <b-col xl="12" lg="12" md="12">
+          <b-col xl="12" lg="12" md="12" class="tbl-blk">
             <b-table striped hover responsive :items="items"
                   :sort-by.sync="sortBy"
                   sort-icon-left :filter-included-fields="filterOn" 
                   :filter="filter" :fields="fields" :per-page="perPage" 
-                  :current-page="currentPage" show-empty>
+                  :current-page="currentPage" show-empty >
                   <template v-slot:cell(sr)="row">
                     {{((currentPage-1)*perPage)+(row.index)+1}}
                   </template>

@@ -74,7 +74,7 @@
         </div>
     </div>
       </br>
-        <b-table striped hover responsive tbl-blk :items="items"
+        <b-table striped hover responsive :items="items"
                   :sort-by.sync="sortBy"
                   :sort-desc.sync="sortDesc"
                    sort-icon-left :filter-included-fields="filterOn" :filter="filter" :fields="fields" :per-page="perPage" :current-page="currentPage" show-empty>

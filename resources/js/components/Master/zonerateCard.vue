@@ -23,6 +23,7 @@
                   id="input-group-Vendor"
                   label="Choose Vendor"
                   label-for="input-Vendor"
+                  placeholder="Select Vendor"
                 >
                   <b-form-select
                     v-model="vendor"
@@ -33,33 +34,21 @@
                   >
                     <template v-slot:first>
                       <b-form-select-option :value="0" disabled
-                        >-- Select Vendor --</b-form-select-option
+                        > Select Vendor </b-form-select-option
                       >
                     </template>
                   </b-form-select>
                 </b-form-group>
-
-                <b-form-group
-                  id="input-group-zone"
-                  label="Choose Zone No"
-                  label-for="input-zone"
-                >
-                  <b-form-select
-                    v-model="zone"
-                    class=""
-                    :options="allzone"
-                    value-field="id"
-                    text-field="zoneno"
-                  >
-                    <template v-slot:first>
-                      <option disabled value="null">Select Zone</option>
-                    </template>
-                  </b-form-select>
-                </b-form-group>
+                  
+                     <b-form-group id="input-group-zone" label=" Choose Zone" label-for="input-zone" placeholder="Select Zone">
+                  <b-form-select v-model="zone" :options="alloption" label="Zone " label-for="input-ZOne"></b-form-select>
+                     </b-form-group>
+                </b-form-select>
+    
 
                 <b-form-group
                   id="input-group-fwd"
-                  label="FWD"
+                  label="Enter Value of FWD"
                   label-for="input-fwd"
                 >
                   <b-form-input
@@ -73,7 +62,7 @@
                 </b-form-group>
                 <b-form-group
                   id="input-group-dto"
-                  label="DTO"
+                  label="Enter Value of DTO "
                   label-for="input-dto"
                 >
                   <b-form-input
@@ -88,7 +77,7 @@
 
                 <b-form-group
                   id="input-group-rto"
-                  label="RTO"
+                  label="Enter VAlue of RTO"
                   label-for="input-rto"
                 >
                   <b-form-input
@@ -144,6 +133,7 @@ export default {
       vid: 0,
       status: "",
       zone: "",
+      zone: null,
       dto: "",
       rto: "",
       fwd: "",
@@ -151,11 +141,12 @@ export default {
       date: "",
       pin: "",
       allvendors: [],
+      alloption:[],
       allzone: [],
       amount: "",
       description: "",
       tranType: "",
-      vendor: null,
+      vendor: 0,
       country: "",
       phone: "",
       add: "",
@@ -179,6 +170,15 @@ export default {
         { value: "SMS Charges", text: "SMS Charges" },
         { value: "Digital Ads", text: "Digital Ads" },
         { value: "Recharge", text: "Recharge" },
+      ],
+      alloption: [
+        { value: null, text: "Please select Zone No" },
+        { value: "A", text: "Zone A" },
+        { value: "B", text: "Zone B" },
+        { value: "C", text: "Zone C" },
+        { value: "D", text: "Zone D" },
+        { value: "E", text: "Zone E" },
+        { value: "F", text: "Zone F" },
       ],
 
       fields: [

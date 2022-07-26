@@ -39,9 +39,17 @@
                     </b-form>
               </b-col>
               <b-col xl="4" lg="4" md="4" class="search_field">
-                  <b-form-input id="filter-input" v-model="filter" type="search" placeholder="Type to Search"></b-form-input>
-                    <b-input-group-append><b-button :disabled="!filter" @click="filter = ''">Clear</b-button></b-input-group-append>
+
+                  <!-- <b-form-input id="filter-input"  type="text" placeholder="Type to Search"></b-form-input>
+                    <b-input-group-append><b-button :disabled="!filter" @click="filter">Search</b-button></b-input-group-append> -->
+                    
+					    <b-form-input  type="search" placeholder="Type to Search"></b-form-input>
+					    <b-input-group-append>
+					      <b-button  @click="Search">Search</b-button>
+					    </b-input-group-append>
+					
               </b-col>
+               
             </b-row>
           <div class="blue-bar"></div>
             <div class="content_bar card list-appointments">
@@ -553,8 +561,26 @@ computed: {
               // loader.hide();
           });
           this.show=false;
-      }, 
 
+
+      },
+
+      Search(){
+      	let formData = new FormData();
+          formData.append("filter", this.filter);
+            order.orderSearch(formData)
+              .then((response) => {    
+                      this.items=response.data;
+                      this.show=false;
+                      console.log(this.items);
+                               })
+              .catch((error) => {
+                  console.log(error);
+                  if (error.response.status == 422) {
+                      this.errors_create = error.response.data.errors;
+                  }
+                      });
+      }
   },
 };  
 </script>

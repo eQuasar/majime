@@ -14,12 +14,12 @@ class CreateZoneratecardsTable extends Migration
     public function up()
     {
         Schema::create('zoneratecards', function (Blueprint $table) {
-           $table->bigInteger('id')->primary();
-            $table->integer('zoneno');
+           $table->bigIncrements('id');
+            $table->string('zoneno');
             $table->integer('vid');
             $table->integer('fwd');
-            $table->integer('dto');
             $table->integer('rto');
+            $table->integer('dto');
             $table->timestamps();
         });
     }

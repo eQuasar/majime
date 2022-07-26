@@ -50,6 +50,8 @@ class WalletprocessedController extends Controller
      */
     public function store(Request $request)
     {
+           
+
         $pw=0;
         if ($request->allSelected == "false")
         {
@@ -58,6 +60,7 @@ class WalletprocessedController extends Controller
         else
         {
             $orders=explode(',', $request->allSelected);
+            
         }
          //echo count($orders);
         $vendor = $request->vid;
@@ -66,23 +69,63 @@ class WalletprocessedController extends Controller
         for($y = 0;$y < count($orders);$y++) 
         {
             $order_table=DB::table("orders")->where('orders.oid','=',intval($orders[$y]))->where('orders.vid','=',$vendor)->get();
-            $data=DB::table("billings")->where('billings.order_id','=',intval($orders[$y]))->where('billings.vid','=',$order_table[0]->vid)->get();
-            $zone=DB::table("zonedetails")->where('zonedetails.pincode','=',$data[0]->postcode)->get();
-            if(count($zone)>=1)
+            if($order_table[0]->status== 'completed')
             {
-            $zone_rate=DB::table("zoneratecards")->where('zoneratecards.zoneno','=',$zone[0]->zoneno)->get(); 
+                $mystatus= 'Delivered';
             }
+            elseif($order_table[0]->status== 'rto-delivered')
+            {
+                $mystatus= 'RTO';
+            }
+            elseif($order_table[0]->status== 'dto-refunded')
+            {
+                $mystatus= 'DTO';
+            }
+            else
+            {
+                $mystatus= 'Delivered';
+            }
+            $data=DB::table("billings")->where('billings.order_id','=',intval($orders[$y]))->where('billings.vid','=',$order_table[0]->vid)->get();
+            // $zone=DB::table("zonedetails")->where('zonedetails.pincode','=',$data[0]->postcode)->get();
+            $origin_pin=141001;
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+            // CURLOPT_URL => 'https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=S&cgm=250&o_pin=141001&d_pin=110011&ss=Delivered',
+            CURLOPT_URL => 'https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=S&cgm=250&o_pin=141001&d_pin=' .$data[0]->postcode. '&ss=' .$mystatus,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Token ed99803a18868406584c6d724f71ebccc80a89f9'
+            ),
+            ));
+            $response = curl_exec($curl);
+            curl_close($curl);
+            $jsonResp = json_decode($response);
+            $zone=$jsonResp[0]->zone;
+            // var_dump($jsonResp[0]->zone);die();
+
+            //     curl_close($curl);
+            // $jsonResp = json_decode($response);
+            // foreach ($jsonResp as $jp) {
+            //     // $curl_data[] = $jp->id;
+            //     $get_zone=$jp->zone;
+            // }
+            $zone_rate=DB::table("zoneratecards")->where('zoneratecards.zoneno','=',$zone)->get();
             $line_items=DB::table("line_items")->where('line_items.order_id','=',intval($orders[$y]))->where('line_items.vid','=',$order_table[0]->vid)->get();
             $line_items_qty=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = $orders[$y] AND line_items.vid = " . intval($order_table[0]->vid) . " GROUP BY line_items.order_id) as quantity"))->get(); 
-            
             $product_weight=DB::table("products")->where('products.product_id','=',$line_items[0]->product_id)->get();  
             $vendor_rate=DB::table("vendor_ratecards")->where('vendor_ratecards.vid','=',$order_table[0]->vid)->get();
+            $sms_cost=$vendor_rate[0]->sms_charges;
+            $mjm_cost=$vendor_rate[0]->majime_charges; 
+            $above_value=$vendor_rate[0]->after500gm;
             $oc_balance=DB::table("opening_closing_tables")->where('opening_closing_tables.vid','=',$order_table[0]->vid)->orderBy('id','DESC')->limit(1)->get();
-            $sms_cost=2;
             $sale_Amount=$order_table[0]->total;
-            $majime_cost=(($order_table[0]->total)*5.9/100);
-           
-
+            $majime_cost=(($order_table[0]->total)*($mjm_cost/100));
             if($order_table[0]->payment_method == 'cod')
             {
                 $payment_gateway=0;
@@ -97,33 +140,17 @@ class WalletprocessedController extends Controller
             }
             //  echo $opening_balance; 
             //  die;
-            if($order_table[0]->status=='completed')
+            if($mystatus= 'Delivered')
             {
-                if(count($zone)>=1){
                 $zone_price=$zone_rate[0]->fwd;
-                }
-                else{
-                    $zone_price=0;
-                }
             }
-            elseif($order_table[0]->status== 'dto-refunded')
+            elseif($mystatus= 'DTO')
             {
-                if(count($zone)>=1){
                 $zone_price=$zone_rate[0]->dto;
-                }
-                else{
-                    $zone_price=0;
-                }
-
             }
-            elseif($order_table[0]->status== 'rto-delivered')
+            elseif($mystatus= 'RTO')
             {
-                if(count($zone)>=1){
                 $zone_price=$zone_rate[0]->rto;
-                }
-                else{
-                    $zone_price=0;
-                }
             }
             // if($order_table[0]->payment_method == 'cod'){
             //     // If wallet is in COD order you can use here
@@ -141,7 +168,6 @@ class WalletprocessedController extends Controller
                 {   
                     $Vcodper = $vendor_rate[0]->codper;
                     $getval = ceil($sale_Amount*($Vcodper/100));
-
                     if($getval > $zone_price){
                         $cod_charges = $getval;
                     }
@@ -158,7 +184,7 @@ class WalletprocessedController extends Controller
                         // $cod_cost=$vendor_rate[0]->cod;
                         $cod_cost=$zone_price;
                         $percent_price=(int)($total_weight/500);
-                        $pp_amount=($cod_cost*85/100)*$percent_price;
+                        $pp_amount=($cod_cost*($above_value/100))*$percent_price;
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{
@@ -341,12 +367,14 @@ class WalletprocessedController extends Controller
      */
     public function show(Request $request)
     {
-     
-        $vendor = $request->vid;
-        $orders = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))
-        ->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
-        
-        return $orders;
+        $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
+        $Clos = $order->last();
+        $Closing_balance=$Clos->current_wallet_bal;
+        $open=$order[0]->current_wallet_bal;
+        $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','=', $open)->get();
+        $opening_balance=$opening_data[0]->opening_bal;
+    
+        return response()->json([ 'order'=> $order,'closing_bal'=> $Closing_balance,'opening_bal'=> $opening_balance], 200);
          
     }
     /**

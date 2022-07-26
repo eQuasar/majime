@@ -43,6 +43,7 @@ class VendorRatecardController extends Controller
             'above' => 'required',
             'vendor' => 'required',
             'sms' => 'required',
+            'mjm_charges' => 'required',
             
          ]);
         
@@ -54,6 +55,7 @@ class VendorRatecardController extends Controller
         $vendorrate_data->after500gm= $request->above;
         $vendorrate_data->vid= $request->vendor;
         $vendorrate_data->sms_charges= $request->sms;
+        $vendorrate_data->majime_charges= $request->mjm_charges;
 
         $vendorrate_data->save();
     }

@@ -33,7 +33,7 @@
                   >
                     <template v-slot:first>
                       <b-form-select-option :value="0" disabled
-                        >-- Select Vendor --</b-form-select-option
+                        > Select Vendor </b-form-select-option
                       >
                     </template>
                   </b-form-select>
@@ -41,7 +41,7 @@
 
                 <b-form-group
                   id="input-group-cod"
-                  label="COD"
+                  label="Enter Value of COD"
                   label-for="input-cod"
                 >
                   <b-form-input
@@ -55,7 +55,7 @@
                 </b-form-group>
                 <b-form-group
                   id="input-group-codpercent"
-                  label="COD Percent"
+                  label="Enter Percentage of COD"
                   label-for="input-codpercent"
                 >
                   <b-form-input
@@ -64,12 +64,12 @@
                     v-model="codper"
                     type="text"
                     required
-                    placeholder="Enter COD Percentage"
+                    placeholder="COD Percentage "
                   ></b-form-input>
                 </b-form-group>
                 <b-form-group
                   id="input-group-above"
-                  label="After 500Gm "
+                  label="Enter Value When Weight is Above 500gm"
                   label-for="input-above"
                 >
                   <b-form-input
@@ -78,7 +78,7 @@
                     v-model="above"
                     type="text"
                     required
-                    placeholder="Enter Above 500gm "
+                    placeholder="After 500gm "
                   ></b-form-input>
                 </b-form-group>
                 <b-form-group
@@ -93,6 +93,21 @@
                     type="text"
                     required
                     placeholder="SMS Charges"
+                  ></b-form-input>
+                </b-form-group>
+
+                <b-form-group
+                  id="input-group-mjm"
+                  label="Enter Percentage of Majime Charges"
+                  label-for="input-mjm"
+                >
+                  <b-form-input
+                    id="input-sms"
+                    :value="this.mjm_charges"
+                    v-model="mjm_charges"
+                    type="text"
+                    required
+                    placeholder=" Majime Charges"
                   ></b-form-input>
                 </b-form-group>
 
@@ -142,11 +157,12 @@ export default {
       amount: "",
       cod: "",
       codper: "",
+      mjm_charges: "",
       above: "",
       sms: "",
       description: "",
       tranType: "",
-      vendor: null,
+      vendor: 0,
       country: "",
       phone: "",
       add: "",
@@ -239,6 +255,12 @@ export default {
       if (!this.vendor) {
         this.create_error += "Choose Vendor  ,";
       }
+      if (!this.mjm_charges) {
+        this.create_error += "Enter Majime Charges  ,";
+      }
+      if (!this.sms) {
+        this.create_error += "Enter SMS Charges  ,";
+      }
       if (this.create_error != "") {
         return false;
       }
@@ -249,7 +271,7 @@ export default {
       formData.append("above", this.above);
       formData.append("vendor", this.vendor);
       formData.append("sms", this.sms);
-
+      formData.append("mjm_charges", this.mjm_charges);
       master
         .vendor_ratecard(formData)
         .then((response) => {
@@ -261,6 +283,8 @@ export default {
           this.cod = "";
           this.codper = "";
           this.above = "";
+          this.mjm_charges = "";
+          this.sms = "";
           // this.country='';
           // this.phone='';
           // this.add='';

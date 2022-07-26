@@ -17,7 +17,7 @@
         <div class="card-body card">
           <div class="call-center-dashboard">
             <b-row>
-              <b-col xl="8" lg="8" md="8">
+              <b-col xl="8" lg="8" md="8" class="tbl-blk">
                 <b-alert show variant="danger" v-if="create_error">{{
                   create_error
                 }}</b-alert>
@@ -66,28 +66,14 @@
                 >
               </b-col>
             </b-row>
-            <div class="blue-bar"></div>
-            <div class="content_bar card list-appointments space-bottom">
-              <div class="col-sm-12">
-                <b-row>
-                  <b-col xl="5" lg="5" md="5">
-                    <b-form-group class="mb-0">
-                      Show
-                      <b-form-select
-                        id="per-page-select"
-                        v-model="perPage"
-                        :options="pageOptions"
-                        size="sm"
-                      ></b-form-select>
-                      entries
-                    </b-form-group>
-                  </b-col>
-                </b-row>
-              </div>
-            </div>
           </div>
         </div>
         <br />
+        <div class="card-body card">
+        <div class="balance">
+          Opening Balance<span>{{ values.opening_bal }}</span>
+        </div>
+        <br>
         <b-table
           striped
           hover
@@ -102,12 +88,22 @@
           :per-page="perPage"
           :current-page="currentPage"
           show-empty
+          class="tbl-blk"
         >
           <template #empty="scope">
             <p style="text-align: center">
               No record found, choose date filter to found the result.
             </p>
           </template>
+
+          <template v-slot:cell(created_at)="row">
+            <div class="my_tag">
+              <span v-for="tag in row.item.created_at.split(' ')" :tag="tag">
+                {{ tag }}
+              </span>
+            </div>
+          </template>
+
           <template v-slot:cell(oid)="row">
             {{ row.item.Order_id }}
           </template>
@@ -115,15 +111,43 @@
             <span :class="row.item.status"> {{ row.item.status }}</span>
           </template>
         </b-table>
+        <br><br>
+        <div class="balance">
+          Closing Balance<span>{{ values.closing_bal }}</span>
+        </div>
+        </div>
         <div class="text-center" v-if="seen">
           <b-spinner variant="primary" label="Text Centered"></b-spinner>
         </div>
-        <b-pagination
-          v-model="currentPage"
-          :total-rows="rows"
-          :per-page="perPage"
-          aria-controls="my-table"
-        ></b-pagination>
+        <br />
+        <div class="card-body card">
+          <div class="list-appointments">
+            <div class="col-sm-12">
+              <b-row>
+                <b-col xl="6" lg="6" md="6">
+                  <b-form-group class="mb-0">
+                    Show
+                    <b-form-select
+                      id="per-page-select"
+                      v-model="perPage"
+                      :options="pageOptions"
+                      size="sm"
+                    ></b-form-select>
+                    entries
+                  </b-form-group>
+                </b-col>
+                <b-col xl="6" lg="6" md="6">
+                  <b-pagination
+                  v-model="currentPage"
+                  :total-rows="rows"
+                  :per-page="perPage"
+                  aria-controls="my-table"
+                ></b-pagination>
+                </b-col>
+              </b-row>
+            </div>
+          </div>
+        </div>
       </div>
     </b-overlay>
   </b-container>
@@ -131,6 +155,7 @@
 <script>
 import wallet from "../../api/wallet.js";
 import user from "../../api/user.js";
+import order from "../../api/order.js";
 export default {
   props: {},
   mounted() {
@@ -140,6 +165,7 @@ export default {
     return {
       //ariaDescribedby: "",
       show: false,
+      tag: [],
       time: "",
       date: "",
       oid: "",
@@ -217,7 +243,7 @@ export default {
         },
         {
           key: "current_wallet_bal",
-          label: "Closing Balance",
+          label: "Wallet Balance",
           sortable: true,
         },
 
@@ -228,6 +254,7 @@ export default {
         // },
       ],
       items: [],
+      values: [],
       errors_create: [],
       successful: false,
       create_error: "",
@@ -240,7 +267,9 @@ export default {
   },
   methods: {
     onSubmit(event) {
+      this.show = true;
       event.preventDefault();
+      console.log(this.date_from);
       this.create_error = "";
       if (!this.date_from) {
         this.create_error += "Add date from,";
@@ -254,11 +283,15 @@ export default {
       let formData = new FormData();
       formData.append("date_from", this.date_from);
       formData.append("date_to", this.date_to);
-
-      appointment
-        .appointmentSearch(formData)
+      formData.append("vid", this.vid);
+      order
+        .walletSearch(formData)
         .then((response) => {
-          this.items = response.data.data;
+          var resp = response.data;
+          this.items = resp.order;
+          this.values = resp;
+          this.show = false;
+          console.log(this.values);
         })
         .catch((error) => {
           console.log(error);
@@ -302,11 +335,11 @@ export default {
       wallet
         .getWalletdetail(formData)
         .then((response) => {
-          console.log(response);
-          this.items = response.data;
-          // this.countrys = response.data.data;
-          console.log(this.items);
-          //this.seen = false;
+          var resp = response.data;
+          this.items = resp.order;
+          this.values = resp;
+          this.show = false;
+          console.log(this.values);
         })
         .catch((response) => {
           this.successful = false;
