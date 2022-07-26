@@ -13,6 +13,27 @@
           <br />
         </div>
       </div>
+
+      <div class="status-block">
+        <div class="stats">
+          <h3>In Transit Orders</h3>
+          <span>Total Orders: {{ stats.inTransitCount }}</span>
+          <p>Sale Amount: <i>Rs </i>{{ stats.inTransitSaleAmount }}</p>
+        </div>
+
+        <div class="stats">
+          <h3>Unprocessed</h3>
+          <span>Total Orders: {{ stats.unProcessedCount }}</span>
+          <p>Sale Amount: <i>Rs </i>{{ stats.unProcessedSaleAmount }}</p>
+        </div>
+
+        <div class="stats">
+          <h3>Next Remittance</h3>
+          <span>Due Date {{ stats.nextDate }}</span>
+          <p><i>Due Amount</i>{{ stats.dueAmount }}</p>
+        </div>
+      </div>
+      <br />
       <div class="content_bar">
         <div class="card-body card">
           <div class="call-center-dashboard">
@@ -70,51 +91,51 @@
         </div>
         <br />
         <div class="card-body card">
-        <div class="balance">
-          Opening Balance<span>{{ values.opening_bal }}</span>
-        </div>
-        <br>
-        <b-table
-          striped
-          hover
-          responsive
-          :items="items"
-          :sort-by.sync="sortBy"
-          :sort-desc.sync="sortDesc"
-          sort-icon-left
-          :filter-included-fields="filterOn"
-          :filter="filter"
-          :fields="fields"
-          :per-page="perPage"
-          :current-page="currentPage"
-          show-empty
-          class="tbl-blk"
-        >
-          <template #empty="scope">
-            <p style="text-align: center">
-              No record found, choose date filter to found the result.
-            </p>
-          </template>
+          <div class="balance">
+            Opening Balance<span>{{ values.opening_bal }}</span>
+          </div>
+          <br />
+          <b-table
+            striped
+            hover
+            responsive
+            :items="items"
+            :sort-by.sync="sortBy"
+            :sort-desc.sync="sortDesc"
+            sort-icon-left
+            :filter-included-fields="filterOn"
+            :filter="filter"
+            :fields="fields"
+            :per-page="perPage"
+            :current-page="currentPage"
+            show-empty
+            class="tbl-blk"
+          >
+            <template #empty="scope">
+              <p style="text-align: center">
+                No record found, choose date filter to found the result.
+              </p>
+            </template>
 
-          <template v-slot:cell(created_at)="row">
-            <div class="my_tag">
-              <span v-for="tag in row.item.created_at.split(' ')" :tag="tag">
-                {{ tag }}
-              </span>
-            </div>
-          </template>
+            <template v-slot:cell(created_at)="row">
+              <div class="my_tag">
+                <span v-for="tag in row.item.created_at.split(' ')" :tag="tag">
+                  {{ tag }}
+                </span>
+              </div>
+            </template>
 
-          <template v-slot:cell(oid)="row">
-            {{ row.item.Order_id }}
-          </template>
-          <template v-slot:cell(status)="row">
-            <span :class="row.item.status"> {{ row.item.status }}</span>
-          </template>
-        </b-table>
-        <br><br>
-        <div class="balance">
-          Closing Balance<span>{{ values.closing_bal }}</span>
-        </div>
+            <template v-slot:cell(oid)="row">
+              {{ row.item.Order_id }}
+            </template>
+            <template v-slot:cell(status)="row">
+              <span :class="row.item.status"> {{ row.item.status }}</span>
+            </template>
+          </b-table>
+          <br /><br />
+          <div class="balance">
+            Closing Balance<span>{{ values.closing_bal }}</span>
+          </div>
         </div>
         <div class="text-center" v-if="seen">
           <b-spinner variant="primary" label="Text Centered"></b-spinner>
@@ -138,11 +159,11 @@
                 </b-col>
                 <b-col xl="6" lg="6" md="6">
                   <b-pagination
-                  v-model="currentPage"
-                  :total-rows="rows"
-                  :per-page="perPage"
-                  aria-controls="my-table"
-                ></b-pagination>
+                    v-model="currentPage"
+                    :total-rows="rows"
+                    :per-page="perPage"
+                    aria-controls="my-table"
+                  ></b-pagination>
                 </b-col>
               </b-row>
             </div>
@@ -255,6 +276,7 @@ export default {
       ],
       items: [],
       values: [],
+      stats: [],
       errors_create: [],
       successful: false,
       create_error: "",
@@ -307,6 +329,7 @@ export default {
         this.vid = JSON.parse(localStorage.getItem("ivid"));
         localStorage.setItem("ivid", this.vid);
         this.getWalletDetail(this.vid);
+        this.getStats(this.vid);
         this.show = false;
       } else {
         this.show = true;
@@ -318,6 +341,7 @@ export default {
             this.vid = response.data;
             localStorage.setItem("ivid", this.vid);
             this.getWalletDetail(this.vid);
+            this.getStats(this.vid);
             this.show = false;
           })
           .catch((response) => {
@@ -344,6 +368,22 @@ export default {
         .catch((response) => {
           this.successful = false;
           alert("something went wrong");
+        });
+    },
+
+    getStats(vid) {
+      let formData = new FormData();
+      console.log("GetStat");
+      wallet
+        .getStats(vid)
+        .then((response) => {
+          var resp = response.data;
+          this.stats = resp;
+          console.log(this.stats);
+        })
+        .catch((response) => {
+          this.successful = false;
+          alert("Stats Not Available");
         });
     },
   },

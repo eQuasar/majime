@@ -45,7 +45,7 @@
                     
 					    <b-form-input  type="search" placeholder="Type to Search"></b-form-input>
 					    <b-input-group-append>
-					      <b-button  @click="Search">Search</b-button>
+					      <b-button  v-model="filter" @click="Search">Search</b-button>
 					    </b-input-group-append>
 					
               </b-col>
@@ -140,7 +140,7 @@
       
                           <b-button type="submit" @click.prevent="assign_status" variant="primary">Submit</b-button>
                  </b-form> 
-     </b-modal>
+          </b-modal>
       </b-overlay>
      </b-container>
     </template>
@@ -194,7 +194,7 @@
         perPage: 10,
         currentPage: 1,
         pageOptions: [5, 10, 15, 20, 50, 100],
-        filter: null,
+        filter: '',
         filterOn: [],
         fields: [
         {
@@ -568,9 +568,9 @@ computed: {
       Search(){
       	let formData = new FormData();
           formData.append("filter", this.filter);
-            order.orderSearch(formData)
+            order.filterSearch(formData)
               .then((response) => {    
-                      this.items=response.data;
+                      this.item=response.data;
                       this.show=false;
                       console.log(this.items);
                                })
@@ -579,7 +579,7 @@ computed: {
                   if (error.response.status == 422) {
                       this.errors_create = error.response.data.errors;
                   }
-                      });
+              });
       }
   },
 };  

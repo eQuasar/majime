@@ -55,6 +55,13 @@ class OrderController extends Controller {
         return response()->json([ 'order'=> $order,'closing_bal'=> $Closing_balance,'opening_bal'=> $opening_balance], 200);
 
     }
+     public function filter_Search (Request $request) {
+
+        // whereBetween(DB::raw('DATE(created_at)'), [$startDate, $endDate])->get();
+        
+        dd($request);die();
+
+    }
     public function order_Profile($oid) {
         $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.oid', '=', $oid)->where('orders.vid', '=', intval($_REQUEST['vid']))->where('billings.vid', '=', intval($_REQUEST['vid']))->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($_REQUEST['vid']) . " GROUP BY line_items.order_id) as quantity"))->get();
         return $order;

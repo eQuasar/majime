@@ -10,5 +10,8 @@ export default {
     complete_downloadsheet(data) {
         return axios.post('complete_download_sheet', data)
     },
+    getStats(vid) {
+        return axios.get('stat/'+vid)
+    }   
 
 }

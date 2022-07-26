@@ -160,4 +160,30 @@ class ProductController extends Controller {
         }
         return $orderItems;
     }
+    function stat($vid) {
+        
+        $dtobook='dtobooked';
+        $intrans='intransit';
+        $dtointrans='dtointransit';
+        $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dtobook,$intrans,$dtointrans])->get();
+        // dd($orders);die();
+        $order_count=count($orders);
+        $unprocessed_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dtobook,$intrans,$dtointrans])->get();
+        $tomorrow = date("Y-m-d", strtotime('tomorrow'));
+        $stats['inTransitCount'] = $order_count;
+        // dd($stats);die();
+        $stats['inTransitSaleAmount'] = "12345";
+        $stats['unProcessedCount'] =  "1234";
+        $stats['unProcessedSaleAmount'] =  "123";
+        $stats['nextDate'] = $tomorrow;
+        $stats['dueAmount'] = "1111";
+        return $stats;
+        
+    }
+
+
+
+
+
+
 }

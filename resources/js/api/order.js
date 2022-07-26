@@ -129,7 +129,10 @@ export default {
     assignwallet(data){
         return axios.post('assign_wallet', data)
     },
-    walletSearch(data) {
-        return axios.post('wallet_Search',data)
-    }
+    filterSearch(data) {
+        return axios.post('filter_Search', data)
+    },
+    // walletSearch(data) {
+    //     return axios.post('wallet_Search',data)
+    // }
 }
