@@ -59,6 +59,8 @@
               <p><strong>Phone:</strong> {{ phone }}</p>
               <p><strong>Email:</strong> {{ email }}</p>
               <p><strong>Payment Method:</strong> {{ payment_method }}</p>
+              <p><strong>Total Amount:</strong> {{ total_amount }}</p>
+              <p><strong>Wallet Used:</strong> {{ wallet_price }}</p>
             </b-col>
             <b-col xl="4" lg="4" md="4">
               <h3>Billing</h3>
@@ -106,15 +108,6 @@
               <template v-slot:cell(sr)="row">
                 {{ (currentPage - 1) * perPage + row.index + 1 }}
               </template>
-              <template v-slot:cell(wallet_used)="row">
-                <span v-if="amount == row.item.total">0</span>
-                <span v-else>{{amount}}</span>
-              </template>
-              <template v-slot:cell(paid_amount)="row">
-                <textInput
-                :value="getValue(row.item.total)"
-                ></textInput>
-              </template>
             </b-table>
           </b-col>
         </b-row>
@@ -151,17 +144,17 @@ export default {
       address_2: "",
       // oid: 0,
       email: "",
+      total_amount:"",
       phone: "",
       payment_method: "",
       state: "",
       city: "",
-      order_total:"",
+      wallet_price:"",
       postcode: "",
       country: "",
       status: "",
       total: "",
       filter: null,
-      paid_amt:0,
       filterOn: [],
       date_created_gmt: "",
       amount: 0,
@@ -204,16 +197,6 @@ export default {
           sortable: true,
         },
         {
-          key: 'wallet_used',
-          label: 'Wallet Used',
-          sortable: true
-        },
-        {
-          key: 'paid_amount',
-          label: 'Paid Amount',
-          sortable: true
-        },
-        {
           key: "total",
           label: "Total",
           sortable: true,
@@ -245,14 +228,13 @@ export default {
             this.date_created_gmt = response.data[0].date_created_gmt;
             this.status = response.data[0].status;
             this.oid = response.data[0].oid;
+            this.total_amount = response.data[0].total_main;
+            this.wallet_price = response.data[0].total_main-response.data[0].total;
           }
         })
         .catch((error) => {
           console.log(error);
         });
-    },
-    getValue(property) {
-      return this.property;
     },
     returnAWB() {
       // alert("asdas");
@@ -274,9 +256,6 @@ export default {
           alert("something went wrong");
         });
     },
-    total: function() {
-          return parseInt(this.amount) + parseInt(this.paid_amt);
-      }.
     goBack() {
       return this.$router.go(-1);
     },
