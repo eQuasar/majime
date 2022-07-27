@@ -41,11 +41,11 @@
                <b-col xl="4" lg="4" md="4" class="search_field">
                     <b-form-input
                         id="filter-input"
-                        v-model="filter"
+                        
                         placeholder="Type to Search"
                       ></b-form-input>
                       <b-input-group-append>
-                        <b-button :disabled="!filter" @click="filter = ''">Search</b-button>
+                        <b-button  v-model="filter"  @click="Search">Search</b-button>
                       </b-input-group-append>
                   </b-col>
             </b-row>

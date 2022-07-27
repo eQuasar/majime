@@ -22,14 +22,7 @@ class WalletprocessedController extends Controller
      */
     public function index()
     {
-        // if ($request->allSelected) {
-        //     $listImp = explode(',', $request->allSelected);
-        //     $vid = intval($request->vid);
-        //     $orders[] = DB::table("orders")->join('line_items', 'orders.oid', '=', 'line_items.order_id')->select("orders.oid as OrderID", "orders.date_created as OrderDate", "line_items.product_id as Item ID", "line_items.name as Item Name", "line_items.sku as SKU", "line_items.quantity as Qty")->where('orders.vid', $vid)->where('line_items.vid', $vid)->orderBy('oid', 'DESC')->get();
-        // } else {
-        //     $orders[] = DB::table("orders")->join('line_items', 'orders.oid', '=', 'line_items.order_id')->select("orders.oid as OrderID", "orders.date_created as OrderDate", "line_items.product_id as Item ID", "line_items.name as Item Name", "line_items.sku as SKU", "line_items.quantity as Qty")->where('orders.vid', intval($request->vid))->where('orders.status', "confirmed")->where('line_items.vid', intval($request->vid))->get();
-        // }
-        // return $orders;
+        
     }
 
     /**
@@ -53,23 +46,25 @@ class WalletprocessedController extends Controller
            
 
         $pw=0;
+        //if single value passed 
         if ($request->allSelected == "false")
         {
             $orders[]=$request->oid;
         }
+        // multiple value passed through checkbox
         else
         {
             $orders=explode(',', $request->allSelected);
             
         }
-         //echo count($orders);
-        $vendor = $request->vid;
         
-        // $orders = DB::table("walletprocesseds")->get();
+        $vendor = $request->vid;
+        //using for loop for more than one order 
         for($y = 0;$y < count($orders);$y++) 
         {
             $order_table=DB::table("orders")->where('orders.oid','=',intval($orders[$y]))->where('orders.vid','=',$vendor)->get();
-            if($order_table[0]->status== 'completed')
+            //assign order status 
+            if($order_table[0]->status== 'completed' || $order_table[0]->status== 'closed')
             {
                 $mystatus= 'Delivered';
             }
@@ -86,11 +81,10 @@ class WalletprocessedController extends Controller
                 $mystatus= 'Delivered';
             }
             $data=DB::table("billings")->where('billings.order_id','=',intval($orders[$y]))->where('billings.vid','=',$order_table[0]->vid)->get();
-            // $zone=DB::table("zonedetails")->where('zonedetails.pincode','=',$data[0]->postcode)->get();
             $origin_pin=141001;
+            //get API through Zone 
             $curl = curl_init();
             curl_setopt_array($curl, array(
-            // CURLOPT_URL => 'https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=S&cgm=250&o_pin=141001&d_pin=110011&ss=Delivered',
             CURLOPT_URL => 'https://track.delhivery.com/api/kinko/v1/invoice/charges/.json?md=S&cgm=250&o_pin=141001&d_pin=' .$data[0]->postcode. '&ss=' .$mystatus,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
@@ -108,17 +102,25 @@ class WalletprocessedController extends Controller
             $jsonResp = json_decode($response);
             $zone=$jsonResp[0]->zone;
             $zone=substr($zone, 0, 1);
-
-            $zone_rate=DB::table("zoneratecards")->where('zoneratecards.zoneno','like',$zone)->get();
+            //Get Rate List according to Zone no 
+            $zone_rate=DB::table("zoneratecards")->where('zoneratecards.zoneno','like',$zone)->where('zoneratecards.vid','=',$order_table[0]->vid)->get();
+            //Get Line Items through order id 
             $line_items=DB::table("line_items")->where('line_items.order_id','=',intval($orders[$y]))->where('line_items.vid','=',$order_table[0]->vid)->get();
+            //Get quantity from line items
             $line_items_qty=DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = $orders[$y] AND line_items.vid = " . intval($order_table[0]->vid) . " GROUP BY line_items.order_id) as quantity"))->get(); 
+            //Get Product Weight through product id 
             $product_weight=DB::table("products")->where('products.product_id','=',$line_items[0]->product_id)->get();  
+            //Get rate card according to the Vendor 
             $vendor_rate=DB::table("vendor_ratecards")->where('vendor_ratecards.vid','=',$order_table[0]->vid)->get();
+            //SMS Charges according to the vendor 
             $sms_cost=$vendor_rate[0]->sms_charges;
+            //Majime Cost according to the vendor
             $mjm_cost=$vendor_rate[0]->majime_charges; 
+            //if weight is above 500g charges accordingly 
             $above_value=$vendor_rate[0]->after500gm;
             $oc_balance=DB::table("opening_closing_tables")->where('opening_closing_tables.vid','=',$order_table[0]->vid)->orderBy('id','DESC')->limit(1)->get();
             $sale_Amount=$order_table[0]->total;
+            //calculate majime cost 
             $majime_cost=(($order_table[0]->total)*($mjm_cost/100));
             if($order_table[0]->payment_method == 'cod')
             {
@@ -132,29 +134,30 @@ class WalletprocessedController extends Controller
             }else{
                 $opening_balance=0;
             }
-
-            if($mystatus= 'Delivered')
+            if($mystatus== 'Delivered')
             {
                 $zone_price=$zone_rate[0]->fwd;
             }
-            elseif($mystatus= 'DTO')
+            elseif($mystatus== 'DTO')
             {
                 $zone_price=$zone_rate[0]->dto;
             }
-            elseif($mystatus= 'RTO')
+            elseif($mystatus== 'RTO')
             {
                 $zone_price=$zone_rate[0]->rto;
             }
-            
+
             $zone_price = $zone_price*1.18;
-          
+            // if order status is dto-refunded or completed
             if($order_table[0]->status != 'rto-delivered')
-            {
+            {   
+                    //caluclate logistic cost if payment method id COD
                 if($order_table[0]->payment_method == 'cod')
                 {   
                     $Vcodper = $vendor_rate[0]->codper;
-                    $getval = ceil($sale_Amount*($Vcodper/100));
-                    if($getval > $zone_price){
+                    $getval = $sale_Amount*($Vcodper/100);
+                    $cod_charges = $vendor_rate[0]->cod;
+                    if($getval > $vendor_rate[0]->cod){
                         $cod_charges = $getval;
                     }
                     $pw=$product_weight[0]->weight;
@@ -162,38 +165,25 @@ class WalletprocessedController extends Controller
                     {   
                         $pw=250;
                     }
-                    //  $qty=$line_items[0]->quantity; 
                     $qty=$line_items_qty[0]->quantity;
                     $total_weight=($pw)*($qty);
                     if($total_weight>500)
                     {
-                        // $cod_cost=$vendor_rate[0]->cod;
                         $cod_cost=$zone_price;
                         $percent_price=(int)($total_weight/500);
                         $pp_amount=($cod_cost*($above_value/100))*$percent_price;
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{
-                        $logistic_cost=$vendor_rate[0]->cod+($vendor_rate[0]->cod*2/100);
-                    }
-                    // if($order_table[0]->status== 'dto-refunded' || $order_table[0]->status== 'dto-refunded'){
-                       
-                    //     $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
-                    //     $closing_bal=$opening_balance+$net_amount;
-                    // }else{
-                        
+                        $cod_cost=$zone_price;
+                        $logistic_cost=$cod_cost+$cod_charges;
+                    }                        
                         $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                         $closing_bal=$opening_balance+$net_amount;
-                    // }
                 }
+                //caluclate logistic cost if payment method is prepaid
                 else{
-                   
-                    $Vcodper = $vendor_rate[0]->codper;
-                    $getval = ceil($sale_Amount*($Vcodper/100));;
-                    if($getval > $zone_price){
-                        $cod_charges = $getval;
-                    }
-                    // $pw=$product_weight[0]->weight;
+                    $cod_charges = 0;
                     if($pw==0)
                     {   
                         $pw=250;
@@ -203,40 +193,28 @@ class WalletprocessedController extends Controller
                     if($total_weight>500)
                     {
                         $cod_cost=$zone_price;
-                       
                         $percent_price=(int)($total_weight/500);
                         $pp_amount=($cod_cost*85/100)*$percent_price;
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{
-                        $logistic_cost=$vendor_rate[0]->cod+($vendor_rate[0]->cod*2/100);
+                        $cod_cost=$zone_price;
+                        $logistic_cost=$cod_cost+$cod_charges;
                     }
                     $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                     $closing_bal=$opening_balance+$net_amount;
-                    // if($order_table[0]->status== 'dto-refunded'){
-                    //     $net_amount=$logistic_cost+$majime_cost+$sms_cost+$payment_gateway;
-                    //     $closing_bal=$opening_balance-$net_amount;
-                    // }else{
-                    //     $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
-                    //     $closing_bal=$opening_balance-$net_amount;
-                    // }
+                   
                 }
             }else{
+                //order status is rto-delivered
                 $logistic_cost=$zone_price;
-                // $sms_cost=2*2;       
-                // $net_amount=$logistic_cost+$sms_cost;
                 $majime_cost=0;
                 $net_amount=0-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                 $closing_bal=$opening_balance+$net_amount;
                 
             }
-            // echo $cod_cost;
-            // echo $pp_amount;
-            // echo $logistic_cost;
-            // echo $percent_price;
-
             $wallet=$request->walletvalue;
-            DB::table('orders')->where('orders.oid', intval($orders[$y]))->where('vid', intval($request->vid))->update(['wallet_processed' => $wallet]);
+            //insert values into Wallet Processed table into database
             $Wallet_order_data[]=[     
                 'date_created'=>$order_table[0]->date_created,
                 'transaction_id'=>"N/A",
@@ -254,95 +232,16 @@ class WalletprocessedController extends Controller
                 'current_wallet_bal'=>$closing_bal,
                 'order_count'=> $line_items[0]->quantity,
                 'zone_amt'=> $zone_price
-            ];    
-            walletprocessed::insert($Wallet_order_data);   
-
+            ];   
+            walletprocessed::insert($Wallet_order_data); 
+            // insert values into opening closing table into database  
             DB::table('opening_closing_tables')->insert(
                 ['vid' => $request->vid, 'opening_bal' => $opening_balance, 'closing_bal' => $closing_bal, 'created_at' => date('Y-m-d h:m:s'), 'updated_at' => date('Y-m-d h:m:s')]
             );
-
-
+            // update order table with wallet processed 
+            DB::table('orders')->where('orders.oid', intval($orders[$y]))->where('vid', intval($request->vid))->update(['wallet_processed' => $wallet]);
         }   
         return response()->json(['error' => false, 'msg' => "Wallet Processed Successfully", "ErrorCode" => "000"], 200);
-        // if ($request->allSelected == "false")
-        // {
-        //     $wallet=$request->walletvalue;
-        //       $order_data=DB::table('orders')->where('orders.oid', intval($request->oid))->where('vid', intval($request->vid))
-        //       ->select("orders.*","orders.oid as orderno",
-        //        DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-        //              WHERE line_items.order_id = orders.oid 
-        //              GROUP BY line_items.order_id) as Quantity"),
-        //            (DB::raw('(total*(5/100)) AS m_cost')),(DB::raw('(total*(5/100)) AS v_cost')),
-        //            (DB::raw('(total*(2/100)) AS gateway_cost')),(DB::raw('(total*(2/100)) AS s_cost')),
-        //            (DB::raw('(total*(93/100)) AS net_amount'))
-        //            )->get();
-                   
-        //         foreach($order_data as $orderdata)
-        //         {
-        //              $Wallet_order_data[]=[     
-        //                 'date_created'=>$orderdata->date_created,
-        //                 'oid'=>$orderdata->oid,
-        //                 'vid'=>$orderdata->vid,
-        //                 'payment_mode'=>$orderdata->payment_method,
-        //                 'status'=>$orderdata->status,
-        //                 'sale_amount'=>$orderdata->total,
-        //                 'Wallet_used'=>$orderdata->total,
-        //                 'logistic_cost'=>$orderdata->total,
-        //                 'payment_gateway_charges'=>$orderdata->gateway_cost,
-        //                 'sms_cost'=>$orderdata->s_cost,
-        //                 'majime_charges'=>$orderdata->s_cost,
-        //                 'net_amount'=>$orderdata->net_amount,
-        //                 'current_wallet_bal'=>$orderdata->total,
-        //                 'order_count'=> $orderdata->Quantity,
-        //                 'created_at'=> $orderdata->created_at,
-        //                 'updated_at'=> $orderdata->updated_at,
-        //              ];    
-        //              walletprocessed::insert($Wallet_order_data);       
-        //       }            
-           
-        //     DB::table('orders')->where('orders.oid', intval($request->oid))->where('vid', intval($request->vid))->update(['wallet_processed' => $wallet]);
-        //     return response()->json(['error' => true, 'msg' => " Wallet Data Processed", "ErrorCode" => "000"], 200);
-        // }
-        // else
-        // {
-        //     $main = explode(',', $request->allSelected);
-        //     $wallet=$request->walletvalue;
-        //     for ($i = 0;$i < count($main);$i++) 
-        //      {
-        //       $order_data=DB::table('orders')->where('orders.oid', intval($main[$i]))->where('vid', intval($request->vid))
-        //       ->select("orders.*","orders.oid as orderno",
-        //        DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-        //              WHERE line_items.order_id = orders.oid 
-        //              GROUP BY line_items.order_id) as Quantity"),
-        //            (DB::raw('(total*(5/100)) AS m_cost')),(DB::raw('(total*(5/100)) AS v_cost')),
-        //            (DB::raw('(total*(2/100)) AS gateway_cost')),(DB::raw('(total*(2/100)) AS s_cost')),
-        //            (DB::raw('(total*(93/100)) AS net_amount'))
-        //            )->get();
-        //         foreach($order_data as $orderdata)
-        //         {
-        //              $Wallet_order_data[]=[
-        //                 'date_created'=>$orderdata->date_created,
-        //                 'oid'=>$orderdata->oid,
-        //                 'vid'=>$orderdata->vid,
-        //                 'payment_mode'=>$orderdata->payment_method,
-        //                 'status'=>$orderdata->status,
-        //                 'sale_amount'=>$orderdata->total,
-        //                 'Wallet_used'=>$orderdata->total,
-        //                 'logistic_cost'=>$orderdata->total,
-        //                 'payment_gateway_charges'=>$orderdata->gateway_cost,
-        //                 'sms_cost'=>$orderdata->s_cost,
-        //                 'majime_charges'=>$orderdata->s_cost,
-        //                 'net_amount'=>$orderdata->net_amount,
-        //                 'current_wallet_bal'=>$orderdata->total,
-        //                 'order_count'=> $orderdata->Quantity,
-        //              ];           
-        //       }
-        //     DB::table('orders')->where('orders.oid', intval($main[$i]))->where('vid', intval($request->vid))->update(['wallet_processed' => $wallet]);
-        //     }
-        //     walletprocessed::insert($Wallet_order_data);
-        //     return response()->json(['error' => true, 'msg' => " Wallet Data Processed", "ErrorCode" => "000"], 200);
-        // }
-       
     }
 
     /**
@@ -353,13 +252,16 @@ class WalletprocessedController extends Controller
      */
     public function show(Request $request)
     {
+        //get wallet processed table
         $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
+        //get last element of array 
         $Clos = $order->last();
+        //calculate closing values
         $Closing_balance=$Clos->current_wallet_bal;
         $open=$order[0]->current_wallet_bal;
-        $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','=', $open)->get();
+        //get opening balance 
+        $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.vid', intval($request->vid))->where('opening_closing_tables.closing_bal','like', $open)->get();
         $opening_balance=$opening_data[0]->opening_bal;
-    
         return response()->json([ 'order'=> $order,'closing_bal'=> $Closing_balance,'opening_bal'=> $opening_balance], 200);
          
     }

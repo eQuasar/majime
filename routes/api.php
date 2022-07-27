@@ -115,7 +115,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('Vendor_rate','VendorRatecardController@show')->name('Vendor_rate');
 	Route::get('pco/{vid}', 'OrderController@Complete_orders')->name('Complete_orders');
 	// Route::get('filter_Search', 'OrderController@filter_Search')->name('filter_Search');
-	Route::post('filter_Search', 'OrderController@filter_Search')->name('filter_Search');
+	Route::post('filter_Search/filter', 'OrderController@filter_Search')->name('filter_Search');
 	Route::get('stat/{vid}', 'ProductController@stat')->name('stat');
 
 	// Route::get('Complete_orders','OrderController@show')->name('Complete_orders');
