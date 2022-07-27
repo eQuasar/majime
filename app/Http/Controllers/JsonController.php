@@ -938,8 +938,9 @@ class JsonController extends Controller
 			 	'parent_name'=>$LineItem->parent_name,
 			];
 	  
-	  	LineItems::insert($LineItems);
+	  	
 	  	}
+		  LineItems::insert($LineItems);
 	}
 
 	/*public function OrderMetaData($OrderID,$Order_MetaData)
@@ -1035,6 +1036,7 @@ class JsonController extends Controller
 			 	'href'=>$linkData->href,
 			];
 	    }
-	    Order_links::insert($Order_links);
+	   
     }
+	Order_links::insert($Order_links);
 }

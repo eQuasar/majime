@@ -1,93 +1,117 @@
 <template>
-<b-container fluid>
+  <b-container fluid>
     <div class="content_bar">
-        <div class="card-body">
+      <div class="card-body">
+        <b-row>
+          <b-col xl="12" lg="12" md="12">
             <b-row>
-                <b-col xl="12" lg="12" md="12">
-                    <b-row>
-                        <b-col xl="6" lg="6" md="6">
-                            <div class="profile_info">
-                                <h3 class="own-heading">
-                                    <p class="h2 mb-2">
-                                        <strong>Order ID:{{ oid }}</strong>
-                                    </p>
-                                    <strong>
-                                        <router-link
-                                            :to="{
-                        name: 'OrderProfile',
-                        params: { oid: this.oid.toString() },
-                      }"
-                                        ></router-link>
-                                    </strong>
-                                </h3>
-                            </div>
-                        </b-col>
-                        <b-col xl="6" lg="6" md="6">
-                            <template>
-                                <span v-if="this.status != 'dtobooked'">
-                                    <span v-if="this.status != 'delivered-to-customer'"><b-button pill variant="download-btn btn btn-primary" @click="returnAWB">Return Order</b-button></span>
-                                </span>
-                                &nbsp;&nbsp;<b-button pill variant="download-btn btn btn-primary" @click="goBack">Go Back</b-button>
-                            </template>
-                        </b-col>
-                    </b-row>
-                </b-col>
+              <b-col xl="6" lg="6" md="6">
+                <div class="profile_info">
+                  <h3 class="own-heading">
+                    <p class="h2 mb-2">
+                      <strong>Order ID:{{ oid }}</strong>
+                    </p>
+                    <strong>
+                      <router-link
+                        :to="{
+                          name: 'OrderProfile',
+                          params: { oid: this.oid.toString() },
+                        }"
+                      ></router-link>
+                    </strong>
+                  </h3>
+                </div>
+              </b-col>
+              <b-col xl="6" lg="6" md="6">
+                <template>
+                  <span v-if="this.status != 'dtobooked'">
+                    <span v-if="this.status != 'delivered-to-customer'"
+                      ><b-button
+                        pill
+                        variant="download-btn btn btn-primary"
+                        @click="returnAWB"
+                        >Return Order</b-button
+                      ></span
+                    >
+                  </span>
+                  &nbsp;&nbsp;<b-button
+                    pill
+                    variant="download-btn btn btn-primary"
+                    @click="goBack"
+                    >Go Back</b-button
+                  >
+                </template>
+              </b-col>
             </b-row>
+          </b-col>
+        </b-row>
+      </div>
+    </div>
+    <div class="order-info">
+      <div class="content_bar card">
+        <div class="card-body">
+          <b-row>
+            <b-col xl="4" lg="4" md="4">
+              <h3>General</h3>
+              <p><strong>Order Date:</strong> {{ date_created_gmt }}</p>
+              <p><strong>Status:</strong> {{ status }}</p>
+              <p><strong>Name:</strong> {{ first_name }} {{ last_name }}</p>
+              <p><strong>Phone:</strong> {{ phone }}</p>
+              <p><strong>Email:</strong> {{ email }}</p>
+              <p><strong>Payment Method:</strong> {{ payment_method }}</p>
+            </b-col>
+            <b-col xl="4" lg="4" md="4">
+              <h3>Billing</h3>
+              <p><strong>First Name:</strong> {{ first_name }}</p>
+              <p><strong>Last Name:</strong> {{ last_name }}</p>
+              <p>
+                <strong>Address:</strong> {{ address_1 }}<br />
+                {{ address_2 }}<br />
+                {{ city }}, {{ state }} {{ postcode }}, {{ country }}
+              </p>
+            </b-col>
+            <b-col xl="4" lg="4" md="4">
+              <h3>Shipping</h3>
+              <p><strong>First Name:</strong> {{ first_name }}</p>
+              <p><strong>Last Name:</strong> {{ last_name }}</p>
+              <p>
+                <strong>Address:</strong> {{ address_1 }}<br />
+                {{ address_2 }}<br />
+                {{ city }}, {{ state }} {{ postcode }}, {{ country }}
+              </p>
+            </b-col>
+          </b-row>
         </div>
       </div>
-      <div class="order-info">
-        <div class="content_bar card">
-          <div class="card-body">
-              <b-row>
-                  <b-col xl="4" lg="4" md="4">
-                      <h3>General</h3>
-                      <p><strong>Order Date:</strong> {{ date_created_gmt }}</p>
-                      <p><strong>Status:</strong> {{ status }}</p>
-                      <p><strong>Name:</strong> {{ first_name }} {{ last_name }}</p>
-                      <p><strong>Phone:</strong> {{ phone }}</p>
-                      <p><strong>Email:</strong> {{ email }}</p>
-                      <p><strong>Payment Method:</strong> {{ payment_method }}</p>
-                  </b-col>
-                  <b-col xl="4" lg="4" md="4">
-                      <h3>Billing</h3>
-                      <p><strong>First Name:</strong> {{ first_name }}</p>
-                      <p><strong>Last Name:</strong> {{ last_name }}</p>
-                      <p>
-                          <strong>Address:</strong> {{ address_1 }}<br />
-                          {{ address_2 }}<br />
-                          {{ city }}, {{ state }} {{ postcode }}, {{ country }}
-                      </p>
-                  </b-col>
-                  <b-col xl="4" lg="4" md="4">
-                      <h3>Shipping</h3>
-                      <p><strong>First Name:</strong> {{ first_name }}</p>
-                      <p><strong>Last Name:</strong> {{ last_name }}</p>
-                      <p>
-                          <strong>Address:</strong> {{ address_1 }}<br />
-                          {{ address_2 }}<br />
-                          {{ city }}, {{ state }} {{ postcode }}, {{ country }}
-                      </p>
-                  </b-col>
-              </b-row>
-          </div>
-        </div>
-      </div>
+    </div>
     <div class="tenpxdiv"></div>
     <div class="content_bar">
-        <div class="card-body">
-            <b-row>
-                <b-col xl="12" lg="12" md="12" class="d-table">
-                    <b-table striped hover responsive :items="items" :sort-by.sync="sortBy" sort-icon-left :filter-included-fields="filterOn" :filter="filter" :fields="fields" :per-page="perPage" :current-page="currentPage" show-empty>
-                        <template v-slot:cell(sr)="row">
-                            {{ (currentPage - 1) * perPage + row.index + 1 }}
-                        </template>
-                    </b-table>
-                </b-col>
-            </b-row>
-        </div>
+      <div class="card-body">
+        <b-row>
+          <b-col xl="12" lg="12" md="12" class="d-table">
+            <b-table
+              striped
+              hover
+              responsive
+              :items="items"
+              :sort-by.sync="sortBy"
+              sort-icon-left
+              :filter-included-fields="filterOn"
+              :filter="filter"
+              :fields="fields"
+              :per-page="perPage"
+              :current-page="currentPage"
+              show-empty
+            >
+              <template v-slot:cell(sr)="row">
+                {{ (currentPage - 1) * perPage + row.index + 1 }}
+              </template>
+            </b-table>
+          </b-col>
+        </b-row>
+      </div>
     </div>
-</b-container>
-
+  </b-container>
 </template>
 
 <script>
@@ -97,6 +121,7 @@ export default {
     oid: {
       type: String,
       required: true,
+      oid: 0,
     },
   },
   mounted() {
@@ -119,8 +144,8 @@ export default {
       phone: "",
       payment_method: "",
       state: "",
-      oid: 0,
       city: "",
+
       postcode: "",
       country: "",
       status: "",

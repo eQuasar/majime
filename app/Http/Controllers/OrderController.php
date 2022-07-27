@@ -64,6 +64,7 @@ class OrderController extends Controller {
     }
     public function order_items($oid) {
         $orderItems = DB::table("line_items")->where('order_id', '=', $oid)->where('vid', '=', $_REQUEST['vid'])->get();
+      
         return $orderItems;
     }
     public function getOrderDetails(Request $request) {
