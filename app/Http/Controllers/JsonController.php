@@ -1036,7 +1036,7 @@ class JsonController extends Controller
 			 	'href'=>$linkData->href,
 			];
 	    }
-	   
+		Order_links::insert($Order_links);
     }
-	Order_links::insert($Order_links);
+	
 }
