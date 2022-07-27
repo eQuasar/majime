@@ -9,26 +9,26 @@
     >
       <div class="header_title">
         <div class="header_inner">
-          <h3><strong>Wallet</strong></h3>
+          <h4><strong>Wallet</strong></h4>
           <br />
         </div>
       </div>
 
       <div class="status-block">
         <div class="stats">
-          <h3>In Transit Orders</h3>
+          <h4>In Transit Orders</h4>
           <span>Total Orders: {{ stats.inTransitCount }}</span>
           <p><i>₹ </i>{{ stats.inTransitSaleAmount }}</p>
         </div>
 
         <div class="stats">
-          <h3>Unprocessed</h3>
+          <h4>Unprocessed</h4>
           <span>Total Orders: {{ stats.unProcessedCount }}</span>
           <p><i>₹ </i>{{ stats.unProcessedSaleAmount }}</p>
         </div>
 
         <div class="stats">
-          <h3>Next Remittance</h3>
+          <h4>Next Remittance</h4>
           <span>Due Date: {{ stats.nextDate }}</span>
           <p><i>₹ </i>{{ stats.dueAmount }}</p>
         </div>
@@ -90,7 +90,7 @@
           </div>
         </div>
         <br />
-        <div class="card-body card">
+        <div class="card-body card right-blk">
           <div class="balance">
             Opening Balance<span>{{ values.opening_bal }}</span>
           </div>

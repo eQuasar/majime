@@ -39,16 +39,17 @@
                     </b-form>
               </b-col>
                <b-col xl="4" lg="4" md="4" class="search_field">
-                    <b-form-input
-                        id="filter-input"
-                        
+                <!-- <b-form-input
+                        id="search"
+                        v-model="filterit"
                         placeholder="Type to Search"
+                           
                       ></b-form-input>
                       <b-input-group-append>
-                        <b-button  v-model="filter"  @click="Search">Search</b-button>
-                      </b-input-group-append>
+                        <b-button  @click="search_data">Search</b-button>
+                      </b-input-group-append>-->
                   </b-col>
-            </b-row>
+            </b-row> 
           <div class="blue-bar"></div>
             <div class="content_bar card list-appointments">
               <div class="col-sm-12">
@@ -170,6 +171,7 @@
         allStateData: [],
         filter:"",
         key: "",
+        filterit: [],
         oid:0,
         status: null,
         status_assign: null,
@@ -186,6 +188,7 @@
         date_from: '',
         statusAssign:'',
         selectall:[],
+        search:"",
         state:'',
         date_to: '',
         sortBy: 'date',
@@ -564,12 +567,12 @@ computed: {
 
       },
 
-      Search(){
+      search_data(){
       	let formData = new FormData();
-          formData.append("filter", this.filter);
+          formData.append("filterit", this.filterit )
             order.filterSearch(formData)
               .then((response) => {    
-                      this.item=response.data;
+                      this.items=response.data;
                       this.show=false;
                       console.log(this.items);
                                })

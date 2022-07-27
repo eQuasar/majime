@@ -130,7 +130,7 @@ export default {
         return axios.post('assign_wallet', data)
     },
     filterSearch(data) {
-        return axios.post('filter_Search', data)
+        return axios.get('filter_Search', data)
     },
     // walletSearch(data) {
     //     return axios.post('wallet_Search',data)

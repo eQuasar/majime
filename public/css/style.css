@@ -22710,7 +22710,7 @@ td span{
   text-transform: capitalize;
 }
 
-.processing, .dtobooked, .dispatched, .intransit, .confirmed, .completed, .cancelled, .packed, .rtd-online, .rtd-cod, .refunded, .deliveredtocust, .dtodel2warehouse, .dtointransit, .pickedup, .on-hold, .rtodelivered, .dto-refunded, .closed{
+.processing, .dtobooked, .dispatched, .intransit, .confirmed, .completed, .cancelled, .packed, .rtd-online, .rtd-cod, .refunded, .deliveredtocust, .dtodel2warehouse, .dtointransit, .pickedup, .on-hold, .rtodelivered, .dto-refunded, .closed, .In{
     border-radius: 3px;
     padding: 8px 15px;
     font-weight: 600;
@@ -22736,6 +22736,7 @@ td span{
 .pickedup{background: #E0EBFE; color: #800000;}
 .on-hold{background: #E0EBFE; color: #A52A2A;}
 .closed{background: #E0EBFE; color: #A52A2A;}
+.In{background: #0080001c; color: #57B657;}
 
 @media (max-width: 1600px) {
 
@@ -22809,26 +22810,32 @@ td span{
     color: #000;
 }
 
-.In {
+/*.In {
   color: green;
   background: #0080001c;
   padding: 6px;
   border-radius: 4px;
-}
+}*/
 
 
 /* CSS by Ritik - End */
 
 
 .balance{
-    width: 100%;
+    width: 400px;
     text-align: left;
     font-size: 16px;
     font-weight: 600;
     padding: 12px;
     background: #fcfcfc;
     border-radius: 6px;
+
 }
+
+.right-blk {
+    align-items: flex-end;
+}
+
 .balance span{
   text-align: right;
   float: right;
@@ -22852,7 +22859,23 @@ td span{
 
 .stats p i{font-style: normal;}
 
-.stats span{font-weight: 600;}
+.stats p{
+  font-size: 16px;
+  margin-bottom: 0.5rem;
+  line-height: 1.3rem;
+  font-weight: 600;
+  color: #575757;
+}
+
+.stats span{
+  font-weight: 400;
+  color: #fa6248;
+  font-size: 15px;
+}
+
+.stats h4{
+  font-weight: 600;
+}
 
 .my_tag span:nth-child(2) {
   display: none;
