@@ -107,8 +107,13 @@
                 {{ (currentPage - 1) * perPage + row.index + 1 }}
               </template>
               <template v-slot:cell(wallet_used)="row">
-                <span v-if="amount === total">0</span>
+                <span v-if="amount == row.item.total">0</span>
                 <span v-else>{{amount}}</span>
+              </template>
+              <template v-slot:cell(paid_amount)="row">
+                <textInput
+                :value="getValue(row.item.total)"
+                ></textInput>
               </template>
             </b-table>
           </b-col>
@@ -156,6 +161,7 @@ export default {
       status: "",
       total: "",
       filter: null,
+      paid_amt:0,
       filterOn: [],
       date_created_gmt: "",
       amount: 0,
@@ -203,6 +209,11 @@ export default {
           sortable: true
         },
         {
+          key: 'paid_amount',
+          label: 'Paid Amount',
+          sortable: true
+        },
+        {
           key: "total",
           label: "Total",
           sortable: true,
@@ -240,6 +251,9 @@ export default {
           console.log(error);
         });
     },
+    getValue(property) {
+      return this.property;
+    },
     returnAWB() {
       // alert("asdas");
       // alert(this.oid);
@@ -260,6 +274,9 @@ export default {
           alert("something went wrong");
         });
     },
+    total: function() {
+          return parseInt(this.amount) + parseInt(this.paid_amt);
+      }.
     goBack() {
       return this.$router.go(-1);
     },
