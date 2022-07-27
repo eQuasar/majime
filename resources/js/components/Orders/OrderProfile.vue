@@ -106,6 +106,10 @@
               <template v-slot:cell(sr)="row">
                 {{ (currentPage - 1) * perPage + row.index + 1 }}
               </template>
+              <template v-slot:cell(wallet_used)="row">
+                <span v-if="amount === total">0</span>
+                <span v-else>{{amount}}</span>
+              </template>
             </b-table>
           </b-col>
         </b-row>
@@ -146,7 +150,7 @@ export default {
       payment_method: "",
       state: "",
       city: "",
-
+      order_total:"",
       postcode: "",
       country: "",
       status: "",
@@ -183,11 +187,6 @@ export default {
           label: "Name",
           sortable: true,
         },
-        // {
-        //   key: 'parent_name',
-        //   label: 'Parent Name',
-        //   sortable: true
-        // },
         {
           key: "quantity",
           label: "Quantity",
@@ -197,6 +196,11 @@ export default {
           key: "price",
           label: "Price",
           sortable: true,
+        },
+        {
+          key: 'wallet_used',
+          label: 'Wallet Used',
+          sortable: true
         },
         {
           key: "total",
