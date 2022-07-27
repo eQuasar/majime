@@ -169,6 +169,10 @@ class ProductController extends Controller {
         $rto_del='rto-delivered';
         $dto_ref='dto-refunded';
         $clos='closed';
+        $process='processing';
+        $confirm='confirmed';
+        $pack='packed';
+        $hold='on-hold';
         $int_check = 0;
         $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dtobook,$intrans,$dtointrans])->get();
         $intransit_saleAmount=$orders->sum('total');
@@ -179,12 +183,17 @@ class ProductController extends Controller {
         $due_amount=DB::table("opening_closing_tables")->where('opening_closing_tables.vid','=',$vid)->orderBy('id', 'DESC')->first();
         $due_closing_bal=$due_amount->closing_bal;
         $tomorrow = date("Y-m-d", strtotime('tomorrow'));
+        $pending_disptach=DB::table("orders")->where('orders.vid', $vid)->whereIn('orders.status',[$process,$confirm,$pack,$hold])->get();
+        $pending_saleAmount=$pending_disptach->sum('total');
+        $pending_count=count($pending_disptach);
         $stats['inTransitCount'] = $order_count;
         $stats['inTransitSaleAmount'] = $intransit_saleAmount;
         $stats['unProcessedCount'] =  $unprocess_count;
         $stats['unProcessedSaleAmount'] =  $unprocessed_saleAmount;
         $stats['nextDate'] = $tomorrow;
         $stats['dueAmount'] =$due_closing_bal;
+        $stats['pendingDispatch'] = $pending_count;
+        $stats['pendingDispatchAmount'] =$pending_saleAmount;
         return $stats;
         
     }

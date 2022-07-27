@@ -145,7 +145,8 @@ class WalletprocessedController extends Controller
             }
             elseif($mystatus== 'RTO')
             {
-                $zone_price=$zone_rate[0]->rto;
+                $zone_price=$zone_rate[0]->fwd;
+                $zone_price=$zone_price+$zone_rate[0]->rto;
             }
 
             $zone_price = $zone_price*1.18;

@@ -121,7 +121,7 @@ export default {
     oid: {
       type: String,
       required: true,
-      oid: 0,
+      default: 0,
     },
   },
   mounted() {
@@ -140,6 +140,7 @@ export default {
       last_name: "",
       address_1: "",
       address_2: "",
+      // oid: 0,
       email: "",
       phone: "",
       payment_method: "",

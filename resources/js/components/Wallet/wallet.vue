@@ -22,7 +22,7 @@
         </div>
 
         <div class="stats">
-          <h4>Unprocessed</h4>
+          <h4>Upcoming Payments</h4>
           <span>Total Orders: {{ stats.unProcessedCount }}</span>
           <p><i>₹ </i>{{ stats.unProcessedSaleAmount }}</p>
         </div>
@@ -31,6 +31,12 @@
           <h4>Next Remittance</h4>
           <span>Due Date: {{ stats.nextDate }}</span>
           <p><i>₹ </i>{{ stats.dueAmount }}</p>
+        </div>
+
+        <div class="stats">
+          <h4>Pending Dispatch</h4>
+          <span>Total Orders: {{ stats.pendingDispatch }}</span>
+          <p><i>₹ </i>{{ stats.pendingDispatchAmount }}</p>
         </div>
       </div>
       <br />

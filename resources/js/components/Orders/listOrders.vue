@@ -42,11 +42,10 @@
                 <b-form-input
                         id="search"
                         v-model="filterit"
-                        type="text"
                         placeholder="Type to Search" 
                       ></b-form-input>
                       <b-input-group-append>
-                        <b-button  @click="search_data">Search</b-button>
+                        <b-button  v-on:click="search_data">Search</b-button>
                       </b-input-group-append>
                   </b-col>
             </b-row> 
@@ -169,9 +168,8 @@
         vendor:null,
         status_assign:"",
         allStateData: [],
-        filter:"",
         key: "",
-        filterit: "",
+        filterit: '',
         oid:0,
         status: null,
         status_assign: null,
@@ -569,13 +567,15 @@ computed: {
       },
 
       search_data(){
+        this.show=true;
       	let formData = new FormData();
-          formData.append("filterit", this.filterit )
+          formData.append("filterit", this.filterit);
+           formData.append("vid",this.vid)
             order.filterSearch(formData)
               .then((response) => {    
-                      this.items3=response.data;
+                      this.items=response.data;
                       this.show=false;
-                      console.log(this.items3);
+                      console.log(this.items);
                                })
               .catch((error) => {
                   console.log(error);

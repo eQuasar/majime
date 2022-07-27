@@ -123,16 +123,16 @@ export default {
           icon: "fa fa-user",
         },
 
-        {
-          href: { name: "report" },
-          title: "Reports",
-          icon: "fa fa-user",
-        },
-        {
-          href: { name: "accounts" },
-          title: "Accounts",
-          icon: "fa fa-user",
-        },
+        // {
+        //   href: { name: "report" },
+        //   title: "Reports",
+        //   icon: "fa fa-user",
+        // },
+        // {
+        //   href: { name: "accounts" },
+        //   title: "Accounts",
+        //   icon: "fa fa-user",
+        // },
         {
           href: { name: "importvendor" },
           title: "Import Vendor",

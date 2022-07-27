@@ -56,7 +56,22 @@ class OrderController extends Controller {
 
     }
      public function filter_Search (Request $request) {
-            echo "hello";
+        $vendor = $request->vid;
+        $search=$request->filterit;
+    $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
+    ->where('orders.vid','=',$vendor)
+    ->where('billings.vid','=',$vendor)
+    ->where('orders.oid', 'like', '%'.$search.'%')
+    ->orWhere('orders.status', 'like', '%'.$search.'%')->where('orders.vid','=',$vendor)
+    ->orWhere('billings.city', 'like', '%'.$search.'%')->where('billings.vid','=',$vendor)
+    ->orWhere('billings.state', 'like', '%'.$search.'%')->where('billings.vid','=',$vendor)
+    
+    ->select("orders.*", "orders.status", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))
+   
+    ->get();
+
+    return $orders;
+           
     }
     public function order_Profile($oid) {
         $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.oid', '=', $oid)->where('orders.vid', '=', intval($_REQUEST['vid']))->where('billings.vid', '=', intval($_REQUEST['vid']))->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($_REQUEST['vid']) . " GROUP BY line_items.order_id) as quantity"))->get();
@@ -74,7 +89,7 @@ class OrderController extends Controller {
             // ->join('waybill','orders.oid','=','waybill.order_id')
             ->where('orders.vid', '=', intval($vendor))->where('billings.vid', '=', intval($vendor))->orderBy('oid', 'DESC')
             // ->select("orders.*","waybill.waybill_no","orders.status as orderstatus","billings.*",
-            ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
+            ->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
         } else {
             $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
@@ -1377,7 +1392,8 @@ class OrderController extends Controller {
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders?status=processing',
+          CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders',
+          // CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders?status=processing',
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => '',
           CURLOPT_MAXREDIRS => 10,
@@ -1398,7 +1414,8 @@ class OrderController extends Controller {
             $curl_data[] = $jp->id;
         }
 
-        $orders = DB::table("orders")->where('vid', '=', intval($_REQUEST['vid']))->where('status', '=', "processing")->get();
+        // $orders = DB::table("orders")->where('vid', '=', intval($_REQUEST['vid']))->where('status', '=', "processing")->get();
+        $orders = DB::table("orders")->where('vid', '=', intval($_REQUEST['vid']))->get();
         // var_dump($orders);
         if (count($orders) >= 1) {
             foreach ($orders as $order) {
@@ -1410,12 +1427,13 @@ class OrderController extends Controller {
 
         // var_dump($curl_data);
         // var_dump($order_data); die;
-        $result=array_diff($curl_data,$order_data);
-        // var_dump($result);
+        $result_arr=array_diff($curl_data,$order_data);
+        $result = array_values($result_arr); 
+        // var_dump($result); die;
         if (count($result) >= 1) {
             for ($i=0; $i < count($result); $i++) { 
                 // echo "<a href='#' target='_blank'>Click here (ORDER ID - ".$result[$i].")</a><br><br>";
-                echo "<a href='https://cl.majime.in/api/v1/get_order_data?api_url=".$vendor[0]->url."/wp-json/wc/v3/orders/".$result[$i]."&vid=".$_REQUEST['vid']."' target='_blank'>Click here (ORDER ID - ".$result[$i].")</a><br><br>";
+                echo "<a href='https://cl.majime.in/api/v1/get_order_data?api_url=".$vendor[0]->url."/wp-json/wc/v3/orders/".intval($result[$i])."&vid=".intval($_REQUEST['vid'])."' target='_blank'>Click here (ORDER ID - ".$result[$i].")</a><br><br>";
             }
         }else{
             echo "No record found.";
