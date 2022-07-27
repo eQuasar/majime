@@ -122,7 +122,9 @@ class OrderController extends Controller {
         // echo "string"; die;
         $int_check = 0;
         $orderItems = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)
-        ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])->get();
+        ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])
+        ->orderBy('orders.oid','DESC')
+        ->get();
         
         // ->where('billings.vid',$vid)
         // ->where('orders.status',$status)->where('orders.status',$state)->get();
@@ -1385,13 +1387,20 @@ class OrderController extends Controller {
     // get my orders - http://majime.nmf.im/api/v1/my_orders?vid=1
     public function my_orders()
     {
-
+        if(isset($_REQUEST['per_page']) != '' && isset($_REQUEST['offset']) != ''){
+            $data = '?per_page='.$_REQUEST['per_page'].'&offset='.$_REQUEST['offset'];
+        }elseif(isset($_REQUEST['per_page']) != ''){
+            $data = '?per_page='.$_REQUEST['per_page'];
+        }else{
+            $data = '';
+        }
+        // echo $data; die;
         $vendor = DB::table("vendors")->where('id', '=', intval($_REQUEST['vid']))->get();
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders',
-          // CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders?status=processing',
+          // CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders',
+          CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders'.$data,
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => '',
           CURLOPT_MAXREDIRS => 10,
@@ -1431,7 +1440,27 @@ class OrderController extends Controller {
         if (count($result) >= 1) {
             for ($i=0; $i < count($result); $i++) { 
                 // echo "<a href='#' target='_blank'>Click here (ORDER ID - ".$result[$i].")</a><br><br>";
-                echo "<a href='https://cl.majime.in/api/v1/get_order_data?api_url=".$vendor[0]->url."/wp-json/wc/v3/orders/".intval($result[$i])."&vid=".intval($_REQUEST['vid'])."' target='_blank'>Click here (ORDER ID - ".$result[$i].")</a><br><br>";
+                // echo "<a href='https://cl.majime.in/api/v1/get_order_data?api_url=".$vendor[0]->url."/wp-json/wc/v3/orders/".intval($result[$i])."&vid=".intval($_REQUEST['vid'])."' target='_blank'>Click here (ORDER ID - ".$result[$i].")</a><br><br>";
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                  CURLOPT_URL => "https://cl.majime.in/api/v1/get_order_data?api_url=".$vendor[0]->url."/wp-json/wc/v3/orders/".intval($result[$i])."&vid=".intval($_REQUEST['vid']),
+                  CURLOPT_RETURNTRANSFER => true,
+                  CURLOPT_ENCODING => '',
+                  CURLOPT_MAXREDIRS => 10,
+                  CURLOPT_TIMEOUT => 0,
+                  CURLOPT_FOLLOWLOCATION => true,
+                  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                  CURLOPT_CUSTOMREQUEST => 'GET',
+                  CURLOPT_HTTPHEADER => array(
+                    'Authorization: Basic Og=='
+                  ),
+                ));
+
+                $response = curl_exec($curl);
+
+                curl_close($curl);
+                echo $response;
             }
         }else{
             echo "No record found.";

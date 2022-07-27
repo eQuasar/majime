@@ -119,7 +119,14 @@ class WalletprocessedController extends Controller
             //if weight is above 500g charges accordingly 
             $above_value=$vendor_rate[0]->after500gm;
             $oc_balance=DB::table("opening_closing_tables")->where('opening_closing_tables.vid','=',$order_table[0]->vid)->orderBy('id','DESC')->limit(1)->get();
-            $sale_Amount=$order_table[0]->total;
+            
+            // Value total of all line items clubbed together to make order total
+            $orderTotalAmt = DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.total) FROM line_items WHERE line_items.order_id = ".intval($orders[$y])." AND line_items.vid = " . intval($order_table[0]->vid) . " GROUP BY line_items.order_id) as total_main"))->first();
+
+            $amtPaid=$order_table[0]->total;
+            $sale_Amount = $orderTotalAmt->total_main;
+            $walletUsedAmt = $sale_Amount - $amtPaid;
+            
             //calculate majime cost 
             $majime_cost=(($order_table[0]->total)*($mjm_cost/100));
             if($order_table[0]->payment_method == 'cod')
@@ -180,7 +187,7 @@ class WalletprocessedController extends Controller
                         $cod_cost=$zone_price;
                         $logistic_cost=$cod_cost+$cod_charges;
                     }                        
-                        $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                        $net_amount=$sale_Amount-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                         $closing_bal=$opening_balance+$net_amount;
                 }
                 //caluclate logistic cost if payment method is prepaid
@@ -203,7 +210,7 @@ class WalletprocessedController extends Controller
                         $cod_cost=$zone_price;
                         $logistic_cost=$cod_cost+$cod_charges;
                     }
-                    $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                    $net_amount=$sale_Amount-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                     $closing_bal=$opening_balance+$net_amount;
                    
                 }
@@ -211,7 +218,7 @@ class WalletprocessedController extends Controller
                 //order status is rto-delivered
                 $logistic_cost=$zone_price;
                 $majime_cost=0;
-                $net_amount=0-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                $net_amount=0-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                 $closing_bal=$opening_balance+$net_amount;
                 
             }
@@ -225,7 +232,7 @@ class WalletprocessedController extends Controller
                 'payment_mode'=>$order_table[0]->payment_method,
                 'status'=>$order_table[0]->status,
                 'sale_amount'=>$sale_Amount,
-                'Wallet_used'=>0,
+                'Wallet_used'=>$walletUsedAmt,
                 'logistic_cost'=>$logistic_cost,
                 'payment_gateway_charges'=>$payment_gateway,
                 'sms_cost'=>$sms_cost,
