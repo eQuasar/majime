@@ -164,7 +164,7 @@ class WalletprocessedController extends Controller
                     $pw=$product_weight[0]->weight;
                     if($pw==0)
                     {   
-                        $pw=250;
+                        $pw=330;
                     }
                     $qty=$line_items_qty[0]->quantity;
                     $total_weight=($pw)*($qty);
@@ -187,7 +187,7 @@ class WalletprocessedController extends Controller
                     $cod_charges = 0;
                     if($pw==0)
                     {   
-                        $pw=250;
+                        $pw=330;
                     }
                     $qty=$line_items_qty[0]->quantity;
                     $total_weight=($pw)*($qty);

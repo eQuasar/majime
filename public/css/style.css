@@ -1549,7 +1549,7 @@ pre code {
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: #fff;
+  background-color: #4b49ac0a;
 }
 
 .table-hover tbody tr:hover {
@@ -5168,7 +5168,7 @@ input::placeholder{text-align: left;}
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #fff;
+  background-color: #fbfbfb;
   background-clip: border-box;
   border: 1px solid #e3e3e3;
   border-radius: 10px;
@@ -10818,7 +10818,7 @@ input:focus {
 /* Typography */
 body {
   font-size: 1rem;
-  font-family: 'Avenir', sans-serif;
+  font-family: 'Ubuntu', sans-serif;
   font-weight: initial;
   line-height: normal;
   -webkit-font-smoothing: antialiased;
@@ -19851,7 +19851,7 @@ div.tagsinput span.tag a {
 }
 
 .content-wrapper {
-  background: #F5F7FF;
+  background: #fff;
   padding: 2.375rem 2.375rem;
   width: 100%;
   -webkit-flex-grow: 1;
@@ -22824,13 +22824,14 @@ td span{
 
 
 .balance{
-    width: 400px;
-    text-align: left;
-    font-size: 16px;
-    font-weight: 600;
-    padding: 12px;
-    background: #fcfcfc;
-    border-radius: 6px;
+  width: 215px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 12px;
+  background: #f3f3f3;
+  border-radius: 6px;
+  border: 1px solid #f1f1f1;
 
 }
 
@@ -22843,19 +22844,24 @@ td span{
   float: right;
 }
 
+.table-responsive table {
+    border-collapse: separate;
+    border-spacing: 0 1em;
+}
+
 .stats {
-    display: inline-block;
-    width: 250px;
-    background: #ccc;
-    padding: 1.25rem;
-    position: relative;
-    /* display: flex; */
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-clip: border-box;
-    border-radius: 10px;
-    margin-right: 15px;
+  display: inline-block;
+  width: 250px;
+  background: #ccc;
+  padding: 1.25rem;
+  position: relative;
+  /* display: flex; */
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-clip: border-box;
+  border-radius: 10px;
+  margin-right: 15px;
 }
 
 .stats p i{font-style: normal;}
@@ -22870,7 +22876,6 @@ td span{
 
 .stats span{
   font-weight: 400;
-  color: #fa6248;
   font-size: 15px;
 }
 
@@ -22879,31 +22884,32 @@ td span{
 }
 
 .orng{
-  background-color: #FFECE8;
+  background-color: #f996291c;
+}
+.orng h4{
+  color: #F99629;
 }
 
 .grn{
   background-color: #E0F5E9;
 }
-.grn span{
-  color: #308e86;
+.grn h4{
+  color: #14B581;
 }
 
-.ylw{
-  background-color: #FFF8E0;
+.red{
+  background-color: #f0142f1c;
 }
-.ylw span{
-  color: #fab51d;
+.red h4{
+  color: #F0142F;
 }
 
 .blu{
   background-color: #dff1ff;
 }
-.blu span{
-  color: #4c68bb;
+.blu h4{
+  color: #064CD9;
 }
-
-
 
 .my_tag span:nth-child(2) {
   display: none;

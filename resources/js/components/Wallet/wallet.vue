@@ -15,25 +15,25 @@
       </div>
 
       <div class="status-block">
-        <div class="stats orng">
+        <div class="stats blu">
           <h4>In Transit Orders</h4>
           <span>Total Orders: {{ stats.inTransitCount }}</span>
           <p><i>₹ </i>{{ stats.inTransitSaleAmount }}</p>
         </div>
 
-        <div class="stats grn">
+        <div class="stats orng">
           <h4>Upcoming Payments</h4>
           <span>Total Orders: {{ stats.unProcessedCount }}</span>
           <p><i>₹ </i>{{ stats.unProcessedSaleAmount }}</p>
         </div>
 
-        <div class="stats ylw">
+        <div class="stats grn">
           <h4>Next Remittance</h4>
           <span>Due Date: {{ stats.nextDate }}</span>
           <p><i>₹ </i>{{ stats.dueAmount }}</p>
         </div>
 
-        <div class="stats blu">
+        <div class="stats red">
           <h4>Pending Dispatch</h4>
           <span>Total Orders: {{ stats.pendingDispatch }}</span>
           <p><i>₹ </i>{{ stats.pendingDispatchAmount }}</p>
@@ -100,7 +100,6 @@
           <div class="balance">
             Opening Balance<span>{{ values.opening_bal }}</span>
           </div>
-          <br />
           <b-table
             striped
             hover
@@ -138,7 +137,7 @@
               <span :class="row.item.status"> {{ row.item.status }}</span>
             </template>
           </b-table>
-          <br /><br />
+          <br />
           <div class="balance">
             Closing Balance<span>{{ values.closing_bal }}</span>
           </div>
