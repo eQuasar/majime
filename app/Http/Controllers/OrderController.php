@@ -1598,13 +1598,13 @@ class OrderController extends Controller {
                         }
 
                         else{
-                            $logistic_cost=$zone_price;
-                            $majime_cost=0;
-                            $net_amount=0-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
-                            $closing_bal=$opening_balance+$net_amount;
-                            
+                            $logistic_cost=$vendor_rate[0]->cod+($vendor_rate[0]->cod*2/100);
+                        }
+                        $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                        $closing_bal=$opening_balance+$net_amount;
                     }    
                 $wallet=1;
+                DB::table('orders')->where('orders.oid',$o_id)->where('orders.vid', $vid)->update(['wallet_processed' => $wallet]);
                 $Wallet_order_data[]=[     
                     'date_created'=>$oi->date_created,
                     'transaction_id'=>"N/A",
@@ -1626,7 +1626,7 @@ class OrderController extends Controller {
                 DB::table('opening_closing_tables')->insert(
                     ['vid' => $order_items[$y]->vid, 'opening_bal' => $opening_balance, 'closing_bal' => $closing_bal, 'created_at' => date('Y-m-d h:m:s'), 'updated_at' => date('Y-m-d h:m:s')]
                 );
-                DB::table('orders')->where('orders.oid', intval($orders[$y]))->where('vid', intval($request->vid))->update(['wallet_processed' => $wallet]);
+               
             }   
             walletprocessed::insert($Wallet_order_data);  
             return response()->json(['error' => false, 'msg' => "Wallet Processed Successfully", "ErrorCode" => "000"], 200);
