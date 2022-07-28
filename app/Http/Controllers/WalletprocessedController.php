@@ -1,18 +1,13 @@
 <?php
-
 namespace App\Http\Controllers;
-
-use App\Models\walletprocessed;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Orders;
+use App\Models\walletprocessed;
 use App\Models\line_items;
 use App\Models\AddTransaction;
 use App\Models\zonedetails;
 use App\Models\billings;
-
-
-
 class WalletprocessedController extends Controller
 {
     /**
@@ -43,8 +38,6 @@ class WalletprocessedController extends Controller
      */
     public function store(Request $request)
     {
-           
-
         $pw=0;
         //if single value passed 
         if ($request->allSelected == "false")
@@ -54,13 +47,13 @@ class WalletprocessedController extends Controller
         // multiple value passed through checkbox
         else
         {
+            
             $orders=explode(',', $request->allSelected);
             
         }
-        
         $vendor = $request->vid;
         //using for loop for more than one order 
-        for($y = 0;$y < count($orders);$y++) 
+        for($y=0;$y<count($orders);$y++) 
         {
             $order_table=DB::table("orders")->where('orders.oid','=',intval($orders[$y]))->where('orders.vid','=',$vendor)->get();
             //assign order status 
@@ -155,7 +148,6 @@ class WalletprocessedController extends Controller
                 $zone_price=$zone_rate[0]->fwd;
                 $zone_price=$zone_price+$zone_rate[0]->rto;
             }
-
             $zone_price = $zone_price*1.18;
             // if order status is dto-refunded or completed
             if($order_table[0]->status != 'rto-delivered')
@@ -214,7 +206,8 @@ class WalletprocessedController extends Controller
                     $closing_bal=$opening_balance+$net_amount;
                    
                 }
-            }else{
+            }
+            else{
                 //order status is rto-delivered
                 $logistic_cost=$zone_price;
                 $majime_cost=0;
@@ -242,14 +235,16 @@ class WalletprocessedController extends Controller
                 'order_count'=> $line_items[0]->quantity,
                 'zone_amt'=> $zone_price
             ];   
-            walletprocessed::insert($Wallet_order_data); 
             // insert values into opening closing table into database  
             DB::table('opening_closing_tables')->insert(
                 ['vid' => $request->vid, 'opening_bal' => $opening_balance, 'closing_bal' => $closing_bal, 'created_at' => date('Y-m-d h:m:s'), 'updated_at' => date('Y-m-d h:m:s')]
             );
             // update order table with wallet processed 
             DB::table('orders')->where('orders.oid', intval($orders[$y]))->where('vid', intval($request->vid))->update(['wallet_processed' => $wallet]);
+            // unset($orders);
         }   
+        walletprocessed::insert($Wallet_order_data); 
+
         return response()->json(['error' => false, 'msg' => "Wallet Processed Successfully", "ErrorCode" => "000"], 200);
     }
 
@@ -264,14 +259,19 @@ class WalletprocessedController extends Controller
         //get wallet processed table
         $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
         //get last element of array 
-        $Clos = $order->last();
-        //calculate closing values
-        $Closing_balance=$Clos->current_wallet_bal;
-        $open=$order[0]->current_wallet_bal;
-        //get opening balance 
-        $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.vid', intval($request->vid))->where('opening_closing_tables.closing_bal','like', $open)->get();
-        $opening_balance=$opening_data[0]->opening_bal;
-        return response()->json([ 'order'=> $order,'closing_bal'=> $Closing_balance,'opening_bal'=> $opening_balance], 200);
+        if (count($order) >= 1) {
+            $Clos = $order->last();
+            //calculate closing values
+            $Closing_balance=$Clos->current_wallet_bal;
+            $open=$order[0]->current_wallet_bal;
+            //get opening balance 
+            $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.vid', intval($request->vid))->where('opening_closing_tables.closing_bal','like', $open)->get();
+            $opening_balance=$opening_data[0]->opening_bal;
+            return response()->json([ 'order'=> $order,'closing_bal'=> $Closing_balance,'opening_bal'=> $opening_balance], 200);
+        }else{
+            $order = array();
+            return response()->json([ 'order'=> $order,'closing_bal'=> 0,'opening_bal'=> 0], 200);
+        }
          
     }
     /**

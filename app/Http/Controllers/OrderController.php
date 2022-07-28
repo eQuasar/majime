@@ -57,18 +57,19 @@ class OrderController extends Controller {
     }
      public function filter_Search (Request $request) {
         $vendor = $request->vid;
-        if ($vendor != null) {
-            $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-            // ->join('waybill','orders.oid','=','waybill.order_id')
-            ->where('orders.vid', '=', intval($vendor))->where('billings.vid', '=', intval($vendor))->orderBy('oid', 'DESC')
-            // ->select("orders.*","waybill.waybill_no","orders.status as orderstatus","billings.*",
-            ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
-        } else {
-            $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-                                        WHERE line_items.order_id = orders.oid
-                                        GROUP BY line_items.order_id) as quantity"))->get();
-        }
-        return $orders;
+        $search = $request->filterit;
+       $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->join('line_items','line_items.order_id','=','orders.oid')
+       ->where('orders.vid','=', $vendor)->where('billings.vid','=',$vendor)
+              ->where('orders.status','like','%'.$search.'%')->where('orders.vid','=',$vendor)
+              ->orWhere('orders.oid','like','%'.$search.'%')->where('orders.vid','=',$vendor)
+              ->orWhere('billings.city','like','%'.$search.'%')->where('billings.vid','=',$vendor)
+             ->orWhere('billings.state','like','%'.$search.'%')->where('billings.vid','=',$vendor)
+             ->orWhere('line_items.quantity','like','%'.$search.'%')->where('line_items.vid','=',$vendor)
+             ->orWhere('orders.date_created_gmt','like','%'.$search.'%')->where('orders.vid','=',$vendor)
+             ->orWhere('orders.total','like','%'.$search.'%')->where('orders.vid','=',$vendor)
+          ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
+        
+         return $orders;
            
     }
     public function order_Profile($oid) {
@@ -1597,27 +1598,13 @@ class OrderController extends Controller {
                         }
 
                         else{
-                            $logistic_cost=$vendor_rate[0]->cod+($vendor_rate[0]->cod*2/100);
-                        }
-
-                        $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
-                        $closing_bal=$opening_balance+$net_amount;
-
-                        // if($order_table[0]->status== 'dto-refunded'){
-                        //     $net_amount=$logistic_cost+$majime_cost+$sms_cost+$payment_gateway;
-                        //     $closing_bal=$opening_balance-$net_amount;
-                        // }else{
-                        //     $net_amount=$sale_Amount-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
-                        //     $closing_bal=$opening_balance-$net_amount;
-                        // }
-                    }
-                // echo $cod_cost;
-                // echo $pp_amount;
-                // echo $logistic_cost;
-                // echo $percent_price;
-                
+                            $logistic_cost=$zone_price;
+                            $majime_cost=0;
+                            $net_amount=0-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                            $closing_bal=$opening_balance+$net_amount;
+                            
+                    }    
                 $wallet=1;
-                DB::table('orders')->where('orders.oid',$o_id)->where('orders.vid', $vid)->update(['wallet_processed' => $wallet]);
                 $Wallet_order_data[]=[     
                     'date_created'=>$oi->date_created,
                     'transaction_id'=>"N/A",
@@ -1636,13 +1623,12 @@ class OrderController extends Controller {
                     'order_count'=>$line_items[0]->quantity,
                     'zone_amt'=> $zone_price
                 ];    
-                walletprocessed::insert($Wallet_order_data);   
-                
-
-                // DB::table('opening_closing_tables')->insert(
-                //     ['vid' => $order_items[$y]->vid, 'opening_bal' => $opening_balance, 'closing_bal' => $closing_bal, 'created_at' => date('Y-m-d h:m:s'), 'updated_at' => date('Y-m-d h:m:s')]
-                // );
+                DB::table('opening_closing_tables')->insert(
+                    ['vid' => $order_items[$y]->vid, 'opening_bal' => $opening_balance, 'closing_bal' => $closing_bal, 'created_at' => date('Y-m-d h:m:s'), 'updated_at' => date('Y-m-d h:m:s')]
+                );
+                DB::table('orders')->where('orders.oid', intval($orders[$y]))->where('vid', intval($request->vid))->update(['wallet_processed' => $wallet]);
             }   
+            walletprocessed::insert($Wallet_order_data);  
             return response()->json(['error' => false, 'msg' => "Wallet Processed Successfully", "ErrorCode" => "000"], 200);
      }
 

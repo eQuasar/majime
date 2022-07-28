@@ -15,25 +15,25 @@
       </div>
 
       <div class="status-block">
-        <div class="stats">
+        <div class="stats orng">
           <h4>In Transit Orders</h4>
           <span>Total Orders: {{ stats.inTransitCount }}</span>
           <p><i>₹ </i>{{ stats.inTransitSaleAmount }}</p>
         </div>
 
-        <div class="stats">
+        <div class="stats grn">
           <h4>Upcoming Payments</h4>
           <span>Total Orders: {{ stats.unProcessedCount }}</span>
           <p><i>₹ </i>{{ stats.unProcessedSaleAmount }}</p>
         </div>
 
-        <div class="stats">
+        <div class="stats ylw">
           <h4>Next Remittance</h4>
           <span>Due Date: {{ stats.nextDate }}</span>
           <p><i>₹ </i>{{ stats.dueAmount }}</p>
         </div>
 
-        <div class="stats">
+        <div class="stats blu">
           <h4>Pending Dispatch</h4>
           <span>Total Orders: {{ stats.pendingDispatch }}</span>
           <p><i>₹ </i>{{ stats.pendingDispatchAmount }}</p>
