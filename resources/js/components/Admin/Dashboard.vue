@@ -9,7 +9,7 @@
     >
       <div class="header_title">
         <div class="header_inner">
-          <h3><strong></strong></h3>
+          <h3><strong>Performance</strong></h3>
           <br />
         </div>
       </div>
@@ -48,11 +48,11 @@
                     locale="en-IN"
                   ></b-form-datepicker>
                 </div>
-                <b-button type="submit" variant="primary">Submit</b-button>
+                <!-- <b-button type="submit" variant="primary">Submit</b-button> -->
               </b-form>
             </b-col>
             <div class="blue-bar"></div>
-            <div class="content_bar card list-appointments space-bottom">
+            <!-- <div class="content_bar card list-appointments space-bottom">
               <div class="col-sm-12">
                 <b-row>
                   <b-col xl="5" lg="5" md="5">
@@ -82,7 +82,7 @@
                   </b-col>
                 </b-row>
               </div>
-            </div>
+            </div> -->
           </div>
           <b-table
             striped
@@ -109,13 +109,22 @@
           <div class="text-center" v-if="seen">
             <b-spinner variant="primary" label="Text Centered"></b-spinner>
           </div>
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="rows"
-            :per-page="perPage"
-            aria-controls="my-table"
-          ></b-pagination>
+          
         </div>
+      </div>
+      <div class="content_bar card2">
+        <div class="Process_Margin_Report">
+          <h3 style="margin-top: 20px">In Process Margin Report (Approx)</h3>
+        </div>
+        
+            <b-table striped hover responsive :items2="items2" :fields2="fields2" :filter-included-fields2="filterOn2" :filter2="filter2"show-empty></b-table>
+        
+            <b-pagination
+              v-model="currentPage"
+              :total-rows="rows"
+              :per-page="perPage"
+              aria-controls="my-table"
+            ></b-pagination>
       </div>
     </b-overlay>
   </b-container>
@@ -142,56 +151,106 @@ export default {
       sortDesc: true,
       perPage: 10,
       currentPage: 1,
+      filter2: null,
       pageOptions: [5, 10, 15, 20, 50, 100],
       filter: null,
+      filterOn2: [],
       filterOn: [],
       fields: [
-        {
-          key: "oid",
-          label: "Order No",
-          sortable: true,
-        },
-        {
-          key: "quantity",
-          label: "Sale",
-          sortable: true,
-        },
-        {
-          key: "subtotal",
-          label: "Product Cost",
-          sortable: true,
-        },
-        {
-          key: "state",
-          label: "Market Cost",
-          sortable: true,
-        },
-        {
-          key: "city",
-          label: "Logistic Cost",
-          sortable: true,
-        },
-        {
-          key: "value",
-          label: "Comission",
-          sortable: true,
-        },
+        // {
+        //   key: "oid",
+        //   label: "Total Orders",
+        //   sortable: true,
+        // },
+        // {
+        //   key: "quantity",
+        //   label: "Cancelled Orders",
+        //   sortable: true,
+        // },
+        // {
+        //   key: "subtotal",
+        //   label: "Failed Orders",
+        //   sortable: true,
+        // },
+        // {
+        //   key: "state",
+        //   label: "Processing",
+        //   sortable: true,
+        // },
+        // {
+        //   key: "city",
+        //   label: "Hold",
+        //   sortable: true,
+        // },
+        // {
+        //   key: "value",
+        //   label: "Packed",
+        //   sortable: true,
+        // },
         {
           key: "date_created_gmt",
-          label: "Sms/Others",
+          label: "Dispetch",
           sortable: true,
         },
         {
           key: "currency",
-          label: "Margin",
+          label: "Intransit",
           sortable: true,
         },
         {
           key: "status",
-          label: "Status",
-          sortable: false,
+          label: "Deliverd",
+          sortable: true,
+        },
+        {
+          key: "status",
+          label: "RTO",
+          sortable: true,
+        },
+        {
+          key: "status",
+          label: "DTO Booked",
+          sortable: true,
+        },
+        {
+          key: "status",
+          label: "DTO Intransit",
+          sortable: true,
+        },
+        {
+          key: "status",
+          label: "DTO Deliverd",
+          sortable: true,
+        },
+        {
+          key: "status",
+          label: "DTO Refunded",
+          sortable: true,
         },
       ],
+
+      fields2: [
+         {
+            key: 'last_name',
+            sortable: true
+          },
+          {
+            key: 'first_name',
+            sortable: false
+          },
+          {
+            key: 'age',
+            label: 'Person age',
+            sortable: true,
+           
+          }
+        ],
+        items2 :[
+          { isActive: true, age: 40, first_name: 'Dickerson', last_name: 'Macdonald' },
+          { isActive: false, age: 21, first_name: 'Larsen', last_name: 'Shaw' },
+          { isActive: false, age: 89, first_name: 'Geneva', last_name: 'Wilson' },
+          { isActive: true, age: 38, first_name: 'Jami', last_name: 'Carney' },
+          ],
       items: [],
       errors_create: [],
       successful: false,
@@ -201,6 +260,9 @@ export default {
   computed: {
     rows() {
       return this.items.length;
+    },
+    rows() {
+      return this.items2.length;
     },
   },
   methods: {

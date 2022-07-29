@@ -132,7 +132,7 @@ export default {
     filterSearch(data) {
         return axios.post('filter_Search', data)
     },
-    // walletSearch(data) {
-    //     return axios.post('wallet_Search',data)
-    // }
+    walletSearch(data) {
+        return axios.post('wallet_Search',data)
+    },
 }

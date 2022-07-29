@@ -47,7 +47,6 @@ class OrderController extends Controller {
         $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->whereBetween(DB::raw('DATE(created_at)'), $range)->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
         $Clos = $order->last();
         $Closing_balance=$Clos->current_wallet_bal;
-      
         $open=$order[0]->current_wallet_bal;
         $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','=', $open)->get();
         $opening_balance=$opening_data[0]->opening_bal;
@@ -1640,7 +1639,10 @@ class OrderController extends Controller {
 
      public function wallet_Sheet_download(Request  $request)
      {
-        $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
+        
+        $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))
+        ->select("walletprocesseds.oid as OrderID","walletprocesseds.transaction_id as TXNID","walletprocesseds.created_at as TXN Date", "walletprocesseds.payment_mode as Payment Mode", "walletprocesseds.status  as Status", "walletprocesseds.sale_amount as Sale Amount", "walletprocesseds.Wallet_used as Wallet Used", "walletprocesseds.logistic_cost as Logistic Cost", "walletprocesseds.payment_gateway_charges as Pymt Gateway Chrges","walletprocesseds.sms_cost as SMS Cost","walletprocesseds.majime_charges as Majime Charges","walletprocesseds.zone_amt as Zone Amount","walletprocesseds.net_amount  as Net Amount","walletprocesseds.current_wallet_bal  as Wallet Balance","walletprocesseds.current_wallet_bal  as Wallet Balance")
+        ->get();
         return $order;
 
      }

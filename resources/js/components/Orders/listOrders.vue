@@ -378,6 +378,7 @@ computed: {
                   });
           },
          getOrderDetails(vid){
+           this.show = true;
             let formData = new FormData();
             formData.append('vid', vid);
             formData.append('type', 'get');
@@ -385,6 +386,7 @@ computed: {
                 .then(( response ) => {
                 console.log(response);
                     this.items=response.data;
+                    this.show=false;
               console.log(this.items);
             })
             .catch(response => {

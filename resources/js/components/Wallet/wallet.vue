@@ -321,8 +321,7 @@ export default {
         return false;
       }
       let formData = new FormData();
-      formData.append("date_from", this.date_from);
-      formData.append("date_to", this.date_to);
+
       formData.append("vid", this.vid);
       order
         .walletSearch(formData)
@@ -391,16 +390,19 @@ export default {
     wallet_download() {
       this.show = true;
       let formData = new FormData();
+      formData.append("date_from", this.date_from);
+      formData.append("date_to", this.date_to);
+      formData.append("select_data", "date_range");
       formData.append("vid", this.vid);
       wallet
         .wallet_sheet(formData)
         .then((response) => {
-          console.log(response.data[0]);
-          this.items = response.data[0];
-          const data = XLSX.utils.json_to_sheet(this.items);
+          console.log(response.data);
+          this.items2 = response.data;
+          const data = XLSX.utils.json_to_sheet(this.items2);
           const wb = XLSX.utils.book_new();
           XLSX.utils.book_append_sheet(wb, data, "data");
-          XLSX.writeFile(wb, "Wallet_sheet_Download.xlsx");
+          XLSX.writeFile(wb, "Wallet_Sheet.xlsx");
         })
         .catch((error) => {
           if (error.response) {

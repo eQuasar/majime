@@ -22911,6 +22911,16 @@ td span{
   color: #064CD9;
 }
 
+.status-block{
+  position: relative;
+}
+
+.new-btn{
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
 .my_tag span:nth-child(2) {
   display: none;
 }

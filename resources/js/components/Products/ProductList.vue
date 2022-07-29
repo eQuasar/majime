@@ -236,6 +236,7 @@
 computed: {
       rows() {
         return this.items.length
+         return this.items2.length
       }
     },
   methods:{
