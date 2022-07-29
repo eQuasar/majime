@@ -11,6 +11,12 @@ export default {
           href: { name: "admindashboard" },
           title: "Dashboard",
           icon: "fas fa-th",
+          child: [
+            {
+              href: { name: "adminperformance" },
+              title: "Performance",
+            },
+          ],
         },
         {
           title: "Sales",

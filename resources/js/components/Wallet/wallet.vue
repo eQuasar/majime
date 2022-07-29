@@ -38,6 +38,15 @@
           <span>Total Orders: {{ stats.pendingDispatch }}</span>
           <p><i>₹ </i>{{ stats.pendingDispatchAmount }}</p>
         </div>
+
+        <button
+          type="button"
+          class="download-btn btn btn-primary"
+          v-on:click="wallet_download"
+          style="margin-left: 15px"
+        >
+          Download
+        </button>
       </div>
       <br />
       <div class="content_bar">
@@ -182,6 +191,7 @@
 import wallet from "../../api/wallet.js";
 import user from "../../api/user.js";
 import order from "../../api/order.js";
+import * as XLSX from "xlsx/xlsx.mjs";
 export default {
   props: {},
   mounted() {
@@ -195,6 +205,7 @@ export default {
       time: "",
       date: "",
       oid: "",
+      status: "",
       time_slots: [],
       seen: false,
       date_from: "",
@@ -280,8 +291,10 @@ export default {
         // },
       ],
       items: [],
+      items2: [],
       values: [],
       stats: [],
+      status: [],
       errors_create: [],
       successful: false,
       create_error: "",
@@ -375,6 +388,29 @@ export default {
           alert("something went wrong");
         });
     },
+    wallet_download() {
+      this.show = true;
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      wallet
+        .wallet_sheet(formData)
+        .then((response) => {
+          console.log(response.data[0]);
+          this.items = response.data[0];
+          const data = XLSX.utils.json_to_sheet(this.items);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, data, "data");
+          XLSX.writeFile(wb, "Wallet_sheet_Download.xlsx");
+        })
+        .catch((error) => {
+          if (error.response) {
+            console.log(error.response);
+          }
+
+          // loader.hide();
+        });
+      this.show = false;
+    },
 
     getStats(vid) {
       let formData = new FormData();
@@ -390,6 +426,7 @@ export default {
           this.successful = false;
           alert("Stats Not Available");
         });
+      this.show = false;
     },
   },
 };

@@ -117,6 +117,7 @@ Route::group(['prefix' => 'v1'], function () {
 	// Route::get('filter_Search', 'OrderController@filter_Search')->name('filter_Search');
 	Route::post('filter_Search', 'OrderController@filter_Search')->name('filter_Search');
 	Route::get('stat/{vid}', 'ProductController@stat')->name('stat');
+	Route::post('wallet_Sheet_download', 'OrderController@wallet_Sheet_download')->name('wallet_Sheet_download');
 
 	// Route::get('Complete_orders','OrderController@show')->name('Complete_orders');
 }); 

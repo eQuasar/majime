@@ -1638,4 +1638,14 @@ class OrderController extends Controller {
         return response()->json(['error' => false, 'msg' => "Wallet Processed Successfully", "ErrorCode" => "000"], 200);
      }
 
+     public function wallet_Sheet_download(Request  $request)
+     {
+        $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
+        return $order;
+
+     }
+
+
+
+
 }

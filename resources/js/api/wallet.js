@@ -12,6 +12,9 @@ export default {
     },
     getStats(vid) {
         return axios.get('stat/'+vid)
-    }   
+    },   
+    wallet_sheet(data) {
+        return axios.post('wallet_Sheet_download', data)
+    }
 
 }

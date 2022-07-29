@@ -280,6 +280,12 @@ class WalletprocessedController extends Controller
      * @param  \App\Models\walletprocessed  $walletprocessed
      * @return \Illuminate\Http\Response
      */
+
+    public function wallet_Sheet_download()
+    {
+        $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
+        return $order;
+    }
     public function edit(walletprocessed $walletprocessed)
     {
         //
