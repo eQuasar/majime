@@ -41,7 +41,7 @@
 
         <button
           type="button"
-          class="download-btn btn btn-primary"
+          class="download-btn btn btn-primary new-btn"
           v-on:click="wallet_download"
           style="margin-left: 15px"
         >
@@ -321,7 +321,8 @@ export default {
         return false;
       }
       let formData = new FormData();
-
+      formData.append("date_from", this.date_from);
+      formData.append("date_to", this.date_to);
       formData.append("vid", this.vid);
       order
         .walletSearch(formData)
@@ -392,7 +393,6 @@ export default {
       let formData = new FormData();
       formData.append("date_from", this.date_from);
       formData.append("date_to", this.date_to);
-      formData.append("select_data", "date_range");
       formData.append("vid", this.vid);
       wallet
         .wallet_sheet(formData)

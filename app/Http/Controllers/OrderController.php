@@ -21,6 +21,7 @@ use App\Http\Resources\LineItemsResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Elibyy\TCPDF\Facades\TCPDF;
+use Carbon\Carbon;
 use PDF;
 use \Milon\Barcode\DNS1D;
 class OrderController extends Controller {
@@ -41,10 +42,10 @@ class OrderController extends Controller {
     public function wallet_Search(Request $request) {
 
         // whereBetween(DB::raw('DATE(created_at)'), [$startDate, $endDate])->get();
-        
+        $vendor=$request->vid;
         $range = [$request->date_from, $request->date_to];
-        // $order=orders::whereBetween('date_created_gmt',$range)->get();
-        $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->whereBetween(DB::raw('DATE(created_at)'), $range)->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
+        $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
+        ->whereBetween(DB::raw('DATE(created_at)'),$range)->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
         $Clos = $order->last();
         $Closing_balance=$Clos->current_wallet_bal;
         $open=$order[0]->current_wallet_bal;
@@ -1238,18 +1239,7 @@ class OrderController extends Controller {
             $orderItems[] = DB::table("orders")
             // ->join('billings','orders.oid','=','billings.order_id')
             ->where('orders.vid', $vid)->whereIn('orders.oid', $listImp)->orderBy('oid', 'DESC')->get();
-            // dd($listImp);
-            //   for($i=0;$i<count($listImp); $i++)
-            // {
-            // $orderItems[] =DB::table("orders.*",
-            //           // ->where('orders.oid',intval($listImp[$i]))
-            //              DB::raw("(SELECT line_items.name as Name, SUM(line_items.quantity) as Quantity FROM line_items WHERE line_items.order_id = orders.oid)"))
-            //               // ->select("orders.oid as OrderID","orders.status as Status","line_items.quantity as Qty","line_items.parent_name as Parent","orders.date_created as Date")
-            //              // ->where('orders.vid',intval($request->vid))
-            //              ->whereIn('orders.oid', $listImp)
-            //                ->get();
-            // }
-            // var_dump($orderItems); die;
+           
             
         } else {
             $orderItems[] = DB::table("orders")->where('vid', intval($request->vid))->get();
@@ -1639,12 +1629,27 @@ class OrderController extends Controller {
 
      public function wallet_Sheet_download(Request  $request)
      {
-        
-        $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))
+        $range = [$request->date_from, $request->date_to];
+        $date = Carbon::now();
+     if($date[0])
+        if($range!=null)
+        {
+            echo "range";die();
+            $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->whereBetween(DB::raw('DATE(created_at)'), $range)
+            ->select("walletprocesseds.oid as OrderID","walletprocesseds.transaction_id as TXNID","walletprocesseds.created_at as TXN Date", "walletprocesseds.payment_mode as Payment Mode", "walletprocesseds.status  as Status", "walletprocesseds.sale_amount as Sale Amount", "walletprocesseds.Wallet_used as Wallet Used", "walletprocesseds.logistic_cost as Logistic Cost", "walletprocesseds.payment_gateway_charges as Pymt Gateway Chrges","walletprocesseds.sms_cost as SMS Cost","walletprocesseds.majime_charges as Majime Charges","walletprocesseds.zone_amt as Zone Amount","walletprocesseds.net_amount  as Net Amount","walletprocesseds.current_wallet_bal  as Wallet Balance","walletprocesseds.current_wallet_bal  as Wallet Balance")
+        ->get();
+      
+        }
+        else
+        {
+          echo "all";die();
+        $order= DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))
         ->select("walletprocesseds.oid as OrderID","walletprocesseds.transaction_id as TXNID","walletprocesseds.created_at as TXN Date", "walletprocesseds.payment_mode as Payment Mode", "walletprocesseds.status  as Status", "walletprocesseds.sale_amount as Sale Amount", "walletprocesseds.Wallet_used as Wallet Used", "walletprocesseds.logistic_cost as Logistic Cost", "walletprocesseds.payment_gateway_charges as Pymt Gateway Chrges","walletprocesseds.sms_cost as SMS Cost","walletprocesseds.majime_charges as Majime Charges","walletprocesseds.zone_amt as Zone Amount","walletprocesseds.net_amount  as Net Amount","walletprocesseds.current_wallet_bal  as Wallet Balance","walletprocesseds.current_wallet_bal  as Wallet Balance")
         ->get();
-        return $order;
-
+      
+     
+        }
+        // return $order;
      }
 
 

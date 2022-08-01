@@ -118,7 +118,6 @@
         </div>
         
             <b-table striped hover responsive :items2="items2" :fields2="fields2" :filter-included-fields2="filterOn2" :filter2="filter2"show-empty></b-table>
-        
             <b-pagination
               v-model="currentPage"
               :total-rows="rows"
@@ -131,11 +130,11 @@
 </template>
 
 <script>
-import order from "../../api/order.js";
+import dashboard from "../../api/dashboard.js";
 export default {
   props: {},
   mounted() {
-    this.getOrderdetail();
+    this.Orderdetail();
   },
   data() {
     return {
@@ -157,36 +156,36 @@ export default {
       filterOn2: [],
       filterOn: [],
       fields: [
-        // {
-        //   key: "oid",
-        //   label: "Total Orders",
-        //   sortable: true,
-        // },
-        // {
-        //   key: "quantity",
-        //   label: "Cancelled Orders",
-        //   sortable: true,
-        // },
-        // {
-        //   key: "subtotal",
-        //   label: "Failed Orders",
-        //   sortable: true,
-        // },
-        // {
-        //   key: "state",
-        //   label: "Processing",
-        //   sortable: true,
-        // },
-        // {
-        //   key: "city",
-        //   label: "Hold",
-        //   sortable: true,
-        // },
-        // {
-        //   key: "value",
-        //   label: "Packed",
-        //   sortable: true,
-        // },
+        {
+          key: "oid",
+          label: "Total Orders",
+          sortable: true,
+        },
+        {
+          key: "quantity",
+          label: "Cancelled Orders",
+          sortable: true,
+        },
+        {
+          key: "subtotal",
+          label: "Failed Orders",
+          sortable: true,
+        },
+        {
+          key: "state",
+          label: "Processing",
+          sortable: true,
+        },
+        {
+          key: "city",
+          label: "Hold",
+          sortable: true,
+        },
+        {
+          key: "value",
+          label: "Packed",
+          sortable: true,
+        },
         {
           key: "date_created_gmt",
           label: "Dispetch",
@@ -232,6 +231,7 @@ export default {
       fields2: [
          {
             key: 'last_name',
+
             sortable: true
           },
           {
@@ -300,10 +300,13 @@ export default {
       // console.log(this.date_to);
       // alert(JSON.stringify(this.form))
     },
-    getOrderdetail() {
+
+    Orderdetail() {
       // this.seen = true;
-      order
-        .getOrderDetail()
+       this.vid = JSON.parse(localStorage.getItem("vid"));
+       let formData = new FormData();
+      formData.append("vid",this.vid);
+      dashboard.getdashboard_detail(formData)
         .then((response) => {
           console.log(response);
           this.items = response.data;
