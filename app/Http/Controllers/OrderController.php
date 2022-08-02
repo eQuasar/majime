@@ -43,43 +43,46 @@ class OrderController extends Controller {
 
         // whereBetween(DB::raw('DATE(created_at)'), [$startDate, $endDate])->get();
         $date=Carbon::now();
-        $current_date = explode(' ', $date);
-        $range = [$request->date_from, $request->date_to];
+        // echo $date;
+        // $current_date = explode(' ', $date);
+        $range = [$request->date_from." 00:00:00", "2022-08-02 00:00:00"];
+        // $curdate = new date('Y-m-d');
         $vendor=$request->vid;
-        if($request->date_to < $current_date[0])
-        {
-        $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
-        ->whereBetween('walletprocesseds.created_at',$range)->get();
-        $Clos = $order->last();
-        $Closing_balance=$Clos->current_wallet_bal;
-        $open=$order[0]->current_wallet_bal;
-        $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','=', $open)->get();
-        $opening_balance=$opening_data[0]->opening_bal;
-        }
-        else
-        {
+        // if( $date < $current_date[0])
+        // {
+        // $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
+        // ->whereBetween('created_at',$range)->get();
+        // $Clos = $order->last();
+        // $Closing_balance=$Clos->current_wallet_bal;
+        // $open=$order[0]->current_wallet_bal;
+        // $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','=', $open)->get();
+        // $opening_balance=$opening_data[0]->opening_bal;
+        // }
+        // else
+        // {
+
             $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
             ->whereBetween('created_at',$range)->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
             if($order->isEmpty())
             {       
                 $order_data=DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)->get();
                 $order_last= $order_data->last();
-                // $Closing_balance=$order_last->current_wallet_bal;
                 $Closing_balance=0;
-                // $open=$order_data[0]->current_wallet_bal;
-                // $opening_data=DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','=', $open)->get();
-                // $opening_data=0;
-                // $opening_balance=$opening_data[0]->opening_bal;
-                 $opening_balance=0;
-               
+                $opening_balance=0;
             }
             else 
             {
-                
+                $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
+                                    ->whereBetween('created_at',$range)->get();
+                $Clos = $order->first();
+                $Closing_balance=$Clos->current_wallet_bal;
+                $open=$order[0]->current_wallet_bal;
+                $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','=', $open)->get();
+                $opening_balance=$opening_data[0]->opening_bal;
 
             }
 
-        }
+        // }
         return response()->json([ 'order'=> $order,'closing_bal'=> $Closing_balance,'opening_bal'=> $opening_balance], 200);
       
     }

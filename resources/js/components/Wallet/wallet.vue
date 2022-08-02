@@ -63,23 +63,10 @@
                   }}</b-alert>
                   <b-form @submit="onSubmit" class="date_range">
                     <div class="datepiker-block">
-                      <span>From:&nbsp;</span>
+                      <span>Date From:&nbsp;</span>
                       <b-form-datepicker
                         id="from"
                         v-model="date_from"
-                        :date-format-options="{
-                          year: 'numeric',
-                          month: '2-digit',
-                          day: '2-digit',
-                        }"
-                        locale="en-IN"
-                      ></b-form-datepicker>
-                    </div>
-                    <div class="datepiker-block">
-                      <span>To:&nbsp;</span>
-                      <b-form-datepicker
-                        id="to"
-                        v-model="date_to"
                         :date-format-options="{
                           year: 'numeric',
                           month: '2-digit',
@@ -130,7 +117,6 @@
               :filter="filter"
               :fields="fields"
               :per-page="perPage"
-              sortable: false
               :current-page="currentPage"
               show-empty
               class="tbl-blk"
@@ -154,6 +140,10 @@
 
               <template v-slot:cell(oid)="row">
                 {{ row.item.Order_id }}
+              </template>
+              <template v-slot:cell(payment_mode)="row">
+                <span v-if="row.item.payment_mode=='wps_wcb_wallet_payment_gateway'"> Wallet</span>
+                <span v-else> {{ row.item.payment_mode }}</span>
               </template>
               <template v-slot:cell(status)="row">
                 <span :class="row.item.status"> {{ row.item.status }}</span>
@@ -236,67 +226,67 @@ export default {
         {
           key: "created_at",
           label: "Date",
-          sortable: true,
+          sortable: false,
         },
         {
           key: "id",
           label: "Txn Id",
-          sortable: true,
+          sortable: false,
         },
         {
           key: "orderno",
           label: "Order Id",
-          sortable: true,
+          sortable: false,
         },
         {
           key: "payment_mode",
           label: "Pay Mode",
-          sortable: true,
+          sortable: false,
         },
         {
           key: "status",
           label: "Status",
-          sortable: true,
+          sortable: false,
         },
         {
           key: "sale_amount",
           label: "Sale Amount",
-          sortable: true,
+          sortable: false,
         },
         {
           key: "Wallet_used",
           label: "Wallet Used",
-          sortable: true,
+          sortable: false,
         },
         {
           key: "logistic_cost",
           label: "Logistic Cost",
-          sortable: true,
+          sortable: false,
         },
         {
           key: "payment_gateway_charges",
           label: "Gateway Charges",
-          sortable: true,
+          sortable: false,
         },
         {
           key: "sms_cost",
           label: "SMS Cost",
-          sortable: true,
+          sortable: false,
         },
         {
           key: "majime_charges",
           label: "Majime Charges",
-          sortable: true,
+          sortable: false,
         },
         {
           key: "net_amount",
           label: "Net Amount",
-          sortable: true,
+          sortable: false,
         },
         {
           key: "current_wallet_bal",
           label: "Wallet Balance",
-          sortable: true,
+          sortable: false,
         },
 
         // {
@@ -329,15 +319,14 @@ export default {
       if (!this.date_from) {
         this.create_error += "Add date from,";
       }
-      if (!this.date_to) {
-        this.create_error += "Add date to,";
-      }
+      // if (!this.date_to) {
+      //   this.create_error += "Add date to,";
+      // }
       if (this.create_error != "") {
         return false;
       }
       let formData = new FormData();
       formData.append("date_from", this.date_from);
-      formData.append("date_to", this.date_to);
       formData.append("vid", this.vid);
       order
         .walletSearch(formData)
@@ -408,7 +397,7 @@ export default {
       this.show = true;
       let formData = new FormData();
       formData.append("date_from", this.date_from);
-      formData.append("date_to", this.date_to);
+      // formData.append("date_to", this.date_to);
       formData.append("vid", this.vid);
       wallet
         .wallet_sheet(formData)
