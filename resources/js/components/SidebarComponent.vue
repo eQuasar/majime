@@ -1,5 +1,9 @@
 <template>
-  <sidebar-menu :menu="menu" @update:collapsed="onToggleCollapse" @item-click="onItemClick"/>
+  <sidebar-menu
+    :menu="menu"
+    @update:collapsed="onToggleCollapse"
+    @item-click="onItemClick"
+  />
 </template>
 
 <script>
@@ -8,7 +12,7 @@ export default {
     return {
       menu: [
         {
-          href: { name: "admindashboard" },
+          href: { name: "admindashboard1" },
           title: "Dashboard",
           icon: "fas fa-th",
           child: [
@@ -48,7 +52,7 @@ export default {
         //     ]
         // }
       ],
-    }
+    };
   },
   methods: {
     onToggleCollapse(collapsed) {
@@ -57,7 +61,7 @@ export default {
     onItemClick(event, item) {
       console.log(event);
       console.log(item);
-    }
-  }
+    },
+  },
 };
 </script>

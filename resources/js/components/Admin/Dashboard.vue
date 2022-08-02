@@ -51,7 +51,6 @@
                 <!-- <b-button type="submit" variant="primary">Submit</b-button> -->
               </b-form>
             </b-col>
-            <div class="blue-bar"></div>
             <!-- <div class="content_bar card list-appointments space-bottom">
               <div class="col-sm-12">
                 <b-row>
@@ -84,47 +83,124 @@
               </div>
             </div> -->
           </div>
-          <b-table
-            striped
-            hover
-            responsive
-            :items="items"
-            :sort-by.sync="sortBy"
-            :sort-desc.sync="sortDesc"
-            sort-icon-left
-            :filter-included-fields="filterOn"
-            :filter="filter"
-            :fields="fields"
-            :per-page="perPage"
-            :current-page="currentPage"
-            show-empty
-          >
-            <template #empty="scope">
-              <p style="text-align: center">
-                No record found, choose date filter to found the result.
-              </p>
-            </template>
-            <template v-slot:cell(oid)="row"> #{{ row.item.oid }} </template>
-          </b-table>
-          <div class="text-center" v-if="seen">
-            <b-spinner variant="primary" label="Text Centered"></b-spinner>
-          </div>
-          
+
         </div>
       </div>
-      <div class="content_bar card2">
-        <div class="Process_Margin_Report">
-          <h3 style="margin-top: 20px">In Process Margin Report (Approx)</h3>
+       <div class="status-block">
+          <div class="stats blu">
+            <h4>Total Orders</h4>
+            <span>Total Orders:</span>
+            <p><i>₹ </i>{{inTransitSaleAmount }}</p>
+          </div>
+
+          <div class="stats cancel">
+            <h4>Cancelled Orders</h4>
+            <span>Total Orders: </span>
+            <p><i>₹ </i></p>
+          </div>
+
+          <div class="stats Fail">
+            <h4>Failed Orders</h4>
+            <span>Due Date: </span>
+            <p><i>₹ </i></p>
+          </div>
+
+          <div class="stats red">
+            <h4>On Hold Orders</h4>
+            <span>Total Orders: </span>
+            <p><i>₹ </i></p>
+          </div>
+           <div class="stats blu">
+            <h4>Processing Orders</h4>
+            <span>Total Orders:</span>
+            <p><i>₹ </i></p>
+          </div>
+
+          <div class="stats confirme">
+            <h4>Confirmed Orders</h4>
+            <span>Total Orders: </span>
+            <p><i>₹ </i></p>
+          </div>
+
+          <div class="stats Pack">
+            <h4>Packed Orders</h4>
+            <span>Due Date: </span>
+            <p><i> ₹ </i></p>
+          </div>
+
+          <div class="stats red">
+            <h4>Dispatch Orders</h4>
+            <span>Total Orders: </span>
+            <p><i>₹ </i></p>
+          </div>
+          <div class="stats blu">
+            <h4>In-transit Orders</h4>
+            <span>Total Orders: </span>
+            <p><i>₹ </i></p>
+          </div>
+          <div class="stats orng">
+            <h4>Deliverd Orders</h4>
+            <span>Total Orders: </span>
+            <p><i>₹ </i></p>
+          </div>
+          <div class="stats grn">
+            <h4>RTO Orders</h4>
+            <span>Total Orders: </span>
+            <p><i>₹ </i></p>
+          </div>
+          <div class="stats red">
+            <h4>DTO Booked Orders</h4>
+            <span>Total Orders: </span>
+            <p><i>₹ </i></p>
+          </div>
+          <div class="stats blu">
+            <h4>DTO In-transit Orders</h4>
+            <span>Total Orders: </span>
+            <p><i>₹ </i></p>
+          </div>
+          <div class="stats orng">
+            <h4>DTO Deliverd Orders</h4>
+            <span>Total Orders: </span>
+            <p><i>₹ </i></p>
+          </div>
+           <div class="stats grn">
+            <h4>DTO Refunded Orders</h4>
+            <span>Total Orders: </span>
+            <p><i>₹ </i></p>
+          </div>
         </div>
-        
-            <b-table striped hover responsive :items2="items2" :fields2="fields2" :filter-included-fields2="filterOn2" :filter2="filter2"show-empty></b-table>
+        <div class="status-block-2">
+        	<div class="margin-report-title">
+        		<h3><strong>Margin Report</strong></h3>
+        		<h6>(Estimate Value)</h6>
+        	</div>
+          <div class="stats blu">
+            <h4>Gross sale</h4>
+            <span>Total Orders:</span>
+            <!-- <p><i>₹ </i>{{inTransitSaleAmount }}</p> -->
+          </div>
+          <div class="stats red">
+            <h4>Estimate Net Sale</h4>
+            <span>33% of Gross order</span>
+            <!-- <p><i>₹ </i></p> -->
+          </div>
+          <div class="stats orng">
+            <h4>Estimate Product Cost</h4>
+            <span>N/A</span>
+            <!-- <p><i>₹ </i></p> -->
+          </div>
+           <div class="stats grn">
+            <h4>Add Cost</h4>
+            <span>Average Per Order</span>
+            <!-- <p><i>₹ </i></p> -->
+          </div>
+        </div>
             <b-pagination
               v-model="currentPage"
               :total-rows="rows"
               :per-page="perPage"
               aria-controls="my-table"
             ></b-pagination>
-      </div>
     </b-overlay>
   </b-container>
 </template>
@@ -134,7 +210,7 @@ import dashboard from "../../api/dashboard.js";
 export default {
   props: {},
   mounted() {
-    this.Orderdetail();
+    // this.Orderdetail();
   },
   data() {
     return {
@@ -193,7 +269,7 @@ export default {
         },
         {
           key: "currency",
-          label: "Intransit",
+          label: "In-transit",
           sortable: true,
         },
         {
@@ -228,29 +304,6 @@ export default {
         },
       ],
 
-      fields2: [
-         {
-            key: 'last_name',
-
-            sortable: true
-          },
-          {
-            key: 'first_name',
-            sortable: false
-          },
-          {
-            key: 'age',
-            label: 'Person age',
-            sortable: true,
-           
-          }
-        ],
-        items2 :[
-          { isActive: true, age: 40, first_name: 'Dickerson', last_name: 'Macdonald' },
-          { isActive: false, age: 21, first_name: 'Larsen', last_name: 'Shaw' },
-          { isActive: false, age: 89, first_name: 'Geneva', last_name: 'Wilson' },
-          { isActive: true, age: 38, first_name: 'Jami', last_name: 'Carney' },
-          ],
       items: [],
       errors_create: [],
       successful: false,
@@ -260,9 +313,6 @@ export default {
   computed: {
     rows() {
       return this.items.length;
-    },
-    rows() {
-      return this.items2.length;
     },
   },
   methods: {

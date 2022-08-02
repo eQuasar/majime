@@ -22861,7 +22861,7 @@ td span{
   word-wrap: break-word;
   background-clip: border-box;
   border-radius: 10px;
-  margin-right: 15px;
+  margin: 6px 15px 15px 0px;
 }
 
 .stats p i{font-style: normal;}
@@ -22923,4 +22923,39 @@ td span{
 
 .my_tag span:nth-child(2) {
   display: none;
+}
+
+.status-block-2 {
+    margin-top: 50px;
+    position: relative;
+}
+
+.confirme{
+  background: #E0EBFE;
+}
+
+.confirme h4{
+  color: #0058FF;
+}
+
+.cancel {
+  background: #FFE8E8;
+}
+
+.cancel h4 {
+  color: #FF4747;
+}
+
+.Pack {
+  background: #FFF8E0
+}
+
+.Pack h4{
+  color: #FFC700;
+}
+
+
+
+.margin-report-title {
+  margin-bottom: 30px;
 }

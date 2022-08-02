@@ -7,179 +7,184 @@
       spinner-variant="primary"
       spinner-small
     >
-      <div class="header_title">
-        <div class="header_inner">
-          <h4><strong>Wallet</strong></h4>
-          <br />
-        </div>
-      </div>
-
-      <div class="status-block">
-        <div class="stats blu">
-          <h4>In Transit Orders</h4>
-          <span>Total Orders: {{ stats.inTransitCount }}</span>
-          <p><i>₹ </i>{{ stats.inTransitSaleAmount }}</p>
-        </div>
-
-        <div class="stats orng">
-          <h4>Upcoming Payments</h4>
-          <span>Total Orders: {{ stats.unProcessedCount }}</span>
-          <p><i>₹ </i>{{ stats.unProcessedSaleAmount }}</p>
-        </div>
-
-        <div class="stats grn">
-          <h4>Next Remittance</h4>
-          <span>Due Date: {{ stats.nextDate }}</span>
-          <p><i>₹ </i>{{ stats.dueAmount }}</p>
-        </div>
-
-        <div class="stats red">
-          <h4>Pending Dispatch</h4>
-          <span>Total Orders: {{ stats.pendingDispatch }}</span>
-          <p><i>₹ </i>{{ stats.pendingDispatchAmount }}</p>
-        </div>
-
-        <button
-          type="button"
-          class="download-btn btn btn-primary new-btn"
-          v-on:click="wallet_download"
-          style="margin-left: 15px"
-        >
-          Download
-        </button>
-      </div>
-      <br />
-      <div class="content_bar">
-        <div class="card-body card">
-          <div class="call-center-dashboard">
-            <b-row>
-              <b-col xl="8" lg="8" md="8" class="tbl-blk">
-                <b-alert show variant="danger" v-if="create_error">{{
-                  create_error
-                }}</b-alert>
-                <b-form @submit="onSubmit" class="date_range">
-                  <div class="datepiker-block">
-                    <span>From:&nbsp;</span>
-                    <b-form-datepicker
-                      id="from"
-                      v-model="date_from"
-                      :date-format-options="{
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                      }"
-                      locale="en-IN"
-                    ></b-form-datepicker>
-                  </div>
-                  <div class="datepiker-block">
-                    <span>To:&nbsp;</span>
-                    <b-form-datepicker
-                      id="to"
-                      v-model="date_to"
-                      :date-format-options="{
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                      }"
-                      locale="en-IN"
-                    ></b-form-datepicker>
-                  </div>
-
-                  <b-button type="submit" variant="primary">Submit</b-button>
-                </b-form>
-              </b-col>
-              <b-col xl="4" lg="4" md="4" class="search_field">
-                <b-form-input
-                  id="filter-input"
-                  v-model="filter"
-                  type="search"
-                  placeholder="Type to Search"
-                ></b-form-input>
-                <b-input-group-append
-                  ><b-button :disabled="!filter" @click="filter = ''"
-                    >Clear</b-button
-                  ></b-input-group-append
-                >
-              </b-col>
-            </b-row>
+      <div class="main">
+        <div class="header_title">
+          <div class="header_inner">
+            <h4><strong>Wallet</strong></h4>
+            <br />
           </div>
         </div>
-        <br />
-        <div class="card-body card right-blk">
-          <div class="balance">
-            Opening Balance<span>{{ values.opening_bal }}</span>
+
+        <div class="status-block">
+          <div class="stats blu">
+            <h4>In Transit Orders</h4>
+            <span>Total Orders: {{ stats.inTransitCount }}</span>
+            <p><i>₹ </i>{{ stats.inTransitSaleAmount }}</p>
           </div>
-          <b-table
-            striped
-            hover
-            responsive
-            :items="items"
-            :sort-by.sync="sortBy"
-            :sort-desc.sync="sortDesc"
-            sort-icon-left
-            :filter-included-fields="filterOn"
-            :filter="filter"
-            :fields="fields"
-            :per-page="perPage"
-            :current-page="currentPage"
-            show-empty
-            class="tbl-blk"
+
+          <div class="stats orng">
+            <h4>Upcoming Payments</h4>
+            <span>Total Orders: {{ stats.unProcessedCount }}</span>
+            <p><i>₹ </i>{{ stats.unProcessedSaleAmount }}</p>
+          </div>
+
+          <div class="stats grn">
+            <h4>Next Remittance</h4>
+            <span>Due Date: {{ stats.nextDate }}</span>
+            <p><i>₹ </i>{{ stats.dueAmount }}</p>
+          </div>
+
+          <div class="stats red">
+            <h4>Pending Dispatch</h4>
+            <span>Total Orders: {{ stats.pendingDispatch }}</span>
+            <p><i>₹ </i>{{ stats.pendingDispatchAmount }}</p>
+          </div>
+
+          <button
+            type="button"
+            class="download-btn btn btn-primary new-btn"
+            v-on:click="wallet_download"
+            style="margin-left: 15px"
           >
-            <template #empty="scope">
-              <p style="text-align: center">
-                No record found, choose date filter to found the result.
-              </p>
-            </template>
-
-            <template v-slot:cell(created_at)="row">
-              <div class="my_tag">
-                <span v-for="tag in row.item.created_at.split(' ')" :tag="tag">
-                  {{ tag }}
-                </span>
-              </div>
-            </template>
-
-            <template v-slot:cell(oid)="row">
-              {{ row.item.Order_id }}
-            </template>
-            <template v-slot:cell(status)="row">
-              <span :class="row.item.status"> {{ row.item.status }}</span>
-            </template>
-          </b-table>
-          <br />
-          <div class="balance">
-            Closing Balance<span>{{ values.closing_bal }}</span>
-          </div>
-        </div>
-        <div class="text-center" v-if="seen">
-          <b-spinner variant="primary" label="Text Centered"></b-spinner>
+            Download
+          </button>
         </div>
         <br />
-        <div class="card-body card">
-          <div class="list-appointments">
-            <div class="col-sm-12">
+        <div class="content_bar">
+          <div class="card-body card">
+            <div class="call-center-dashboard">
               <b-row>
-                <b-col xl="6" lg="6" md="6">
-                  <b-form-group class="mb-0">
-                    Show
-                    <b-form-select
-                      id="per-page-select"
-                      v-model="perPage"
-                      :options="pageOptions"
-                      size="sm"
-                    ></b-form-select>
-                    entries
-                  </b-form-group>
+                <b-col xl="8" lg="8" md="8" class="tbl-blk">
+                  <b-alert show variant="danger" v-if="create_error">{{
+                    create_error
+                  }}</b-alert>
+                  <b-form @submit="onSubmit" class="date_range">
+                    <div class="datepiker-block">
+                      <span>From:&nbsp;</span>
+                      <b-form-datepicker
+                        id="from"
+                        v-model="date_from"
+                        :date-format-options="{
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                        }"
+                        locale="en-IN"
+                      ></b-form-datepicker>
+                    </div>
+                    <div class="datepiker-block">
+                      <span>To:&nbsp;</span>
+                      <b-form-datepicker
+                        id="to"
+                        v-model="date_to"
+                        :date-format-options="{
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                        }"
+                        locale="en-IN"
+                      ></b-form-datepicker>
+                    </div>
+
+                    <b-button type="submit" variant="primary">Submit</b-button>
+                  </b-form>
                 </b-col>
-                <b-col xl="6" lg="6" md="6">
-                  <b-pagination
-                    v-model="currentPage"
-                    :total-rows="rows"
-                    :per-page="perPage"
-                    aria-controls="my-table"
-                  ></b-pagination>
+                <b-col xl="4" lg="4" md="4" class="search_field">
+                  <b-form-input
+                    id="filter-input"
+                    v-model="filter"
+                    type="search"
+                    placeholder="Type to Search"
+                  ></b-form-input>
+                  <b-input-group-append
+                    ><b-button :disabled="!filter" @click="filter = ''"
+                      >Clear</b-button
+                    ></b-input-group-append
+                  >
                 </b-col>
               </b-row>
+            </div>
+          </div>
+          <br />
+          <div class="card-body card right-blk">
+            <div class="balance">
+              Opening Balance<span>{{ values.opening_bal }}</span>
+            </div>
+            <b-table
+              striped
+              hover
+              responsive
+              :items="items"
+              :sort-by.sync="sortBy"
+              :sort-desc.sync="sortDesc"
+              sort-icon-left
+              :filter-included-fields="filterOn"
+              :filter="filter"
+              :fields="fields"
+              :per-page="perPage"
+              :current-page="currentPage"
+              show-empty
+              class="tbl-blk"
+            >
+              <template #empty="scope">
+                <p style="text-align: center">
+                  No record found, choose date filter to found the result.
+                </p>
+              </template>
+
+              <template v-slot:cell(created_at)="row">
+                <div class="my_tag">
+                  <span
+                    v-for="tag in row.item.created_at.split(' ')"
+                    :tag="tag"
+                  >
+                    {{ tag }}
+                  </span>
+                </div>
+              </template>
+
+              <template v-slot:cell(oid)="row">
+                {{ row.item.Order_id }}
+              </template>
+              <template v-slot:cell(status)="row">
+                <span :class="row.item.status"> {{ row.item.status }}</span>
+              </template>
+            </b-table>
+            <br />
+            <div class="balance">
+              Closing Balance<span>{{ values.closing_bal }}</span>
+            </div>
+          </div>
+          <div class="text-center" v-if="seen">
+            <b-spinner variant="primary" label="Text Centered"></b-spinner>
+          </div>
+          <br />
+          <div class="card-body card">
+            <div class="list-appointments">
+              <div class="col-sm-12">
+                <b-row>
+                  <b-col xl="6" lg="6" md="6">
+                    <b-form-group class="mb-0">
+                      Show
+                      <b-form-select
+                        id="per-page-select"
+                        v-model="perPage"
+                        :options="pageOptions"
+                        size="sm"
+                      ></b-form-select>
+                      entries
+                    </b-form-group>
+                  </b-col>
+                  <b-col xl="6" lg="6" md="6">
+                    <b-pagination
+                      v-model="currentPage"
+                      :total-rows="rows"
+                      :per-page="perPage"
+                      aria-controls="my-table"
+                    ></b-pagination>
+                  </b-col>
+                </b-row>
+              </div>
             </div>
           </div>
         </div>
@@ -327,6 +332,7 @@ export default {
       order
         .walletSearch(formData)
         .then((response) => {
+          // alert(response.data.msg);
           var resp = response.data;
           this.items = resp.order;
           this.values = resp;

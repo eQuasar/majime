@@ -527,7 +527,7 @@ computed: {
           formData.append("vid",this.vid);
           order.ListOrderStatus_assign(formData)
           .then((response)=>{
-              alert(response.data.msg);
+              $alert(response.data.msg);
               this.getVidz();
           })
             .catch(response=>{
