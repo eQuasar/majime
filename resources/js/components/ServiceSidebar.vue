@@ -12,7 +12,7 @@ export default {
     return {
       menu: [
         {
-          href: { name: "admindashboard1" },
+          href: { name: "admindashboard" },
           title: "Dashboard",
           icon: "fas fa-th",
         },

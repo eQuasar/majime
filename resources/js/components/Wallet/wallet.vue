@@ -16,6 +16,13 @@
         </div>
 
         <div class="status-block">
+
+          <div class="stats red">
+            <h4>Pending Dispatch</h4>
+            <span>Total Orders: {{ stats.pendingDispatch }}</span>
+            <p><i>₹ </i>{{ stats.pendingDispatchAmount }}</p>
+          </div>
+
           <div class="stats blu">
             <h4>In Transit Orders</h4>
             <span>Total Orders: {{ stats.inTransitCount }}</span>
@@ -23,7 +30,7 @@
           </div>
 
           <div class="stats orng">
-            <h4>Upcoming Payments</h4>
+            <h4>Open Delivered Order</h4>
             <span>Total Orders: {{ stats.unProcessedCount }}</span>
             <p><i>₹ </i>{{ stats.unProcessedSaleAmount }}</p>
           </div>
@@ -34,11 +41,7 @@
             <p><i>₹ </i>{{ stats.dueAmount }}</p>
           </div>
 
-          <div class="stats red">
-            <h4>Pending Dispatch</h4>
-            <span>Total Orders: {{ stats.pendingDispatch }}</span>
-            <p><i>₹ </i>{{ stats.pendingDispatchAmount }}</p>
-          </div>
+         
 
           <button
             type="button"
@@ -106,9 +109,14 @@
             </div>
           </div>
           <br />
-          <div class="card-body card right-blk">
-            <div class="balance">
-              Opening Balance<span>{{ values.opening_bal }}</span>
+          <div class="card-body card ">
+            <div class="balance-values">
+              <div class="balance">
+                Opening Balance<span>{{ values.opening_bal }}</span>
+              </div>
+              <div class="balance">
+                Closing Balance<span>{{ values.closing_bal }}</span>
+              </div>
             </div>
             <b-table
               striped
@@ -151,9 +159,9 @@
               </template>
             </b-table>
             <br />
-            <div class="balance">
+            <!-- <div class="balance">
               Closing Balance<span>{{ values.closing_bal }}</span>
-            </div>
+            </div> -->
           </div>
           <div class="text-center" v-if="seen">
             <b-spinner variant="primary" label="Text Centered"></b-spinner>
@@ -421,7 +429,6 @@ export default {
     },
 
     getStats(vid) {
-      this.vid = JSON.parse(localStorage.getItem("ivid"));
       let formData = new FormData();
       console.log("GetStat");
       wallet

@@ -105,7 +105,8 @@ class AddTransactionController extends Controller
                 'current_wallet_bal'=>$opening_balance,
                 'order_count'=> 0,
                 'zone_amt'=> 0,
-                'description'=> $request->description
+                'description'=> $request->description,
+           
             ];      
         }else{
             $wallet_data->opening_bal=$openclose_data[0]->closing_bal;
@@ -128,13 +129,16 @@ class AddTransactionController extends Controller
                 'current_wallet_bal'=>$opening_balance2,
                 'order_count'=> 0,
                 'zone_amt'=> 0,
-                'description'=> $request->description
+                'description'=> $request->description,
+            
             ];    
         }
 
         $wallet_data->save();  
         walletprocessed::insert($Wallet_order_data);
+        DB::table('walletprocesseds')->where('walletprocesseds.vid', intval($request->vid))->update(['created_at' => $request->date]);
         return response()->json(['error' => false,'data' => $trans_data],200);
+        
     }
 
     /**

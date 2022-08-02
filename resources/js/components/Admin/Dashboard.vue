@@ -125,7 +125,7 @@
 
         <div class="stats Pack">
           <h4>Packed Orders</h4>
-          <span>Due Date: {{ dashboardData.packedtotalcount }}</span>
+          <span>Total Orders: {{ dashboardData.packedtotalcount }}</span>
           <p><i> ₹ </i>{{ dashboardData.packedtotalSaleAmount }}</p>
         </div>
 
@@ -210,6 +210,7 @@
 
 <script>
 import dashboard from "../../api/dashboard.js";
+import user from "../../api/user.js";
 export default {
   props: {},
   mounted() {

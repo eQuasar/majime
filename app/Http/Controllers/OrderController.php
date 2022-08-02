@@ -42,13 +42,14 @@ class OrderController extends Controller {
     public function wallet_Search(Request $request) {
 
         // whereBetween(DB::raw('DATE(created_at)'), [$startDate, $endDate])->get();
-        $date[0]=Carbon::now();
+        $date=Carbon::now();
+        $current_date = explode(' ', $date);
         $range = [$request->date_from, $request->date_to];
         $vendor=$request->vid;
-        if($request->date_from < $date[0])
+        if($request->date_to < $current_date[0])
         {
         $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
-        ->whereBetween(DB::raw('DATE(created_at)'),$range)->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
+        ->whereBetween('walletprocesseds.created_at',$range)->get();
         $Clos = $order->last();
         $Closing_balance=$Clos->current_wallet_bal;
         $open=$order[0]->current_wallet_bal;

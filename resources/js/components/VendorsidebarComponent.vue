@@ -1,5 +1,9 @@
 <template>
-  <sidebar-menu :menu="menu" @update:collapsed="onToggleCollapse" @item-click="onItemClick" />
+  <sidebar-menu
+    :menu="menu"
+    @update:collapsed="onToggleCollapse"
+    @item-click="onItemClick"
+  />
 </template>
 
 <script>
@@ -7,6 +11,11 @@ export default {
   data() {
     return {
       menu: [
+        {
+          href: { name: "admindashboard" },
+          title: "Dashboard",
+          icon: "fas fa-th",
+        },
         {
           title: "Sales",
           icon: "fas fa-chart-bar",
@@ -106,7 +115,7 @@ export default {
     onItemClick(event, item) {
       console.log(event);
       console.log(item);
-    }
-  }
+    },
+  },
 };
 </script>

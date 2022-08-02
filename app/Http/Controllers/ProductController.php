@@ -173,11 +173,14 @@ class ProductController extends Controller {
         $confirm='confirmed';
         $pack='packed';
         $hold='on-hold';
+        $dis='dispatched';
+        $del='deliveredtocust';
+        $dto_del='dtodelivered';
         $int_check = 0;
-        $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dtobook,$intrans,$dtointrans])->get();
+        $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dtobook,$intrans,$dtointrans,$dis])->get();
         $intransit_saleAmount=$orders->sum('total');
         $order_count=count($orders);
-        $unprocessed_orders=DB::table("orders")->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)->whereIn('orders.status',[$Comple,$dto_ref,$clos])->get();
+        $unprocessed_orders=DB::table("orders")->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)->whereIn('orders.status',[$dto_del,$del])->get();
         $unprocessed_saleAmount=$unprocessed_orders->sum('total');
         $unprocess_count=count($unprocessed_orders);
         $due_amount=DB::table("opening_closing_tables")->where('opening_closing_tables.vid','=',$vid)->orderBy('id', 'DESC')->first();

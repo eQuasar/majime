@@ -22717,6 +22717,10 @@ td span{
     padding: 8px 15px;
     font-weight: 600;
     font-size: 12px;
+    width: 120px !important;
+    float: left;
+    text-align: center;
+
 }
 
 
@@ -22733,7 +22737,7 @@ td span{
 .dto-refunded{background: #FFECE8; color: #FF6347;}
 .rtodelivered{background: #0000FF1F; color: #0000FFD9;}
 .rto-delivered{background: #FFECE8; color: #FF6347;}
-.dto-delivered{background: #FFECE8; color: #FF6347;}
+.dto-delivered{background: #FFF8E0; color: #FFDB58;}
 .deliveredtocust{background: #E0EBFE; color: #808000;}
 .dtodel2warehouse{background: #E0EBFE; color: #008000;}
 .dtointransit{background: #E0EBFE; color: #800080;}
@@ -22965,7 +22969,11 @@ td span{
   color: #FFC700;
 }
 
-
+.balance-values {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
 
 .margin-report-title {
   margin-bottom: 30px;
