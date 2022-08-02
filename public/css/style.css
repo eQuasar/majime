@@ -22712,7 +22712,7 @@ td span{
   text-transform: capitalize;
 }
 
-.processing, .dtobooked, .dispatched, .intransit, .confirmed, .completed, .cancelled, .packed, .rtd-online, .rtd-cod, .refunded, .deliveredtocust, .dtodel2warehouse, .dtointransit, .pickedup, .on-hold, .rtodelivered, .dto-refunded, .closed, .In, .rto-delivered{
+.processing, .dtobooked, .dispatched, .intransit, .confirmed, .completed, .cancelled, .packed, .rtd-online, .rtd-cod, .refunded, .deliveredtocust, .dtodel2warehouse, .Out, .dtointransit, .pickedup, .on-hold, .rtodelivered, .dto-refunded, .closed, .In, .rto-delivered{
     border-radius: 3px;
     padding: 8px 15px;
     font-weight: 600;
@@ -22734,7 +22734,7 @@ td span{
 .packed{background: #FFF8E0; color: #FFC700;}
 .rtd-online{background: #E0EBFE; color: #00008B;}
 .rtd-cod{background: #E0EBFE; color: #00FFFF;}
-.dto-refunded{background: #FFECE8; color: #FF6347;}
+.dto-refunded{background: #4B49AC59; color: #4B49AC;}
 .rtodelivered{background: #0000FF1F; color: #0000FFD9;}
 .rto-delivered{background: #FFECE8; color: #FF6347;}
 .dto-delivered{background: #FFF8E0; color: #FFDB58;}
@@ -22745,6 +22745,7 @@ td span{
 .on-hold{background: #E0EBFE; color: #A52A2A;}
 .closed{background: #E0F5E9; color: #57B657;}
 .In{background: #0080001c; color: #57B657;}
+.Out{background: #FFECE8; color: #FF6347;}
 
 @media (max-width: 1600px) {
 

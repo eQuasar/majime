@@ -130,6 +130,7 @@
               :filter="filter"
               :fields="fields"
               :per-page="perPage"
+              sortable: false
               :current-page="currentPage"
               show-empty
               class="tbl-blk"

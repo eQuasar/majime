@@ -132,6 +132,7 @@ class AddTransactionController extends Controller
                 'description'=> $request->description,
             
             ];    
+
         }
 
         $wallet_data->save();  

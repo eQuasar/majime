@@ -282,7 +282,7 @@ class WalletprocessedController extends Controller
     public function show(Request $request)
     {
         //get wallet processed table
-        $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
+        $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->select("walletprocesseds.*","walletprocesseds.oid as orderno")->orderBy('id','DESC')->get();
         //get last element of array 
         if (count($order) >= 1) {
             $Clos = $order->last();
