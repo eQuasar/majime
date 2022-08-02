@@ -118,7 +118,8 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('filter_Search', 'OrderController@filter_Search')->name('filter_Search');
 	Route::get('stat/{vid}', 'ProductController@stat')->name('stat');
 	Route::post('wallet_Sheet_download', 'OrderController@wallet_Sheet_download')->name('wallet_Sheet_download');
-	Route::get('Order_detail' , 'DashboardController@Order_detail')->name('Order_detail');
+	Route::get('dashboard_detail/{vid}', 'DashboardController@dashboard_detail')->name('dashboard_detail');
+	Route::post('dashboard_search', 'DashboardController@dashboard_search')->name('dashboard_search');
 
 	// Route::get('Complete_orders','OrderController@show')->name('Complete_orders');
 }); 

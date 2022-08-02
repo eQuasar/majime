@@ -22719,6 +22719,7 @@ td span{
     font-size: 12px;
 }
 
+
 .dtobooked{background: #fff6e6; color: #FFA500;}
 .dispatched{background: #def7e1; color: #57B657;}
 .intransit{background: #FFF8E0; color: #FFC700;}
@@ -22731,13 +22732,14 @@ td span{
 .rtd-cod{background: #E0EBFE; color: #00FFFF;}
 .dto-refunded{background: #FFECE8; color: #FF6347;}
 .rtodelivered{background: #0000FF1F; color: #0000FFD9;}
-.rto-delivered{background: #0000FF1F; color: #0000FFD9;}
+.rto-delivered{background: #FFECE8; color: #FF6347;}
+.dto-delivered{background: #FFECE8; color: #FF6347;}
 .deliveredtocust{background: #E0EBFE; color: #808000;}
 .dtodel2warehouse{background: #E0EBFE; color: #008000;}
 .dtointransit{background: #E0EBFE; color: #800080;}
 .pickedup{background: #E0EBFE; color: #800000;}
 .on-hold{background: #E0EBFE; color: #A52A2A;}
-.closed{background: #E0EBFE; color: #2e6dd9;}
+.closed{background: #E0F5E9; color: #57B657;}
 .In{background: #0080001c; color: #57B657;}
 
 @media (max-width: 1600px) {
@@ -22925,9 +22927,18 @@ td span{
   display: none;
 }
 
+.Dashboard_title {
+  text-align: center;
+}
+
 .status-block-2 {
-    margin-top: 50px;
+    
     position: relative;
+}
+
+.margin-report-title {
+  
+  text-align: center;
 }
 
 .confirme{

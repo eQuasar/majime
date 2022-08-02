@@ -122,7 +122,7 @@ class WalletprocessedController extends Controller
             
             //calculate majime cost 
             $majime_cost=(($order_table[0]->total)*($mjm_cost/100));
-            if($order_table[0]->payment_method == 'cod')
+            if($order_table[0]->payment_method == 'cod' || $order_table[0]->payment_method == 'wps_wcb_wallet_payment_gateway')
             {
                 $payment_gateway=0;
             }else{
@@ -181,6 +181,31 @@ class WalletprocessedController extends Controller
                     }                        
                         $net_amount=$sale_Amount-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                         $closing_bal=$opening_balance+$net_amount;
+                }
+                //caluclate logistic cost if payment method is Wallet Used
+                elseif ($order_table[0]->payment_method == 'wps_wcb_wallet_payment_gateway'){
+                    $walletUsedAmt = $amtPaid;
+                    $cod_charges = 0;
+                    if($pw==0)
+                    {   
+                        $pw=330;
+                    }
+                    $qty=$line_items_qty[0]->quantity;
+                    $total_weight=($pw)*($qty);
+                    if($total_weight>500)
+                    {
+                        $cod_cost=$zone_price;
+                        $percent_price=(int)($total_weight/500);
+                        $pp_amount=($cod_cost*85/100)*$percent_price;
+                        $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
+                    }
+                    else{
+                        $cod_cost=$zone_price;
+                        $logistic_cost=$cod_cost+$cod_charges;
+                    }
+                    $net_amount=$sale_Amount-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                    $closing_bal=$opening_balance+$net_amount;
+                   
                 }
                 //caluclate logistic cost if payment method is prepaid
                 else{

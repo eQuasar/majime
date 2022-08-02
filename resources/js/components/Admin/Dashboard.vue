@@ -7,9 +7,9 @@
       spinner-variant="primary"
       spinner-small
     >
-      <div class="header_title">
+      <div class="Dashboard_title">
         <div class="header_inner">
-          <h3><strong>Performance</strong></h3>
+          <h3><strong>Dashboard</strong></h3>
           <br />
         </div>
       </div>
@@ -17,7 +17,7 @@
       <div class="content_bar card">
         <div class="card-body">
           <div class="call-center-dashboard">
-            <b-col xl="10" lg="10" md="10">
+            <b-col xl="8" lg="8" md="8">
               <b-alert show variant="danger" v-if="create_error">{{
                 create_error
               }}</b-alert>
@@ -29,10 +29,11 @@
                     v-model="date_from"
                     :date-format-options="{
                       year: 'numeric',
-                      month: '2-digit',
+                      month: 'short',
                       day: '2-digit',
+                      weekday: 'short',
                     }"
-                    locale="en-IN"
+                    locale="en"
                   ></b-form-datepicker>
                 </div>
                 <div class="datepiker-block">
@@ -45,10 +46,10 @@
                       month: '2-digit',
                       day: '2-digit',
                     }"
-                    locale="en-IN"
+                    locale="en"
                   ></b-form-datepicker>
                 </div>
-                <!-- <b-button type="submit" variant="primary">Submit</b-button> -->
+                <b-button type="submit" variant="primary">Submit</b-button>
               </b-form>
             </b-col>
             <!-- <div class="content_bar card list-appointments space-bottom">
@@ -83,124 +84,126 @@
               </div>
             </div> -->
           </div>
-
         </div>
       </div>
-       <div class="status-block">
-          <div class="stats blu">
-            <h4>Total Orders</h4>
-            <span>Total Orders:</span>
-            <p><i>₹ </i>{{inTransitSaleAmount }}</p>
-          </div>
-
-          <div class="stats cancel">
-            <h4>Cancelled Orders</h4>
-            <span>Total Orders: </span>
-            <p><i>₹ </i></p>
-          </div>
-
-          <div class="stats Fail">
-            <h4>Failed Orders</h4>
-            <span>Due Date: </span>
-            <p><i>₹ </i></p>
-          </div>
-
-          <div class="stats red">
-            <h4>On Hold Orders</h4>
-            <span>Total Orders: </span>
-            <p><i>₹ </i></p>
-          </div>
-           <div class="stats blu">
-            <h4>Processing Orders</h4>
-            <span>Total Orders:</span>
-            <p><i>₹ </i></p>
-          </div>
-
-          <div class="stats confirme">
-            <h4>Confirmed Orders</h4>
-            <span>Total Orders: </span>
-            <p><i>₹ </i></p>
-          </div>
-
-          <div class="stats Pack">
-            <h4>Packed Orders</h4>
-            <span>Due Date: </span>
-            <p><i> ₹ </i></p>
-          </div>
-
-          <div class="stats red">
-            <h4>Dispatch Orders</h4>
-            <span>Total Orders: </span>
-            <p><i>₹ </i></p>
-          </div>
-          <div class="stats blu">
-            <h4>In-transit Orders</h4>
-            <span>Total Orders: </span>
-            <p><i>₹ </i></p>
-          </div>
-          <div class="stats orng">
-            <h4>Deliverd Orders</h4>
-            <span>Total Orders: </span>
-            <p><i>₹ </i></p>
-          </div>
-          <div class="stats grn">
-            <h4>RTO Orders</h4>
-            <span>Total Orders: </span>
-            <p><i>₹ </i></p>
-          </div>
-          <div class="stats red">
-            <h4>DTO Booked Orders</h4>
-            <span>Total Orders: </span>
-            <p><i>₹ </i></p>
-          </div>
-          <div class="stats blu">
-            <h4>DTO In-transit Orders</h4>
-            <span>Total Orders: </span>
-            <p><i>₹ </i></p>
-          </div>
-          <div class="stats orng">
-            <h4>DTO Deliverd Orders</h4>
-            <span>Total Orders: </span>
-            <p><i>₹ </i></p>
-          </div>
-           <div class="stats grn">
-            <h4>DTO Refunded Orders</h4>
-            <span>Total Orders: </span>
-            <p><i>₹ </i></p>
-          </div>
+      <br />
+      <div class="status-block">
+        <div class="stats blu">
+          <h4>Total Orders</h4>
+          <span>Total Orders:{{ dashboardData.totalcount }}</span>
+          <p><i>₹ </i>{{ dashboardData.totalSaleAmount }}</p>
         </div>
-        <div class="status-block-2">
-        	<div class="margin-report-title">
-        		<h3><strong>Margin Report</strong></h3>
-        		<h6>(Estimate Value)</h6>
-        	</div>
-          <div class="stats blu">
-            <h4>Gross sale</h4>
-            <span>Total Orders:</span>
-            <!-- <p><i>₹ </i>{{inTransitSaleAmount }}</p> -->
-          </div>
-          <div class="stats red">
-            <h4>Estimate Net Sale</h4>
-            <span>33% of Gross order</span>
-            <!-- <p><i>₹ </i></p> -->
-          </div>
-          <div class="stats orng">
-            <h4>Estimate Product Cost</h4>
-            <span>N/A</span>
-            <!-- <p><i>₹ </i></p> -->
-          </div>
-           <div class="stats grn">
-            <h4>Add Cost</h4>
-            <span>Average Per Order</span>
-            <!-- <p><i>₹ </i></p> -->
-          </div>
+
+        <div class="stats cancel">
+          <h4>Cancelled Orders</h4>
+          <span>Total Orders:{{ dashboardData.canceltotalcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.canceltotalSaleAmount }}</p>
         </div>
-            <b-pagination
-              v-model="currentPage"
-              :total-rows="rows"
-              :per-page="perPage"
-              aria-controls="my-table"
-            ></b-pagination>
+
+        <div class="stats orng">
+          <h4>Failed Orders</h4>
+          <span>Total Orders: {{ dashboardData.failtotalcount }}</span>
+          <p><i>₹ </i>{{ dashboardData.failtotalSaleAmount }}</p>
+        </div>
+
+        <div class="stats red">
+          <h4>On Hold Orders</h4>
+          <span>Total Orders:{{ dashboardData.holdtotalcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.holdtotalSaleAmount }}</p>
+        </div>
+        <div class="stats blu">
+          <h4>Processing Orders</h4>
+          <span>Total Orders:{{ dashboardData.processingtotalcount }}</span>
+          <p><i>₹ </i>{{ dashboardData.processingtotalSaleAmount }}</p>
+        </div>
+
+        <div class="stats confirme">
+          <h4>Confirmed Orders</h4>
+          <span>Total Orders:{{ dashboardData.confirmtotalcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.confirmtotalSaleAmount }}</p>
+        </div>
+
+        <div class="stats Pack">
+          <h4>Packed Orders</h4>
+          <span>Due Date: {{ dashboardData.packedtotalcount }}</span>
+          <p><i> ₹ </i>{{ dashboardData.packedtotalSaleAmount }}</p>
+        </div>
+
+        <div class="stats red">
+          <h4>Dispatch Orders</h4>
+          <span>Total Orders:{{ dashboardData.dispatchtotalcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.dispatchtotalSaleAmount }}</p>
+        </div>
+        <div class="stats blu">
+          <h4>In-transit Orders</h4>
+          <span>Total Orders:{{ dashboardData.transittotalcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.transittotalSaleAmount }}</p>
+        </div>
+        <div class="stats orng">
+          <h4>Deliverd Orders</h4>
+          <span>Total Orders:{{ dashboardData.deltotalcount }}</span>
+          <p><i>₹ </i>{{ dashboardData.deltotalSaleAmount }}</p>
+        </div>
+        <div class="stats grn">
+          <h4>RTO Orders</h4>
+          <span>Total Orders:{{ dashboardData.rtototalcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.rtototalSaleAmount }}</p>
+        </div>
+        <div class="stats red">
+          <h4>DTO Booked Orders</h4>
+          <span>Total Orders:{{ dashboardData.dtobktotalcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.dtobktotalSaleAmount }}</p>
+        </div>
+        <div class="stats blu">
+          <h4>DTO In-transit Orders</h4>
+          <span>Total Orders:{{ dashboardData.dtointtotalcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.dtointtotalSaleAmount }}</p>
+        </div>
+        <div class="stats orng">
+          <h4>DTO Deliverd Orders</h4>
+          <span>Total Orders:{{ dashboardData.dtodeltotalcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.dtodeltotalSaleAmount }}</p>
+        </div>
+        <div class="stats grn">
+          <h4>DTO Refunded Orders</h4>
+          <span>Total Orders:{{ dashboardData.dtoreftotalcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.dtoreftotalSaleAmount }}</p>
+        </div>
+      </div>
+      <br />
+      <br />
+      <div class="status-block-2">
+        <div class="margin-report-title">
+          <h3><strong>Margin Report</strong></h3>
+          <h6>(Estimate Value)</h6>
+        </div>
+        <div class="stats blu">
+          <h4>Gross sale</h4>
+          <span>Total Orders:{{ dashboardData.grosscount }}</span>
+          <p><i>₹ </i>{{ dashboardData.grossSaleAmount }}</p>
+        </div>
+        <div class="stats red">
+          <h4>Estimated Net Sale</h4>
+          <span>{{ dashboardData.netcount }}</span>
+          <p><i>₹ </i>{{ dashboardData.netsale }}</p>
+        </div>
+        <div class="stats orng">
+          <h4>Estimated Product Cost</h4>
+          <span>N/A</span>
+          <p><i>₹ </i>N/A</p>
+        </div>
+        <div class="stats grn">
+          <h4>Ad Cost</h4>
+          <span>N/A</span>
+          <p><i>₹ </i>N/A</p>
+        </div>
+      </div>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="rows"
+        :per-page="perPage"
+        aria-controls="my-table"
+      ></b-pagination>
     </b-overlay>
   </b-container>
 </template>
@@ -210,7 +213,7 @@ import dashboard from "../../api/dashboard.js";
 export default {
   props: {},
   mounted() {
-    // this.Orderdetail();
+    this.getVidz();
   },
   data() {
     return {
@@ -306,6 +309,7 @@ export default {
 
       items: [],
       errors_create: [],
+      dashboardData: [],
       successful: false,
       create_error: "",
     };
@@ -316,6 +320,34 @@ export default {
     },
   },
   methods: {
+    getVidz() {
+      if (this.$userId == 1) {
+        this.show = true;
+        this.vid = JSON.parse(localStorage.getItem("ivid"));
+        localStorage.setItem("ivid", this.vid);
+        // this.getWalletDetail(this.vid);
+        this.Orderdetail(this.vid);
+        this.show = false;
+      } else {
+        this.show = true;
+        let formData = new FormData();
+        formData.append("user_id", this.$userId);
+        user
+          .getVid(formData)
+          .then((response) => {
+            this.vid = response.data;
+            localStorage.setItem("ivid", this.vid);
+            // this.getWalletDetail(this.vid);
+            this.Orderdetail(this.vid);
+            this.show = false;
+          })
+          .catch((response) => {
+            this.successful = false;
+            //alert('something went wrong');
+          });
+      }
+      // alert("aaa");
+    },
     onSubmit(event) {
       event.preventDefault();
       this.create_error = "";
@@ -331,11 +363,13 @@ export default {
       let formData = new FormData();
       formData.append("date_from", this.date_from);
       formData.append("date_to", this.date_to);
-
-      appointment
-        .appointmentSearch(formData)
+      formData.append("vid", this.vid);
+      dashboard
+        .dashbaordSearch(formData)
         .then((response) => {
-          this.items = response.data.data;
+          var resp = response.data;
+          this.dashboardData = resp;
+          console.log(this.dashboardData);
 
           // }
         })
@@ -351,18 +385,16 @@ export default {
       // alert(JSON.stringify(this.form))
     },
 
-    Orderdetail() {
+    Orderdetail(vid) {
       // this.seen = true;
-       this.vid = JSON.parse(localStorage.getItem("vid"));
-       let formData = new FormData();
-      formData.append("vid",this.vid);
-      dashboard.getdashboard_detail(formData)
+      let formData = new FormData();
+
+      dashboard
+        .getdashboard_detail(vid)
         .then((response) => {
-          console.log(response);
-          this.items = response.data;
-          // this.countrys = response.data.data;
-          console.log(this.items);
-          //this.seen = false;
+          var resp = response.data;
+          this.dashboardData = resp;
+          console.log(this.dashboardData);
         })
         .catch((response) => {
           this.successful = false;

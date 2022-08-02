@@ -421,6 +421,7 @@ export default {
     },
 
     getStats(vid) {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
       let formData = new FormData();
       console.log("GetStat");
       wallet
@@ -432,9 +433,8 @@ export default {
         })
         .catch((response) => {
           this.successful = false;
-          alert("Stats Not Available");
+          alert("Dashboard Not Available");
         });
-      this.show = false;
     },
   },
 };
