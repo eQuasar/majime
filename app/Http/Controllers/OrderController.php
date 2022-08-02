@@ -62,7 +62,7 @@ class OrderController extends Controller {
         // {
 
             $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
-            ->whereBetween('created_at',$range)->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();
+            ->whereBetween('created_at',$range)->select("walletprocesseds.*","walletprocesseds.oid as orderno")->orderBy('id','DESC')->get();
             if($order->isEmpty())
             {       
                 $order_data=DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)->get();
@@ -73,10 +73,11 @@ class OrderController extends Controller {
             else 
             {
                 $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
-                                    ->whereBetween('created_at',$range)->get();
+                                    ->whereBetween('created_at',$range)->orderBy('id','DESC')->get();
                 $Clos = $order->first();
                 $Closing_balance=$Clos->current_wallet_bal;
-                $open=$order[0]->current_wallet_bal;
+                $open_d= $order->last();
+            $open=$open_d->current_wallet_bal;
                 $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','=', $open)->get();
                 $opening_balance=$opening_data[0]->opening_bal;
 
