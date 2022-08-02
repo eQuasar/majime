@@ -283,12 +283,15 @@ class WalletprocessedController extends Controller
     {
         //get wallet processed table
         $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->select("walletprocesseds.*","walletprocesseds.oid as orderno")->orderBy('id','DESC')->get();
+        
         //get last element of array 
         if (count($order) >= 1) {
-            $Clos = $order->last();
+            $Clos = $order[0];
+
             //calculate closing values
             $Closing_balance=$Clos->current_wallet_bal;
-            $open=$order[0]->current_wallet_bal;
+            $open_d= $order->last();
+            $open=$open_d->current_wallet_bal;
             //get opening balance 
             $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.vid', intval($request->vid))->where('opening_closing_tables.closing_bal','like', $open)->get();
             $opening_balance=$opening_data[0]->opening_bal;

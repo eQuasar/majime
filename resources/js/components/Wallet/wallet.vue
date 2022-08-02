@@ -30,13 +30,13 @@
           </div>
 
           <div class="stats orng">
-            <h4>Open Delivered Order</h4>
+            <h4>Payments with Courier</h4>
             <span>Total Orders: {{ stats.unProcessedCount }}</span>
             <p><i>₹ </i>{{ stats.unProcessedSaleAmount }}</p>
           </div>
 
           <div class="stats grn">
-            <h4>Next Remittance</h4>
+            <h4>Remittance Due</h4>
             <span>Due Date: {{ stats.nextDate }}</span>
             <p><i>₹ </i>{{ stats.dueAmount }}</p>
           </div>
@@ -215,6 +215,7 @@ export default {
     return {
       //ariaDescribedby: "",
       show: false,
+      sortable: false,
       tag: [],
       time: "",
       date: "",
