@@ -31,6 +31,8 @@ import ZoneRateCard from './components/Master/zonerateCard.vue'
 import VendorRateCard from './components/Master/vendorrateCard.vue'
 import ZRCView from './components/Master/ZRCView.vue'
 import VRCView from './components/Master/VRCView.vue'
+import demo from './components/Accounts/demo.vue'
+
 
 export const routes = [ 
     {path: '/',component: App},
@@ -70,5 +72,7 @@ export const routes = [
       {path:'/vendor/dtoIntransit',component:DtoIntransit,name:'dtoIntransit',meta: { auth: true}},
       {path:'/vendor/dtoBooked',component:DtoBooked,name:'dtoBooked',meta: { auth: true}},
     {path:'/vendor/dtoDelivered',component:DtoDelivered,name:'dtoDelivered',meta: { auth: true}},
+    {path:'/admin/demo',component: demo ,name:'demo',meta: { auth: true}},
+
   
 ];

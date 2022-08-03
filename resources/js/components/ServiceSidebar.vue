@@ -138,6 +138,11 @@ export default {
           title: "Import Vendor",
           icon: "fa fa-user",
         },
+        {
+          href: { name: "demo" },
+          title: "demo",
+          icon: "fa fa-user",
+        },
       ],
     };
   },

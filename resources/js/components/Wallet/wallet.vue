@@ -16,7 +16,6 @@
         </div>
 
         <div class="status-block">
-
           <div class="stats red">
             <h4>Pending Dispatch</h4>
             <span>Total Orders: {{ stats.pendingDispatch }}</span>
@@ -40,8 +39,6 @@
             <span>Due Date: {{ stats.nextDate }}</span>
             <p><i>₹ </i>{{ stats.dueAmount }}</p>
           </div>
-
-         
 
           <button
             type="button"
@@ -96,7 +93,7 @@
             </div>
           </div>
           <br />
-          <div class="card-body card ">
+          <div class="card-body card">
             <div class="balance-values">
               <div class="balance">
                 Opening Balance<span>{{ values.opening_bal }}</span>
@@ -142,7 +139,13 @@
                 {{ row.item.Order_id }}
               </template>
               <template v-slot:cell(payment_mode)="row">
-                <span v-if="row.item.payment_mode=='wps_wcb_wallet_payment_gateway'"> Wallet</span>
+                <span
+                  v-if="
+                    row.item.payment_mode == 'wps_wcb_wallet_payment_gateway'
+                  "
+                >
+                  Wallet</span
+                >
                 <span v-else> {{ row.item.payment_mode }}</span>
               </template>
               <template v-slot:cell(status)="row">
