@@ -406,7 +406,10 @@ export default {
         .wallet_sheet(formData)
         .then((response) => {
           console.log(response.data);
-          this.items2 = response.data;
+          // this.items2 = response.data;
+          var resp = response.data;
+          this.items = resp.order;
+          this.values = resp;
           const data = XLSX.utils.json_to_sheet(this.items2);
           const wb = XLSX.utils.book_new();
           XLSX.utils.book_append_sheet(wb, data, "data");
