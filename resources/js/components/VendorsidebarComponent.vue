@@ -30,13 +30,13 @@ export default {
             },
           ],
         },
-        //                    {
-        //
-        //                        title: 'Wallet',
-        //                        icon: 'fa fa-wallet',
-        //                        href:{ name: 'wallet'}
-        //
-        //                  },
+                            {
+        
+                                title: 'Wallet',
+                                icon: 'fa fa-wallet',
+                                href:{ name: 'wallet'}
+        
+                          },
         // {
         //     href:{ name: 'report'},
         //     title: 'Reports',
@@ -104,6 +104,11 @@ export default {
               // icon: 'fa fa-user',
             },
           ],
+        },
+        {
+          href: { name: "wallet" },
+          title: "Wallet",
+          icon: "fa fa-user",
         },
       ],
     };

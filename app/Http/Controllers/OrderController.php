@@ -60,7 +60,6 @@ class OrderController extends Controller {
         // }
         // else
         // {
-
             $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
             ->whereBetween('created_at',$range)->select("walletprocesseds.*","walletprocesseds.oid as orderno")->orderBy('id','DESC')->get();
             if($order->isEmpty())
@@ -76,11 +75,9 @@ class OrderController extends Controller {
                                     ->whereBetween('created_at',$range)->orderBy('id','DESC')->get();
                 $Clos = $order->first();
                 $Closing_balance=$Clos->current_wallet_bal;
-                $open_d= $order->last();
-            $open=$open_d->current_wallet_bal;
+                $open=$order[0]->current_wallet_bal;
                 $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','=', $open)->get();
                 $opening_balance=$opening_data[0]->opening_bal;
-
             }
 
         // }
@@ -121,10 +118,12 @@ class OrderController extends Controller {
             ->where('orders.vid', '=', intval($vendor))->where('billings.vid', '=', intval($vendor))->orderBy('oid', 'DESC')
             // ->select("orders.*","waybill.waybill_no","orders.status as orderstatus","billings.*",
             ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
+            echo "abc";die();
         } else {
-            $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+            $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', '=', intval($vendor))->where('billings.vid', '=', intval($vendor))->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
                                         GROUP BY line_items.order_id) as quantity"))->get();
+                                        echo "xyz";die();                  
         }
         return $orders;
     }

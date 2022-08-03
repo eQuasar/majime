@@ -51,8 +51,6 @@ class AddTransactionController extends Controller
             'amount' => 'required',
             'date' => 'required',
          ]);
-        
-        
         $trans_data = new AddTransaction();
         $trans_data->id= $request->id;
         $trans_data->vid= $request->vid;
@@ -61,7 +59,6 @@ class AddTransactionController extends Controller
         $trans_data->amount=$request->amount;
         $trans_data->date=$request->date;
         $trans_data->save();
-
         $openclose_data =DB::table("opening_closing_tables")
               ->where('opening_closing_tables.vid',$request->vid)
               ->orderBy('id','DESC')
@@ -106,6 +103,7 @@ class AddTransactionController extends Controller
                 'order_count'=> 0,
                 'zone_amt'=> 0,
                 'description'=> $request->description,
+                'created_at'=>$request->date,
            
             ];      
         }else{
@@ -130,6 +128,7 @@ class AddTransactionController extends Controller
                 'order_count'=> 0,
                 'zone_amt'=> 0,
                 'description'=> $request->description,
+                'created_at'=>$request->date,
             
             ];    
 
@@ -137,7 +136,7 @@ class AddTransactionController extends Controller
 
         $wallet_data->save();  
         walletprocessed::insert($Wallet_order_data);
-        DB::table('walletprocesseds')->where('walletprocesseds.vid', intval($request->vid))->update(['created_at' => $request->date]);
+        // DB::table('walletprocesseds')->where('walletprocesseds.vid', intval($request->vid))->update(['created_at' => $request->date]);
         return response()->json(['error' => false,'data' => $trans_data],200);
         
     }
