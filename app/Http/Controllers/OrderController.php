@@ -42,10 +42,10 @@ class OrderController extends Controller {
     public function wallet_Search(Request $request) {
 
         // whereBetween(DB::raw('DATE(created_at)'), [$startDate, $endDate])->get();
-        $date=Carbon::now();
-        // echo $date;
-        // $current_date = explode(' ', $date);
-        $range = [$request->date_from."00:00:00", "2022-08-02 00:00:00"];
+        // $date=Carbon::now();
+        $date = date('Y-m-d H:i:s');
+        $from = $request->date_from." 00:00:00";
+        $range = [$from, $date];
         // $curdate = new date('Y-m-d');
         $vendor=$request->vid;
         // if( $date < $current_date[0])
@@ -64,10 +64,19 @@ class OrderController extends Controller {
             ->whereBetween('created_at',$range)->select("walletprocesseds.*","walletprocesseds.oid as orderno")->orderBy('id','DESC')->get();
             if($order->isEmpty())
             {       
-                $order_data=DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)->get();
-                $order_last= $order_data->last();
-                $Closing_balance=0;
-                $opening_balance=0;
+                $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)->orderBy('id','DESC')->get();
+                $Clos = $order->first();
+                $Closing_balance=$Clos->current_wallet_bal;
+                $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
+                                ->where('walletprocesseds.created_at', '<', $request->date_from." 00:00:00")
+                                ->orderBy('id','DESC')->get();
+                if($order->isEmpty()){
+                    $opening_balance=0;   
+                }else{
+                    $OpnBal = $order->first();
+                    $opening_balance=$OpnBal->current_wallet_bal;
+                }
+                
             }
             else 
             {

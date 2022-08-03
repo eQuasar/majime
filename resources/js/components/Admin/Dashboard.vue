@@ -129,7 +129,7 @@
           <p><i> ₹ </i>{{ dashboardData.packedtotalSaleAmount }}</p>
         </div>
 
-        <div class="stats red">
+        <div class="stats Dispatch">
           <h4>Dispatch Orders</h4>
           <span>Total Orders:{{ dashboardData.dispatchtotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.dispatchtotalSaleAmount }}</p>

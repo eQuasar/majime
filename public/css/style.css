@@ -22970,11 +22970,22 @@ td span{
   color: #FFC700;
 }
 
+.Dispatch{
+  background: #def7e1;
+}
+
+.Dispatch h4 {
+  color: #57B657;
+}
+
+
 .balance-values {
   width: 100%;
   display: flex;
   justify-content: space-between;
 }
+
+
 
 .margin-report-title {
   margin-bottom: 30px;
