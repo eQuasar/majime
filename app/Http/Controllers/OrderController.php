@@ -67,26 +67,21 @@ class OrderController extends Controller {
                 $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)->orderBy('id','DESC')->get();
                 $Clos = $order->first();
                 $Closing_balance=$Clos->current_wallet_bal;
-                $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
-                                ->where('walletprocesseds.created_at', '<', $request->date_from." 00:00:00")
-                                ->orderBy('id','DESC')->get();
-                if($order->isEmpty()){
-                    $opening_balance=0;   
-                }else{
-                    $OpnBal = $order->first();
-                    $opening_balance=$OpnBal->current_wallet_bal;
-                }
-                
             }
             else 
             {
-                $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
-                                    ->whereBetween('created_at',$range)->orderBy('id','DESC')->get();
                 $Clos = $order->first();
                 $Closing_balance=$Clos->current_wallet_bal;
                 $open=$order[0]->current_wallet_bal;
-                $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','like', $open)->get();
-                $opening_balance=$opening_data[0]->opening_bal;
+            }
+            $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
+                        ->where('walletprocesseds.created_at', '<', $request->date_from." 00:00:00")
+                        ->orderBy('id','DESC')->get();
+            if($order->isEmpty()){
+                $opening_balance=0;   
+            }else{
+                $OpnBal = $order->first();
+                $opening_balance=$OpnBal->current_wallet_bal;
             }
 
         // }
