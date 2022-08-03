@@ -56,68 +56,70 @@
         </div>
       </div>
       <br />
-      <div class="status-block">
-        <div class="stats blu">
+      <div class="left">
+        <div class="statas ">
           <h4>Total Orders</h4>
           <span>Total Orders:{{ dashboardData.totalcount }}</span>
           <p><i>₹ </i>{{ dashboardData.totalSaleAmount }}</p>
         </div>
 
-        <div class="stats cancel">
+        <div class="statas ">
           <h4>Cancelled </h4>
           <span>Total Orders:{{ dashboardData.canceltotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.canceltotalSaleAmount }}</p>
         </div>
 
-        <div class="stats orng">
+        <div class="statas ">
           <h4>Failed </h4>
           <span>Total Orders: {{ dashboardData.failtotalcount }}</span>
           <p><i>₹ </i>{{ dashboardData.failtotalSaleAmount }}</p>
         </div>
 
-        <div class="stats hold">
+        <div class="statas ">
           <h4>On Hold </h4>
           <span>Total Orders:{{ dashboardData.holdtotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.holdtotalSaleAmount }}</p>
         </div>
-        <div class="stats Process">
+        <div class="statas ">
           <h4>Processing </h4>
           <span>Total Orders:{{ dashboardData.processingtotalcount }}</span>
           <p><i>₹ </i>{{ dashboardData.processingtotalSaleAmount }}</p>
         </div>
 
-        <div class="stats confirme">
+        <div class="statas ">
           <h4>Confirmed </h4>
           <span>Total Orders:{{ dashboardData.confirmtotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.confirmtotalSaleAmount }}</p>
         </div>
 
-        <div class="stats Pack">
+        <div class="statas ">
           <h4>Packed </h4>
           <span>Total Orders: {{ dashboardData.packedtotalcount }}</span>
           <p><i> ₹ </i>{{ dashboardData.packedtotalSaleAmount }}</p>
         </div>
 
-        <div class="stats Dispatch">
+        <div class="statas ">
           <h4>Dispatch </h4>
           <span>Total Orders:{{ dashboardData.dispatchtotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.dispatchtotalSaleAmount }}</p>
         </div>
-        <div class="stats blu">
+        <div class="statas ">
           <h4>In-transit </h4>
           <span>Total Orders:{{ dashboardData.transittotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.transittotalSaleAmount }}</p>
         </div>
-        <div class="stats orng">
+        <div class="statas ">
           <h4>Deliverd </h4>
           <span>Total Orders:{{ dashboardData.deltotalcount }}</span>
           <p><i>₹ </i>{{ dashboardData.deltotalSaleAmount }}</p>
         </div>
-        <div class="stats grn">
+        <div class="statas ">
           <h4>RTO </h4>
           <span>Total Orders:{{ dashboardData.rtototalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.rtototalSaleAmount }}</p>
         </div>
+      </div>
+      <div class="right">
         <div class="stats red">
           <h4>DTO Booked </h4>
           <span>Total Orders:{{ dashboardData.dtobktotalcount }} </span>
@@ -141,7 +143,7 @@
       </div>
       <br />
       <br />
-      <div class="status-block-2">
+      <div class="margin-report">
         <div class="margin-report-title">
           <h3><strong>Margin Report</strong></h3>
           <h6>(Estimate Value)</h6>
@@ -207,6 +209,7 @@ export default {
       filterOn2: [],
       filterOn: [],
       
+      items: [],
       errors_create: [],
       dashboardData: [],
       successful: false,

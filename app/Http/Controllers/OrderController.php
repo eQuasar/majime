@@ -40,63 +40,50 @@ class OrderController extends Controller {
         return $order;
     }
     public function wallet_Search(Request $request) {
-
-        // whereBetween(DB::raw('DATE(created_at)'), [$startDate, $endDate])->get();
-        $date=Carbon::now();
-        // echo $date;
-        // $current_date = explode(' ', $date);
-        $range = [$request->date_from." 00:00:00", "2022-08-02 00:00:00"];
-        // $curdate = new date('Y-m-d');
+        $date = date('Y-m-d H:i:s');
+        $from = $request->date_from." 00:00:00";
+        $range = [$from, $date];
         $vendor=$request->vid;
-        // if( $date < $current_date[0])
-        // {
-        // $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
-        // ->whereBetween('created_at',$range)->get();
-        // $Clos = $order->last();
-        // $Closing_balance=$Clos->current_wallet_bal;
-        // $open=$order[0]->current_wallet_bal;
-        // $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','=', $open)->get();
-        // $opening_balance=$opening_data[0]->opening_bal;
-        // }
-        // else
-        // {
             $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
             ->whereBetween('created_at',$range)->select("walletprocesseds.*","walletprocesseds.oid as orderno")->orderBy('id','DESC')->get();
             if($order->isEmpty())
             {       
-                $order_data=DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)->get();
-                $order_last= $order_data->last();
-                $Closing_balance=0;
-                $opening_balance=0;
+                $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)->orderBy('id','DESC')->get();
+                $Clos = $order->first();
+                $Closing_balance=$Clos->current_wallet_bal;
             }
             else 
             {
-                $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
-                                    ->whereBetween('created_at',$range)->orderBy('id','DESC')->get();
                 $Clos = $order->first();
                 $Closing_balance=$Clos->current_wallet_bal;
                 $open=$order[0]->current_wallet_bal;
-                $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','=', $open)->get();
-                $opening_balance=$opening_data[0]->opening_bal;
             }
-
-        // }
+            $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
+                        ->where('walletprocesseds.created_at', '<', $request->date_from." 00:00:00")
+                        ->orderBy('id','DESC')->get();
+            if($order->isEmpty()){
+                $opening_balance=0;   
+            }else{
+                $OpnBal = $order->first();
+                $opening_balance=$OpnBal->current_wallet_bal;
+            }
         return response()->json([ 'order'=> $order,'closing_bal'=> $Closing_balance,'opening_bal'=> $opening_balance], 200);
       
     }
      public function filter_Search (Request $request) {
         $vendor = $request->vid;
         $search = $request->filterit;
-       $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->join('line_items','line_items.order_id','=','orders.oid')
+       $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
+    //    ->join('line_items','line_items.order_id','=','orders.oid')
        ->where('orders.vid','=', $vendor)->where('billings.vid','=',$vendor)
               ->where('orders.status','like','%'.$search.'%')->where('orders.vid','=',$vendor)
               ->orWhere('orders.oid','like','%'.$search.'%')->where('orders.vid','=',$vendor)
               ->orWhere('billings.city','like','%'.$search.'%')->where('billings.vid','=',$vendor)
              ->orWhere('billings.state','like','%'.$search.'%')->where('billings.vid','=',$vendor)
-             ->orWhere('line_items.quantity','like','%'.$search.'%')->where('line_items.vid','=',$vendor)
+            //  ->orWhere('line_items.quantity','like','%'.$search.'%')->where('line_items.vid','=',$vendor)
              ->orWhere('orders.date_created_gmt','like','%'.$search.'%')->where('orders.vid','=',$vendor)
              ->orWhere('orders.total','like','%'.$search.'%')->where('orders.vid','=',$vendor)
-          ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
+          ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND  line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
         
          return $orders;
            
