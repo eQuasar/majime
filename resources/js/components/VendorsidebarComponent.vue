@@ -103,11 +103,11 @@ export default {
             },
           ],
         },
-        {
-          href: { name: "wallet" },
-          title: "Wallet",
-          icon: "fa fa-user",
-        },
+        // {
+        //   href: { name: "wallet" },
+        //   title: "Wallet",
+        //   icon: "fa fa-user",
+        // },
       ],
     };
   },

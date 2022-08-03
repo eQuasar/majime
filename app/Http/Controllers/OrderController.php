@@ -76,7 +76,7 @@ class OrderController extends Controller {
                 $Clos = $order->first();
                 $Closing_balance=$Clos->current_wallet_bal;
                 $open=$order[0]->current_wallet_bal;
-                $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','=', $open)->get();
+                $opening_data = DB::table("opening_closing_tables")->where('opening_closing_tables.closing_bal','like', $open)->get();
                 $opening_balance=$opening_data[0]->opening_bal;
             }
 
