@@ -45,7 +45,7 @@ class OrderController extends Controller {
         $date=Carbon::now();
         // echo $date;
         // $current_date = explode(' ', $date);
-        $range = [$request->date_from." 00:00:00", "2022-08-02 00:00:00"];
+        $range = [$request->date_from."00:00:00", "2022-08-02 00:00:00"];
         // $curdate = new date('Y-m-d');
         $vendor=$request->vid;
         // if( $date < $current_date[0])

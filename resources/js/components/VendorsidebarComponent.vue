@@ -12,7 +12,7 @@ export default {
     return {
       menu: [
         {
-          href: { name: "admindashboard" },
+          href: { name: "admindashboard11" },
           title: "Dashboard",
           icon: "fas fa-th",
         },
@@ -30,13 +30,11 @@ export default {
             },
           ],
         },
-                            {
-        
-                                title: 'Wallet',
-                                icon: 'fa fa-wallet',
-                                href:{ name: 'wallet'}
-        
-                          },
+        {
+          title: "Wallet",
+          icon: "fa fa-wallet",
+          href: { name: "wallet" },
+        },
         // {
         //     href:{ name: 'report'},
         //     title: 'Reports',
