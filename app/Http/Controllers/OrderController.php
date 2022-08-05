@@ -99,6 +99,74 @@ class OrderController extends Controller {
     }
     public function getOrderDetails(Request $request) {
         $vendor = $request->vid;
+        $vendor2 = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => $vendor2[0]->url.'/wp-json/wc/v3/orders',
+          // CURLOPT_URL => $vendor2[0]->url.'/wp-json/wc/v3/orders',
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'GET',
+          CURLOPT_HTTPHEADER => array(
+            'Authorization: Basic ' . $vendor2[0]->token
+          ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        $jsonResp = json_decode($response);
+        foreach ($jsonResp as $jp) {
+            $curl_data[] = $jp->id;
+        }
+
+        // $orders = DB::table("orders")->where('vid', '=', intval($_REQUEST['vid']))->where('status', '=', "processing")->get();
+        $orders = DB::table("orders")->where('vid', '=', intval($request->vid))->get();
+        // var_dump($orders);
+        if (count($orders) >= 1) {
+            foreach ($orders as $order) {
+                $order_data[] = $order->oid;
+            }
+        }else{
+            $order_data = array();
+        }
+
+        // var_dump($curl_data);
+        // var_dump($order_data); die;
+        $result_arr=array_diff($curl_data,$order_data);
+        $result = array_values($result_arr); 
+        // var_dump($result); die;
+        if (count($result) >= 1) {
+            for ($i=0; $i < count($result); $i++) { 
+                // echo "<a href='#' target='_blank'>Click here (ORDER ID - ".$result[$i].")</a><br><br>";
+                // echo "<a href='https://cl.majime.in/api/v1/get_order_data?api_url=".$vendor[0]->url."/wp-json/wc/v3/orders/".intval($result[$i])."&vid=".intval($_REQUEST['vid'])."' target='_blank'>Click here (ORDER ID - ".$result[$i].")</a><br><br>";
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                  CURLOPT_URL => "https://cl.majime.in/api/v1/get_order_data?api_url=".$vendor2[0]->url."/wp-json/wc/v3/orders/".intval($result[$i])."&vid=".intval($request->vid),
+                  CURLOPT_RETURNTRANSFER => true,
+                  CURLOPT_ENCODING => '',
+                  CURLOPT_MAXREDIRS => 10,
+                  CURLOPT_TIMEOUT => 0,
+                  CURLOPT_FOLLOWLOCATION => true,
+                  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                  CURLOPT_CUSTOMREQUEST => 'GET',
+                  CURLOPT_HTTPHEADER => array(
+                    'Authorization: Basic Og=='
+                  ),
+                ));
+
+                $response = curl_exec($curl);
+
+                curl_close($curl);
+                echo $response;
+            }
+        }
         if ($vendor != null) {
             $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
             // ->join('waybill','orders.oid','=','waybill.order_id')
@@ -287,7 +355,7 @@ class OrderController extends Controller {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
+                              "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_2) . '",
                               "phone": ' . $order->phone . ',
                               "payment_mode": "COD",
                               "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -312,7 +380,7 @@ class OrderController extends Controller {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
+                              "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_2) . '",
                               "phone": ' . $order->phone . ',
                               "payment_mode": "Prepaid",
                               "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -465,6 +533,8 @@ class OrderController extends Controller {
             $response2 = curl_exec($curl2);
             curl_close($curl2);
             $new_val2 = json_decode($response2, true);
+            // echo str_replace( array( '\'', '"', ';', '-', '<', '>' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>' ), ' ', $order->address_2); die;
+            // 36 & 37 Suyog Residency 2 , B wing , Flat no 104, Sector 8 , Sanpada, Navi Mumbai
             // var_dump($new_val2); die;
             if ($new_val2 != NULL) {
                 $curl = curl_init();
@@ -476,7 +546,7 @@ class OrderController extends Controller {
                 $postfields = 'format=json&data={
 					  "shipments": [
 						{
-						  "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
+						  "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_2) . '",
 						  "phone": ' . $order->phone . ',
 						  "payment_mode": "' . $payment_mode . '",
 						  "name": "' . $order->first_name . ' ' . $order->last_name . '",
