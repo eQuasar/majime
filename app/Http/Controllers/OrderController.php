@@ -15,6 +15,7 @@ use App\Models\Order_Coupan_lines;
 use App\Models\Order_Refunds;
 use App\Models\Order_links;
 use App\Models\walletprocessed;
+use App\Models\order_reldate;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\BillingResource;
 use App\Http\Resources\LineItemsResource;
@@ -99,6 +100,74 @@ class OrderController extends Controller {
     }
     public function getOrderDetails(Request $request) {
         $vendor = $request->vid;
+        $vendor2 = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => $vendor2[0]->url.'/wp-json/wc/v3/orders',
+          // CURLOPT_URL => $vendor2[0]->url.'/wp-json/wc/v3/orders',
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'GET',
+          CURLOPT_HTTPHEADER => array(
+            'Authorization: Basic ' . $vendor2[0]->token
+          ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        $jsonResp = json_decode($response);
+        foreach ($jsonResp as $jp) {
+            $curl_data[] = $jp->id;
+        }
+
+        // $orders = DB::table("orders")->where('vid', '=', intval($_REQUEST['vid']))->where('status', '=', "processing")->get();
+        $orders = DB::table("orders")->where('vid', '=', intval($request->vid))->get();
+        // var_dump($orders);
+        if (count($orders) >= 1) {
+            foreach ($orders as $order) {
+                $order_data[] = $order->oid;
+            }
+        }else{
+            $order_data = array();
+        }
+
+        // var_dump($curl_data);
+        // var_dump($order_data); die;
+        $result_arr=array_diff($curl_data,$order_data);
+        $result = array_values($result_arr); 
+        // var_dump($result); die;
+        if (count($result) >= 1) {
+            for ($i=0; $i < count($result); $i++) { 
+                // echo "<a href='#' target='_blank'>Click here (ORDER ID - ".$result[$i].")</a><br><br>";
+                // echo "<a href='https://cl.majime.in/api/v1/get_order_data?api_url=".$vendor[0]->url."/wp-json/wc/v3/orders/".intval($result[$i])."&vid=".intval($_REQUEST['vid'])."' target='_blank'>Click here (ORDER ID - ".$result[$i].")</a><br><br>";
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                  CURLOPT_URL => "https://cl.majime.in/api/v1/get_order_data?api_url=".$vendor2[0]->url."/wp-json/wc/v3/orders/".intval($result[$i])."&vid=".intval($request->vid),
+                  CURLOPT_RETURNTRANSFER => true,
+                  CURLOPT_ENCODING => '',
+                  CURLOPT_MAXREDIRS => 10,
+                  CURLOPT_TIMEOUT => 0,
+                  CURLOPT_FOLLOWLOCATION => true,
+                  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                  CURLOPT_CUSTOMREQUEST => 'GET',
+                  CURLOPT_HTTPHEADER => array(
+                    'Authorization: Basic Og=='
+                  ),
+                ));
+
+                $response = curl_exec($curl);
+
+                curl_close($curl);
+                echo $response;
+            }
+        }
         if ($vendor != null) {
             $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
             // ->join('waybill','orders.oid','=','waybill.order_id')
@@ -1288,8 +1357,28 @@ class OrderController extends Controller {
             curl_close($curl);
             $jsonResp = json_decode($response);
             // var_dump($jsonResp);
+            if($request->status_assign=='confirmed')
+            {
+                $date = date('Y-m-d');
+                $confirm_order_data[]=[     
+                'vid'=>$request->vid,
+                'oid'=>$listImp[$i] ,
+                'order_confirmdate'=>$date,
+                ];   
+               
+            }elseif($request->status_assign=='dto-refunded')
+            {
+                $date = date('Y-m-d');
+                $confirm_order_data[]=[     
+                'vid'=>$request->vid,
+                'oid'=>$listImp[$i] ,
+                'dto_refunddate'=>$date,
+                ];   
+                
+            }
             
         }
+        order_reldate::insert($confirm_order_data); 
         return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
     }
     public function getProcessingOrder_Details(Request $request) {
@@ -1369,6 +1458,13 @@ class OrderController extends Controller {
         // foreach ($order_items as $order) {
         if($orders[0]->status == "packed"){
             $this->changeOrderStatus(intval($request->vid), intval($order_items[0]->order_id), "dispatched");
+            $date = date('Y-m-d');
+            $confirm_order_data[]=[     
+            'vid'=>$request->vid,
+            'oid'=>$request->dispatch,
+            'order_dispatchdate'=>$date,
+            ];   
+            order_reldate::insert($confirm_order_data);        
             return response()->json(['error' => false, 'msg' => "Success, Your order number " . intval($order_items[0]->order_id) . " with AWB number is " . intval($order_items[0]->waybill_no), "ErrorCode" => "000"], 200);
         }else{
             return response()->json(['error' => true, 'msg' => "Order is not Packed.", "ErrorCode" => "000"], 200);
@@ -1647,87 +1743,26 @@ class OrderController extends Controller {
 
      public function wallet_Sheet_download(Request $request)
      {
-    //     $date = date('Y-m-d H:i:s');
-    //     $from = $request->date_from." 00:00:00";
-    //     $range = [$from, $date];
-    //     if($from!=0)
-    //     {
-    //         $date = date('Y-m-d H:i:s');
-    //         $from = $request->date_from." 00:00:00";
-    //         $range = [$from, $date];
-    //         $vendor=$request->vid;
-    //             $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
-    //             ->whereBetween('created_at',$range)->select("walletprocesseds.*","walletprocesseds.oid as orderno")
-    //             ->select("walletprocesseds.oid as OrderID","walletprocesseds.transaction_id as TXNID","walletprocesseds.created_at as TXN Date", "walletprocesseds.payment_mode as Payment Mode", "walletprocesseds.status  as Status", "walletprocesseds.sale_amount as Sale Amount", "walletprocesseds.Wallet_used as Wallet Used", "walletprocesseds.logistic_cost as Logistic Cost", "walletprocesseds.payment_gateway_charges as Pymt Gateway Chrges","walletprocesseds.sms_cost as SMS Cost","walletprocesseds.majime_charges as Majime Charges","walletprocesseds.zone_amt as Zone Amount","walletprocesseds.net_amount  as Net Amount","walletprocesseds.current_wallet_bal  as Wallet Balance","walletprocesseds.current_wallet_bal  as Wallet Balance")
-    //             ->orderBy('id','DESC')
-    //             ->get();
-    //             if($order->isEmpty())
-    //             {       
-    //                 $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)->orderBy('id','DESC')->get();
-    //                 $Clos = $order->first();
-    //                 $Closing_balance=$Clos->current_wallet_bal;
-    //             }
-    //             else 
-    //             {
-    //                 $Clos = $order->first();
-    //                 $Closing_balance=$Clos->current_wallet_bal;
-    //                 $open=$order[0]->current_wallet_bal;
-    //             }
-    //             $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
-    //                         ->where('walletprocesseds.created_at', '<', $request->date_from." 00:00:00")
-    //                         ->orderBy('id','DESC')->get();
-    //             if($order->isEmpty()){
-    //                 $opening_balance=0;   
-    //             }else{
-    //                 $OpnBal = $order->first();
-    //                 $opening_balance=$OpnBal->current_wallet_bal;
-    //             }
-
-    //     //  $order= DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->whereBetween('walletprocesseds.created_at',$range) 
-    //     // ->select("walletprocesseds.oid as OrderID","walletprocesseds.transaction_id as TXNID","walletprocesseds.created_at as TXN Date", "walletprocesseds.payment_mode as Payment Mode", "walletprocesseds.status  as Status", "walletprocesseds.sale_amount as Sale Amount", "walletprocesseds.Wallet_used as Wallet Used", "walletprocesseds.logistic_cost as Logistic Cost", "walletprocesseds.payment_gateway_charges as Pymt Gateway Chrges","walletprocesseds.sms_cost as SMS Cost","walletprocesseds.majime_charges as Majime Charges","walletprocesseds.zone_amt as Zone Amount","walletprocesseds.net_amount  as Net Amount","walletprocesseds.current_wallet_bal  as Wallet Balance","walletprocesseds.current_wallet_bal  as Wallet Balance")
-      
-
-        
-    //     }
-    //     else
-    //     {
-    //     $order= DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))
-    //     ->select("walletprocesseds.oid as OrderID","walletprocesseds.transaction_id as TXNID","walletprocesseds.created_at as TXN Date", "walletprocesseds.payment_mode as Payment Mode", "walletprocesseds.status  as Status", "walletprocesseds.sale_amount as Sale Amount", "walletprocesseds.Wallet_used as Wallet Used", "walletprocesseds.logistic_cost as Logistic Cost", "walletprocesseds.payment_gateway_charges as Pymt Gateway Chrges","walletprocesseds.sms_cost as SMS Cost","walletprocesseds.majime_charges as Majime Charges","walletprocesseds.zone_amt as Zone Amount","walletprocesseds.net_amount  as Net Amount","walletprocesseds.current_wallet_bal  as Wallet Balance","walletprocesseds.current_wallet_bal  as Wallet Balance")
-    //     ->get();
-     
-    //     }
-    //     return $order;
-
-    //  }
-    $date = date('Y-m-d H:i:s');
-    $from = $request->date_from." 00:00:00";
-    $range = [$from, $date];
-    $vendor=$request->vid;
-        $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
-        ->whereBetween('created_at',$range)->select("walletprocesseds.*","walletprocesseds.oid as orderno")->orderBy('id','DESC')->get();
-        if($order->isEmpty())
-        {       
-            $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)->orderBy('id','DESC')->get();
-            $Clos = $order->first();
-            $Closing_balance=$Clos->current_wallet_bal;
-        }
-        else 
+        $date = date('Y-m-d H:i:s');
+        $from = $request->date_from." 00:00:00";
+        $range = [$from, $date];
+        if($from!=0)
         {
-            $Clos = $order->first();
-            $Closing_balance=$Clos->current_wallet_bal;
-            $open=$order[0]->current_wallet_bal;
-        }
-        $order= DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
-                    ->where('walletprocesseds.created_at', '<', $request->date_from." 00:00:00")
-                    ->orderBy('id','DESC')->get();
-        if($order->isEmpty()){
-            $opening_balance=0;   
-        }else{
-            $OpnBal = $order->first();
-            $opening_balance=$OpnBal->current_wallet_bal;
-        }
-    return response()->json([ 'order'=> $order,'closing_bal'=> $Closing_balance,'opening_bal'=> $opening_balance], 200);
- 
+         $order= DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->whereBetween('walletprocesseds.created_at',$range)
+        ->select("walletprocesseds.oid as OrderID","walletprocesseds.transaction_id as TXNID","walletprocesseds.created_at as TXN Date", "walletprocesseds.payment_mode as Payment Mode", "walletprocesseds.status  as Status", "walletprocesseds.sale_amount as Sale Amount", "walletprocesseds.Wallet_used as Wallet Used", "walletprocesseds.logistic_cost as Logistic Cost", "walletprocesseds.payment_gateway_charges as Pymt Gateway Chrges","walletprocesseds.sms_cost as SMS Cost","walletprocesseds.majime_charges as Majime Charges","walletprocesseds.zone_amt as Zone Amount","walletprocesseds.net_amount  as Net Amount","walletprocesseds.current_wallet_bal  as Wallet Balance","walletprocesseds.current_wallet_bal  as Wallet Balance")
+        ->orderBy('id','DESC')     
+        ->get();
     }
+        else
+        {
+        $order= DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))
+        ->select("walletprocesseds.oid as OrderID","walletprocesseds.transaction_id as TXNID","walletprocesseds.created_at as TXN Date", "walletprocesseds.payment_mode as Payment Mode", "walletprocesseds.status  as Status", "walletprocesseds.sale_amount as Sale Amount", "walletprocesseds.Wallet_used as Wallet Used", "walletprocesseds.logistic_cost as Logistic Cost", "walletprocesseds.payment_gateway_charges as Pymt Gateway Chrges","walletprocesseds.sms_cost as SMS Cost","walletprocesseds.majime_charges as Majime Charges","walletprocesseds.zone_amt as Zone Amount","walletprocesseds.net_amount  as Net Amount","walletprocesseds.current_wallet_bal  as Wallet Balance","walletprocesseds.current_wallet_bal  as Wallet Balance")
+        ->get();
+     
+        }
+        return $order;
+
+     }
+  
 
 }

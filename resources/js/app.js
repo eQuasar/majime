@@ -29,6 +29,8 @@ import { ModalPlugin } from 'bootstrap-vue'
 import { SpinnerPlugin } from 'bootstrap-vue'
 import { BFormTimepicker } from 'bootstrap-vue'
 import VueSimpleAlert from "vue-simple-alert";
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core'

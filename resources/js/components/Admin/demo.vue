@@ -57,86 +57,86 @@
       </div>
       <br />
       <div class="left">
-        <div class="statas ">
+        <div class="statas">
           <h4>Total Orders</h4>
           <span>Total Orders:{{ dashboardData.totalcount }}</span>
           <p><i>₹ </i>{{ dashboardData.totalSaleAmount }}</p>
         </div>
 
-        <div class="statas ">
-          <h4>Cancelled </h4>
+        <div class="statas">
+          <h4>Cancelled</h4>
           <span>Total Orders:{{ dashboardData.canceltotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.canceltotalSaleAmount }}</p>
         </div>
 
-        <div class="statas ">
-          <h4>Failed </h4>
+        <div class="statas">
+          <h4>Failed</h4>
           <span>Total Orders: {{ dashboardData.failtotalcount }}</span>
           <p><i>₹ </i>{{ dashboardData.failtotalSaleAmount }}</p>
         </div>
 
-        <div class="statas ">
-          <h4>On Hold </h4>
+        <div class="statas">
+          <h4>On Hold</h4>
           <span>Total Orders:{{ dashboardData.holdtotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.holdtotalSaleAmount }}</p>
         </div>
-        <div class="statas ">
-          <h4>Processing </h4>
+        <div class="statas">
+          <h4>Processing</h4>
           <span>Total Orders:{{ dashboardData.processingtotalcount }}</span>
           <p><i>₹ </i>{{ dashboardData.processingtotalSaleAmount }}</p>
         </div>
 
-        <div class="statas ">
-          <h4>Confirmed </h4>
+        <div class="statas">
+          <h4>Confirmed</h4>
           <span>Total Orders:{{ dashboardData.confirmtotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.confirmtotalSaleAmount }}</p>
         </div>
 
-        <div class="statas ">
-          <h4>Packed </h4>
+        <div class="statas">
+          <h4>Packed</h4>
           <span>Total Orders: {{ dashboardData.packedtotalcount }}</span>
           <p><i> ₹ </i>{{ dashboardData.packedtotalSaleAmount }}</p>
         </div>
 
-        <div class="statas ">
-          <h4>Dispatch </h4>
+        <div class="statas">
+          <h4>Dispatch</h4>
           <span>Total Orders:{{ dashboardData.dispatchtotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.dispatchtotalSaleAmount }}</p>
         </div>
-        <div class="statas ">
-          <h4>In-transit </h4>
+        <div class="statas">
+          <h4>In-transit</h4>
           <span>Total Orders:{{ dashboardData.transittotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.transittotalSaleAmount }}</p>
         </div>
-        <div class="statas ">
-          <h4>Deliverd </h4>
+        <div class="statas">
+          <h4>Deliverd</h4>
           <span>Total Orders:{{ dashboardData.deltotalcount }}</span>
           <p><i>₹ </i>{{ dashboardData.deltotalSaleAmount }}</p>
         </div>
-        <div class="statas ">
-          <h4>RTO </h4>
+        <div class="statas">
+          <h4>RTO</h4>
           <span>Total Orders:{{ dashboardData.rtototalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.rtototalSaleAmount }}</p>
         </div>
       </div>
       <div class="right">
         <div class="stats red">
-          <h4>DTO Booked </h4>
+          <h4>DTO Booked</h4>
           <span>Total Orders:{{ dashboardData.dtobktotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.dtobktotalSaleAmount }}</p>
         </div>
         <div class="stats blu">
-          <h4>DTO In-transit </h4>
+          <h4>DTO In-transit</h4>
           <span>Total Orders:{{ dashboardData.dtointtotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.dtointtotalSaleAmount }}</p>
         </div>
         <div class="stats orng">
-          <h4>DTO Deliverd </h4>
+          <h4>DTO Deliverd</h4>
           <span>Total Orders:{{ dashboardData.dtodeltotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.dtodeltotalSaleAmount }}</p>
         </div>
         <div class="stats grn">
-          <h4>DTO Refunded </h4>
+          <h4>DTO Refunded</h4>
           <span>Total Orders:{{ dashboardData.dtoreftotalcount }} </span>
           <p><i>₹ </i>{{ dashboardData.dtoreftotalSaleAmount }}</p>
         </div>
@@ -169,6 +169,17 @@
           <p><i>₹ </i>N/A</p>
         </div>
       </div>
+      <template>
+        <Bar
+          :chart-options="chartOptions"
+          :chart-data="chartData"
+          :chart-id="chartId"
+          :dataset-id-key="datasetIdKey"
+          :plugins="plugins"
+          :css-classes="cssClasses"
+          :styles="styles"
+        />
+      </template>
       <b-pagination
         v-model="currentPage"
         :total-rows="rows"
@@ -178,14 +189,65 @@
     </b-overlay>
   </b-container>
 </template>
-
 <script>
-
 import dashboard from "../../api/dashboard.js";
 import user from "../../api/user.js";
+import { Bar } from "vue-chartjs/legacy";
+
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+} from "chart.js";
+
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale
+);
 
 export default {
-  props: {},
+  name: "BarChart",
+  components: {
+    Bar,
+  },
+  props: {
+    chartId: {
+      type: String,
+      default: "bar-chart",
+    },
+    datasetIdKey: {
+      type: String,
+      default: "label",
+    },
+    width: {
+      type: Number,
+      default: 10,
+    },
+    height: {
+      type: Number,
+      default: 10,
+    },
+    cssClasses: {
+      default: "",
+      type: String,
+    },
+    styles: {
+      type: Object,
+      default: () => {},
+    },
+    plugins: {
+      type: Array,
+      default: () => [],
+    },
+  },
   mounted() {
     this.getVidz();
   },
@@ -208,19 +270,58 @@ export default {
       filter: null,
       filterOn2: [],
       filterOn: [],
-      
       items: [],
       errors_create: [],
       dashboardData: [],
       successful: false,
       create_error: "",
+      chartData: {
+        labels: [
+          "T.Order",
+          "Cancelled",
+          "Failed",
+          "On-Hold",
+          "Processing",
+          "Confirmed",
+          "Packed",
+          "Dispatch",
+          "In-Transit",
+          "Delivered",
+          "RTO",
+        ],
+        datasets: [
+          {
+            label: "Data One",
+            backgroundColor: "#f87979",
+            data: [
+              dashboardData.totalcount,
+              dashboardData.canceltotalcount,
+              dashboardData.failtotalcount,
+              dashboardData.holdtotalcount,
+              dashboardData.processingtotalcount,
+              dashboardData.confirmtotalcount,
+              dashboardData.packedtotalcount,
+              dashboardData.dispatchtotalcount,
+              dashboardData.transittotalcount,
+              dashboardData.deltotalcount,
+              dashboardData.rtototalcount,
+            ],
+          },
+        ],
+      },
+      chartOptions: {
+        // responsive: true,
+        // maintainAspectRatio: false,
+      },
     };
   },
+
   computed: {
     rows() {
       return this.items.length;
     },
   },
+
   methods: {
     getVidz() {
       if (this.$userId == 1) {

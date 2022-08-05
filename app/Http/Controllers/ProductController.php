@@ -10,18 +10,9 @@ use App\Models\Products;
 use Illuminate\Support\Facades\DB;
 use PDF;
 class ProductController extends Controller {
-    // public function productDetail()
-    // {
-    // 	//return billings::all();
-    // $obj=Products::join('categories','products.id','=','categories.id')->get(['products.product_id','products.name','products.price','categories.name']);
-    //     //->join('billings','billings.order_id','=','orders.oid')-
-    //        return $obj;
-    // }
+
     public function productDetail(Request $request) {
-        // echo $request->vid; die;
         $vendor = $request->vid;
-        // $Order=DB::table("line_items")->where('line_items.vid','=',intVal($vendor))
-        // // ->get();
         $order = DB::table('line_items')->join('orders', 'orders.oid', '=', 'line_items.order_id')
         // ->distinct()
         // 					->select('line_items.*',
@@ -201,6 +192,13 @@ class ProductController extends Controller {
         
     }
 
+    function delivered_tocust($vid) {
+
+        $del='deliveredtocust';
+        $orders=DB::table("orders")->where('orders.vid','=',$vid)->where("orders.status",'=',$del)->get();
+        return $orders;
+        
+    }
 
 
 
