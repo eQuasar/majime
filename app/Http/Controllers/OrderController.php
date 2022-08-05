@@ -356,7 +356,7 @@ class OrderController extends Controller {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
+                              "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_2) . '",
                               "phone": ' . $order->phone . ',
                               "payment_mode": "COD",
                               "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -381,7 +381,7 @@ class OrderController extends Controller {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
+                              "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_2) . '",
                               "phone": ' . $order->phone . ',
                               "payment_mode": "Prepaid",
                               "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -534,6 +534,8 @@ class OrderController extends Controller {
             $response2 = curl_exec($curl2);
             curl_close($curl2);
             $new_val2 = json_decode($response2, true);
+            // echo str_replace( array( '\'', '"', ';', '-', '<', '>' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>' ), ' ', $order->address_2); die;
+            // 36 & 37 Suyog Residency 2 , B wing , Flat no 104, Sector 8 , Sanpada, Navi Mumbai
             // var_dump($new_val2); die;
             if ($new_val2 != NULL) {
                 $curl = curl_init();
@@ -545,7 +547,7 @@ class OrderController extends Controller {
                 $postfields = 'format=json&data={
 					  "shipments": [
 						{
-						  "add": "' . $order->address_1 . ', ' . $order->address_2 . '",
+						  "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_2) . '",
 						  "phone": ' . $order->phone . ',
 						  "payment_mode": "' . $payment_mode . '",
 						  "name": "' . $order->first_name . ' ' . $order->last_name . '",
