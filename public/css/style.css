@@ -22728,7 +22728,7 @@ td span{
 .dispatched{background: #def7e1; color: #57B657;}
 .intransit{background: #FFF8E0; color: #FFC700;}
 .confirmed{background: #E0EBFE; color: #0058FF;}
-.Processing{background: #fef8e1; color: #fac100;}
+.processing{background: #fef8e1; color: #fac100;}
 .completed{background: #E0F5E9; color: #57B657;}
 .cancelled{background: #FFE8E8; color: #FF4747;}
 .packed{background: #FFF8E0; color: #FFC700;}
@@ -22744,8 +22744,8 @@ td span{
 .pickedup{background: #E0EBFE; color: #800000;}
 .on-hold{background: #E0EBFE; color: #A52A2A;}
 .closed{background: #E0F5E9; color: #57B657;}
-.In{background: #0080001c; color: #57B657;}
-.Out{background: #FFECE8; color: #FF6347;}
+.in{background: #0080001c; color: #57B657;}
+.out{background: #FFECE8; color: #FF6347;}
 
 @media (max-width: 1600px) {
 

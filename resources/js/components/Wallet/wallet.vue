@@ -311,6 +311,7 @@ export default {
   computed: {
     rows() {
       return this.items.length;
+      return this.items2.length;
     },
   },
   methods: {
@@ -400,16 +401,12 @@ export default {
       this.show = true;
       let formData = new FormData();
       formData.append("date_from", this.date_from);
-      // formData.append("date_to", this.date_to);
       formData.append("vid", this.vid);
       wallet
         .wallet_sheet(formData)
         .then((response) => {
-          console.log(response.data);
-          // this.items2 = response.data;
-          var resp = response.data;
-          this.items = resp.order;
-          this.values = resp;
+          console.log(this.items2);
+          this.items2 = response.data;
           const data = XLSX.utils.json_to_sheet(this.items2);
           const wb = XLSX.utils.book_new();
           XLSX.utils.book_append_sheet(wb, data, "data");
