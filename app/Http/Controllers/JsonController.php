@@ -377,14 +377,14 @@ class JsonController extends Controller
 
  	public function getAWBStatus($orders,$vid,$fwdOrReturn)
 	{	
-		if($vid == 1){
-			$curlopt_url = "https://staging-express.delhivery.com/api/v1/packages/json/?";
-			$del_url = "https://staging-express.delhivery.com/api/v1/packages/json/?";
+		// if($vid == 1){
+		// 	$curlopt_url = "https://staging-express.delhivery.com/api/v1/packages/json/?";
+		// 	$del_url = "https://staging-express.delhivery.com/api/v1/packages/json/?";
 			
-		}else{
+		// }else{
 			$curlopt_url = "https://track.delhivery.com/api/v1/packages/json/?";
 			$del_url = "https://track.delhivery.com/api/v1/packages/json/?";
-		}
+		// }
 
 		$waybill_nos = "";
 		foreach ($orders as $order) {
@@ -445,6 +445,10 @@ class JsonController extends Controller
 
 				if ($status == "Manifested" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "dispatched";
+				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
+					$status = "intransit";
+				}else if ($status == "Dispatched" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
+					$status = "intransit";
 				}else if ($status == "Pending" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "intransit";
 				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
@@ -462,27 +466,10 @@ class JsonController extends Controller
 				} else if ($status == "Delivered" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "deliveredtocust";
 				} 
-				// else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
-				// 	$status = "dtodelivered";
-				// }
-				//  else if ($status == "Canceled" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
-				// 	$status = "deliveredtocust";
-				// }
-				//  else if ($status == "Delivered"){
-				// 	$status = "deliveredtocust";
-				// // }else if(){
-				// // 	delivery_status_name     DL
-				// // 	delivery_brief_status    delivered
-				// }
 				else{
 					$status = "undefined";
 				}
-				// $order_id = $orderIds[$response['ShipmentData'][$i]['Shipment']['AWB']];
 				
-		// 		foreach ($orders as $order) {
-					// $waybill_nos = $waybill_nos.",".$order->waybill_no;
-			//   }
-			//   $waybill_nos = substr($waybill_nos, 1);
 				$statusDel[$i]['vid'] = addslashes( $vid );
 				$statusDel[$i]['awb'] = addslashes( $response['ShipmentData'][$i]['Shipment']['AWB'] );
 				$statusDel[$i]['oid'] = addslashes( $order_id );
@@ -507,16 +494,15 @@ class JsonController extends Controller
 		}
 
 
-		// print_r($statusDel);
-		// die();
-    	$ResUpdateStatusDelivary = $this->updateStatusDelivary($statusDel,$vid);
+    	$ResUpdateStatusDelivary = $this->updateStatusDelivary($statusDel,$vid,$order_id);
 
     	
     	return  $ResUpdateStatusDelivary;
 
  	}
 
- 	public function updateStatusDelivary($statusDel,$vid){
+ 	public function updateStatusDelivary($statusDel,$vid,$order_id){
+
  		foreach($statusDel as  $status_update)
  		{
           	$data[]=[
@@ -543,21 +529,27 @@ class JsonController extends Controller
 			$statusCheck=DB::table("update_statuses")
 				->where([
 							'update_statuses.awb' => $status_update['awb'],
+							'update_statuses.status' => $status_update['status'],
 							'update_statuses.delivery_status_code' => $status_update['delivery_status_code'],
 							'update_statuses.delivery_brief_status' => $status_update['delivery_brief_status']
 					])->get();
 
-		
 			if( sizeof($statusCheck) == 0){
 				$Result[$status_update['awb']] = "AWB: ".$status_update['awb']." Updated Successfully.";
 				UpdateStatus::insert($data);
-				// var_dump($status_update); die;
-				
+				switch ($status_update['status']){
+					case 'deliveredtocust':
+						DB::table('order_reldates')->where('oid', intval($order_id))->where('vid', intval($vid))->update(['order_deldate' => date('Y-m-d')]);
+						break;
+					case 'rto-delivered':
+						DB::table('order_reldates')->where('oid', intval($order_id))->where('vid', intval($vid))->update(['rto_deldate' => date('Y-m-d')]);
+						break;
+					default:
+						break;
+				}
 				if($status_update['status'] != "undefined"){
 					OrderController::changeOrderStatus(intval($vid),$status_update['oid'],$status_update['status']); 
 				}
-				
-
 				// call order status update method that will further update vendor's wordpress order status as well.
 				
 			}else{
@@ -566,54 +558,6 @@ class JsonController extends Controller
 	    }
 		return $Result;
 	}
-
-
- 	// Table to add all data 
-
-
-
- 		// order table status get check if new status and old status is different
-
-
-
- 		// update the status in oredr table (Hold)
-
-
-
-
- 		/*
- 		DB::table('orders')
-          ->where('oid', $request->oid)
-          ->where('vid', $request->vid)
-          ->update(['status' => $request->status_assign]);
-
-			// print_r($woocommerce->put('orders/'.$request->oid, $data)); die;
-			// https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
-		$vendor =DB::table("vendors")->where('id','=',intval($request->vid))->get();
-		
-          $curl = curl_init();
-
-		    curl_setopt_array($curl, array(
-
-		    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$request->oid.'?status='.$request->status_assign,
-		    CURLOPT_RETURNTRANSFER => true,
-		    CURLOPT_ENCODING => '',
-		    CURLOPT_MAXREDIRS => 10,
-		    CURLOPT_TIMEOUT => 0,
-		    CURLOPT_FOLLOWLOCATION => true,
-		    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-		    CURLOPT_CUSTOMREQUEST => 'PUT',
-		    CURLOPT_HTTPHEADER => array(
-
-		        'Authorization: Basic '.$vendor[0]->token
-		      ),
-		    ));
-
-		    $response = curl_exec($curl);
-		    curl_close($curl);
-		    $jsonResp = json_decode($response);
-		  */
- 
 
     public function getUpdateStatus(Request $request)
 	{	

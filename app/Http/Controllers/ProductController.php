@@ -7,6 +7,7 @@ use App\Models\LineItems;
 use App\Models\line_items_metas;
 use App\Models\Orders;
 use App\Models\Products;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use PDF;
 class ProductController extends Controller {
@@ -35,43 +36,7 @@ class ProductController extends Controller {
         //               'e.categories as categories')
         //   ->get();
         return $order;
-        /*
-        $users = DB::table('users')
-        ->selectRaw('count(*) as user_count, status')
-        ->where('status', '<>', 1)
-        ->groupBy('status')
-        ->get();
-        */
-        // $Order=DB::table("line_items")
-        // 	// ->join('products','products.product_id','=','line_items.product_id')
-        // 	->where('line_items.vid','=',intVal($vendor))
-        // 	// ->where('products.vid','=',intVal($vendor))
-        // 	// ->where('products.vid','=',)
-        // 	->select("line_items.*")
-        //   	     ->distinct()
-        //   	     ->select('line_items.name')
-        //   	     ->orderBy('line_items.name')
-        // 		   // DB::raw("(select products.categories from products)"))
-        // 	->get();
-        // return $Order;
-        // DB::table("line_items")
-        // 		 ->join('products','products.product_id','=','line_items.product_id')
-        // 		->where('line_items.vid','=',intVal($vendor))
-        // 		->select("line_items.*","products.*")
-        // 			   DB::raw("(select products.categories from products)"))
-        //           ->get();
-        // $results = DB::select("(SELECT products.categories FROM products WHERE products.product_id = 6699)");
-        // 	var_dump($results);
-        // 		$orders = DB::table('line_items')
-        //         ->select("line_items.*")
-        //         ->get();
-        //          ->groupBy('variation_id')
-        //                     DB::raw("(SELECT products.categories FROM products
-        //                                 WHERE products.product_id = line_items.product_id
-        //                                 GROUP BY products.id) as cat_name"))
-        //          ->get();
-        // 		$obj=Products::all();
-        //        return $collection;
+    
         
     }
     public function status_data(Request $request) {
@@ -192,16 +157,30 @@ class ProductController extends Controller {
         
     }
 
-    function delivered_tocust($vid) {
-
+    function dispatched_order_toclose($vid) 
+    {
         $del='deliveredtocust';
+        $clos='closed';
+        //get all orders with deltocustomer status
         $orders=DB::table("orders")->where('orders.vid','=',$vid)->where("orders.status",'=',$del)->get();
-        return $orders;
-        
+        //using for loop for more than 1 orders
+        for($x=0;$x<count($orders);$x++) 
+        {   
+            //get current date
+            $current_date=Carbon::parse(date('Y-m-d')); 
+            //get dispatched date 
+            $order_date=DB::table("order_reldates")->where('order_reldates.oid','=',intval($orders[$x]->oid))->where('order_reldates.vid','=',$vid)->get(); 
+            $order_confirm_date=$order_date[0]->order_dispatchdate;
+            //calculate days from current date to dispatched date
+            $days=$current_date->diffInDays($order_confirm_date);
+            //using if days above 15 days close all orders
+                if($days>15)
+                {
+                    //above 15 days update status delivertocust to closed
+                DB::table('orders')->where('orders.oid', intval($orders[$x]->oid))->where('orders.vid', $vid)->update(['status' => $clos]);
+                }
+        }
+        //print message 
+        return response()->json([ 'msg' => "orders closed Successfully"]);
     }
-
-
-
-
-
 }

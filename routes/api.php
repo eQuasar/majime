@@ -120,8 +120,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('wallet_Sheet_download', 'OrderController@wallet_Sheet_download')->name('wallet_Sheet_download');
 	Route::get('dashboard_detail/{vid}', 'DashboardController@dashboard_detail')->name('dashboard_detail');
 	Route::post('dashboard_search', 'DashboardController@dashboard_search')->name('dashboard_search');
-	Route::get('delivered_tocust/{vid}', 'ProductController@delivered_tocust')->name('delivered_tocust');
-
-	// Route::get('Complete_orders','OrderController@show')->name('Complete_orders');
+	Route::get('dispatched_order_toclose/{vid}', 'ProductController@dispatched_order_toclose')->name('dispatched_order_toclose');
+	Route::get('chart_data/{vid}', 'DashboardController@chart_data')->name('chart_data');
 }); 
 

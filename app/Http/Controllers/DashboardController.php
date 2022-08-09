@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 
 class DashboardController extends Controller
@@ -194,5 +195,61 @@ class DashboardController extends Controller
     $dashboardData['netsale'] = $net_sale;
 
     return  $dashboardData;
+   }
+
+   public function chart_data($vid)
+   {
+    $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereDate('date_created', Carbon::now()->subDays(7))->get();
+    $total_order_count=count($orders);
+    $cancelled_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','cancelled')->get();
+    $cancel_order_count=count($cancelled_orders);
+    $fail_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','failed')->get();
+    $fail_order_count=count($fail_orders);
+    $hold_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','on-hold')->get();
+    $hold_order_count=count($hold_orders);
+    $processing_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->get();
+    $processing_order_count=count($processing_orders);
+    $confirm_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','confirmed')->get();
+    $confirm_order_count=count($confirm_orders);
+    $packed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','packed')->get();
+    $packed_order_count=count($packed_orders);
+    $dispatch_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dispatched')->get();
+    $dispatch_order_count=count($dispatch_orders);
+    $transit_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','intransit')->get();
+    $transit_order_count=count($transit_orders);
+    $deliver_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','deliveredtocust')->get();
+    $deliver_order_count=count($deliver_orders);
+    $rto_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->get();
+    $rto_order_count=count($rto_orders);
+    $dtobook_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dtobooked')->get();
+    $dtobook_order_count=count($dtobook_orders);
+    $dtointransit_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dtointransit')->get();
+    $dtointransit_order_count=count($dtointransit_orders);
+    $dtodel_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dtodelivered')->get();
+    $dtodel_order_count=count($dtodel_orders);
+    $dtoref_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dto-refunded')->get();
+    $dtoref_order_count=count($dtoref_orders);
+
+    $chartData['values'][0] = $total_order_count;
+    $chartData['values'][1] = $cancel_order_count;
+    $chartData['values'][2] = $fail_order_count;
+    $chartData['values'][3] = $hold_order_count;
+    $chartData['values'][4] = $processing_order_count;
+    $chartData['values'][5] = $confirm_order_count;
+    $chartData['values'][6] = $packed_order_count;
+    $chartData['values'][7] = $dispatch_order_count;
+    $chartData['values'][8] = $transit_order_count;
+    $chartData['values'][9]= $deliver_order_count;
+    $chartData['values'][10] = $rto_order_count;
+   //  $chartData['values'][11] = $rto_order_count;
+   //  $chartData['values'][12] = $dtointransit_order_count;
+   //  $chartData['values'][13] = $dtodel_order_count;
+   //  $chartData['values'][14] = $dtoref_order_count;
+
+      // $series['name'] = "Values";
+      // $series['data'] = $chartData;
+   
+    return  $chartData;
+
    }
 }

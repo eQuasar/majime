@@ -13,7 +13,39 @@
           <br />
         </div>
       </div>
-
+      <template>
+        <div>
+          <apexchart
+            width="500"
+            type="bar"
+            :options="options"
+            :series="series"
+          ></apexchart>
+        </div>
+      </template>
+      <template>
+        <Pie
+          :chart-options="pieOptions"
+          :chart-data="pieData"
+          :chart-id="chartId"
+          :dataset-id-key="datasetIdKey"
+          :plugins="plugins"
+          :css-classes="cssClasses"
+          :styles="styles"
+          :width="width"
+          :height="height"
+        />
+      </template>
+      <template>
+        <div>
+          <apexchart
+            width="380"
+            type="pie"
+            :options="chartOptions1"
+            :series="series1"
+          ></apexchart>
+        </div>
+      </template>
       <div class="content_bar card">
         <div class="card-body">
           <div class="call-center-dashboard">
@@ -169,17 +201,7 @@
           <p><i>₹ </i>N/A</p>
         </div>
       </div>
-      <template>
-        <Bar
-          :chart-options="chartOptions"
-          :chart-data="chartData"
-          :chart-id="chartId"
-          :dataset-id-key="datasetIdKey"
-          :plugins="plugins"
-          :css-classes="cssClasses"
-          :styles="styles"
-        />
-      </template>
+
       <b-pagination
         v-model="currentPage"
         :total-rows="rows"
@@ -192,36 +214,31 @@
 <script>
 import dashboard from "../../api/dashboard.js";
 import user from "../../api/user.js";
-import { Bar } from "vue-chartjs/legacy";
-
+import VueApexCharts from "vue-apexcharts";
+import { Pie } from "vue-chartjs/legacy";
 import {
   Chart as ChartJS,
   Title,
   Tooltip,
   Legend,
-  BarElement,
+  ArcElement,
   CategoryScale,
-  LinearScale,
 } from "chart.js";
 
-ChartJS.register(
-  Title,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale
-);
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
 export default {
-  name: "BarChart",
+  mounted() {
+    this.getVidz();
+  },
+  name: "PieChart",
   components: {
-    Bar,
+    Pie,
   },
   props: {
     chartId: {
       type: String,
-      default: "bar-chart",
+      default: "pie-chart",
     },
     datasetIdKey: {
       type: String,
@@ -229,11 +246,11 @@ export default {
     },
     width: {
       type: Number,
-      default: 10,
+      default: 400,
     },
     height: {
       type: Number,
-      default: 10,
+      default: 400,
     },
     cssClasses: {
       default: "",
@@ -247,9 +264,6 @@ export default {
       type: Array,
       default: () => [],
     },
-  },
-  mounted() {
-    this.getVidz();
   },
   data() {
     return {
@@ -271,47 +285,81 @@ export default {
       filterOn2: [],
       filterOn: [],
       items: [],
+      chartdata: [],
       errors_create: [],
       dashboardData: [],
+      series: [],
       successful: false,
       create_error: "",
-      chartData: {
+      options: {
+        chart: {
+          id: "vuechart-example",
+        },
+        xaxis: {
+          categories: [
+            "Total Orders",
+            "Cancelled",
+            "Failed",
+            "ON-Hold",
+            "Processing",
+            "Confirmed",
+            "Packed",
+            "Dispatch",
+            "In-Transit",
+            "Delivered",
+            "RTO",
+          ],
+        },
+      },
+      series: [
+        {
+          name: "series-1",
+          data: [10, 1, 3, 2, 4, 7, 1, 16, 2, 1, 1],
+        },
+      ],
+      series1: [75, 45, 20, 43],
+      chartOptions1: {
+        chart: {
+          width: 380,
+          type: "pie",
+        },
         labels: [
-          "T.Order",
-          "Cancelled",
-          "Failed",
-          "On-Hold",
-          "Processing",
-          "Confirmed",
-          "Packed",
-          "Dispatch",
-          "In-Transit",
-          "Delivered",
-          "RTO",
+          "Processed Orders",
+          "Failed Orders",
+          "Cancelled Orders",
+          "Others",
         ],
-        datasets: [
+        responsive: [
           {
-            label: "Data One",
-            backgroundColor: "#f87979",
-            data: [
-              dashboardData.totalcount,
-              dashboardData.canceltotalcount,
-              dashboardData.failtotalcount,
-              dashboardData.holdtotalcount,
-              dashboardData.processingtotalcount,
-              dashboardData.confirmtotalcount,
-              dashboardData.packedtotalcount,
-              dashboardData.dispatchtotalcount,
-              dashboardData.transittotalcount,
-              dashboardData.deltotalcount,
-              dashboardData.rtototalcount,
-            ],
+            // breakpoint: 480,
+            options: {
+              chart: {
+                width: 200,
+              },
+              legend: {
+                position: "bottom",
+              },
+            },
           },
         ],
       },
-      chartOptions: {
-        // responsive: true,
-        // maintainAspectRatio: false,
+      pieData: {
+        labels: [
+          "Processed Orders",
+          "Failed Orders",
+          "Cancelled Orders",
+          "Others",
+        ],
+        datasets: [
+          {
+            backgroundColor: ["#41B883", "#E46651", "#00D8FF", "#DD1B16"],
+            data: [80, 20, 10, 50],
+          },
+        ],
+      },
+      pieOptions: {
+        responsive: true,
+        maintainAspectRatio: false,
       },
     };
   },
@@ -330,6 +378,7 @@ export default {
         localStorage.setItem("ivid", this.vid);
         // this.getWalletDetail(this.vid);
         this.Orderdetail(this.vid);
+        this.dashboard_data(this.vid);
         this.show = false;
       } else {
         this.show = true;
@@ -342,6 +391,7 @@ export default {
             localStorage.setItem("ivid", this.vid);
             // this.getWalletDetail(this.vid);
             this.Orderdetail(this.vid);
+            this.dashboard_data(this.vid);
             this.show = false;
           })
           .catch((response) => {
@@ -391,13 +441,45 @@ export default {
     Orderdetail(vid) {
       // this.seen = true;
       let formData = new FormData();
-
       dashboard
         .getdashboard_detail(vid)
         .then((response) => {
           var resp = response.data;
           this.dashboardData = resp;
           console.log(this.dashboardData);
+        })
+        .catch((response) => {
+          this.successful = false;
+          alert("something went wrong");
+        });
+    },
+    dashboard_data() {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      localStorage.setItem("ivid", this.vid);
+      dashboard
+        .getchart(this.vid)
+        .then((response) => {
+          // this.series = response.data;
+          var chart = response.data;
+          var val = chart.values;
+
+          console.log("Chart Data" + val);
+          var dataforchart = [];
+          for (let i = 0; i < val.length; i++) {
+            dataforchart[i] = val[i];
+            console.log("val - " + val[i]);
+          }
+
+          // var chart = response.data;
+          //
+          console.log("Chart Data" + dataforchart);
+          this.chartdata = "[1,2,3,4,5,6,7,8,9,0]";
+          // var series = response.data;
+          // var string = series.values;
+          // this.chartData = string.split(",");
+          // console.log("CHART " + string);
+          // this.chartData = "[" + string + "]";
+          // console.log("CHART " + this.chartData);
         })
         .catch((response) => {
           this.successful = false;

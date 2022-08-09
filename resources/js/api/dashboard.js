@@ -7,6 +7,9 @@ export default {
     },
     dashbaordSearch(data) {
         return axios.post('dashboard_search' , data)
+    },
+    getchart(vid) {
+        return axios.get('chart_data/'+vid)
     }
 
    }

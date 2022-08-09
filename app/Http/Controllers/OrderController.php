@@ -179,7 +179,7 @@ class OrderController extends Controller {
             $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', '=', intval($vendor))->where('billings.vid', '=', intval($vendor))->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
                                         GROUP BY line_items.order_id) as quantity"))->get();
-                                        echo "xyz";die();                  
+                                                        
         }
         return $orders;
     }
