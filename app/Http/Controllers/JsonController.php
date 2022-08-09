@@ -445,6 +445,10 @@ class JsonController extends Controller
 
 				if ($status == "Manifested" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "dispatched";
+				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
+					$status = "intransit";
+				}else if ($status == "Dispatched" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
+					$status = "intransit";
 				}else if ($status == "Pending" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "intransit";
 				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
@@ -543,6 +547,7 @@ class JsonController extends Controller
 			$statusCheck=DB::table("update_statuses")
 				->where([
 							'update_statuses.awb' => $status_update['awb'],
+							'update_statuses.status' => $status_update['status'],
 							'update_statuses.delivery_status_code' => $status_update['delivery_status_code'],
 							'update_statuses.delivery_brief_status' => $status_update['delivery_brief_status']
 					])->get();
