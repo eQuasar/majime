@@ -22858,7 +22858,7 @@ td span{
 
 .stats {
   display: inline-block;
-  width: 250px;
+  width: 100%;
   background: #ccc;
   padding: 1.25rem;
   position: relative;
@@ -22899,6 +22899,7 @@ td span{
 
 .grn{
   background-color: #E0F5E9;
+  margin-right: 0;
 }
 .grn h4{
   color: #14B581;
@@ -23004,6 +23005,9 @@ td span{
 
 .margin-report-title {
   margin-bottom: 30px;
+  width: 100%;
+  float: left;
+  margin-top: 50px;
 }
 
 
@@ -23021,12 +23025,14 @@ td span{
   position: relative;
   width: 100%;
   float: left;
+  display: flex;
 }
 
 
 .right {
-  width: 40%;
+  width: 100%;
   float: left;
+  display: flex;
 }
 
 .statas {
@@ -23067,4 +23073,14 @@ td span{
   float: left;
   overflow-y: scroll;
   height: 538px;
+}
+
+.chartsss .card {
+    height: 100%;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#pie-chart {
+    height: 250px!important;
 }
