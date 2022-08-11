@@ -73,7 +73,7 @@
           </div> -->
         </div>
       </template><br>
-      <div class="content_bar card">
+    <!--   <div class="content_bar card">
         <div class="card-body">
           <div class="call-center-dashboard">
             <b-col xl="8" lg="8" md="8">
@@ -113,7 +113,7 @@
             </b-col>
           </div>
         </div>
-      </div>
+      </div> -->
       <br />
       <div class="right">
         <div class="stats red">
