@@ -10,6 +10,13 @@ export default {
     },
     getchart(vid) {
         return axios.get('chart_data/'+vid)
-    }
+    },
+    getpiechart(vid) {
+        return axios.get('piechart_data/'+vid)
+    },
+    getsecondpiechart(vid) {
+        return axios.get('secondpiechart_data/'+vid)
+    },
+
 
    }

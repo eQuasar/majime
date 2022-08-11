@@ -122,5 +122,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('dashboard_search', 'DashboardController@dashboard_search')->name('dashboard_search');
 	Route::get('dispatched_order_toclose/{vid}', 'ProductController@dispatched_order_toclose')->name('dispatched_order_toclose');
 	Route::get('chart_data/{vid}', 'DashboardController@chart_data')->name('chart_data');
+	Route::get('piechart_data/{vid}', 'DashboardController@piechart_data')->name('piechart_data');
+	Route::get('secondpiechart_data/{vid}', 'DashboardController@secondpiechart_data')->name('secondpiechart_data');
 }); 
 

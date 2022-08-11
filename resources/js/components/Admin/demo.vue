@@ -15,18 +15,10 @@
       </div>
       <template>
         <div class="row chartsss">
-          <div class="col-sm-4">
-            <div class="content_bar card">
-              <apexchart
-                width="500"
-                type="bar"
-                :options="options"
-                :series="series"
-              ></apexchart>
-            </div>
-          </div>
+        
 
           <div class="col-sm-4">
+
             <div class="content_bar card">
               <Pie
                 :chart-options="pieOptions"
@@ -41,8 +33,35 @@
               />
             </div>
           </div>
+            <div class="col-sm-4">
+            <div class="content_bar card">
+            	  	 <h3><strong>All Orders Data</strong></h3>
+              <apexchart
+                width="500"
+                type="bar"
+                :options="options"
+                :series="series"
+              ></apexchart>
+            </div>
+          </div>
 
-          <div class="col-sm-4">
+           <div class="col-sm-4">
+            <div class="content_bar card">
+               <Doughnut
+                :chart-options="chartpie"
+                :chart-data="chartdatapie"
+                :chart-id="chartId"
+                :dataset-id-key="datasetIdKey"
+                :plugins="plugins"
+                :css-classes="cssClasses"
+                :styles="styles"
+                :width="width"
+                :height="height"
+              />  
+            </div>
+          </div>
+
+       <!--    <div class="col-sm-4">
             <div class="content_bar card">
               <apexchart
                 width="380"
@@ -51,7 +70,7 @@
                 :series="series1"
               ></apexchart>
             </div>
-          </div>
+          </div> -->
         </div>
       </template><br>
       <div class="content_bar card">
@@ -147,6 +166,33 @@
         </div>
       </div>
 
+      <div class="margin-report-title">
+          <h3>Actual Report</h3>
+          <h6>(Actual Value)</h6>
+        </div>
+      <div class="margin-report">
+        <div class="stats blu">
+          <h4>Actual Gross sale</h4>
+          <span>Total Orders:{{ dashboardData.grosscount }}</span>
+          <p><i>₹ </i>{{ dashboardData.grossSaleAmount }}</p>
+        </div>
+        <div class="stats red">
+          <h4>Actual Net Sale</h4>
+          <span>{{ dashboardData.netcount }}</span>
+          <p><i>₹ </i>{{ dashboardData.netsale }}</p>
+        </div>
+        <div class="stats orng">
+          <h4>Actual Product Cost</h4>
+          <span>N/A</span>
+          <p><i>₹ </i>N/A</p>
+        </div>
+        <div class="stats grn">
+          <h4>Ad Cost</h4>
+          <span>N/A</span>
+          <p><i>₹ </i>N/A</p>
+        </div>
+      </div>
+
     </b-overlay>
   </b-container>
 </template>
@@ -155,6 +201,7 @@ import dashboard from "../../api/dashboard.js";
 import user from "../../api/user.js";
 import VueApexCharts from "vue-apexcharts";
 import { Pie } from "vue-chartjs/legacy";
+import { Doughnut } from 'vue-chartjs/legacy';
 import {
   Chart as ChartJS,
   Title,
@@ -164,15 +211,30 @@ import {
   CategoryScale,
 } from "chart.js";
 
+// import {
+//   Chart as ChartJS,
+//   Title,
+//   Tooltip,
+//   Legend,
+//   ArcElement,
+//   CategoryScale
+// } from 'chart.js'
+
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
+// ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
 export default {
   mounted() {
     this.getVidz();
+    // this.dashboard_data();
+    //console.log(this.chartdata);
   },
   name: "PieChart",
+  name: 'DoughnutChart',
   components: {
     Pie,
+    apexcharts: VueApexCharts,
+     Doughnut,
   },
   props: {
     chartId: {
@@ -185,11 +247,11 @@ export default {
     },
     width: {
       type: Number,
-      default: 400,
+      default: 300,
     },
     height: {
       type: Number,
-      default: 400,
+      default: 300,
     },
     cssClasses: {
       default: "",
@@ -203,6 +265,39 @@ export default {
       type: Array,
       default: () => [],
     },
+     chartData: {
+      type: Array
+    },
+  },
+  props: {
+    chartId: {
+      type: String,
+      default: 'doughnut-chart'
+    },
+    datasetIdKey: {
+      type: String,
+      default: 'label'
+    },
+    width: {
+      type: Number,
+      default: 300
+    },
+    height: {
+      type: Number,
+      default: 300
+    },
+    cssClasses: {
+      default: '',
+      type: String
+    },
+    styles: {
+      type: Object,
+      default: () => {}
+    },
+    plugins: {
+      type: Array,
+      default: () => []
+    }
   },
   data() {
     return {
@@ -217,6 +312,7 @@ export default {
       sortBy: "date",
       sortDesc: true,
       perPage: 10,
+      chartData: '',
       currentPage: 1,
       filter2: null,
       pageOptions: [5, 10, 15, 20, 50, 100],
@@ -227,7 +323,6 @@ export default {
       chartdata: [],
       errors_create: [],
       dashboardData: [],
-      series: [],
       successful: false,
       create_error: "",
       options: {
@@ -253,46 +348,45 @@ export default {
       series: [
         {
           name: "series-1",
-          data: [10, 1, 3, 2, 4, 7, 1, 16, 2, 1, 1],
+          data: [],
         },
       ],
-      series1: [75, 45, 20, 43],
-      chartOptions1: {
-        chart: {
-          width: 380,
-          type: "pie",
-        },
-        labels: [
-          "Processed Orders",
-          "Failed Orders",
-          "Cancelled Orders",
-          "Others",
-        ],
-        responsive: [
-          {
-            // breakpoint: 480,
-            options: {
-              chart: {
-                width: 200,
-              },
-              legend: {
-                position: "bottom",
-              },
-            },
-          },
-        ],
-      },
+      // series1: [],
+      // chartOptions1: {
+      //   chart: {
+      //     width: 380,
+      //     type: "pie",
+      //   },
+      //   labels: [
+      //     "Processed Amount",
+      //     "Deliver to Customer Amount ",
+      //     "In-transit Amount",
+      //   ],
+      //   responsive: [
+      //     {
+      //       // breakpoint: 480,
+      //       options: {
+      //         chart: {
+      //           width: 200,
+      //         },
+      //         legend: {
+      //           position: "bottom",
+      //         },
+      //       },
+      //     },
+      //   ],
+      // },
       pieData: {
-        labels: [
-          "Processed Orders",
-          "Failed Orders",
-          "Cancelled Orders",
-          "Others",
-        ],
+            labels: [
+              "Processed Orders",
+              "Failed Orders",
+              "Cancelled Orders",
+              "Others",
+            ],
         datasets: [
           {
             backgroundColor: ["#41B883", "#E46651", "#DD1B16", "#00D8FF"],
-            data: [80, 20, 10, 50],
+            data:[],
           },
         ],
       },
@@ -300,6 +394,20 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
       },
+      chartdatapie: {
+        labels: ['Processed Amount', 'Deliverd Amount', 'Intransit Amount'],
+        datasets: [
+          {
+            backgroundColor: ['#41B883', '#E46651', '#00D8FF'],
+            data:[],
+          }
+        ]
+      },
+      chartpie: {
+        responsive: true,
+        maintainAspectRatio: false
+      },
+
     };
   },
 
@@ -318,6 +426,8 @@ export default {
         // this.getWalletDetail(this.vid);
         this.Orderdetail(this.vid);
         this.dashboard_data(this.vid);
+        this.dashboard_piedata(this.vid);
+         this.dashboard_secondpiedata(this.vid) 
         this.show = false;
       } else {
         this.show = true;
@@ -331,6 +441,8 @@ export default {
             // this.getWalletDetail(this.vid);
             this.Orderdetail(this.vid);
             this.dashboard_data(this.vid);
+            this.dashboard_piedata(this.vid);
+             this.dashboard_secondpiedata(this.vid) 
             this.show = false;
           })
           .catch((response) => {
@@ -401,30 +513,53 @@ export default {
           // this.series = response.data;
           var chart = response.data;
           var val = chart.values;
-
-          console.log("Chart Data" + val);
-          var dataforchart = [];
-          for (let i = 0; i < val.length; i++) {
-            dataforchart[i] = val[i];
-            console.log("val - " + val[i]);
-          }
-
-          // var chart = response.data;
-          //
-          console.log("Chart Data" + dataforchart);
-          this.chartdata = "[1,2,3,4,5,6,7,8,9,0]";
-          // var series = response.data;
-          // var string = series.values;
-          // this.chartData = string.split(",");
-          // console.log("CHART " + string);
-          // this.chartData = "[" + string + "]";
-          // console.log("CHART " + this.chartData);
+          this.series = [{
+          data: val
+        }]
         })
         .catch((response) => {
           this.successful = false;
           alert("something went wrong");
         });
     },
-  },
+     dashboard_piedata(vid) 
+     {
+        dashboard
+        .getpiechart(this.vid)
+        .then((response) => {
+        const responseData = response.data; 
+       this.pieData={
+          datasets: [
+            {
+            data:responseData.pie
+            }
+         ]
+        }
+          })
+         .catch(e => {
+        this.errors.push(e)
+      })
+        
+      },
+      dashboard_secondpiedata(vid) 
+     {
+        dashboard
+        .getsecondpiechart(this.vid)
+        .then((response) => 
+        {
+          const responseData = response.data;   
+          this.chartdatapie={
+          datasets: [
+            {
+            data:responseData.amount
+            }
+         ]
+        }
+      })
+      .catch(e => {
+        this.errors.push(e)
+      })
+    }
+  }
 };
 </script>

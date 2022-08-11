@@ -23,6 +23,7 @@ class CreateOrderReldatesTable extends Migration
             $table->date('order_deldate');
             $table->date('dto_refunddate');
             $table->date('rto_deldate');
+            $table->date('order_closedate');
         });
     }
 
