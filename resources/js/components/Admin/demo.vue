@@ -73,7 +73,7 @@
           </div> -->
         </div>
       </template><br>
-    <!--   <div class="content_bar card">
+      <div class="content_bar card">
         <div class="card-body">
           <div class="call-center-dashboard">
             <b-col xl="8" lg="8" md="8">
@@ -113,28 +113,28 @@
             </b-col>
           </div>
         </div>
-      </div> -->
+      </div>
       <br />
       <div class="right">
         <div class="stats red">
-          <h4>DTO Booked</h4>
-          <span>Total Orders:{{ dashboardData.dtobktotalcount }} </span>
-          <p><i>₹ </i>{{ dashboardData.dtobktotalSaleAmount }}</p>
+          <h4>Total Orders</h4>
+          <span>Total Orders:{{ dashboardData.totalcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.totalSaleAmount }}</p>
         </div>
         <div class="stats blu">
-          <h4>DTO In-transit</h4>
-          <span>Total Orders:{{ dashboardData.dtointtotalcount }} </span>
-          <p><i>₹ </i>{{ dashboardData.dtointtotalSaleAmount }}</p>
+          <h4>Wallet Processed</h4>
+          <span>Total Orders:{{ dashboardData.walletcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.walletsale }}</p>
         </div>
         <div class="stats orng">
-          <h4>DTO Deliverd</h4>
-          <span>Total Orders:{{ dashboardData.dtodeltotalcount }} </span>
-          <p><i>₹ </i>{{ dashboardData.dtodeltotalSaleAmount }}</p>
+          <h4>Delivered to Customer</h4>
+          <span>Total Orders:{{ dashboardData.delivercustcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.deliversale }}</p>
         </div>
         <div class="stats grn">
-          <h4>DTO Refunded</h4>
-          <span>Total Orders:{{ dashboardData.dtoreftotalcount }} </span>
-          <p><i>₹ </i>{{ dashboardData.dtoreftotalSaleAmount }}</p>
+          <h4>Intransit</h4>
+          <span>Total Orders:{{ dashboardData.intransitcount }} </span>
+          <p><i>₹ </i>{{ dashboardData.intransitSaleAmount }}</p>
         </div>
       </div>
       <br />
@@ -211,23 +211,11 @@ import {
   CategoryScale,
 } from "chart.js";
 
-// import {
-//   Chart as ChartJS,
-//   Title,
-//   Tooltip,
-//   Legend,
-//   ArcElement,
-//   CategoryScale
-// } from 'chart.js'
-
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
-// ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
 export default {
   mounted() {
     this.getVidz();
-    // this.dashboard_data();
-    //console.log(this.chartdata);
   },
   name: "PieChart",
   name: 'DoughnutChart',
@@ -331,17 +319,19 @@ export default {
         },
         xaxis: {
           categories: [
-            "Total Orders",
-            "Cancelled",
-            "Failed",
-            "ON-Hold",
             "Processing",
             "Confirmed",
             "Packed",
-            "Dispatch",
-            "In-Transit",
+            "Dispatched",
+            "Intransit",
             "Delivered",
-            "RTO",
+            "Completed",
+            "Closed",
+            "Dtobooked",
+            "On-hold",
+            "Cancelled",
+            "Rto-delivered",
+            "Dto-delivered",
           ],
         },
       },
@@ -351,31 +341,6 @@ export default {
           data: [],
         },
       ],
-      // series1: [],
-      // chartOptions1: {
-      //   chart: {
-      //     width: 380,
-      //     type: "pie",
-      //   },
-      //   labels: [
-      //     "Processed Amount",
-      //     "Deliver to Customer Amount ",
-      //     "In-transit Amount",
-      //   ],
-      //   responsive: [
-      //     {
-      //       // breakpoint: 480,
-      //       options: {
-      //         chart: {
-      //           width: 200,
-      //         },
-      //         legend: {
-      //           position: "bottom",
-      //         },
-      //       },
-      //     },
-      //   ],
-      // },
       pieData: {
             labels: [
               "Processed Orders",
