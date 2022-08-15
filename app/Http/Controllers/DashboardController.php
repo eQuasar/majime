@@ -88,57 +88,29 @@ class DashboardController extends Controller
 
    public function chart_data($vid)
    {
+
     $date = \Carbon\Carbon::today()->subDays(7);
-    $processing_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->where('date_created', '>=', $date)->get();
-    $process_order_count=count($processing_orders);
-    $confirmed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','confirmed')->where('date_created', '>=', $date)->get();
-    $confirm_order_count=count($confirmed_orders);
-    $packed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','packed')->where('date_created', '>=', $date)->get();
-    $packed_order_count=count($packed_orders);
-    $dispatched_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dispatched')->where('date_created', '>=', $date)->get();
-    $dispatched_order_count=count($dispatched_orders);
-    $intransit_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','intransit')->where('date_created', '>=', $date)->get();
-    $intransit_order_count=count($intransit_orders);
-    $deliveredtocust_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','deliveredtocust')->where('date_created', '>=', $date)->get();
-    $deliveredtocust_order_count=count($deliveredtocust_orders);
-    $completed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','completed')->where('date_created', '>=', $date)->get();
-    $completed_order_count=count($completed_orders);
-    $closed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','closed')->where('date_created', '>=', $date)->get();
-    $closed_order_count=count($closed_orders);
-    $dtobooked_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dtobooked')->where('date_created', '>=', $date)->get();
-    $dtobooked_order_count=count($dtobooked_orders);
-    $onhold_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','on-hold')->where('date_created', '>=', $date)->get();
-    $onhold_order_count=count($onhold_orders);
-    $rtodelivered_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->where('date_created', '>=', $date)->get();
-    $rtodelivered_order_count=count($rtodelivered_orders);
-    $dtodelivered_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dto-delivered')->where('date_created', '>=', $date)->get();
-    $dtodelivered_order_count=count($dtodelivered_orders);
-    $dtorefunded_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dto-refunded')->where('date_created', '>=', $date)->get();
-    $dtorefunded_order_count=count($dtorefunded_orders);
-    $picked_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','pickedup')->where('date_created', '>=', $date)->get();
-    $picked_order_count=count($picked_orders);
-    $dtoIntras_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dtointransit')->where('date_created', '>=', $date)->get();
-    $dtoIntra_order_count=count($dtoIntras_orders);
-    $dtowarehouse_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dtodel2warehouse')->where('date_created', '>=', $date)->get();
-    $dtowarehouse_order_count=count($dtowarehouse_orders);
 
-    $chartData['values'][0] = $process_order_count;
-    $chartData['values'][1] = $confirm_order_count;
-    $chartData['values'][2] = $packed_order_count;
-    $chartData['values'][3] = $dispatched_order_count;
-    $chartData['values'][4] = $intransit_order_count;
-    $chartData['values'][5] = $deliveredtocust_order_count;
-    $chartData['values'][6] = $completed_order_count;
-    $chartData['values'][7] = $closed_order_count;
-    $chartData['values'][8] = $dtobooked_order_count;
-    $chartData['values'][9] = $onhold_order_count;
-    $chartData['values'][10] = $rtodelivered_order_count;
-    $chartData['values'][11] = $dtodelivered_order_count;
-    $chartData['values'][12] = $dtorefunded_order_count;
-    $chartData['values'][13] = $picked_order_count;
-    $chartData['values'][14] = $dtoIntra_order_count;
-    $chartData['values'][15] = $dtowarehouse_order_count;
-
+    $processing_orders=DB::table("orders")
+                              ->select(
+                                DB::raw("(COUNT(id)) as count"),
+                                DB::raw("(DATE_FORMAT(date_created, '%Y-%m-%d')) as date")
+                                )
+                              ->where('orders.vid','=',$vid)
+                              ->whereNotIn('orders.status', ['cancelled','failed'])
+                              ->where('date_created', '>=', $date)
+                              ->orderBy('date_created','DESC')
+                              ->groupBy(DB::raw("DATE_FORMAT(date_created, '%Y-%m-%d')"))
+                              ->get();
+  $i = 0;
+  foreach($processing_orders as $porders){
+    // print_r($porders);
+    $chartData['catgories'][$i] = $porders->date;
+    $chartData['values'][$i] = $porders->count;
+    $i = $i +1;
+  }
+  // print_r($chartData);
+    
     return  $chartData;
    }
      public function piechart_data($vid)
@@ -164,7 +136,7 @@ class DashboardController extends Controller
       $total_Processed=count($orders);
       $rto=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->where('date_created', '>=', $date)->get();
       $total_rto=count($rto);
-      $dto=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dto_ref,$dto_del, $dtointrans])->where('date_created', '>=', $date)->get();
+      $dto=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dto_ref,$dto_del, $dtointrans,$dtobook])->where('date_created', '>=', $date)->get();
       $total_dto=count($dto);
       $dispatched_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$intrans,$dis])->where('date_created', '>=', $date)->get();
       $dispatched_order_count=count($dispatched_orders);
@@ -177,34 +149,51 @@ class DashboardController extends Controller
    }
     public function secondpiechart_data($vid)
    {
-        $dtobook='dtobooked';
-        $intrans='intransit';
-        $dtointrans='dtointransit';
-        $Comple='completed';
-        $rto_del='rto-delivered';
-        $dto_ref='dto-refunded';
-        $clos='closed';
-        $process='processing';
-        $confirm='confirmed';
-        $pack='packed';
-        $hold='on-hold';
-        $dis='dispatched';
-        $del='deliveredtocust';
-        $dto_del='dtodelivered';
-        $cancel='cancelled';
-        $fail='failed';
-      $date = \Carbon\Carbon::today()->subDays(7);
-      $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$clos,$rto_del,$dto_ref])->get();
-      $processed_saleAmount=$orders->sum('total');
-      $del=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$del])->get();
-      $del_saleAmount=$del->sum('total');
-      $intransit=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$intrans])->get();
-      $intransit_saleAmount=$intransit->sum('total');
-      $saledata['amount'][0]= $processed_saleAmount;
-      $saledata['amount'][1]= $del_saleAmount;
-      $saledata['amount'][2]= $intransit_saleAmount;
-      return $saledata;
 
+              $dtobook='dtobooked';
+              $intrans='intransit';
+              $Comple='completed';
+              $rto_del='rto-delivered';
+              $dto_ref='dto-refunded';
+              $dto_del='dtodelivered';
+              $dtointrans='dtointransit';
+              $clos='closed';
+              $process='processing';
+              $confirm='confirmed';
+              $pack='packed';
+              $hold='on-hold';
+              $dis='dispatched';
+              $del='deliveredtocust';
+              $cancel='cancelled';
+              $fail='failed';
+            $date = \Carbon\Carbon::today()->subDays(7);
+            $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$clos,$del])->where('date_created', '>=', $date)->get();
+            $total_Processed=count($orders);
+
+            $rto=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->where('date_created', '>=', $date)->get();
+            $total_rto=count($rto);
+            $dto=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dto_ref,$dto_del, $dtointrans,$dtobook])->where('date_created', '>=', $date)->get();
+            $total_dto=count($dto);
+            $dispatched_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$intrans,$dis])->where('date_created', '>=', $date)->get();
+            $dispatched_order_count=count($dispatched_orders);
+            
+            $dispatched_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$intrans,$dis])->where('date_created', '>=', $date)->get();
+            $dispatched_order_count=count($dispatched_orders);
+
+
+
+
+
+
+
+
+
+            $piedata['pie'][0]= $total_Processed;
+            $piedata['pie'][1]= $total_rto;
+            $piedata['pie'][2]= $total_dto;
+            $piedata['pie'][3]= $dispatched_order_count;
+            return $piedata;
+    
    }
      public function getsales_data($vid)
    {

@@ -433,24 +433,7 @@ export default {
           id: "vuechart-example",
         },
         xaxis: {
-          categories: [
-            "Processing",
-            "Confirmed",
-            "Packed",
-            "Dispatched",
-            "Intransit",
-            "Delivered",
-            "Completed",
-            "Closed",
-            "Dtobooked",
-            "On-hold",
-            "Rto-Delivered",
-            "Dto-Delivered",
-            "Dto-Refunded",
-            "Picked",
-            "Dto-Intransit",
-            "Dto-toWareshouse",
-          ],
+          categories: [],
         },
       },
       series: [
@@ -473,10 +456,10 @@ export default {
         maintainAspectRatio: false,
       },
       chartdatapie: {
-        labels: ["Processed Amount", "Deliverd Amount", "Intransit Amount"],
+        labels: ["Delivered Orders", "RTO", "DTO", "Dispatched"],
         datasets: [
           {
-            backgroundColor: ["#41B883", "#E46651", "#00D8FF"],
+            backgroundColor: ["#41B883", "#E46651", "#DD1B16", "#00D8FF"],
             data: [],
           },
         ],
@@ -611,11 +594,24 @@ export default {
           // this.series = response.data;
           var chart = response.data;
           var val = chart.values;
+          var cat = chart.catgories;
           this.series = [
             {
               data: val,
             },
           ];
+          
+          this.options = {
+            chart: {
+              id: "Sales Chart",
+            },
+            xaxis: {
+              categories: cat,
+            },
+          };
+
+          console.log(JSON.stringify(this.categories))
+          
         })
         .catch((response) => {
           this.successful = false;
@@ -647,7 +643,8 @@ export default {
           this.chartdatapie = {
             datasets: [
               {
-                data: responseData.amount,
+                data: responseData.pie,
+                
               },
             ],
           };
