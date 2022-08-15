@@ -138,6 +138,91 @@
                     </div>
                 </div>
             </div>
+            <!-- </br>
+            <div class="content_bar card grey">
+                <div class="card-body">
+
+                  <div class="sales">
+                      <div class="header_inner text-center">
+                        <br />
+                        <h3><strong>Sales</strong></h3>
+                        <br />
+                      </div>
+
+                      <div class="sales">
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <b-table
+                              striped
+                              hover
+                              responsive
+                              :items="items"
+                              :sort-by.sync="sortBy"
+                              :sort-desc.sync="sortDesc"
+                              sort-icon-left
+                              :filter-included-fields3="filterOn"
+                              :filter="filter"
+                              :fields3="fields3"
+                              :per-page="perPage"
+                              :current-page="currentPage"
+                              show-empty
+                              class="tbl-blk2"
+                            >
+                              <template #empty="scope">
+                                <p style="text-align: center">
+                                  No record found, choose date filter to found the result.
+                                </p>
+                              </template>
+                              <template v-slot:cell(oid)="row">
+                                {{ row.item.oid }}
+                              </template>
+                              <template v-slot:cell(status)="row">
+                                <span :class="row.item.status">
+                                  {{ row.item.status }}</span
+                                >
+                              </template>
+                            </b-table>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="content_bar card">
+                              <b-table
+                                striped
+                                hover
+                                responsive
+                                :items="items"
+                                :sort-by.sync="sortBy"
+                                :sort-desc.sync="sortDesc"
+                                sort-icon-left
+                                :filter-included-fields="filterOn"
+                                :filter="filter"
+                                :fields="fields"
+                                :per-page="perPage"
+                                :current-page="currentPage"
+                                show-empty
+                                class="tbl-blk3"
+                              >
+                                <template #empty="scope">
+                                  <p style="text-align: center">
+                                    No record found, choose date filter to found the
+                                    result.
+                                  </p>
+                                </template>
+                                <template v-slot:cell(oid)="row">
+                                  {{ row.items.oid }}
+                                </template>
+                                <template v-slot:cell(status)="row">
+                                  <span :class="row.items.status">
+                                    {{ row.item.status }}</span
+                                  >
+                                </template>
+                              </b-table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+            </div> -->
             </br>
             <div class="right">
                       <div class="stats red">
@@ -348,24 +433,7 @@ export default {
           id: "vuechart-example",
         },
         xaxis: {
-          categories: [
-            "Processing",
-            "Confirmed",
-            "Packed",
-            "Dispatched",
-            "Intransit",
-            "Delivered",
-            "Completed",
-            "Closed",
-            "Dtobooked",
-            "On-hold",
-            "Rto-Delivered",
-            "Dto-Delivered",
-            "Dto-Refunded",
-            "Picked",
-            "Dto-Intransit",
-            "Dto-toWareshouse",
-          ],
+          categories: [],
         },
       },
       series: [
@@ -388,10 +456,10 @@ export default {
         maintainAspectRatio: false,
       },
       chartdatapie: {
-        labels: ["Processed Amount", "Deliverd Amount", "Intransit Amount"],
+        labels: ["Processed", "RTO", "DTO", "Dispatched","Packed","Processing"],
         datasets: [
           {
-            backgroundColor: ["#41B883", "#E46651", "#00D8FF"],
+            backgroundColor: ["#41B883", "#E46651", "#DD1B16", "#00D8FF","#E46651","#41B883"],
             data: [],
           },
         ],
@@ -526,11 +594,24 @@ export default {
           // this.series = response.data;
           var chart = response.data;
           var val = chart.values;
+          var cat = chart.catgories;
           this.series = [
             {
               data: val,
             },
           ];
+          
+          this.options = {
+            chart: {
+              id: "Sales Chart",
+            },
+            xaxis: {
+              categories: cat,
+            },
+          };
+
+          console.log(JSON.stringify(this.categories))
+          
         })
         .catch((response) => {
           this.successful = false;
@@ -562,7 +643,8 @@ export default {
           this.chartdatapie = {
             datasets: [
               {
-                data: responseData.amount,
+                data: responseData.pie,
+                
               },
             ],
           };

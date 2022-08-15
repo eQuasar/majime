@@ -138,7 +138,7 @@
                     </div>
                 </div>
             </div>
-            </br>
+            <!-- </br>
             <div class="content_bar card grey">
                 <div class="card-body">
 
@@ -222,7 +222,7 @@
                       </div>
                   </div>
                 </div>
-            </div>
+            </div> -->
             </br>
             <div class="right">
                       <div class="stats red">
@@ -456,10 +456,10 @@ export default {
         maintainAspectRatio: false,
       },
       chartdatapie: {
-        labels: ["Delivered Orders", "RTO", "DTO", "Dispatched"],
+        labels: ["Processed", "RTO", "DTO", "Dispatched","Packed","Processing"],
         datasets: [
           {
-            backgroundColor: ["#41B883", "#E46651", "#DD1B16", "#00D8FF"],
+            backgroundColor: ["#41B883", "#E46651", "#DD1B16", "#00D8FF","#E46651","#41B883"],
             data: [],
           },
         ],

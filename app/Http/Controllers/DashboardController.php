@@ -168,30 +168,31 @@ class DashboardController extends Controller
               $fail='failed';
             $date = \Carbon\Carbon::today()->subDays(7);
             $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$clos,$del])->where('date_created', '>=', $date)->get();
-            $total_Processed=count($orders);
-
+            $total_Processed=$orders->sum('total');
             $rto=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->where('date_created', '>=', $date)->get();
-            $total_rto=count($rto);
+            $total_rto=$rto->sum('total');
             $dto=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dto_ref,$dto_del, $dtointrans,$dtobook])->where('date_created', '>=', $date)->get();
-            $total_dto=count($dto);
+            $total_dto=$dto->sum('total');
             $dispatched_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$intrans,$dis])->where('date_created', '>=', $date)->get();
-            $dispatched_order_count=count($dispatched_orders);
-            
-            $dispatched_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$intrans,$dis])->where('date_created', '>=', $date)->get();
-            $dispatched_order_count=count($dispatched_orders);
-
-
-
-
-
-
+            $dispatched_amount=$dispatched_orders->sum('total');
+            $packed=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','packed')->where('date_created', '>=', $date)->get();
+            $packed_amount=$packed->sum('total');
+            $processing=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->where('date_created', '>=', $date)->get();
+            $processing_amount=$processing->sum('total');
 
 
 
             $piedata['pie'][0]= $total_Processed;
             $piedata['pie'][1]= $total_rto;
             $piedata['pie'][2]= $total_dto;
-            $piedata['pie'][3]= $dispatched_order_count;
+            $piedata['pie'][3]= $dispatched_amount;
+            $piedata['pie'][4]= $packed_amount;
+            $piedata['pie'][5]= $processing_amount;
+
+
+
+
+
             return $piedata;
     
    }
