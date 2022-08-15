@@ -1377,6 +1377,15 @@ class OrderController extends Controller {
                 'dto_refunddate'=>$date,
                 ];   
                 
+            }elseif($request->status_assign=='closed')
+            {
+                $date = date('Y-m-d');
+                $confirm_order_data[]=[     
+                'vid'=>$request->vid,
+                'oid'=>$listImp[$i] ,
+                'order_closedate'=>$date,
+                ];   
+                
             }
             
         }

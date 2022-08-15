@@ -124,5 +124,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('chart_data/{vid}', 'DashboardController@chart_data')->name('chart_data');
 	Route::get('piechart_data/{vid}', 'DashboardController@piechart_data')->name('piechart_data');
 	Route::get('secondpiechart_data/{vid}', 'DashboardController@secondpiechart_data')->name('secondpiechart_data');
+	Route::get('getsales_data/{vid}', 'DashboardController@getsales_data')->name('getsales_data');
+	// Route::get('getsales/{vid}', 'DashboardController@getsales_data')->name('getsales');
 }); 
 

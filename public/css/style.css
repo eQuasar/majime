@@ -2461,37 +2461,37 @@ fieldset:disabled .wizard > .actions a,
 
 .btn-primary, .wizard > .actions a {
   color: #fff;
-  background-color: #4B49AC;
-  border-color: #4B49AC;
+  background-color: #8dc0de;
+  border-color: #8dc0de;
   float: right;
   padding: 0.675rem 1.5rem;
 }
 
 .btn-primary:hover, .wizard > .actions a:hover {
   color: #fff;
-  background-color: #3f3e91;
-  border-color: #3b3a88;
+  background-color: #7b97a8;
+  border-color: #7b97a8;
 }
 
 .btn-primary:focus, .wizard > .actions a:focus, .btn-primary.focus, .wizard > .actions a.focus {
   color: #fff;
-  background-color: #3f3e91;
-  border-color: #3b3a88;
+  background-color: #7b97a8;
+  border-color: #7b97a8;
   box-shadow: 0 0 0 0.2rem rgba(102, 100, 184, 0.5);
 }
 
 .btn-primary.disabled, .wizard > .actions a.disabled, .btn-primary:disabled, .wizard > .actions a:disabled {
   color: #fff;
-  background-color: #4B49AC;
-  border-color: #4B49AC;
+  background-color: #8dc0de;
+  border-color: #8dc0de;
 }
 
 .btn-primary:not(:disabled):not(.disabled):active, .wizard > .actions a:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .wizard > .actions a:not(:disabled):not(.disabled).active,
 .show > .btn-primary.dropdown-toggle,
 .wizard > .actions .show > a.dropdown-toggle {
   color: #fff;
-  background-color: #3b3a88;
-  border-color: #37367f;
+  background-color: #8dc0de;
+  border-color: #8dc0de;
 }
 
 .btn-primary:not(:disabled):not(.disabled):active:focus, .wizard > .actions a:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .wizard > .actions a:not(:disabled):not(.disabled).active:focus,
@@ -5168,7 +5168,7 @@ input::placeholder{text-align: left;}
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #fbfbfb;
+  background-color: transparent;
   background-clip: border-box;
   border: 1px solid #e3e3e3;
   border-radius: 10px;
@@ -15230,8 +15230,8 @@ dl li {
 .pagination .page-item:active .jsgrid .jsgrid-pager .jsgrid-pager-page a,
 .jsgrid .jsgrid-pager .page-item:active .jsgrid-pager-page a, .jsgrid .jsgrid-pager .jsgrid-pager-page .page-item:active a,
 .jsgrid .jsgrid-pager .jsgrid-pager-page:active a {
-  background: #4B49AC;
-  border-color: #4B49AC;
+  background: #8dc0de;
+  border-color: #8dc0de;
   color: #ffffff;
 }
 
@@ -19825,6 +19825,7 @@ div.tagsinput span.tag a {
   padding-left: 0;
   padding-right: 0;
   padding-top: 60px;
+  justify-content: flex-end;
 }
 
 .page-body-wrapper.full-page-wrapper {
@@ -19835,7 +19836,7 @@ div.tagsinput span.tag a {
 
 .main-panel {
   transition: width 0.25s ease, margin 0.25s ease;
-  width: calc(100% - 235px);
+  width: calc(100% - 260px);
   min-height: calc(100vh - 60px);
   display: -webkit-flex;
   display: flex;
@@ -20174,7 +20175,7 @@ div.tagsinput span.tag a {
 }
 
 .navbar .navbar-brand-wrapper {
-  background: #232227 !important;
+  background: #4c6676 !important;
   transition: width 0.25s ease, background 0.25s ease;
   -webkit-transition: width 0.25s ease, background 0.25s ease;
   -moz-transition: width 0.25s ease, background 0.25s ease;
@@ -20204,7 +20205,7 @@ div.tagsinput span.tag a {
 }
 
 .navbar .navbar-menu-wrapper {
-  background: #ffffff;
+  background: #4c6676;
   transition: width 0.25s ease;
   -webkit-transition: width 0.25s ease;
   -moz-transition: width 0.25s ease;
@@ -20212,9 +20213,9 @@ div.tagsinput span.tag a {
   color: #6C7383;
   padding-right: 2.375rem;
   padding-left: 2.375rem;
-  width: calc(99% - 235px);
+  width: calc(100% - 260px);
   height: 60px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: none;
 }
 
 @media (max-width: 991px) {
@@ -22031,8 +22032,8 @@ margin:0 !important;
 }
 .v-sidebar-menu {
     background-color: transparent !important;
-    position: relative !important;
     margin: 0 !important;
+    top: 55px!important;
 }
 .v-sidebar-menu .vsm--link i {
     display: flex;
@@ -22085,7 +22086,8 @@ label{
 
 
 .v-sidebar-menu {
-    background-color: #232227 !important;
+    background-color: #fff !important;
+        box-shadow: 3px 3px 3px hwb(0deg 35% 65% / 13%);
 }
 
 .navbar .nav-search {
@@ -22150,7 +22152,7 @@ label{
     align-items: center;
     white-space: nowrap;
     padding: 6px 15px;
-    color: #fff;
+    color: #4c6676;
     border-radius: 8px;
     -webkit-transition-duration: 0.45s;
     -moz-transition-duration: 0.45s;
@@ -22160,7 +22162,7 @@ label{
     -webkit-transition-property: color;
     text-decoration: none;
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 600;
 }
 
 .v-sidebar-menu .vsm--dropdown .vsm--item .vsm--link{
@@ -22198,7 +22200,7 @@ label{
 
 .v-sidebar-menu .vsm--link:hover {
     color: #fff !important;
-    background-color: #4B49AC!important;
+    background-color: #7b97a8!important;
 }
 
 .v-sidebar-menu .vsm--link:hover i{
@@ -22210,7 +22212,7 @@ label{
 }*/
 
 .v-sidebar-menu.vsm_expanded .vsm--item_open .vsm--link_level-1 {
-    background-color: #4B49AC !important;
+    background-color: #8dc0de !important;
     /*border-radius: 8px 8px 0px 0px!important;*/
     color: #fff !important;
 }
@@ -22220,11 +22222,11 @@ label{
 }
 
 .v-sidebar-menu .vsm--link_level-1.vsm--link_exact-active, .v-sidebar-menu .vsm--link_level-1.vsm--link_active{
-  background: #4B49AC;
+  background: #8dc0de;
 }
 
 .vsm--item.vsm--item_open{
-  background-color: #4B49AC !important; 
+  background-color: #8dc0de !important; 
   border-radius: 10px;
 }
 
@@ -22829,16 +22831,21 @@ td span{
 
 /* CSS by Ritik - End */
 
+.padd-off{
+  padding-left: 0px!important;
+  padding-right: 0px!important;
+}
 
 .balance{
   width: 215px;
-  text-align: left;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 12px;
-  background: #f3f3f3;
-  border-radius: 6px;
-  border: 1px solid #f1f1f1;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px;
+    background: #8dc0de;
+    border-radius: 6px;
+    border: 1px solid #f1f1f1;
+    color: #fff;
 
 }
 
@@ -22858,7 +22865,7 @@ td span{
 
 .stats {
   display: inline-block;
-  width: 100%;
+  width: 25%;
   background: #ccc;
   padding: 1.25rem;
   position: relative;
@@ -22869,6 +22876,7 @@ td span{
   background-clip: border-box;
   border-radius: 10px;
   margin: 6px 15px 15px 0px;
+  box-shadow: 3px 3px 3px hwb(0deg 35% 65% / 13%);
 }
 
 .stats p i{font-style: normal;}
@@ -22891,36 +22899,61 @@ td span{
 }
 
 .orng{
-  background-color: #f996291c;
+ /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#000000+0,fbedd3+100&0+0,0.65+100 */
+background: -moz-linear-gradient(120deg,  rgba(0,0,0,0) 0%, rgba(251,237,211,0.65) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(120deg,  rgba(0,0,0,0) 0%,rgba(251,237,211,0.65) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(120deg,  rgba(0,0,0,0) 0%,rgba(251,237,211,0.65) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6fbedd3',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+
 }
 .orng h4{
-  color: #F99629;
+  color: #e9c78d;
 }
 
 .grn{
-  background-color: #E0F5E9;
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#000000+0,7db9d7+100&0+0,0.65+100 */
+background: -moz-linear-gradient(120deg,  rgba(0,0,0,0) 0%, rgba(125,185,215,0.65) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(120deg,  rgba(0,0,0,0) 0%,rgba(125,185,215,0.65) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(120deg,  rgba(0,0,0,0) 0%,rgba(125,185,215,0.65) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a67db9d7',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+
   margin-right: 0;
 }
 .grn h4{
-  color: #14B581;
+  color: #8acaea;
 }
 
 .red{
-  background-color: #f0142f1c;
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#000000+0,f5b6b7+100&0+0,0.65+100 */
+background: -moz-linear-gradient(120deg,  rgba(0,0,0,0) 0%, rgba(245,182,183,0.65) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(120deg,  rgba(0,0,0,0) 0%,rgba(245,182,183,0.65) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(120deg,  rgba(0,0,0,0) 0%,rgba(245,182,183,0.65) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6f5b6b7',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+
 }
 .red h4{
-  color: #F0142F;
+  color: #f09092;
 }
 
 .blu{
-  background-color: #dff1ff;
+ /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#000000+0,ffd3ba+100&0+0,0.65+100 */
+background: -moz-linear-gradient(120deg,  rgba(0,0,0,0) 0%, rgba(255,211,186,0.65) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(120deg,  rgba(0,0,0,0) 0%,rgba(255,211,186,0.65) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(120deg,  rgba(0,0,0,0) 0%,rgba(255,211,186,0.65) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6ffd3ba',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+
+
 }
 .blu h4{
-  color: #064CD9;
+  color: #f8bf9c;
 }
 
 .status-block{
   position: relative;
+  display: flex;
 }
 
 .new-btn{
@@ -22934,7 +22967,7 @@ td span{
 }
 
 .Dashboard_title {
-  text-align: center;
+  text-align: left;
 }
 
 .status-block-2 {
@@ -22999,6 +23032,7 @@ td span{
   width: 100%;
   display: flex;
   justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 
@@ -23083,4 +23117,47 @@ td span{
 
 #pie-chart {
     height: 250px!important;
+}
+
+.download-btn{margin-left: 0px!important;width: 200px;
+    font-weight: 600;}
+
+.grey {
+  background-color: #f6fcff;
+}
+
+.apexcharts-canvas, #SvgjsSvg1128{
+  width: 100%!important;
+}
+
+.v-sidebar-menu .vsm--scroll-wrapper{
+      background: url(https://ik.imagekit.io/asiiiiiiffffff/new_logo_without__font_3elRDbi_R.png?ik-sdk-version=javascript-1.4.3&updatedAt=1660309958728);
+    background-size: 100px;
+    background-repeat: no-repeat;
+    background-position: 50% 95%;
+}
+
+/*
+.table thead th{
+  text-align: right!important;
+}
+
+.table thead th:nth-child(1),.table thead th:nth-child(2),.table thead th:nth-child(3),.table thead th:nth-child(4),.table thead th:nth-child(5){
+  text-align: left!important;
+}
+
+.table tbody tr td{text-align: right;}
+
+.table tbody tr td:nth-child(1),.table tbody tr td:nth-child(2),.table tbody tr td:nth-child(3),.table tbody tr td:nth-child(4),.table tbody tr td:nth-child(5){
+ text-align: left!important; 
+}*/
+
+
+
+/**** BY HS   ***/
+.dashboard-sales td, .dashboard-sales th{
+  padding: 8px 10px !important;
+}
+.dashboard-sales table{
+  border-spacing: 1rem 0;
 }

@@ -74,3 +74,12 @@
   margin-bottom: 20px;
   background: #4B49AC;
 }
+
+.login-logo{
+  text-align: center;
+}
+
+.login-logo img{
+  width: 50px;
+  max-width: 100%;
+}

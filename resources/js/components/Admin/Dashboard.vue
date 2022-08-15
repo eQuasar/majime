@@ -1,207 +1,179 @@
 <template>
-  <b-container fluid>
-    <b-overlay
-      :show="show"
-      rounded="sm"
-      spinner-type="grow"
-      spinner-variant="primary"
-      spinner-small
-    >
-      <div class="Dashboard_title">
-        <div class="header_inner">
-          <h3><strong>Dashboard</strong></h3>
-          <br />
-        </div>
-      </div>
-      <template>
-        <div class="row chartsss">
-        
-
-          <div class="col-sm-4">
-
-            <div class="content_bar card">
-              <Pie
-                :chart-options="pieOptions"
-                :chart-data="pieData"
-                :chart-id="chartId"
-                :dataset-id-key="datasetIdKey"
-                :plugins="plugins"
-                :css-classes="cssClasses"
-                :styles="styles"
-                :width="width"
-                :height="height"
-              />
-            </div>
-          </div>
-            <div class="col-sm-4">
-            <div class="content_bar card">
-                   <h3><strong>All Orders Data</strong></h3>
-              <apexchart
-                width="500"
-                type="bar"
-                :options="options"
-                :series="series"
-              ></apexchart>
-            </div>
-          </div>
-
-           <div class="col-sm-4">
-            <div class="content_bar card">
-               <Doughnut
-                :chart-options="chartpie"
-                :chart-data="chartdatapie"
-                :chart-id="chartId"
-                :dataset-id-key="datasetIdKey"
-                :plugins="plugins"
-                :css-classes="cssClasses"
-                :styles="styles"
-                :width="width"
-                :height="height"
-              />  
-            </div>
-          </div>
-
-       <!--    <div class="col-sm-4">
-            <div class="content_bar card">
-              <apexchart
-                width="380"
-                type="pie"
-                :options="chartOptions1"
-                :series="series1"
-              ></apexchart>
-            </div>
-          </div> -->
-        </div>
-      </template><br>
-      <div class="content_bar card">
-        <div class="card-body">
-          <div class="call-center-dashboard">
-            <b-col xl="8" lg="8" md="8">
-              <b-alert show variant="danger" v-if="create_error">{{
-                create_error
-              }}</b-alert>
-              <b-form @submit="onSubmit" class="date_range">
-                <div class="datepiker-block">
-                  <span>From:&nbsp;</span>
-                  <b-form-datepicker
-                    id="from"
-                    v-model="date_from"
-                    :date-format-options="{
-                      year: 'numeric',
-                      month: 'short',
-                      day: '2-digit',
-                      weekday: 'short',
-                    }"
-                    locale="en"
-                  ></b-form-datepicker>
+    <b-container fluid>
+        <b-overlay :show="show" rounded="sm" spinner-type="grow" spinner-variant="primary" spinner-small>
+            <div class="main">
+                <div class="Dashboard_title">
+                    <div class="header_inner">
+                        <h3><strong>Dashboard</strong></h3>
+                        <br />
+                    </div>
                 </div>
-                <div class="datepiker-block">
-                  <span>To:&nbsp;</span>
-                  <b-form-datepicker
-                    id="to"
-                    v-model="date_to"
-                    :date-format-options="{
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit',
-                    }"
-                    locale="en"
-                  ></b-form-datepicker>
+            </div>
+            <div class="content_bar card">
+                <div class="card-body padd-off">
+                    <div class="call-center-dashboard">
+                        <b-col xl="8" lg="8" md="8" class="padd-off">
+                            <b-alert show variant="danger" v-if="create_error">{{ create_error }}</b-alert>
+                            <b-form @submit="onSubmit" class="date_range">
+                                <div class="datepiker-block">
+                                    <span>From:&nbsp;</span>
+                                    <b-form-datepicker
+                                        id="from"
+                                        v-model="date_from"
+                                        :date-format-options="{
+                                      year: 'numeric',
+                                      month: 'short',
+                                      day: '2-digit',
+                                      weekday: 'short',
+                                    }"
+                                        locale="en"
+                                    ></b-form-datepicker>
+                                </div>
+                                <div class="datepiker-block">
+                                    <span>To:&nbsp;</span>
+                                    <b-form-datepicker
+                                        id="to"
+                                        v-model="date_to"
+                                        :date-format-options="{
+                                      year: 'numeric',
+                                      month: '2-digit',
+                                      day: '2-digit',
+                                    }"
+                                        locale="en"
+                                    ></b-form-datepicker>
+                                </div>
+                                <b-button type="submit" variant="primary">Submit</b-button>
+                            </b-form>
+                        </b-col>
+                    </div>
                 </div>
-                <b-button type="submit" variant="primary">Submit</b-button>
-              </b-form>
-            </b-col>
-          </div>
-        </div>
-      </div>
-      <br />
-      <div class="right">
-        <div class="stats red">
-          <h4>Total Orders</h4>
-          <span>Total Orders:{{ dashboardData.totalcount }} </span>
-          <p><i>₹ </i>{{ dashboardData.totalSaleAmount }}</p>
-        </div>
-        <div class="stats blu">
-          <h4>Wallet Processed</h4>
-          <span>Total Orders:{{ dashboardData.walletcount }} </span>
-          <p><i>₹ </i>{{ dashboardData.walletsale }}</p>
-        </div>
-        <div class="stats orng">
-          <h4>Delivered to Customer</h4>
-          <span>Total Orders:{{ dashboardData.delivercustcount }} </span>
-          <p><i>₹ </i>{{ dashboardData.deliversale }}</p>
-        </div>
-        <div class="stats grn">
-          <h4>Intransit</h4>
-          <span>Total Orders:{{ dashboardData.intransitcount }} </span>
-          <p><i>₹ </i>{{ dashboardData.intransitSaleAmount }}</p>
-        </div>
-      </div>
-      <br />
-      <br />
-        <div class="margin-report-title">
-          <h3><strong>Margin Report</strong></h3>
-          <h6>(Estimate Value)</h6>
-        </div>
-      <div class="margin-report">
-        <div class="stats blu">
-          <h4>Gross sale</h4>
-          <span>Total Orders:{{ dashboardData.grosscount }}</span>
-          <p><i>₹ </i>{{ dashboardData.grossSaleAmount }}</p>
-        </div>
-        <div class="stats red">
-          <h4>Estimated Net Sale</h4>
-          <span>{{ dashboardData.netcount }}</span>
-          <p><i>₹ </i>{{ dashboardData.netsale }}</p>
-        </div>
-        <div class="stats orng">
-          <h4>Estimated Product Cost</h4>
-          <span>N/A</span>
-          <p><i>₹ </i>N/A</p>
-        </div>
-        <div class="stats grn">
-          <h4>Ad Cost</h4>
-          <span>N/A</span>
-          <p><i>₹ </i>N/A</p>
-        </div>
-      </div>
+            </div>
+            <br>
+            <div class="content_bar card grey">
+                <div class="card-body">
+                    <div class="sales">
+                        <div class="header_inner text-center">
+                            <br />
+                                <h3><strong>Sales</strong></h3>
+                            <br />
+                        </div>
 
-      <div class="margin-report-title">
-          <h3>Actual Report</h3>
-          <h6>(Actual Value)</h6>
-        </div>
-      <div class="margin-report">
-        <div class="stats blu">
-          <h4>Actual Gross sale</h4>
-          <span>Total Orders:{{ dashboardData.grosscount }}</span>
-          <p><i>₹ </i>{{ dashboardData.grossSaleAmount }}</p>
-        </div>
-        <div class="stats red">
-          <h4>Actual Net Sale</h4>
-          <span>{{ dashboardData.netcount }}</span>
-          <p><i>₹ </i>{{ dashboardData.netsale }}</p>
-        </div>
-        <div class="stats orng">
-          <h4>Actual Product Cost</h4>
-          <span>N/A</span>
-          <p><i>₹ </i>N/A</p>
-        </div>
-        <div class="stats grn">
-          <h4>Ad Cost</h4>
-          <span>N/A</span>
-          <p><i>₹ </i>N/A</p>
-        </div>
-      </div>
+                        <div class="sales dashboard-sales">
+                          <div class="row">
+                            <div class="col-sm-6">
+                                <b-table
+                                  striped
+                                  hover
+                                  responsive
+                                  :items="valdata"
+                                  :sort-by.sync="sortBy"
+                                  :sort-desc.sync="sortDesc"
+                                  sort-icon-left
+                                  :filter-included-fields="filterOn"
+                                  :filter="filter"
+                                  :fields="fields"
+                                  :per-page="perPage"
+                                  :current-page="currentPage"
+                                  show-empty
+                                  class="tbl-blk"
+                                >
+                                  <template #empty="scope">
+                                    <p style="text-align: center">
+                                      No record found, choose date filter to found the result.
+                                    </p>
+                                  </template>
+                                  <template v-slot:cell(row.items.status)="row">
+                                    {{ row.items.status }}
+                                  </template>
+                                  <template v-slot:cell(row.items.count)="row">
+                                    {{ row.items.count }}
+                                  </template>
+                                  <template v-slot:cell(row.items.sale)="row">
+                                    <span :class="row.items.sale">
+                                      {{ row.items.sale }}</span
+                                    >
+                                  </template>
+                                </b-table>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="content_bar card">
+                                  <Doughnut
+                                    :chart-options="chartpie"
+                                    :chart-data="chartdatapie"
+                                    :chart-id="chartId"
+                                    :dataset-id-key="datasetIdKey"
+                                    :plugins="plugins"
+                                    :css-classes="cssClasses"
+                                    :styles="styles"
+                                    :width="100"
+                                    :height="height"
+                                  />
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </br>
+            <div class="content_bar card grey">
+                <div class="card-body">
+                    <div class="table">
+                        <div class="header_inner text-center">
+                            <br />
+                            <h3><strong>Performance</strong></h3>
+                            <br />
+                        </div>
 
-    </b-overlay>
-  </b-container>
+                        <div class="sales row">
+                            <div class="col-sm-4">
+                                <Pie :chart-options="pieOptions" :chart-data="pieData" :chart-id="chartId" :dataset-id-key="datasetIdKey" :plugins="plugins" :css-classes="cssClasses" :styles="styles" :width="width" :height="height" />
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="content_bar card">
+                                    <apexchart width="100%"  height="500" type="bar" :options="options" :series="series"></apexchart>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </br>
+            <div class="right">
+                      <div class="stats red">
+                      <h4>Processing Orders</h4>
+                      <span>Total Orders:{{ dashboardData.processingcount }} </span>
+                      <p><i>₹ </i>{{ dashboardData.processingsale }}</p>
+                      </div>
+                      <div class="stats blu">
+                      <h4>Confirmed Orders</h4>
+                      <span>Total Orders:{{ dashboardData.confirmcount }} </span>
+                      <p><i>₹ </i>{{ dashboardData.confirmSaleAmount }}</p>
+                      </div>
+                      <div class="stats orng">
+                      <h4>On-Hold Orders</h4>
+                      <span>Total Orders:{{ dashboardData.holdcount }} </span>
+                      <p><i>₹ </i>{{ dashboardData.onholdSaleAmount }}</p>
+                      </div>
+                      <div class="stats grn">
+                      <h4>Intransit Orders</h4>
+                      <span>Total Orders:{{ dashboardData.packedcount }} </span>
+                      <p><i>₹ </i>{{ dashboardData.packedSaleAmount }}</p>
+                      </div>
+                  </div>
+        </b-overlay>
+    </b-container>
 </template>
+
+
+
+
 <script>
 import dashboard from "../../api/dashboard.js";
 import user from "../../api/user.js";
 import VueApexCharts from "vue-apexcharts";
 import { Pie } from "vue-chartjs/legacy";
-import { Doughnut } from 'vue-chartjs/legacy';
+import { Doughnut } from "vue-chartjs/legacy";
 import {
   Chart as ChartJS,
   Title,
@@ -218,11 +190,11 @@ export default {
     this.getVidz();
   },
   name: "PieChart",
-  name: 'DoughnutChart',
+  name: "DoughnutChart",
   components: {
     Pie,
     apexcharts: VueApexCharts,
-     Doughnut,
+    Doughnut,
   },
   props: {
     chartId: {
@@ -253,39 +225,39 @@ export default {
       type: Array,
       default: () => [],
     },
-     chartData: {
-      type: Array
+    chartData: {
+      type: Array,
     },
   },
   props: {
     chartId: {
       type: String,
-      default: 'doughnut-chart'
+      default: "doughnut-chart",
     },
     datasetIdKey: {
       type: String,
-      default: 'label'
+      default: "label",
     },
     width: {
       type: Number,
-      default: 300
+      default: 300,
     },
     height: {
       type: Number,
-      default: 300
+      default: 300,
     },
     cssClasses: {
-      default: '',
-      type: String
+      default: "",
+      type: String,
     },
     styles: {
       type: Object,
-      default: () => {}
+      default: () => {},
     },
     plugins: {
       type: Array,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
   data() {
     return {
@@ -300,7 +272,7 @@ export default {
       sortBy: "date",
       sortDesc: true,
       perPage: 10,
-      chartData: '',
+      chartData: "",
       currentPage: 1,
       filter2: null,
       pageOptions: [5, 10, 15, 20, 50, 100],
@@ -308,11 +280,69 @@ export default {
       filterOn2: [],
       filterOn: [],
       items: [],
+      valdata: [],
+      dsales: [],
+      dcount: [],
+      dstatus: [],
       chartdata: [],
       errors_create: [],
       dashboardData: [],
       successful: false,
       create_error: "",
+      fields: [
+        {
+          key: "status",
+          label: "Status",
+          sortable: false,
+        },
+        {
+          key: "count",
+          label: "Count",
+          sortable: false,
+        },
+
+        {
+          key: "sale",
+          label: "Sale Amount",
+          sortable: false,
+        },
+      ],
+      fields3: [
+        {
+          key: "payment_gateway_charges",
+          label: "Gateway Charges",
+          sortable: false,
+        },
+        {
+          key: "sms_cost",
+          label: "SMS Cost",
+          sortable: false,
+        },
+        {
+          key: "majime_charges",
+          label: "Majime Charges",
+          sortable: false,
+        },
+        {
+          key: "net_amount",
+          label: "Net Amount",
+          sortable: false,
+        },
+        {
+          key: "current_wallet_bal",
+          label: "Wallet Balance",
+          sortable: false,
+        },
+      ],
+      items: [],
+      items2: [],
+      values: [],
+      stats: [],
+      status: [],
+      errors_create: [],
+      successful: false,
+      create_error: "",
+
       options: {
         chart: {
           id: "vuechart-example",
@@ -329,9 +359,12 @@ export default {
             "Closed",
             "Dtobooked",
             "On-hold",
-            "Cancelled",
-            "Rto-delivered",
-            "Dto-delivered",
+            "Rto-Delivered",
+            "Dto-Delivered",
+            "Dto-Refunded",
+            "Picked",
+            "Dto-Intransit",
+            "Dto-toWareshouse",
           ],
         },
       },
@@ -342,16 +375,11 @@ export default {
         },
       ],
       pieData: {
-            labels: [
-              "Processed Orders",
-              "Failed Orders",
-              "Cancelled Orders",
-              "Others",
-            ],
+        labels: ["Delivered Orders", "RTO", "DTO", "Dispatched"],
         datasets: [
           {
             backgroundColor: ["#41B883", "#E46651", "#DD1B16", "#00D8FF"],
-            data:[],
+            data: [],
           },
         ],
       },
@@ -360,19 +388,18 @@ export default {
         maintainAspectRatio: false,
       },
       chartdatapie: {
-        labels: ['Processed Amount', 'Deliverd Amount', 'Intransit Amount'],
+        labels: ["Processed Amount", "Deliverd Amount", "Intransit Amount"],
         datasets: [
           {
-            backgroundColor: ['#41B883', '#E46651', '#00D8FF'],
-            data:[],
-          }
-        ]
+            backgroundColor: ["#41B883", "#E46651", "#00D8FF"],
+            data: [],
+          },
+        ],
       },
       chartpie: {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
       },
-
     };
   },
 
@@ -381,7 +408,6 @@ export default {
       return this.items.length;
     },
   },
-
   methods: {
     getVidz() {
       if (this.$userId == 1) {
@@ -392,7 +418,8 @@ export default {
         this.Orderdetail(this.vid);
         this.dashboard_data(this.vid);
         this.dashboard_piedata(this.vid);
-         this.dashboard_secondpiedata(this.vid) 
+        this.dashboard_secondpiedata(this.vid);
+        this.getsalesdetail(this.vid);
         this.show = false;
       } else {
         this.show = true;
@@ -407,7 +434,8 @@ export default {
             this.Orderdetail(this.vid);
             this.dashboard_data(this.vid);
             this.dashboard_piedata(this.vid);
-             this.dashboard_secondpiedata(this.vid) 
+            this.dashboard_secondpiedata(this.vid);
+            this.getsalesdetail(this.vid);
             this.show = false;
           })
           .catch((response) => {
@@ -469,6 +497,26 @@ export default {
           alert("something went wrong");
         });
     },
+
+    getsalesdetail(vid) {
+      // this.seen = true;
+      let formData = new FormData();
+      dashboard
+        .getsales_detail(vid)
+        .then((response) => {
+          var data = response.data;
+          // this.dsales = data.sale;
+          // this.dcount = data.count;
+          // this.dstatus = data.status;
+          this.valdata = data;
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+    },
     dashboard_data() {
       this.vid = JSON.parse(localStorage.getItem("ivid"));
       localStorage.setItem("ivid", this.vid);
@@ -478,53 +526,51 @@ export default {
           // this.series = response.data;
           var chart = response.data;
           var val = chart.values;
-          this.series = [{
-          data: val
-        }]
+          this.series = [
+            {
+              data: val,
+            },
+          ];
         })
         .catch((response) => {
           this.successful = false;
           alert("something went wrong");
         });
     },
-     dashboard_piedata(vid) 
-     {
-        dashboard
+    dashboard_piedata(vid) {
+      dashboard
         .getpiechart(this.vid)
         .then((response) => {
-        const responseData = response.data; 
-       this.pieData={
-          datasets: [
-            {
-            data:responseData.pie
-            }
-         ]
-        }
-          })
-         .catch(e => {
-        this.errors.push(e)
-      })
-        
-      },
-      dashboard_secondpiedata(vid) 
-     {
-        dashboard
+          const responseData = response.data;
+          this.pieData = {
+            datasets: [
+              {
+                data: responseData.pie,
+              },
+            ],
+          };
+        })
+        .catch((e) => {
+          this.errors.push(e);
+        });
+    },
+    dashboard_secondpiedata(vid) {
+      dashboard
         .getsecondpiechart(this.vid)
-        .then((response) => 
-        {
-          const responseData = response.data;   
-          this.chartdatapie={
-          datasets: [
-            {
-            data:responseData.amount
-            }
-         ]
-        }
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
-    }
-  }
+        .then((response) => {
+          const responseData = response.data;
+          this.chartdatapie = {
+            datasets: [
+              {
+                data: responseData.amount,
+              },
+            ],
+          };
+        })
+        .catch((e) => {
+          this.errors.push(e);
+        });
+    },
+  },
 };
 </script>

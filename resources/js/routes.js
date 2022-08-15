@@ -32,6 +32,7 @@ import VendorRateCard from './components/Master/vendorrateCard.vue'
 import ZRCView from './components/Master/ZRCView.vue'
 import VRCView from './components/Master/VRCView.vue'
 import demo from './components/Admin/demo.vue'
+import deliveredorders from './components/Admin/deliveredorders.vue'
 
 
 export const routes = [ 
@@ -73,6 +74,7 @@ export const routes = [
       {path:'/vendor/dtoBooked',component:DtoBooked,name:'dtoBooked',meta: { auth: true}},
     {path:'/vendor/dtoDelivered',component:DtoDelivered,name:'dtoDelivered',meta: { auth: true}},
     {path:'/admin/demo',component: demo,name:'demo',meta: { auth: true}},
+    {path:'/admin/deliveredorders',component: deliveredorders,name:'deliveredorders',meta: { auth: true}},
 
   
 ];

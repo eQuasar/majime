@@ -39,15 +39,7 @@
             <span>Due Date: {{ stats.nextDate }}</span>
             <p><i>₹ </i>{{ stats.dueAmount }}</p>
           </div>
-
-          <button
-            type="button"
-            class="download-btn btn btn-primary new-btn"
-            v-on:click="wallet_download"
-            style="margin-left: 15px"
-          >
-            Download
-          </button>
+          <br>
         </div>
         <br />
         <div class="content_bar">
@@ -92,7 +84,16 @@
               </b-row>
             </div>
           </div>
-          <br />
+          <div class="card-body card">
+              <button
+                type="button"
+                class="download-btn btn btn-primary "
+                v-on:click="wallet_download"
+                style="margin-left: 15px"
+              >
+                Download
+              </button>
+          </div>
           <div class="card-body card">
             <div class="balance-values">
               <div class="balance">

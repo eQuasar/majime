@@ -204,8 +204,8 @@ float:left;
 
 .call-center-dashboard .date_range .datepiker-block span {
     font-size: 14px;
-    color: #7E7E7E;
-    font-weight: 500;
+    color: #4d6676;
+    font-weight: 600;
 }
 .call-center-dashboard .date_range .datepiker-block .b-form-datepicker{
     margin: 0 !important;
@@ -319,7 +319,7 @@ float:left;
     width: 100px;
     border-radius: 8px!important;
     font-weight: 600;
-    background: #4b49ac;
+    background: #8dc0de;
     color: #fff;
 }
 

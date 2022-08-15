@@ -5,7 +5,9 @@
     <div class="div-center">
         <div class="content">
             <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+                <div class="card-header login-logo">
+                    <img src="https://ik.imagekit.io/asiiiiiiffffff/new_logo_without__font_3elRDbi_R.png?ik-sdk-version=javascript-1.4.3&updatedAt=1660309958728" alt="" />
+                </div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">

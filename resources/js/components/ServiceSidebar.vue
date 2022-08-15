@@ -115,6 +115,10 @@ export default {
               title: "Complete Orders",
               // icon: 'fa fa-user',
             },
+             {
+              href: { name: "deliveredorders" },
+              title: "Delivered Orders",
+            },
           ],
         },
         {
