@@ -1,4 +1,4 @@
-<template>
+  <template>
     <b-container fluid>
         <b-overlay :show="show" rounded="sm" spinner-type="grow" spinner-variant="primary" spinner-small>
             <div class="main">
@@ -131,121 +131,51 @@
                             </div>
                             <div class="col-sm-8">
                                 <div class="content_bar card">
-                                    <apexchart width="100%"  height="500" type="bar" :options="options" :series="series"></apexchart>
+                                    <apexchart width="100%"  height="300" type="bar" :options="options" :series="series"></apexchart>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- </br>
-            <div class="content_bar card grey">
-                <div class="card-body">
-
-                  <div class="sales">
-                      <div class="header_inner text-center">
-                        <br />
-                        <h3><strong>Sales</strong></h3>
-                        <br />
-                      </div>
-
-                      <div class="sales">
-                        <div class="row">
-                          <div class="col-sm-6">
-                            <b-table
-                              striped
-                              hover
-                              responsive
-                              :items="items"
-                              :sort-by.sync="sortBy"
-                              :sort-desc.sync="sortDesc"
-                              sort-icon-left
-                              :filter-included-fields3="filterOn"
-                              :filter="filter"
-                              :fields3="fields3"
-                              :per-page="perPage"
-                              :current-page="currentPage"
-                              show-empty
-                              class="tbl-blk2"
-                            >
-                              <template #empty="scope">
-                                <p style="text-align: center">
-                                  No record found, choose date filter to found the result.
-                                </p>
-                              </template>
-                              <template v-slot:cell(oid)="row">
-                                {{ row.item.oid }}
-                              </template>
-                              <template v-slot:cell(status)="row">
-                                <span :class="row.item.status">
-                                  {{ row.item.status }}</span
-                                >
-                              </template>
-                            </b-table>
-                          </div>
-                          <div class="col-sm-6">
-                            <div class="content_bar card">
-                              <b-table
-                                striped
-                                hover
-                                responsive
-                                :items="items"
-                                :sort-by.sync="sortBy"
-                                :sort-desc.sync="sortDesc"
-                                sort-icon-left
-                                :filter-included-fields="filterOn"
-                                :filter="filter"
-                                :fields="fields"
-                                :per-page="perPage"
-                                :current-page="currentPage"
-                                show-empty
-                                class="tbl-blk3"
-                              >
-                                <template #empty="scope">
-                                  <p style="text-align: center">
-                                    No record found, choose date filter to found the
-                                    result.
-                                  </p>
-                                </template>
-                                <template v-slot:cell(oid)="row">
-                                  {{ row.items.oid }}
-                                </template>
-                                <template v-slot:cell(status)="row">
-                                  <span :class="row.items.status">
-                                    {{ row.item.status }}</span
-                                  >
-                                </template>
-                              </b-table>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                  </div>
-                </div>
-            </div> -->
             </br>
-            <div class="right">
-                      <div class="stats red">
-                      <h4>Processing Orders</h4>
-                      <span>Total Orders:{{ dashboardData.processingcount }} </span>
-                      <p><i>₹ </i>{{ dashboardData.processingsale }}</p>
-                      </div>
-                      <div class="stats blu">
-                      <h4>Confirmed Orders</h4>
-                      <span>Total Orders:{{ dashboardData.confirmcount }} </span>
-                      <p><i>₹ </i>{{ dashboardData.confirmSaleAmount }}</p>
-                      </div>
-                      <div class="stats orng">
-                      <h4>On-Hold Orders</h4>
-                      <span>Total Orders:{{ dashboardData.holdcount }} </span>
-                      <p><i>₹ </i>{{ dashboardData.onholdSaleAmount }}</p>
-                      </div>
-                      <div class="stats grn">
-                      <h4>Intransit Orders</h4>
-                      <span>Total Orders:{{ dashboardData.packedcount }} </span>
-                      <p><i>₹ </i>{{ dashboardData.packedSaleAmount }}</p>
-                      </div>
+            <div class="content_bar card grey">
+            	<div class="card-body">
+                <div class="header_inner text-center">
+                            <br />
+                               <h3><strong>In House Performance</strong></h3>
+                            <br />
+                        </div>
+            		<div class="row">
+			            <div class="col-sm-6 boxes">
+							       <div class="states red">
+			                  	<h4>Processing Orders</h4>
+			                    <span>Total Orders:{{ dashboardData.processingcount }} </span>
+			                    <p><i>₹ </i>{{ dashboardData.processingsale }} </p>
+			                </div>
+			                <div class="states blu">
+			                    <h4>Confirmed Orders</h4>
+			                    <span>Total Orders:{{ dashboardData.confirmcount }} </span>
+			                    <p><i>₹ </i>{{ dashboardData.confirmSaleAmount }} </p>
+			                </div>
+			                <div class="states orng">
+			                    <h4>On-Hold Orders</h4>
+			                    <span>Total Orders:{{ dashboardData.holdcount }} </span>
+			                    <p><i>₹ </i>{{ dashboardData.onholdSaleAmount }} </p>
+			                </div>
+			                <div class="states grn">
+			                    <h4>Intransit Orders</h4>
+			                    <span>Total Orders:{{ dashboardData.packedcount }} </span>
+			                    <p><i>₹ </i>{{ dashboardData.packedSaleAmount }} </p>
+			                </div>
+
+			            </div>
+			            <div class="col-sm-6">
+                    <Pie :chart-options="delpieOptions" :chart-data="delpieData" :chart-id="chartId" :dataset-id-key="datasetIdKey" :plugins="plugins" :css-classes="cssClasses" :styles="styles" :width="width" :height="height" />
                   </div>
+			        </div>
+		        </div>
+	        </div>
         </b-overlay>
     </b-container>
 </template>
@@ -446,7 +376,7 @@ export default {
         labels: ["Delivered Orders", "RTO", "DTO", "Dispatched"],
         datasets: [
           {
-            backgroundColor: ["#41B883", "#E46651", "#DD1B16", "#00D8FF"],
+            backgroundColor: ["#41B883", "#1CD6CE", "#E64848", "#3AB4F2"],
             data: [],
           },
         ],
@@ -456,10 +386,10 @@ export default {
         maintainAspectRatio: false,
       },
       chartdatapie: {
-        labels: ["Processed", "RTO", "DTO", "Dispatched","Packed","Processing"],
+        labels: ["Processed", "RTO", "DTO", "Dispatched","Packed","Processing","confirmed","intransit","completed","on-hold"],
         datasets: [
           {
-            backgroundColor: ["#41B883", "#E46651", "#DD1B16", "#00D8FF","#E46651","#41B883"],
+            backgroundColor: ["#0078AA","#1CD6CE","#E64848","#3AB4F2","#DF7861","#59CE8F","#76BA99","#377D71","#F2DF3A","#FEB139"],
             data: [],
           },
         ],
@@ -468,6 +398,24 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
       },
+
+        delpieData: {
+        labels: ["Delivered","DTO"],
+        datasets: [
+          {
+            backgroundColor: ["#41B883", "#E64848"],
+            data: [],
+          },
+        ],
+      },
+      delpieOptions: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+
+
+
+
     };
   },
 
@@ -488,6 +436,7 @@ export default {
         this.dashboard_piedata(this.vid);
         this.dashboard_secondpiedata(this.vid);
         this.getsalesdetail(this.vid);
+        this.dashboard_delpiedata(this.vid);
         this.show = false;
       } else {
         this.show = true;
@@ -504,6 +453,7 @@ export default {
             this.dashboard_piedata(this.vid);
             this.dashboard_secondpiedata(this.vid);
             this.getsalesdetail(this.vid);
+            this.dashboard_delpiedata(this.vid);
             this.show = false;
           })
           .catch((response) => {
@@ -532,9 +482,59 @@ export default {
       dashboard
         .dashbaordSearch(formData)
         .then((response) => {
-          var resp = response.data;
-          this.dashboardData = resp;
-          console.log(this.dashboardData);
+
+          //  var chart = response.data;
+          // var val = chart.values;
+          // var cat = chart.catgories;
+
+          var resp = response.data[0];
+          this.valdata = resp;
+          console.log(response.data[0]);
+
+          var chart = response.data[1];
+          var val = chart.values;
+          var cat = chart.catgories;
+          this.series = [
+            {
+              data: val,
+            },
+          ];
+          
+          this.options = {
+            chart: {
+              id: "Sales Chart",
+            },
+            xaxis: {
+              categories: cat,
+            },
+          };
+          
+          const responseDatapie = response.data[2];
+          this.pieData = {
+            datasets: [
+              {
+                data: responseDatapie.pie,
+              },
+            ],
+          };
+           const responseDatadel = response.data[4];
+           this.delpieData = {
+            datasets: [
+              {
+                data: responseDatadel.deldata,
+              },
+            ],
+          };
+          const responseDatapiedata = response.data[3];
+          this.chartdatapie = {
+            datasets: [
+              {
+                data: responseDatapiedata.piedata,
+                
+              },
+            ],
+          };
+      
 
           // }
         })
@@ -635,6 +635,23 @@ export default {
           this.errors.push(e);
         });
     },
+      dashboard_delpiedata(vid) {
+      dashboard
+        .delgetpiechart(this.vid)
+        .then((response) => {
+          const responseData = response.data;
+          this.delpieData = {
+            datasets: [
+              {
+                data: responseData.deldata,
+              },
+            ],
+          };
+        })
+        .catch((e) => {
+          this.errors.push(e);
+        });
+    },
     dashboard_secondpiedata(vid) {
       dashboard
         .getsecondpiechart(this.vid)
@@ -643,7 +660,7 @@ export default {
           this.chartdatapie = {
             datasets: [
               {
-                data: responseData.pie,
+                data: responseData.piedata,
                 
               },
             ],

@@ -1,4 +1,4 @@
-<template>
+  <template>
     <b-container fluid>
         <b-overlay :show="show" rounded="sm" spinner-type="grow" spinner-variant="primary" spinner-small>
             <div class="main">
@@ -147,28 +147,28 @@
                             <br />
                         </div>
             		<div class="row">
-			            <div class="col-sm-6 right">
-							       <div class="stats red">
+			            <div class="col-sm-6 boxes">
+							       <div class="states red">
 			                  	<h4>Processing Orders</h4>
 			                    <span>Total Orders:{{ dashboardData.processingcount }} </span>
 			                    <p><i>₹ </i>{{ dashboardData.processingsale }} </p>
 			                </div>
-			                <div class="stats blu">
+			                <div class="states blu">
 			                    <h4>Confirmed Orders</h4>
 			                    <span>Total Orders:{{ dashboardData.confirmcount }} </span>
 			                    <p><i>₹ </i>{{ dashboardData.confirmSaleAmount }} </p>
 			                </div>
-			                <div class="stats orng">
+			                <div class="states orng">
 			                    <h4>On-Hold Orders</h4>
 			                    <span>Total Orders:{{ dashboardData.holdcount }} </span>
 			                    <p><i>₹ </i>{{ dashboardData.onholdSaleAmount }} </p>
 			                </div>
-			                <div class="stats grn">
+			                <div class="states grn">
 			                    <h4>Intransit Orders</h4>
 			                    <span>Total Orders:{{ dashboardData.packedcount }} </span>
 			                    <p><i>₹ </i>{{ dashboardData.packedSaleAmount }} </p>
 			                </div>
-                      
+
 			            </div>
 			            <div class="col-sm-6">
                     <Pie :chart-options="delpieOptions" :chart-data="delpieData" :chart-id="chartId" :dataset-id-key="datasetIdKey" :plugins="plugins" :css-classes="cssClasses" :styles="styles" :width="width" :height="height" />
@@ -376,7 +376,7 @@ export default {
         labels: ["Delivered Orders", "RTO", "DTO", "Dispatched"],
         datasets: [
           {
-            backgroundColor: ["#41B883", "#E46651", "#DD1B16", "#00D8FF"],
+            backgroundColor: ["#41B883", "#1CD6CE", "#E64848", "#3AB4F2"],
             data: [],
           },
         ],
@@ -386,10 +386,10 @@ export default {
         maintainAspectRatio: false,
       },
       chartdatapie: {
-        labels: ["Processed", "RTO", "DTO", "Dispatched","Packed","Processing"],
+        labels: ["Processed", "RTO", "DTO", "Dispatched","Packed","Processing","confirmed","intransit","completed","on-hold"],
         datasets: [
           {
-            backgroundColor: ["#41B883", "#E46651", "#DD1B16", "#00D8FF","#E46651","#41B883"],
+            backgroundColor: ["#0078AA","#1CD6CE","#E64848","#3AB4F2","#DF7861","#59CE8F","#76BA99","#377D71","#F2DF3A","#FEB139"],
             data: [],
           },
         ],
@@ -403,7 +403,7 @@ export default {
         labels: ["Delivered","DTO"],
         datasets: [
           {
-            backgroundColor: ["#0A6E2B", "#9F4511"],
+            backgroundColor: ["#41B883", "#E64848"],
             data: [],
           },
         ],
@@ -482,9 +482,59 @@ export default {
       dashboard
         .dashbaordSearch(formData)
         .then((response) => {
-          var resp = response.data;
-          this.dashboardData = resp;
-          console.log(this.dashboardData);
+
+          //  var chart = response.data;
+          // var val = chart.values;
+          // var cat = chart.catgories;
+
+          var resp = response.data[0];
+          this.valdata = resp;
+          console.log(response.data[0]);
+
+          var chart = response.data[1];
+          var val = chart.values;
+          var cat = chart.catgories;
+          this.series = [
+            {
+              data: val,
+            },
+          ];
+          
+          this.options = {
+            chart: {
+              id: "Sales Chart",
+            },
+            xaxis: {
+              categories: cat,
+            },
+          };
+          
+          const responseDatapie = response.data[2];
+          this.pieData = {
+            datasets: [
+              {
+                data: responseDatapie.pie,
+              },
+            ],
+          };
+           const responseDatadel = response.data[4];
+           this.delpieData = {
+            datasets: [
+              {
+                data: responseDatadel.deldata,
+              },
+            ],
+          };
+          const responseDatapiedata = response.data[3];
+          this.chartdatapie = {
+            datasets: [
+              {
+                data: responseDatapiedata.piedata,
+                
+              },
+            ],
+          };
+      
 
           // }
         })
@@ -610,7 +660,7 @@ export default {
           this.chartdatapie = {
             datasets: [
               {
-                data: responseData.pie,
+                data: responseData.piedata,
                 
               },
             ],

@@ -22865,7 +22865,7 @@ td span{
 
 .stats {
   display: inline-block;
-  width: 47%;
+  width: 25%;
   background: #ccc;
   padding: 1.25rem;
   position: relative;
@@ -22970,7 +22970,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
   text-align: left;
 }
 
-.status-block-2 {
+/*.status-block-2 {
     
     position: relative;
 }
@@ -23026,7 +23026,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
 
 .hold h4{
   color: #0058FF;
-}
+}*/
 
 .balance-values {
   width: 100%;
@@ -23066,10 +23066,19 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
 .right {
   width: 100%;
   float: left;
-  /*display: flex;*/
+  display: flex;
 }
 
-.statas {
+.boxes{
+  width: 100%;
+  float: left;
+  
+}
+
+.states {
+  display: inline-block;
+  width: 47%;
+  /*background: #ccc;*/
   padding: 1.25rem;
   position: relative;
   /* display: flex; */
@@ -23079,17 +23088,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
   background-clip: border-box;
   border-radius: 10px;
   margin: 6px 15px 15px 0px;
+  box-shadow: 3px 3px 3px hwb(0deg 35% 65% / 13%);
 }
 
 
-.statas p {
+/*.statas p {
   font-size: 0.875rem;
   margin-bottom: .5rem;
   line-height: 1.3rem;
   float: right;
   margin: 0px;
 }
-
+*/
 .left {
   width: 56%;
   float: left;
