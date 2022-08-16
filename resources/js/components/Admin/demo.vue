@@ -483,6 +483,8 @@ export default {
         .dashbaordSearch(formData)
         .then((response) => {
 
+           var resp = response.data[5];
+          this.dashboardData = resp;
           //  var chart = response.data;
           // var val = chart.values;
           // var cat = chart.catgories;
