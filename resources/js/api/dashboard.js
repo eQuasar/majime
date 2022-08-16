@@ -14,6 +14,9 @@ export default {
     getpiechart(vid) {
         return axios.get('piechart_data/' + vid)
     },
+    delgetpiechart(vid) {
+        return axios.get('delpiechart_data/' + vid)
+    },
     getsecondpiechart(vid) {
         return axios.get('secondpiechart_data/' + vid)
     },
