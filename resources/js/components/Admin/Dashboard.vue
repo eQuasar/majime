@@ -49,7 +49,7 @@
                 </div>
             </div>
             <br>
-            <div class="content_bar card grey">
+            <div class="content_bar card grey dashboard-sales">
                 <div class="card-body">
                     <div class="sales">
                         <div class="header_inner text-center">
@@ -58,7 +58,7 @@
                             <br />
                         </div>
 
-                        <div class="sales dashboard-sales">
+                        <div class="sales">
                           <div class="row">
                             <div class="col-sm-6">
                                 <b-table
@@ -117,7 +117,7 @@
                 </div>
             </div>
             </br>
-            <div class="content_bar card grey">
+            <div class="content_bar card grey dashboard-sales">
                 <div class="card-body">
                     <div class="table">
                         <div class="header_inner text-center">
@@ -174,7 +174,7 @@
                 </div>
             </div>
             </br>
-            <div class="content_bar card grey">
+            <div class="content_bar card grey dashboard-sales">
             	<div class="card-body">
                 <div class="header_inner text-center">
                             <br />
@@ -580,7 +580,7 @@ export default {
             ],
           };
 
-         var chart = response.data[6];
+         var chart = response.data;
           var val = chart.values;
           var cat = chart.catgories;
           this.series = [
