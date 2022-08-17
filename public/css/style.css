@@ -23171,3 +23171,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
 .dashboard-sales table{
   border-spacing: 1rem 0;
 }
+.custom-select{
+  height: 37.59px !important;
+    margin-left: -5px !important;
+    margin-top: -5px !important;
+    width: 200px;
+}
+#input-group-Vendor {
+margin-right: 10px;
+}
