@@ -182,11 +182,11 @@
                             <br />
                         </div>
             		<div class="row">
-			            <div class="col-sm-6 boxes">
+			            <div class="col-sm-4 boxes">
 							         <Pie :chart-options="delpieOptions" :chart-data="delpieData" :chart-id="chartId" :dataset-id-key="datasetIdKey" :plugins="plugins" :css-classes="cssClasses" :styles="styles" :width="width" :height="height" />
 
 			            </div>
-			            <div class="col-sm-6">
+			            <div class="col-sm-8">
                    <b-table
                                   striped
                                   hover
@@ -276,7 +276,7 @@ export default {
     },
     height: {
       type: Number,
-      default: 300,
+      default: 200,
     },
     cssClasses: {
       default: "",
