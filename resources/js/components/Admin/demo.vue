@@ -54,7 +54,7 @@
                     <div class="sales">
                         <div class="header_inner text-center">
                             <br />
-                                <h3><strong>Sales</strong></h3>
+                                <h3><strong>Sales Performance</strong></h3>
                             <br />
                         </div>
 
@@ -76,7 +76,7 @@
                                   :current-page="currentPage"
                                   show-empty
                                   class="tbl-blk"
-                                >
+                                 >
                                   <template #empty="scope">
                                     <p style="text-align: center">
                                       No record found, choose date filter to found the result.
@@ -88,16 +88,17 @@
                                   <template v-slot:cell(row.items.count)="row">
                                     {{ row.items.count }}
                                   </template>
-                                  <template v-slot:cell(row.items.sale)="row">
-                                    <span :class="row.items.sale">
-                                      {{ row.items.sale }}</span
+                                  <template v-slot:cell(row.items.sale)="row">     
+                                      {{ row.items.sale }}
                                     >
                                   </template>
                                 </b-table>
                             </div>
                             <div class="col-sm-6">
                                 <div class="content_bar card">
-                                  <Doughnut
+                                    <apexchart width="100%"  height="300" type="bar" :options="options" :series="series"></apexchart>
+                        
+                                  <!-- <Doughnut
                                     :chart-options="chartpie"
                                     :chart-data="chartdatapie"
                                     :chart-id="chartId"
@@ -107,7 +108,7 @@
                                     :styles="styles"
                                     :width="100"
                                     :height="height"
-                                  />
+                                  /> -->
                                 </div>
                             </div>
                           </div>
@@ -121,7 +122,7 @@
                     <div class="table">
                         <div class="header_inner text-center">
                             <br />
-                            <h3><strong>Performance</strong></h3>
+                            <h3><strong>Logistics Performance</strong></h3>
                             <br />
                         </div>
 
@@ -130,9 +131,43 @@
                                 <Pie :chart-options="pieOptions" :chart-data="pieData" :chart-id="chartId" :dataset-id-key="datasetIdKey" :plugins="plugins" :css-classes="cssClasses" :styles="styles" :width="width" :height="height" />
                             </div>
                             <div class="col-sm-8">
-                                <div class="content_bar card">
+                               <b-table
+                                  striped
+                                  hover
+                                  responsive
+                                  :items="logisticsdata"
+                                  :sort-by.sync="sortBy"
+                                  :sort-desc.sync="sortDesc"
+                                  sort-icon-left
+                                  :filter-included-fields="filterOn"
+                                  :filter="filter"
+                                  :fields="fields3"
+                                  :per-page="perPage"
+                                  :current-page="currentPage"
+                                  show-empty
+                                  class="tbl-blk"
+                                 >
+                                  <template #empty="scope">
+                                    <p style="text-align: center">
+                                      No record found, choose date filter to found the result.
+                                    </p>
+                                  </template>
+                                  <template v-slot:cell(row.items.status)="row">
+                                    {{ row.items.status }}
+                                  </template>
+                                  <template v-slot:cell(row.items.count)="row">
+                                    {{ row.items.count }}
+                                  </template>
+                                  <template v-slot:cell(row.items.amount)="row">
+                                      {{ row.items.amount }}
+                                  </template>
+                                     <template v-slot:cell(row.items.percentage)="row">
+                                      {{ row.items.percentage }}
+                                  </template>
+                                  </b-table>
+                                <!-- <div class="content_bar card">
                                     <apexchart width="100%"  height="300" type="bar" :options="options" :series="series"></apexchart>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -143,35 +178,50 @@
             	<div class="card-body">
                 <div class="header_inner text-center">
                             <br />
-                               <h3><strong>In House Performance</strong></h3>
+                               <h3><strong>Operational Pendency</strong></h3>
                             <br />
                         </div>
             		<div class="row">
 			            <div class="col-sm-6 boxes">
-							       <div class="states red">
-			                  	<h4>Processing Orders</h4>
-			                    <span>Total Orders:{{ dashboardData.processingcount }} </span>
-			                    <p><i>₹ </i>{{ dashboardData.processingsale }} </p>
-			                </div>
-			                <div class="states blu">
-			                    <h4>Confirmed Orders</h4>
-			                    <span>Total Orders:{{ dashboardData.confirmcount }} </span>
-			                    <p><i>₹ </i>{{ dashboardData.confirmSaleAmount }} </p>
-			                </div>
-			                <div class="states orng">
-			                    <h4>On-Hold Orders</h4>
-			                    <span>Total Orders:{{ dashboardData.holdcount }} </span>
-			                    <p><i>₹ </i>{{ dashboardData.onholdSaleAmount }} </p>
-			                </div>
-			                <div class="states grn">
-			                    <h4>Intransit Orders</h4>
-			                    <span>Total Orders:{{ dashboardData.packedcount }} </span>
-			                    <p><i>₹ </i>{{ dashboardData.packedSaleAmount }} </p>
-			                </div>
+							         <Pie :chart-options="delpieOptions" :chart-data="delpieData" :chart-id="chartId" :dataset-id-key="datasetIdKey" :plugins="plugins" :css-classes="cssClasses" :styles="styles" :width="width" :height="height" />
 
 			            </div>
 			            <div class="col-sm-6">
-                    <Pie :chart-options="delpieOptions" :chart-data="delpieData" :chart-id="chartId" :dataset-id-key="datasetIdKey" :plugins="plugins" :css-classes="cssClasses" :styles="styles" :width="width" :height="height" />
+                   <b-table
+                                  striped
+                                  hover
+                                  responsive
+                                  :items="pendencydata"
+                                  :sort-by.sync="sortBy"
+                                  :sort-desc.sync="sortDesc"
+                                  sort-icon-left
+                                  :filter-included-fields="filterOn"
+                                  :filter="filter"
+                                  :fields="fields3"
+                                  :per-page="perPage"
+                                  :current-page="currentPage"
+                                  show-empty
+                                  class="tbl-blk"
+                                 >
+                                  <template #empty="scope">
+                                    <p style="text-align: center">
+                                      No record found, choose date filter to found the result.
+                                    </p>
+                                  </template>
+                                  <template v-slot:cell(row.items.status)="row">
+                                    {{ row.items.status }}
+                                  </template>
+                                  <template v-slot:cell(row.items.count)="row">
+                                    {{ row.items.count }}
+                                  </template>
+                                  <template v-slot:cell(row.items.amount)="row">
+                                      {{ row.items.amount }}
+                                  </template>
+                                  <template v-slot:cell(row.items.perc)="row">
+                                      {{ row.items.perc }}
+                                  </template>
+
+                                  </b-table>
                   </div>
 			        </div>
 		        </div>
@@ -288,13 +338,17 @@ export default {
       sortDesc: true,
       perPage: 10,
       chartData: "",
+      percentage:"",
+      perc:"",
       currentPage: 1,
       filter2: null,
       pageOptions: [5, 10, 15, 20, 50, 100],
       filter: null,
       filterOn2: [],
       filterOn: [],
+      pendencydata:[],
       items: [],
+      logisticsdata:[],
       valdata: [],
       dsales: [],
       dcount: [],
@@ -321,31 +375,27 @@ export default {
           label: "Sale Amount",
           sortable: false,
         },
+
       ],
       fields3: [
-        {
-          key: "payment_gateway_charges",
-          label: "Gateway Charges",
+       {
+          key: "status",
+          label: "Status",
           sortable: false,
         },
         {
-          key: "sms_cost",
-          label: "SMS Cost",
+          key: "count",
+          label: "Count",
           sortable: false,
         },
         {
-          key: "majime_charges",
-          label: "Majime Charges",
+          key: "amount",
+          label: "Sale Amount",
           sortable: false,
         },
-        {
-          key: "net_amount",
-          label: "Net Amount",
-          sortable: false,
-        },
-        {
-          key: "current_wallet_bal",
-          label: "Wallet Balance",
+         {
+          key: "percentage",
+          label: "Percentage",
           sortable: false,
         },
       ],
@@ -373,7 +423,7 @@ export default {
         },
       ],
       pieData: {
-        labels: ["Delivered Orders", "RTO", "DTO", "Dispatched"],
+        labels: ["Delivered Orders", "RTO", "DTO", "Intransit"],
         datasets: [
           {
             backgroundColor: ["#41B883", "#1CD6CE", "#E64848", "#3AB4F2"],
@@ -400,10 +450,10 @@ export default {
       },
 
         delpieData: {
-        labels: ["Delivered","DTO"],
+        labels: ["Processing","Confirmed","Packed","On-hold"],
         datasets: [
           {
-            backgroundColor: ["#41B883", "#E64848"],
+            backgroundColor: ["#41B883", "#E64848","#3AB4F2","#FEB139"],
             data: [],
           },
         ],
@@ -483,17 +533,54 @@ export default {
         .dashbaordSearch(formData)
         .then((response) => {
 
-           var resp = response.data[5];
-          this.dashboardData = resp;
+          //  var resp = response.data[5];
+          // this.dashboardData = resp;
           //  var chart = response.data;
           // var val = chart.values;
           // var cat = chart.catgories;
 
-          var resp = response.data[0];
+          var resp = response.data[5];
           this.valdata = resp;
-          console.log(response.data[0]);
+          // console.log(response.data[0]);
+          var logistic=response.data[1]
+          const responseData = response.data[0];
+          this.logisticsdata =logistic;
+           this.pieData = {
+            datasets: [
+              {
+                data: responseData.pie,
+              },
+            ],
+          };        
+          const responseDatapie = response.data[0];
+          this.pieData = {
+            datasets: [
+              {
+                data: responseDatapie.pie,
+              },
+            ],
+          };
+           const responseDatadel = response.data[2];
+            var pendency=response.data[3]
+           this.pendencydata = pendency;
+           this.delpieData = {
+            datasets: [
+              {
+                data: responseDatadel.deldata,
+              },
+            ],
+          };
+          const responseDatapiedata = response.data[4];
+          this.chartdatapie = {
+            datasets: [
+              {
+                data: responseDatapiedata.piedata,
+                
+              },
+            ],
+          };
 
-          var chart = response.data[1];
+         var chart = response.data[6];
           var val = chart.values;
           var cat = chart.catgories;
           this.series = [
@@ -509,32 +596,6 @@ export default {
             xaxis: {
               categories: cat,
             },
-          };
-          
-          const responseDatapie = response.data[2];
-          this.pieData = {
-            datasets: [
-              {
-                data: responseDatapie.pie,
-              },
-            ],
-          };
-           const responseDatadel = response.data[4];
-           this.delpieData = {
-            datasets: [
-              {
-                data: responseDatadel.deldata,
-              },
-            ],
-          };
-          const responseDatapiedata = response.data[3];
-          this.chartdatapie = {
-            datasets: [
-              {
-                data: responseDatapiedata.piedata,
-                
-              },
-            ],
           };
       
 
@@ -624,7 +685,9 @@ export default {
       dashboard
         .getpiechart(this.vid)
         .then((response) => {
-          const responseData = response.data;
+          const responseData = response.data[0];
+          var logistic=response.data[1]
+           this.logisticsdata = logistic;
           this.pieData = {
             datasets: [
               {
@@ -641,7 +704,10 @@ export default {
       dashboard
         .delgetpiechart(this.vid)
         .then((response) => {
-          const responseData = response.data;
+          const responseData = response.data[0];
+          console.log("responseData "+responseData)
+          var pendency=response.data[1]
+           this.pendencydata = pendency;
           this.delpieData = {
             datasets: [
               {
@@ -651,7 +717,8 @@ export default {
           };
         })
         .catch((e) => {
-          this.errors.push(e);
+          console.log("Error "+e)
+          // this.errors.push(e);
         });
     },
     dashboard_secondpiedata(vid) {
