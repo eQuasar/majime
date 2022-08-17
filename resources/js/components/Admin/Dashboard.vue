@@ -309,7 +309,7 @@ export default {
     },
     height: {
       type: Number,
-      default: 300,
+      default: 200,
     },
     cssClasses: {
       default: "",

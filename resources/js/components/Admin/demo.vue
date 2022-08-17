@@ -182,11 +182,7 @@
                             <br />
                         </div>
             		<div class="row">
-			            <div class="col-sm-6 boxes">
-							         <Pie :chart-options="delpieOptions" :chart-data="delpieData" :chart-id="chartId" :dataset-id-key="datasetIdKey" :plugins="plugins" :css-classes="cssClasses" :styles="styles" :width="width" :height="height" />
-
-			            </div>
-			            <div class="col-sm-6">
+  		            <div class="col-sm-8">
                    <b-table
                                   striped
                                   hover
@@ -204,25 +200,29 @@
                                   class="tbl-blk"
                                  >
                                   <template #empty="scope">
-                                    <p style="text-align: center">
-                                      No record found, choose date filter to found the result.
-                                    </p>
-                                  </template>
-                                  <template v-slot:cell(row.items.status)="row">
-                                    {{ row.items.status }}
-                                  </template>
-                                  <template v-slot:cell(row.items.count)="row">
-                                    {{ row.items.count }}
-                                  </template>
-                                  <template v-slot:cell(row.items.amount)="row">
-                                      {{ row.items.amount }}
-                                  </template>
-                                  <template v-slot:cell(row.items.perc)="row">
-                                      {{ row.items.perc }}
-                                  </template>
+                        <p style="text-align: center">
+                          No record found, choose date filter to found the result.
+                        </p>
+                      </template>
+                      <template v-slot:cell(row.items.status)="row">
+                        {{ row.items.status }}
+                      </template>
+                      <template v-slot:cell(row.items.count)="row">
+                        {{ row.items.count }}
+                      </template>
+                      <template v-slot:cell(row.items.amount)="row">
+                          {{ row.items.amount }}
+                      </template>
+                      <template v-slot:cell(row.items.perc)="row">
+                          {{ row.items.perc }}
+                      </template>
 
-                                  </b-table>
+                      </b-table>
                   </div>
+                  <div class="col-sm-4 boxes">
+							         <Pie :chart-options="delpieOptions" :chart-data="delpieData" :chart-id="chartId" :dataset-id-key="datasetIdKey" :plugins="plugins" :css-classes="cssClasses" :styles="styles" :width="width" :height="height" />
+
+			            </div>
 			        </div>
 		        </div>
 	        </div>
@@ -276,7 +276,7 @@ export default {
     },
     height: {
       type: Number,
-      default: 300,
+      default: 200,
     },
     cssClasses: {
       default: "",
@@ -309,7 +309,7 @@ export default {
     },
     height: {
       type: Number,
-      default: 300,
+      default: 200,
     },
     cssClasses: {
       default: "",
