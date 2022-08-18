@@ -162,6 +162,7 @@ class DashboardController extends Controller
     $total_count_process=count($orders);
     $rto=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->whereBetween('orders.date_created_gmt',$range)->get();
     $total_rto=$rto->sum('total');
+    $count_rto=count($rto);
     $dto=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dto_ref,$dto_del, $dtointrans,$dtobook])->whereBetween('orders.date_created_gmt',$range)->get();
     $total_dto=$dto->sum('total');
     $confirmed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','confirmed')->whereBetween('orders.date_created_gmt',$range)->get();
@@ -319,7 +320,7 @@ class DashboardController extends Controller
     $piedata['pie'][2]= $total_dto;
     $piedata['pie'][3]= $dispatched_amount;
     $logisticsdata[0]['count']= $total_Processed;
-    $logisticsdata[1]['count']= $total_rto;
+    $logisticsdata[1]['count']= $count_rto;
     $logisticsdata[2]['count']= $total_dto;
     $logisticsdata[3]['count']= $dispatched_order_count;
     $logisticsdata[0]['status']= $deld;
