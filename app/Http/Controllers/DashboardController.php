@@ -222,10 +222,10 @@ class DashboardController extends Controller
     $chartData['values'][$i] = $porders->count;
     $i = $i +1;
   }
-    $pendencychart['deldata'][0]=$processing_order_count;
-    $pendencychart['deldata'][1]=$confirm_order_count;
-    $pendencychart['deldata'][2]=$packed_order_count;
-    $pendencychart['deldata'][3]=$hold_order_count;
+    $pendencychart['deldata'][0]=$processing_saleAmount;
+    $pendencychart['deldata'][1]=$confirm_saleAmount;
+    $pendencychart['deldata'][2]=$packed_saleAmount;
+    $pendencychart['deldata'][3]=$hold_saleAmount;
 
     $pendencytable[0]['status']=$process;
     $pendencytable[1]['status']=$confirm;
@@ -294,7 +294,7 @@ class DashboardController extends Controller
     $piedata['pie'][0]= $total_Processedd;
     $piedata['pie'][1]= $total_rto;
     $piedata['pie'][2]= $total_dto;
-    $piedata['pie'][3]= $dispatched_order_count;
+    $piedata['pie'][3]= $dispatched_amount;
     $logisticsdata[0]['count']= $total_Processed;
     $logisticsdata[1]['count']= $total_rto;
     $logisticsdata[2]['count']= $total_dto;

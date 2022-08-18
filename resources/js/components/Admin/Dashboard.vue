@@ -38,6 +38,7 @@
                                       year: 'numeric',
                                       month: '2-digit',
                                       day: '2-digit',
+                                      weekday: 'short',
                                     }"
                                         locale="en"
                                     ></b-form-datepicker>
@@ -418,7 +419,7 @@ export default {
       },
       series: [
         {
-          name: "series-1",
+          name: "",
           data: [],
         },
       ],
@@ -542,13 +543,13 @@ export default {
           var resp = response.data[5];
           this.valdata = resp;
           // console.log(response.data[0]);
-          var logistic=response.data[1]
-          const responseData = response.data[0];
+          var logistic=response.data[1];
           this.logisticsdata =logistic;
+          const responseDatalogistic = response.data[0];
            this.pieData = {
             datasets: [
               {
-                data: responseData.pie,
+                data: responseDatalogistic.pie,
               },
             ],
           };        
@@ -580,7 +581,7 @@ export default {
             ],
           };
 
-         var chart = response.data;
+         var chart = response.data[6];
           var val = chart.values;
           var cat = chart.catgories;
           this.series = [
