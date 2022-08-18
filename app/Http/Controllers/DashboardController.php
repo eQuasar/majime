@@ -90,7 +90,6 @@ class DashboardController extends Controller
     $deld='Delivered';
     $fail='failed';
     $pick='pickedup';
-    $warehouse='dtodel2warehouse';
     $rt='RTO';
     $dt='DTO';
     $onhold='on-hold';
@@ -196,24 +195,8 @@ class DashboardController extends Controller
     $rto_percentage=round((($total_rtoo/$total)*100),2);
     $dto_percentage=round((($total_dtoo/$total)*100),2);
     $dispatch_percentage=round((($dispatched_order_count/$total)*100),2);
-    $process_percentagee=round((($processing_order_count/$totalp)*100),2);
-    $confirm_percentage=round((($confirm_order_count/$totalp)*100),2);
-    $packed_percentage=round((($packed_order_count/$totalp)*100),2);
-    $hold_percentage=round((($hold_order_count/$totalp)*100),2);
-    $date = \Carbon\Carbon::today()->subDays(7);
-    $processing_orders=DB::table("orders")
-                              ->select(
-                                DB::raw("(COUNT(id)) as count"),
-                                DB::raw("(DATE_FORMAT(date_created, '%Y-%m-%d')) as date")
-                                )
-                              ->where('orders.vid','=',$vid)
-                              ->whereNotIn('orders.status', ['cancelled','failed'])
-                              ->where('date_created', '>=', $date)
 
-                              ->orderBy('date_created','DESC')
-                              ->whereBetween('orders.date_created_gmt',$range)
-                              ->groupBy(DB::raw("DATE_FORMAT(date_created, '%Y-%m-%d')"))
-                              ->get();
+
   $i = 0;
   $chartData['catgories'][$i] = 'No Result Found';
   $chartData['values'][$i] = '0';
@@ -222,13 +205,13 @@ class DashboardController extends Controller
   $chartOrders=DB::table("orders")
                             ->select(
                               DB::raw("(COUNT(id)) as count"),
-                              DB::raw("(DATE_FORMAT(date_created, '%Y-%m-%d')) as date")
+                              DB::raw("(DATE_FORMAT(date_created_gmt, '%Y-%m-%d')) as date")
                               )
                             ->where('orders.vid','=',$vid)
                             ->whereNotIn('orders.status', ['cancelled','failed'])
                             ->whereBetween('orders.date_created_gmt',$range)
-                            ->orderBy('date_created','DESC')
-                            ->groupBy(DB::raw("DATE_FORMAT(date_created, '%Y-%m-%d')"))
+                            ->orderBy('date_created_gmt','ASC')
+                            ->groupBy(DB::raw("DATE_FORMAT(date_created_gmt, '%Y-%m-%d')"))
                             ->get();
   $i = 0;
   foreach($chartOrders as $chartOrder){
@@ -238,13 +221,29 @@ class DashboardController extends Controller
     $i = $i +1;
   }
 
+  $sale='Sales';
+  $retr='Returns';
+  $can='Cancellations';
+  $date = \Carbon\Carbon::today()->subDays(7);
+  $sales_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereBetween('orders.date_created_gmt',$range)->whereIn("orders.status",[$dtobook,$intrans,$dtointrans,$Comple,$dto_ref,$clos,$process,$confirm,$pack,$onhold,$dis,$del,$dto_del,$pick,$warehouse])->get();
+  $sales_order_count=count($sales_orders);
+  $salesorder_saleAmount=$sales_orders->sum('total');
+  $salesrtodelivered_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->whereBetween('orders.date_created_gmt',$range)->get();
+  $salesrtodelivered_order_count=count($salesrtodelivered_orders);
+  $salesrtodelivered_saleAmount=$salesrtodelivered_orders->sum('total');
+  $salescancel_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$cancel,$fail])->whereBetween('orders.date_created_gmt',$range)->get();
+  $salescancel_order_count=count($salescancel_orders);
+  $salesrtodelivered_saleAmount=$salescancel_orders->sum('total');
+  $sales[0]['count'] = $sales_order_count;
+  $sales[1]['count'] = $salesrtodelivered_order_count;
+  $sales[2]['count'] = $salescancel_order_count;
+  $sales[0]['sale'] = $salesorder_saleAmount;
+  $sales[1]['sale'] = $salesrtodelivered_saleAmount;
+  $sales[2]['sale'] = $salesrtodelivered_saleAmount;
+  $sales[0]['status'] = $sale;
+  $sales[1]['status'] = $retr;
+  $sales[2]['status'] = $can;
 
-  // foreach($processing_orders as $porders){
-  //   // print_r($porders);
-  //   $chartData['catgories'][$i] = $porders->date;
-  //   $chartData['values'][$i] = $porders->count;
-  //   $i = $i +1;
-  // }
     $pendencychart['deldata'][0]=$processing_saleAmount;
     $pendencychart['deldata'][1]=$confirm_saleAmount;
     $pendencychart['deldata'][2]=$packed_saleAmount;
@@ -262,58 +261,8 @@ class DashboardController extends Controller
     $pendencytable[1]['amount']=$confirm_saleAmount;
     $pendencytable[2]['amount']=$packed_saleAmount;
     $pendencytable[3]['amount']=$hold_saleAmount;
-    $pendencytable[0]['percentage']=$process_percentagee;
-    $pendencytable[1]['percentage']=$confirm_percentage;
-    $pendencytable[2]['percentage']=$packed_percentage;
-    $pendencytable[3]['percentage']=$hold_percentage;
-    $sales[0]['count'] = $process_order_count;
-    $sales[1]['count'] = $confirm_order_count;
-    $sales[2]['count'] = $packed_order_count;
-    $sales[3]['count'] = $dispatched_order_count;
-    $sales[4]['count'] = $intransit_order_count;
-    $sales[5]['count'] = $deliveredtocust_order_count;
-    $sales[6]['count'] = $completed_order_count;
-    $sales[7]['count'] = $closed_order_count;
-    $sales[8]['count'] = $dtobooked_order_count;
-    $sales[9]['count'] = $onhold_order_count;
-    $sales[10]['count'] = $rtodelivered_order_count;
-    $sales[11]['count'] = $dtodelivered_order_count;
-    $sales[12]['count'] = $dtorefunded_order_count;
-    $sales[13]['count'] = $picked_order_count;
-    $sales[14]['count'] = $dtoIntra_order_count;
-    $sales[15]['count'] = $dtowarehouse_order_count;
-    $sales[0]['sale'] = $processed_saleAmount;
-    $sales[1]['sale'] = $confirm_saleAmount;
-    $sales[2]['sale'] = $packed_saleAmount;
-    $sales[3]['sale'] = $dispatch_saleAmount;
-    $sales[4]['sale'] = $intransit_saleAmount;
-    $sales[5]['sale'] = $deliver_saleAmount;
-    $sales[6]['sale'] = $complete_saleAmount;
-    $sales[7]['sale'] = $closed_saleAmount;
-    $sales[8]['sale'] = $dtobooked_saleAmount;
-    $sales[9]['sale'] = $onhold_saleAmount;
-    $sales[10]['sale'] = $rtodelivered_saleAmount;
-    $sales[11]['sale'] = $dtodelivered_saleAmount;
-    $sales[12]['sale'] = $dtorefunded_saleAmount;
-    $sales[13]['sale'] = $picked_saleAmount;
-    $sales[14]['sale'] = $dtoIntrans_saleAmount;
-    $sales[15]['sale'] = $dtowarehouse_saleAmount;
-    $sales[0]['status'] = $process;
-    $sales[1]['status'] = $confirm;
-    $sales[2]['status'] = $pack;
-    $sales[3]['status'] = $dis;
-    $sales[4]['status'] = $intrans;
-    $sales[5]['status'] = $del;
-    $sales[6]['status'] = $Comple;
-    $sales[7]['status'] =  $clos;
-    $sales[8]['status'] =  $dtobook;
-    $sales[9]['status'] =  $onhold;
-    $sales[10]['status'] =  $rto_del;
-    $sales[11]['status'] = $dto_del;
-    $sales[12]['status'] =  $dto_ref;
-    $sales[13]['status'] = $pick;
-    $sales[14]['status'] =  $dtointrans;
-    $sales[15]['status'] = $warehouse;
+
+    
     $piedata['pie'][0]= $total_Processedd;
     $piedata['pie'][1]= $total_rto;
     $piedata['pie'][2]= $total_dto;
@@ -366,13 +315,13 @@ class DashboardController extends Controller
     $processing_orders=DB::table("orders")
                               ->select(
                                 DB::raw("(COUNT(id)) as count"),
-                                DB::raw("(DATE_FORMAT(date_created, '%Y-%m-%d')) as date")
+                                DB::raw("(DATE_FORMAT(date_created_gmt, '%Y-%m-%d')) as date")
                                 )
                               ->where('orders.vid','=',$vid)
                               ->whereNotIn('orders.status', ['cancelled','failed'])
                               ->where('date_created', '>=', $date)
-                              ->orderBy('date_created','DESC')
-                              ->groupBy(DB::raw("DATE_FORMAT(date_created, '%Y-%m-%d')"))
+                              ->orderBy('date_created_gmt','ASC')
+                              ->groupBy(DB::raw("DATE_FORMAT(date_created_gmt, '%Y-%m-%d')"))
                               ->get();
     $i = 0;
     foreach($processing_orders as $porders){
@@ -512,7 +461,6 @@ class DashboardController extends Controller
     $intrans='intransit';
     $dtointrans='dtointransit';
     $Comple='completed';
-    $rto_del='rto-delivered';
     $dto_ref='dto-refunded';
     $clos='closed';
     $process='processing';
@@ -522,108 +470,33 @@ class DashboardController extends Controller
     $dis='dispatched';
     $del='deliveredtocust';
     $dto_del='dtodelivered';
-    $cancel='cancelled';
-    $fail='failed';
     $pick='pickedup';
     $warehouse='dtodel2warehouse';
+    $rto_del='rto-delivered';
+    $cancel='cancelled';
+    $fail='failed';
+    $sale='Sales';
+    $retr='Returns';
+    $can='Cancellations';
     $date = \Carbon\Carbon::today()->subDays(7);
-    $processing_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->where('date_created', '>=', $date)->get();
-    $process_order_count=count($processing_orders);
-    $processed_saleAmount=$processing_orders->sum('total');
-    $confirmed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','confirmed')->where('date_created', '>=', $date)->get();
-    $confirm_order_count=count($confirmed_orders);
-    $confirm_saleAmount=$confirmed_orders->sum('total');
-    $packed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','packed')->where('date_created', '>=', $date)->get();
-    $packed_order_count=count($packed_orders);
-    $packed_saleAmount=$packed_orders->sum('total');
-    $dispatched_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dispatched')->where('date_created', '>=', $date)->get();
-    $dispatched_order_count=count($dispatched_orders);
-    $dispatch_saleAmount=$dispatched_orders->sum('total');
-    $intransit_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','intransit')->where('date_created', '>=', $date)->get();
-    $intransit_order_count=count($intransit_orders);
-    $intransit_saleAmount=$intransit_orders->sum('total');
-    $deliveredtocust_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','deliveredtocust')->where('date_created', '>=', $date)->get();
-    $deliveredtocust_order_count=count($deliveredtocust_orders);
-    $deliver_saleAmount=$deliveredtocust_orders->sum('total');
-    $completed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','completed')->where('date_created', '>=', $date)->get();
-    $completed_order_count=count($completed_orders);
-    $complete_saleAmount=$completed_orders->sum('total');
-    $closed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','closed')->where('date_created', '>=', $date)->get();
-    $closed_order_count=count($closed_orders);
-    $closed_saleAmount=$closed_orders->sum('total');
-    $dtobooked_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dtobooked')->where('date_created', '>=', $date)->get();
-    $dtobooked_order_count=count($dtobooked_orders);
-    $dtobooked_saleAmount=$dtobooked_orders->sum('total');
-    $onhold_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','on-hold')->where('date_created', '>=', $date)->get();
-    $onhold_order_count=count($onhold_orders);
-    $onhold_saleAmount=$onhold_orders->sum('total');
-    $rtodelivered_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->where('date_created', '>=', $date)->get();
-    $rtodelivered_order_count=count($rtodelivered_orders);
-    $rtodelivered_saleAmount=$rtodelivered_orders->sum('total');
-    $dtodelivered_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dto-delivered')->where('date_created', '>=', $date)->get();
-    $dtodelivered_order_count=count($dtodelivered_orders);
-    $dtodelivered_saleAmount=$dtodelivered_orders->sum('total');
-    $dtorefunded_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dto-refunded')->where('date_created', '>=', $date)->get();
-    $dtorefunded_order_count=count($dtorefunded_orders);
-    $dtorefunded_saleAmount=$dtorefunded_orders->sum('total');
-    $picked_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','pickedup')->where('date_created', '>=', $date)->get();
-    $picked_order_count=count($picked_orders);
-    $picked_saleAmount=$picked_orders->sum('total');
-    $dtoIntras_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dtointransit')->where('date_created', '>=', $date)->get();
-    $dtoIntra_order_count=count($dtoIntras_orders);
-    $dtoIntrans_saleAmount=$dtoIntras_orders->sum('total');
-    $dtowarehouse_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dtodel2warehouse')->where('date_created', '>=', $date)->get();
-    $dtowarehouse_order_count=count($dtowarehouse_orders);
-    $dtowarehouse_saleAmount=$dtowarehouse_orders->sum('total');
-    
-    $sales[0]['count'] = $process_order_count;
-    $sales[1]['count'] = $confirm_order_count;
-    $sales[2]['count'] = $packed_order_count;
-    $sales[3]['count'] = $dispatched_order_count;
-    $sales[4]['count'] = $intransit_order_count;
-    $sales[5]['count'] = $deliveredtocust_order_count;
-    $sales[6]['count'] = $completed_order_count;
-    $sales[7]['count'] = $closed_order_count;
-    $sales[8]['count'] = $dtobooked_order_count;
-    $sales[9]['count'] = $onhold_order_count;
-    $sales[10]['count'] = $rtodelivered_order_count;
-    $sales[11]['count'] = $dtodelivered_order_count;
-    $sales[12]['count'] = $dtorefunded_order_count;
-    $sales[13]['count'] = $picked_order_count;
-    $sales[14]['count'] = $dtoIntra_order_count;
-    $sales[15]['count'] = $dtowarehouse_order_count;
-    $sales[0]['sale'] = $processed_saleAmount;
-    $sales[1]['sale'] = $confirm_saleAmount;
-    $sales[2]['sale'] = $packed_saleAmount;
-    $sales[3]['sale'] = $dispatch_saleAmount;
-    $sales[4]['sale'] = $intransit_saleAmount;
-    $sales[5]['sale'] = $deliver_saleAmount;
-    $sales[6]['sale'] = $complete_saleAmount;
-    $sales[7]['sale'] = $closed_saleAmount;
-    $sales[8]['sale'] = $dtobooked_saleAmount;
-    $sales[9]['sale'] = $onhold_saleAmount;
-    $sales[10]['sale'] = $rtodelivered_saleAmount;
-    $sales[11]['sale'] = $dtodelivered_saleAmount;
-    $sales[12]['sale'] = $dtorefunded_saleAmount;
-    $sales[13]['sale'] = $picked_saleAmount;
-    $sales[14]['sale'] = $dtoIntrans_saleAmount;
-    $sales[15]['sale'] = $dtowarehouse_saleAmount;
-    $sales[0]['status'] = $process;
-    $sales[1]['status'] = $confirm;
-    $sales[2]['status'] = $pack;
-    $sales[3]['status'] = $dis;
-    $sales[4]['status'] = $intrans;
-    $sales[5]['status'] = $del;
-    $sales[6]['status'] = $Comple;
-    $sales[7]['status'] =  $clos;
-    $sales[8]['status'] =  $dtobook;
-    $sales[9]['status'] =  $hold;
-    $sales[10]['status'] =  $rto_del;
-    $sales[11]['status'] = $dto_del;
-    $sales[12]['status'] =  $dto_ref;
-    $sales[13]['status'] = $pick;
-    $sales[14]['status'] =  $dtointrans;
-    $sales[15]['status'] = $warehouse;
+    $sales_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dtobook,$intrans,$dtointrans,$Comple,$dto_ref,$clos,$process,$confirm,$pack,$hold,$dis,$del,$dto_del,$pick,$warehouse])->get();
+    $sales_order_count=count($sales_orders);
+    $salesorder_saleAmount=$sales_orders->sum('total');
+    $salesrtodelivered_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->where('date_created', '>=', $date)->get();
+    $salesrtodelivered_order_count=count($salesrtodelivered_orders);
+    $salesrtodelivered_saleAmount=$salesrtodelivered_orders->sum('total');
+    $salescancel_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$cancel,$fail])->where('date_created', '>=', $date)->get();
+    $salescancel_order_count=count($salescancel_orders);
+    $salesrtodelivered_saleAmount=$salescancel_orders->sum('total');
+    $sales[0]['count'] = $sales_order_count;
+    $sales[1]['count'] = $salesrtodelivered_order_count;
+    $sales[2]['count'] = $salescancel_order_count;
+    $sales[0]['sale'] = $salesorder_saleAmount;
+    $sales[1]['sale'] = $salesrtodelivered_saleAmount;
+    $sales[2]['sale'] = $salesrtodelivered_saleAmount;
+    $sales[0]['status'] = $sale;
+    $sales[1]['status'] = $retr;
+    $sales[2]['status'] = $can;
      return $sales ;
 
    }
@@ -636,8 +509,6 @@ class DashboardController extends Controller
         $con='confirmed';
         $pack='packed';
         $hold='on-hold';
-
-
         $date = \Carbon\Carbon::today()->subDays(7);
         $processing_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->where('date_created', '>=', $date)->get();
         $processing_order_count=count($processing_orders);
@@ -653,10 +524,10 @@ class DashboardController extends Controller
         $hold_saleAmount=$hold_orders->sum('total');
         $totalp=$processing_order_count+$confirm_order_count+$packed_order_count+$hold_order_count;
 
-        $process_percentage=round((($processing_order_count/$totalp)*100),2);
-        $confirm_percentage=round((($confirm_order_count/$totalp)*100),2);
-        $packed_percentage=round((($packed_order_count/$totalp)*100),2);
-        $hold_percentage=round((($hold_order_count/$totalp)*100),2);
+        // $process_percentage=round((($processing_order_count/$totalp)*100),2);
+        // $confirm_percentage=round((($confirm_order_count/$totalp)*100),2);
+        // $packed_percentage=round((($packed_order_count/$totalp)*100),2);
+        // $hold_percentage=round((($hold_order_count/$totalp)*100),2);
 
         $pendencychart['deldata'][0]=$processing_order_count;
         $pendencychart['deldata'][1]=$confirm_order_count;
@@ -675,10 +546,10 @@ class DashboardController extends Controller
         $pendencytable[1]['amount']=$confirm_saleAmount;
         $pendencytable[2]['amount']=$packed_saleAmount;
         $pendencytable[3]['amount']=$hold_saleAmount;
-        $pendencytable[0]['percentage']=$process_percentage;
-        $pendencytable[1]['percentage']=$confirm_percentage;
-        $pendencytable[2]['percentage']=$packed_percentage;
-        $pendencytable[3]['percentage']=$hold_percentage;
+        // $pendencytable[0]['percentage']=$process_percentage;
+        // $pendencytable[1]['percentage']=$confirm_percentage;
+        // $pendencytable[2]['percentage']=$packed_percentage;
+        // $pendencytable[3]['percentage']=$hold_percentage;
 
         return[
           $pendencychart,

@@ -229,6 +229,11 @@ float:left;
     padding: 0.675rem 1.5rem;
     font-weight: 500;
 }
+
+.call-center-dashboard span .btn.btn-primary{
+    margin-right: 10px;
+}
+
 .call-center-dashboard .list-appointments .form-group div{
     color: #7E7E7E;
 }
