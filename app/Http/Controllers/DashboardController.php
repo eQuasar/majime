@@ -95,7 +95,6 @@ class DashboardController extends Controller
     $dt='DTO';
     $onhold='on-hold';
 
-
     $range = [$request->date_from, $request->date_to];
     $date = \Carbon\Carbon::today()->subDays(7);
     $processing_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->whereBetween('orders.date_created_gmt',$range)->get();
@@ -216,14 +215,36 @@ class DashboardController extends Controller
                               ->groupBy(DB::raw("DATE_FORMAT(date_created, '%Y-%m-%d')"))
                               ->get();
   $i = 0;
-  $chartData['catgories'][$i] = '';
-  $chartData['values'][$i] = '';
-  foreach($processing_orders as $porders){
+  $chartData['catgories'][$i] = 'No Result Found';
+  $chartData['values'][$i] = '0';
+
+  $date = \Carbon\Carbon::today()->subDays(7);
+  $chartOrders=DB::table("orders")
+                            ->select(
+                              DB::raw("(COUNT(id)) as count"),
+                              DB::raw("(DATE_FORMAT(date_created, '%Y-%m-%d')) as date")
+                              )
+                            ->where('orders.vid','=',$vid)
+                            ->whereNotIn('orders.status', ['cancelled','failed'])
+                            ->whereBetween('orders.date_created_gmt',$range)
+                            ->orderBy('date_created','DESC')
+                            ->groupBy(DB::raw("DATE_FORMAT(date_created, '%Y-%m-%d')"))
+                            ->get();
+  $i = 0;
+  foreach($chartOrders as $chartOrder){
     // print_r($porders);
-    $chartData['catgories'][$i] = $porders->date;
-    $chartData['values'][$i] = $porders->count;
+    $chartData['catgories'][$i] = $chartOrder->date;
+    $chartData['values'][$i] = $chartOrder->count;
     $i = $i +1;
   }
+
+
+  // foreach($processing_orders as $porders){
+  //   // print_r($porders);
+  //   $chartData['catgories'][$i] = $porders->date;
+  //   $chartData['values'][$i] = $porders->count;
+  //   $i = $i +1;
+  // }
     $pendencychart['deldata'][0]=$processing_saleAmount;
     $pendencychart['deldata'][1]=$confirm_saleAmount;
     $pendencychart['deldata'][2]=$packed_saleAmount;
@@ -353,16 +374,13 @@ class DashboardController extends Controller
                               ->orderBy('date_created','DESC')
                               ->groupBy(DB::raw("DATE_FORMAT(date_created, '%Y-%m-%d')"))
                               ->get();
-  $i = 0;
-  foreach($processing_orders as $porders){
-    // print_r($porders);
-    $chartData['catgories'][$i] = $porders->date;
-    $chartData['values'][$i] = $porders->count;
-    $i = $i +1;
-  }
-
-  
-  // print_r($chartData);
+    $i = 0;
+    foreach($processing_orders as $porders){
+      // print_r($porders);
+      $chartData['catgories'][$i] = $porders->date;
+      $chartData['values'][$i] = $porders->count;
+      $i = $i +1;
+    }
     
     return  $chartData;
    }
