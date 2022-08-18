@@ -314,7 +314,7 @@ class DashboardController extends Controller
     $date = \Carbon\Carbon::today()->subDays(7);
     $processing_orders=DB::table("orders")
                               ->select(
-                                DB::raw("(COUNT(id)) as count"),
+                                DB::raw('SUM(orders.total) As total'),
                                 DB::raw("(DATE_FORMAT(date_created_gmt, '%Y-%m-%d')) as date")
                                 )
                               ->where('orders.vid','=',$vid)
@@ -327,7 +327,7 @@ class DashboardController extends Controller
     foreach($processing_orders as $porders){
       // print_r($porders);
       $chartData['catgories'][$i] = $porders->date;
-      $chartData['values'][$i] = $porders->count;
+      $chartData['values'][$i] = $porders->total;
       $i = $i +1;
     }
     
