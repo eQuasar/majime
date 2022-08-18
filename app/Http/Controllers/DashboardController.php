@@ -216,6 +216,8 @@ class DashboardController extends Controller
                               ->groupBy(DB::raw("DATE_FORMAT(date_created, '%Y-%m-%d')"))
                               ->get();
   $i = 0;
+  $chartData['catgories'][$i] = '';
+  $chartData['values'][$i] = '';
   foreach($processing_orders as $porders){
     // print_r($porders);
     $chartData['catgories'][$i] = $porders->date;
@@ -330,7 +332,7 @@ class DashboardController extends Controller
       $pendencytable,
       $pieData,
       $sales ,
-     $chartData,
+      $chartData,
 
     ] ;
 
