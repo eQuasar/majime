@@ -97,7 +97,7 @@
                             </div>
                             <div class="col-sm-6">
                                 <div class="content_bar card">
-                                    <apexchart width="100%"  height="300" type="bar" :options="options" :series="series"></apexchart>
+                                    <apexchart width="100%"  height="250" type="bar" :options="options" :series="series"></apexchart>
                         
                                   <!-- <Doughnut
                                     :chart-options="chartpie"

@@ -192,10 +192,27 @@ class DashboardController extends Controller
     $hold_saleAmount=$hold_orders->sum('total');
     $totalp=$processing_order_count+$confirm_order_count+$packed_order_count+$hold_order_count;
     $total=$total_count_process+$total_rtoo+$total_dtoo+ $dispatched_order_count;
-    $process_percentage=round((($total_count_process/$total)*100),2);
-    $rto_percentage=round((($total_rtoo/$total)*100),2);
-    $dto_percentage=round((($total_dtoo/$total)*100),2);
-    $dispatch_percentage=round((($dispatched_order_count/$total)*100),2);
+    if($total_count_process == 0){
+      $process_percentage=0;
+    }else{
+      $process_percentage=round((($total_count_process/$total)*100),2);
+    }
+    if($total_rtoo == 0){
+      $rto_percentage=0;
+    }else {
+      $rto_percentage=round((($total_rtoo/$total)*100),2);
+    }
+    if($total_dtoo == 0){
+      $dto_percentage=0;
+    }else {
+      $dto_percentage=round((($total_dtoo/$total)*100),2);
+    }
+    if($total_dtoo == 0){
+      $dispatch_percentage=0;
+    }else{
+      $dispatch_percentage=round((($dispatched_order_count/$total)*100),2);
+    }
+    
 
 
   $i = 0;
@@ -203,24 +220,24 @@ class DashboardController extends Controller
   $chartData['values'][$i] = '0';
 
   $date = \Carbon\Carbon::today()->subDays(7);
-  $chartOrders=DB::table("orders")
-                            ->select(
-                              DB::raw("(COUNT(id)) as count"),
-                              DB::raw("(DATE_FORMAT(date_created_gmt, '%Y-%m-%d')) as date")
-                              )
-                            ->where('orders.vid','=',$vid)
-                            ->whereNotIn('orders.status', ['cancelled','failed'])
-                            ->whereBetween('orders.date_created_gmt',$range)
-                            ->orderBy('date_created_gmt','ASC')
-                            ->groupBy(DB::raw("DATE_FORMAT(date_created_gmt, '%Y-%m-%d')"))
-                            ->get();
-  $i = 0;
-  foreach($chartOrders as $chartOrder){
-    // print_r($porders);
-    $chartData['catgories'][$i] = $chartOrder->date;
-    $chartData['values'][$i] = $chartOrder->count;
-    $i = $i +1;
-  }
+  $processing_orders=DB::table("orders")
+                              ->select(
+                                DB::raw('SUM(orders.total) As total'),
+                                DB::raw("(DATE_FORMAT(date_created_gmt, '%Y-%m-%d')) as date")
+                                )
+                              ->where('orders.vid','=',$vid)
+                              ->whereNotIn('orders.status', ['cancelled','failed'])
+                              ->whereBetween('orders.date_created_gmt',$range)
+                              ->orderBy('date_created_gmt','ASC')
+                              ->groupBy(DB::raw("DATE_FORMAT(date_created_gmt, '%Y-%m-%d')"))
+                              ->get();
+    
+    foreach($processing_orders as $porders){
+      // print_r($porders);
+      $chartData['catgories'][$i] = $porders->date;
+      $chartData['values'][$i] = $porders->total;
+      $i = $i +1;
+    }
 
   $sale='Sales';
   $retr='Returns';
@@ -315,12 +332,12 @@ class DashboardController extends Controller
     $date = \Carbon\Carbon::today()->subDays(7);
     $processing_orders=DB::table("orders")
                               ->select(
-                                DB::raw("(COUNT(id)) as count"),
+                                DB::raw('SUM(orders.total) As total'),
                                 DB::raw("(DATE_FORMAT(date_created_gmt, '%Y-%m-%d')) as date")
                                 )
                               ->where('orders.vid','=',$vid)
                               ->whereNotIn('orders.status', ['cancelled','failed'])
-                              ->where('date_created', '>=', $date)
+                              ->where('date_created_gmt', '>=', $date)
                               ->orderBy('date_created_gmt','ASC')
                               ->groupBy(DB::raw("DATE_FORMAT(date_created_gmt, '%Y-%m-%d')"))
                               ->get();
@@ -328,7 +345,7 @@ class DashboardController extends Controller
     foreach($processing_orders as $porders){
       // print_r($porders);
       $chartData['catgories'][$i] = $porders->date;
-      $chartData['values'][$i] = $porders->count;
+      $chartData['values'][$i] = $porders->total;
       $i = $i +1;
     }
     
