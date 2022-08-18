@@ -23129,7 +23129,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
     height: 250px!important;
 }
 
-.download-btn{margin-left: 0px!important;width: 200px;
+.download-btn{margin-left: 10px!important;width: 200px;
     font-weight: 600;}
 
 .grey {
@@ -23165,9 +23165,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
 
 
 /**** BY HS   ***/
-.dashboard-sales td, .dashboard-sales th{
+/* .dashboard-sales td, .dashboard-sales th{
   padding: 8px 10px !important;
-}
+} */
 .dashboard-sales table{
   border-spacing: 1rem 0;
 }

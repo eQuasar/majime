@@ -36,7 +36,7 @@
                                         v-model="date_to"
                                         :date-format-options="{
                                       year: 'numeric',
-                                      month: '2-digit',
+                                      month: 'short',
                                       day: '2-digit',
                                       weekday: 'short',
                                     }"
@@ -194,7 +194,7 @@
                                   sort-icon-left
                                   :filter-included-fields="filterOn"
                                   :filter="filter"
-                                  :fields="fields3"
+                                  :fields="fields4"
                                   :per-page="perPage"
                                   :current-page="currentPage"
                                   show-empty
@@ -230,9 +230,6 @@
         </b-overlay>
     </b-container>
 </template>
-
-
-
 
 <script>
 import dashboard from "../../api/dashboard.js";
@@ -277,7 +274,7 @@ export default {
     },
     height: {
       type: Number,
-      default: 200,
+      default: 250,
     },
     cssClasses: {
       default: "",
@@ -310,7 +307,7 @@ export default {
     },
     height: {
       type: Number,
-      default: 200,
+      default: 250,
     },
     cssClasses: {
       default: "",
@@ -397,6 +394,23 @@ export default {
          {
           key: "percentage",
           label: "Percentage",
+          sortable: false,
+        },
+      ],
+        fields4: [
+       {
+          key: "status",
+          label: "Status",
+          sortable: false,
+        },
+        {
+          key: "count",
+          label: "Count",
+          sortable: false,
+        },
+        {
+          key: "amount",
+          label: "Sale Amount",
           sortable: false,
         },
       ],
