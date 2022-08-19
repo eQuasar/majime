@@ -498,7 +498,7 @@ class DashboardController extends Controller
     $retr='Returns';
     $can='Cancellations';
     $date = \Carbon\Carbon::today()->subDays(7);
-    $sales_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dtobook,$intrans,$dtointrans,$Comple,$dto_ref,$clos,$process,$confirm,$pack,$hold,$dis,$del,$dto_del,$pick,$warehouse])->get();
+    $sales_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dtobook,$intrans,$dtointrans,$Comple,$dto_ref,$clos,$process,$confirm,$pack,$hold,$dis,$del,$dto_del,$pick,$warehouse])->where('date_created', '>=', $date)->get();
     $sales_order_count=count($sales_orders);
     $salesorder_saleAmount=$sales_orders->sum('total');
     $salesrtodelivered_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->where('date_created', '>=', $date)->get();
