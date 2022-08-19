@@ -164,6 +164,7 @@ class DashboardController extends Controller
     $count_rto=count($rto);
     $dto=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dto_ref,$dto_del, $dtointrans,$dtobook])->whereBetween('orders.date_created_gmt',$range)->get();
     $total_dto=$dto->sum('total');
+    $count_dto=count($dto);
     $confirmed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','confirmed')->whereBetween('orders.date_created_gmt',$range)->get();
     $confirmed_amount=$confirmed_orders->sum('total');
     $intransit_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','intransit')->whereBetween('orders.date_created_gmt',$range)->get();
@@ -226,7 +227,7 @@ class DashboardController extends Controller
                                 DB::raw("(DATE_FORMAT(date_created_gmt, '%Y-%m-%d')) as date")
                                 )
                               ->where('orders.vid','=',$vid)
-                              ->whereNotIn('orders.status', ['cancelled','failed'])
+                              ->whereNotIn('orders.status', ['cancelled','failed','rto-delivered'])
                               ->whereBetween('orders.date_created_gmt',$range)
                               ->orderBy('date_created_gmt','ASC')
                               ->groupBy(DB::raw("DATE_FORMAT(date_created_gmt, '%Y-%m-%d')"))
@@ -251,13 +252,13 @@ class DashboardController extends Controller
   $salesrtodelivered_saleAmount=$salesrtodelivered_orders->sum('total');
   $salescancel_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$cancel,$fail])->whereBetween('orders.date_created_gmt',$range)->get();
   $salescancel_order_count=count($salescancel_orders);
-  $salesrtodelivered_saleAmount=$salescancel_orders->sum('total');
+  $salescancel_order_saleAmount=$salescancel_orders->sum('total');
   $sales[0]['count'] = $sales_order_count;
   $sales[1]['count'] = $salesrtodelivered_order_count;
   $sales[2]['count'] = $salescancel_order_count;
   $sales[0]['sale'] = $salesorder_saleAmount;
   $sales[1]['sale'] = $salesrtodelivered_saleAmount;
-  $sales[2]['sale'] = $salesrtodelivered_saleAmount;
+  $sales[2]['sale'] = $salescancel_order_saleAmount;
   $sales[0]['status'] = $sale;
   $sales[1]['status'] = $retr;
   $sales[2]['status'] = $can;
@@ -287,7 +288,7 @@ class DashboardController extends Controller
     $piedata['pie'][3]= $dispatched_amount;
     $logisticsdata[0]['count']= $total_Processed;
     $logisticsdata[1]['count']= $count_rto;
-    $logisticsdata[2]['count']= $total_dto;
+    $logisticsdata[2]['count']= $count_dto;
     $logisticsdata[3]['count']= $dispatched_order_count;
     $logisticsdata[0]['status']= $deld;
     $logisticsdata[1]['status']= $rt;
@@ -336,7 +337,7 @@ class DashboardController extends Controller
                                 DB::raw("(DATE_FORMAT(date_created_gmt, '%Y-%m-%d')) as date")
                                 )
                               ->where('orders.vid','=',$vid)
-                              ->whereNotIn('orders.status', ['cancelled','failed'])
+                              ->whereNotIn('orders.status', ['cancelled','failed','rto-delivered'])
                               ->where('date_created_gmt', '>=', $date)
                               ->orderBy('date_created_gmt','ASC')
                               ->groupBy(DB::raw("DATE_FORMAT(date_created_gmt, '%Y-%m-%d')"))
@@ -505,13 +506,13 @@ class DashboardController extends Controller
     $salesrtodelivered_saleAmount=$salesrtodelivered_orders->sum('total');
     $salescancel_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$cancel,$fail])->where('date_created', '>=', $date)->get();
     $salescancel_order_count=count($salescancel_orders);
-    $salesrtodelivered_saleAmount=$salescancel_orders->sum('total');
+    $salescancel_order_saleAmount=$salescancel_orders->sum('total');
     $sales[0]['count'] = $sales_order_count;
     $sales[1]['count'] = $salesrtodelivered_order_count;
     $sales[2]['count'] = $salescancel_order_count;
     $sales[0]['sale'] = $salesorder_saleAmount;
     $sales[1]['sale'] = $salesrtodelivered_saleAmount;
-    $sales[2]['sale'] = $salesrtodelivered_saleAmount;
+    $sales[2]['sale'] = $salescancel_order_saleAmount;
     $sales[0]['status'] = $sale;
     $sales[1]['status'] = $retr;
     $sales[2]['status'] = $can;

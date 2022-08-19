@@ -451,9 +451,14 @@ class JsonController extends Controller
 					$status = "intransit";
 				}else if ($status == "Pending" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "intransit";
-				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
-					$status = "intransit";
-				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == TRUE && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType']=="PU"){
+				}
+				// else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
+				// 	$status = "intransit";
+				// }
+				else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == TRUE && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType']=="RT"){
+					$status = "dtointransit";
+				}
+				else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == TRUE && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType']=="PU"){
 					$status = "dtointransit";
 				} else if ($status == "RTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "rto-delivered";
@@ -462,6 +467,8 @@ class JsonController extends Controller
 				} else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] != "DL" ){
 					$status = "dtointransit";
 				} else if ($status == "Closed" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
+					$status = "deliveredtocust";
+				} else if ($status == "Canceled" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
 					$status = "deliveredtocust";
 				} else if ($status == "Delivered" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "deliveredtocust";
