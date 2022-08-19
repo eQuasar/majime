@@ -23180,3 +23180,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
 #input-group-Vendor {
 margin-right: 10px;
 }
+
+
+.out {
+  background: #FFECE8;
+  color: #FF6347;
+}

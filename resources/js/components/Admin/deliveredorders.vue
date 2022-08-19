@@ -44,6 +44,7 @@
                     type="button"
                     class="download-btn btn btn-primary"
                     v-on:click="confirmstatus"
+                    v-model="statusAssign"
                   >
                     Close Status
                   </button>
