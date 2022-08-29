@@ -23,6 +23,9 @@ export default {
     getsales_detail(vid) {
         return axios.get('getsales_data/' + vid)
     },
+    getmargin_report(vid) {
+        return axios.get('getmargin_report/' + vid)
+    },
     // getsale_detail(vid) {
     //     return axios.get('getsales/' + vid)
     // },

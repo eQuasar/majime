@@ -227,6 +227,38 @@
 			        </div>
 		        </div>
 	        </div>
+            </br>
+            	     <div class="content_bar card grey dashboard-sales">
+                     <div class="header_inner text-center">
+                            <br />
+                               <h3><strong>Margin Report</strong></h3>
+                            <br />
+                        </div>
+                        <div class="right">
+              
+                      <div class="stats red">
+                               
+                      <h4>Gross sale</h4>
+                      <span>Total Orders:{{ dashboardData.gross_count }} </span>
+                      <p><i>₹ </i>{{ dashboardData.gross_saleAmount }}</p>
+                      </div>
+                      <div class="stats blu">
+                      <h4>Estimated Net Sale</h4>
+                      <span>Total Orders:{{ dashboardData.net_count }} </span>
+                      <p><i>₹ </i>{{ dashboardData.net_sale }}</p>
+                      </div>
+                      <div class="stats orng">
+                      <h4>Estimated Product Cost</h4>
+                      <span>Total Orders:{{ dashboardData.holdcount }} </span>
+                      <p><i>₹ </i>{{ dashboardData.onholdSaleAmount }}</p>
+                      </div>
+                      <div class="stats grn">
+                      <h4>Estimated Logistic Cost</h4>
+                      <span>Total Orders:{{ dashboardData.logistic_count }} </span>
+                      <p><i>₹ </i>{{ dashboardData.logistic_sale }}</p>
+                      </div>
+                  </div>
+                  </div>
         </b-overlay>
     </b-container>
 </template>
@@ -343,6 +375,7 @@ export default {
       pageOptions: [5, 10, 15, 20, 50, 100],
       filter: null,
       filterOn2: [],
+      marginreport:[],
       filterOn: [],
       pendencydata:[],
       items: [],
@@ -502,6 +535,7 @@ export default {
         this.dashboard_secondpiedata(this.vid);
         this.getsalesdetail(this.vid);
         this.dashboard_delpiedata(this.vid);
+        this.margin_report(this.vid);
         this.show = false;
       } else {
         this.show = true;
@@ -519,6 +553,7 @@ export default {
             this.dashboard_secondpiedata(this.vid);
             this.getsalesdetail(this.vid);
             this.dashboard_delpiedata(this.vid);
+            this.margin_report(this.vid);
             this.show = false;
           })
           .catch((response) => {
@@ -556,10 +591,13 @@ export default {
 
           var resp = response.data[5];
           this.valdata = resp;
+          this.show=false;
           // console.log(response.data[0]);
           var logistic=response.data[1];
           this.logisticsdata =logistic;
+          this.show=false;
           const responseDatalogistic = response.data[0];
+          this.show=false;
            this.pieData = {
             datasets: [
               {
@@ -568,6 +606,7 @@ export default {
             ],
           };        
           const responseDatapie = response.data[0];
+          this.show=false;
           this.pieData = {
             datasets: [
               {
@@ -578,6 +617,7 @@ export default {
            const responseDatadel = response.data[2];
             var pendency=response.data[3]
            this.pendencydata = pendency;
+           this.show=false;
            this.delpieData = {
             datasets: [
               {
@@ -598,6 +638,7 @@ export default {
          var chart = response.data[6];
           var val = chart.values;
           var cat = chart.catgories;
+          this.show=false;
           this.series = [
             {
               data: val,
@@ -636,11 +677,28 @@ export default {
         .then((response) => {
           var resp = response.data;
           this.dashboardData = resp;
+          this.show=false;
           console.log(this.dashboardData);
         })
         .catch((response) => {
           this.successful = false;
-          alert("something went wrong");
+          this.$alert("",'Dashboard Data Not available');
+        });
+    },
+    margin_report(vid) {
+      // this.seen = true;
+      let formData = new FormData();
+      dashboard
+        .getmargin_report(vid)
+        .then((response) => {
+          var resp = response.data;
+          this.dashboardData = resp;
+          this.show=false;
+          console.log(this.dashboardData);
+        })
+        .catch((response) => {
+          this.successful = false;
+          this.$alert("",'Please Check...Margin Report Not Available');
         });
     },
 
@@ -655,6 +713,8 @@ export default {
           // this.dcount = data.count;
           // this.dstatus = data.status;
           this.valdata = data;
+          this.show=false;
+          
         })
         .catch((error) => {
           console.log(error);
@@ -673,9 +733,11 @@ export default {
           var chart = response.data;
           var val = chart.values;
           var cat = chart.catgories;
+          this.show=false;
           this.series = [
             {
               data: val,
+           
             },
           ];
           
@@ -693,7 +755,7 @@ export default {
         })
         .catch((response) => {
           this.successful = false;
-          alert("something went wrong");
+          this.$alert("",'Dashboard Data Not available')
         });
     },
     dashboard_piedata(vid) {
@@ -703,10 +765,12 @@ export default {
           const responseData = response.data[0];
           var logistic=response.data[1]
            this.logisticsdata = logistic;
+           this.show=false;
           this.pieData = {
             datasets: [
               {
                 data: responseData.pie,
+               
               },
             ],
           };
@@ -723,10 +787,12 @@ export default {
           console.log("responseData "+responseData)
           var pendency=response.data[1]
            this.pendencydata = pendency;
+           this.show=false;
           this.delpieData = {
             datasets: [
               {
                 data: responseData.deldata,
+              
               },
             ],
           };
@@ -745,6 +811,7 @@ export default {
             datasets: [
               {
                 data: responseData.piedata,
+        
                 
               },
             ],

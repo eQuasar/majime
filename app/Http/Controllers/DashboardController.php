@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Orders;
+use App\Models\walletprocessed;
 use Illuminate\Support\Facades\Auth;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\DB;
@@ -63,6 +64,45 @@ class DashboardController extends Controller
       $pendencytable,
 
     ];
+
+   }
+   public function getmargin_report($vid)
+   {
+      $clos='closed';
+      $del='deliveredtocust';
+      $process='processing';
+      $con='confirmed';
+      $pack='packed';
+      $hold='on-hold';
+
+
+      $date = \Carbon\Carbon::today()->subDays(7);
+
+    $gross_orders=Orders::where('orders.vid','=',$vid)->where('date_created', '>=', $date)->get();
+    $gross_count=count($gross_orders);
+    $gross_saleAmount=$gross_orders->sum('total');
+    $net_count=round($gross_count*33/100);
+    $net_sale=round($gross_saleAmount*33/100);
+    $logistic_orders=walletprocessed::where('walletprocesseds.vid','=',$vid)->where('created_at', '>=', $date)->get();
+    $logistic_count=count($logistic_orders);
+    $logistic_saleAmount=$logistic_orders->sum('logistic_cost');
+    $marginreport['gross_count']=$gross_count;
+    $marginreport['gross_saleAmount']=$gross_saleAmount;
+    $marginreport['net_count']=$net_count;
+    $marginreport['net_sale']=$net_sale;
+    $marginreport['logistic_count']=$logistic_count;
+    $marginreport['logistic_sale']=$logistic_saleAmount;
+
+    // $marginreport[2]['status']=$pack;
+    // $marginreport[3]['status']=$hold;
+    // $marginreport[0]['count']=$processing_order_count;
+    // $marginreport[1]['count']=$confirm_order_count;
+    // $marginreport[2]['count']=$packed_order_count;
+    // $marginreport[3]['count']=$hold_order_count;
+
+     return $marginreport;
+
+  
 
    }
 
