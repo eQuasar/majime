@@ -75,7 +75,6 @@ class DashboardController extends Controller
       $pack='packed';
       $hold='on-hold';
 
-
       $date = \Carbon\Carbon::today()->subDays(7);
 
     $gross_orders=Orders::where('orders.vid','=',$vid)->where('date_created', '>=', $date)->get();
@@ -389,7 +388,6 @@ class DashboardController extends Controller
       $chartData['values'][$i] = $porders->total;
       $i = $i +1;
     }
-    
     return  $chartData;
    }
      public function piechart_data($vid)
@@ -415,7 +413,7 @@ class DashboardController extends Controller
         $dt='DTO';
       $date = \Carbon\Carbon::today()->subDays(7);
       $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$clos,$del])->where('date_created', '>=', $date)->get();
-      $total_Processedd=count($orders);
+      $total_Processedd=count($orders);  
       $total_amount=$orders->sum('total');
       $rto=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->where('date_created', '>=', $date)->get();
       $total_rto=count($rto);
@@ -431,7 +429,6 @@ class DashboardController extends Controller
       $rto_percentage=round((($total_rto/$total)*100),2);
       $dto_percentage=round((($total_dto/$total)*100),2);
       $dispatch_percentage=round((($dispatched_order_count/$total)*100),2);
-
       $piedata['pie'][0]= $total_Processedd;
       $piedata['pie'][1]= $total_rto;
       $piedata['pie'][2]= $total_dto;
