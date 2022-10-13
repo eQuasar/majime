@@ -126,5 +126,6 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('secondpiechart_data/{vid}', 'DashboardController@secondpiechart_data')->name('secondpiechart_data');
 	Route::get('getsales_data/{vid}', 'DashboardController@getsales_data')->name('getsales_data');
 	Route::get('delpiechart_data/{vid}', 'DashboardController@delpiechart_data')->name('delpiechart_data');
+	Route::get('getmargin_report/{vid}', 'DashboardController@getmargin_report')->name('getmargin_report');
 }); 
 

@@ -1348,7 +1348,8 @@ class OrderController extends Controller {
         } else {
             $listImp = explode(',', $request->allSelected);
         }
-        for ($i = 0;$i < count($listImp);$i++) {
+        for ($i = 0;$i < count($listImp);$i++) 
+        {
             DB::table('orders')->where('oid', intval($listImp[$i]))->where('vid', intval($request->vid))->update(['status' => $request->status_assign]);
             // print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
             // https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
@@ -1364,7 +1365,7 @@ class OrderController extends Controller {
                 $date = date('Y-m-d');
                 $confirm_order_data[]=[     
                 'vid'=>$request->vid,
-                'oid'=>$listImp[$i] ,
+                'oid'=>$listImp[$i],
                 'order_confirmdate'=>$date,
                 ];   
                
@@ -1373,7 +1374,7 @@ class OrderController extends Controller {
                 $date = date('Y-m-d');
                 $confirm_order_data[]=[     
                 'vid'=>$request->vid,
-                'oid'=>$listImp[$i] ,
+                'oid'=>$listImp[$i],
                 'dto_refunddate'=>$date,
                 ];   
                 
@@ -1382,12 +1383,21 @@ class OrderController extends Controller {
                 $date = date('Y-m-d');
                 $confirm_order_data[]=[     
                 'vid'=>$request->vid,
-                'oid'=>$listImp[$i] ,
+                'oid'=>$listImp[$i],
                 'order_closedate'=>$date,
                 ];   
-                
+            }
+            elseif($request->status_assign=='cancelled')
+            {
+                $date = date('Y-m-d');
+                $confirm_order_data[]=[     
+                'vid'=>$request->vid,
+                'oid'=>$listImp[$i],
+                'order_canceldate'=>$date,
+                ];   
             }
             
+          
         }
         order_reldate::insert($confirm_order_data); 
         return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);

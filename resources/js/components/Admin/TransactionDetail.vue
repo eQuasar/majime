@@ -113,6 +113,8 @@
           { value: 'Digital Ads', text: 'Digital Ads' },
           { value: 'Bank Transfer', text: 'Bank Transfer' },
           { value: 'Cash', text: 'Cash' },
+          { value: 'Debit Note', text: 'Debit Note' },
+          { value: 'Credit Note', text: 'Credit Note' },
         ],
          
            
