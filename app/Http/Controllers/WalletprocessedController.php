@@ -161,10 +161,11 @@ class WalletprocessedController extends Controller
                     if($getval > $vendor_rate[0]->cod){
                         $cod_charges = $getval;
                     }
-                    $pw=$product_weight[0]->weight;
+                    if(isset($product_weight[0]))
+                        $pw=$product_weight[0]->weight;
                     if($pw==0)
                     {   
-                        $pw=330;
+                        $pw=410;
                     }
                     $qty=$line_items_qty[0]->quantity;
                     $total_weight=($pw)*($qty);
@@ -188,7 +189,7 @@ class WalletprocessedController extends Controller
                     $cod_charges = 0;
                     if($pw==0)
                     {   
-                        $pw=330;
+                        $pw=410;
                     }
                     $qty=$line_items_qty[0]->quantity;
                     $total_weight=($pw)*($qty);
@@ -212,7 +213,7 @@ class WalletprocessedController extends Controller
                     $cod_charges = 0;
                     if($pw==0)
                     {   
-                        $pw=330;
+                        $pw=410;
                     }
                     $qty=$line_items_qty[0]->quantity;
                     $total_weight=($pw)*($qty);

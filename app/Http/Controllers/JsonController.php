@@ -333,19 +333,13 @@ class JsonController extends Controller
 
  	public function cronOrderStatusUpdate($vid){
 
-
-// /*		
 		// Forward Orders
  		$orders=DB::table("orders")
- 				// ->join('waybill', 'orders.oid','=','waybill.order_id')
-				->whereIn('orders.status',['dispatched','intransit'])
-				// ->where('orders.oid',intval('6907'))
- 				// ->whereIn('orders.status',['dtointransit']) 
-				 
- 				->where('orders.vid',intval($vid))
+ 				->whereIn('orders.status',['dispatched','intransit'])
+				->where('orders.vid',intval($vid))
 				->orderBy('orders.oid','desc')
 				->get();
-		// print_r($orders); exit();
+		
 		echo "Forward Orders: ".$countOfOrders = count($orders);
 		if($countOfOrders==0){          // If no record found
 			$Result['0'] = "No update required.";
@@ -354,7 +348,6 @@ class JsonController extends Controller
 			$result = $this->getAWBStatus($orders,$vid,"fwd");
 			echo "<pre>";print_r($result);echo "</pre>";
 		}
-// */
 
 		// Return Orders
 		$orders=DB::table("orders")
@@ -385,7 +378,6 @@ class JsonController extends Controller
 			$curlopt_url = "https://track.delhivery.com/api/v1/packages/json/?";
 			$del_url = "https://track.delhivery.com/api/v1/packages/json/?";
 		// }
-
 		$waybill_nos = "";
 		foreach ($orders as $order) {
 			$waybillnos=DB::table("waybill")
@@ -400,14 +392,9 @@ class JsonController extends Controller
 				}else{
 					$waybillno = $waybillnos[0]->return_waybill_no ;
 				}
-				
-
-			
-	    
+				echo "\n<br/>WAY: ".$waybillno." Order: ".$order->oid;
 			$url = $del_url."waybill=".$waybillno."&token=ed99803a18868406584c6d724f71ebccc80a89f9";
-
 			$curl = curl_init();
-
 			curl_setopt_array($curl, array(
 				CURLOPT_URL => $url, 
 				CURLOPT_RETURNTRANSFER => true,
@@ -421,28 +408,24 @@ class JsonController extends Controller
 		
 			$response = curl_exec($curl);
 			$response = json_decode($response,true);
-
 			if (isset($response['Error'])){
 				$data['0'] = "Error: ".$response['Error'];
 			}else{
-				$data[$order->oid] = $this->processAWBStatus($response,$vid,$order->oid);
+				if($fwdOrReturn == "fwd"){
+					$data[$order->oid] = $this->processAWBStatusFwd($response,$vid,$order->oid);
+				}else{
+					$data[$order->oid] = $this->processAWBStatusRev($response,$vid,$order->oid);
+				}
 			}
 		}
 		return $data;
-	    // $waybill_nos = substr($waybill_nos, 1);
 	}
-	public function processAWBStatus($response,$vid,$order_id)
+	public function processAWBStatusFwd($response,$vid,$order_id)
 	{
-		// print_r($response);
-		if (isset($response['ShipmentData'])){
-			
+		if (isset($response['ShipmentData'])){		
 			for($i=0; $i < sizeof($response['ShipmentData']) ; $i++){
-
 				// waybill table get orderId of awb = $response['ShipmentData'][$i]['Shipment']['AWB'];
-				
 				$status = $response['ShipmentData'][$i]['Shipment']['Status']['Status'];
-
-
 				if ($status == "Manifested" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "dispatched";
 				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
@@ -451,17 +434,54 @@ class JsonController extends Controller
 					$status = "intransit";
 				}else if ($status == "Pending" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "intransit";
-				}
-				// else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
-				// 	$status = "intransit";
-				// }
-				else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == TRUE && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType']=="RT"){
-					$status = "dtointransit";
-				}
-				else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == TRUE && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType']=="PU"){
-					$status = "dtointransit";
 				} else if ($status == "RTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "rto-delivered";
+				} else if ($status == "Closed" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
+					$status = "deliveredtocust";
+				} else if ($status == "Canceled" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
+					$status = "deliveredtocust";
+				} else if ($status == "Delivered" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
+					$status = "deliveredtocust";
+				} 
+				else{
+					$status = "undefined";
+				}
+				
+				$statusDel[$i]['vid'] = addslashes( $vid );
+				$statusDel[$i]['awb'] = addslashes( $response['ShipmentData'][$i]['Shipment']['AWB'] );
+				$statusDel[$i]['oid'] = addslashes( $order_id );
+				$statusDel[$i]['status'] = addslashes( $status );
+				$statusDel[$i]['ReverseInTransit'] = addslashes( $response['ShipmentData'][$i]['Shipment']['ReverseInTransit']);
+				$statusDel[$i]['delivery_status_name'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] );
+				$statusDel[$i]['delivery_status'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['Status'] );
+				$statusDel[$i]['delivery_status_code'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusCode'] );
+				$statusDel[$i]['delivery_order_sno'] = addslashes( $response['ShipmentData'][$i]['Shipment']['ReferenceNo'] );
+				$statusDel[$i]['delivery_status_date_and_time'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['StatusDateTime'] );
+				$statusDel[$i]['delivery_brief_status'] = strtolower( addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['Status'] ) );
+				$statusDel[$i]['delivery_instructions'] = addslashes( $response['ShipmentData'][$i]['Shipment']['Status']['Instructions'] );
+				$statusDel[$i]['delivery_dispatch_count'] = (int) $response['ShipmentData'][$i]['Shipment']['DispatchCount'];
+				$statusDel[$i]['delivery_invoice_amount'] =  $response['ShipmentData'][$i]['Shipment']['InvoiceAmount'];
+				$statusDel[$i]['delivery_scans'] = addslashes( json_encode($delivery_scans = $response['ShipmentData'][$i]['Shipment']['Scans'] ) );
+				$statusDel[$i]['delivery_destination_received_date'] = addslashes( str_replace( "T", " ", $response['ShipmentData'][$i]['Shipment']['DestRecieveDate'] ) );
+				$statusDel[$i]['delivery_pickup_date'] = addslashes( str_replace( "T", " ", $response['ShipmentData'][$i]['Shipment']['PickUpDate'] ) );
+				$statusDel[$i]['delivery_charged_weight_in_grams'] = (int) $response['ShipmentData'][$i]['Shipment']['ChargedWeight'] ;
+			}
+		}else{
+			return "No Data Found";
+		}
+    	$ResUpdateStatusDelivary = $this->updateStatusDelivary($statusDel,$vid,$order_id);
+    	return  $ResUpdateStatusDelivary;
+ 	}
+	public function processAWBStatusRev($response,$vid,$order_id)
+	{
+		 if (isset($response['ShipmentData'])){
+			for($i=0; $i < sizeof($response['ShipmentData']) ; $i++){
+				// waybill table get orderId of awb = $response['ShipmentData'][$i]['Shipment']['AWB'];
+				$status = $response['ShipmentData'][$i]['Shipment']['Status']['Status'];
+				if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == TRUE && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType']=="RT"){
+					$status = "dtointransit";
+				} else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == TRUE && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType']=="PU"){
+					$status = "dtointransit";
 				} else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "dtodelivered";
 				} else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] != "DL" ){
@@ -499,14 +519,9 @@ class JsonController extends Controller
 		}else{
 			return "No Data Found";
 		}
-
-
-    	$ResUpdateStatusDelivary = $this->updateStatusDelivary($statusDel,$vid,$order_id);
-
-    	
-    	return  $ResUpdateStatusDelivary;
-
- 	}
+		$ResUpdateStatusDelivary = $this->updateStatusDelivary($statusDel,$vid,$order_id);
+		return  $ResUpdateStatusDelivary;
+	}
 
  	public function updateStatusDelivary($statusDel,$vid,$order_id){
 
