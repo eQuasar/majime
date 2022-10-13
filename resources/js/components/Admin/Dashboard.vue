@@ -228,7 +228,7 @@
 		        </div>
 	        </div>
             </br>
-            	     <div class="content_bar card grey dashboard-sales">
+            	     <!-- <div class="content_bar card grey dashboard-sales">
                      <div class="header_inner text-center">
                             <br />
                                <h3><strong>Margin Report</strong></h3>
@@ -257,7 +257,7 @@
                       <span>Total Orders:{{ dashboardData.logistic_count }} </span>
                       <p><i>₹ </i>{{ dashboardData.logistic_sale }}</p>
                       </div>
-                  </div>
+                  </div> -->
                   </div>
         </b-overlay>
     </b-container>
