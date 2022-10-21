@@ -646,9 +646,12 @@ class JsonController extends Controller
 			$this->Order_links($order->id,$order->_links,$vid);
 
 	    }
-       	Orders::insert($Orders); 	
+       	
+	    if(!empty($Orders)){
+	       	Orders::insert($Orders); 	
 
-       	$this->getWayBill($vid, $url);
+	       	$this->getWayBill($vid, $url);
+       	}
 			
 		$jsonResponse=$this->getProductWP($url, intval($vid));
 		$this->InsertProduct($jsonResponse, $vid);

@@ -829,11 +829,20 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
         }elseif($request->vid == 3){
-            $address_store = '<p><span class="c_name">M/s Hemkunt Industries<br>GST NO : 03ADVPS8590F1ZV</span><br>E-207, Phase-IV A,<br>Focal Point, Dhandari Kalan <br>141010 - Ludhiana, Punjab, India</p>';
-            $industry_name = "M/s Hemkunt Industries";
+            $address_store = '<p><span class="c_name">HK Texfab Pvt Ltd<br>GST NO : 03AAFCH1375M1ZJ</span><br>E-207 IV-A Focal Point,<br>141010 - Ludhiana, Punjab, India</p>';
+            $industry_name = "HK Texfab Pvt Ltd";
         }elseif($request->vid == 4){
             $address_store = '<p><span class="c_name">INDRA HOSIERY MILLS<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "INDRA HOSIERY MILLS";
+        }elseif($request->vid == 8){
+            $address_store = '<p><span class="c_name">ShopMetalm<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "ShopMetalm";
+        }elseif($request->vid == 9){
+            $address_store = '<p><span class="c_name">Krelon Cosmetic<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Krelon Cosmetic";
+        }elseif($request->vid == 10){
+            $address_store = '<p><span class="c_name">ABS ENTREPRISES<br>GST NO : 03ABXFA0812G1ZP</span><br>PC-10, BAHDAUR HOSUE, C-10 CALIBRE PLAZA <br>141009 - Ludhiana, Punjab, India</p>';
+            $industry_name = "ABS ENTREPRISES";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
@@ -1051,11 +1060,20 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
         }elseif($request->vid == 3){
-            $address_store = '<p><span class="c_name">M/s Hemkunt Industries<br>GST NO : 03ADVPS8590F1ZV</span><br>E-207, Phase-IV A,<br>Focal Point, Dhandari Kalan <br>141010 - Ludhiana, Punjab, India</p>';
-            $industry_name = "M/s Hemkunt Industries";
+            $address_store = '<p><span class="c_name">HK Texfab Pvt Ltd<br>GST NO : 03AAFCH1375M1ZJ</span><br>E-207 IV-A Focal Point,<br>141010 - Ludhiana, Punjab, India</p>';
+            $industry_name = "HK Texfab Pvt Ltd";
         }elseif($request->vid == 4){
             $address_store = '<p><span class="c_name">INDRA HOSIERY MILLS<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "INDRA HOSIERY MILLS";
+        }elseif($request->vid == 8){
+            $address_store = '<p><span class="c_name">ShopMetalm<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "ShopMetalm";
+        }elseif($request->vid == 9){
+            $address_store = '<p><span class="c_name">Krelon Cosmetic<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Krelon Cosmetic";
+        }elseif($request->vid == 10){
+            $address_store = '<p><span class="c_name">ABS ENTREPRISES<br>GST NO : 03ABXFA0812G1ZP</span><br>PC-10, BAHDAUR HOSUE, C-10 CALIBRE PLAZA <br>141009 - Ludhiana, Punjab, India</p>';
+            $industry_name = "ABS ENTREPRISES";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
