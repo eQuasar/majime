@@ -356,7 +356,7 @@ class OrderController extends Controller {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_2) . '",
+                              "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_2) . '",
                               "phone": ' . $order->phone . ',
                               "payment_mode": "COD",
                               "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -381,7 +381,7 @@ class OrderController extends Controller {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_2) . '",
+                              "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_2) . '",
                               "phone": ' . $order->phone . ',
                               "payment_mode": "Prepaid",
                               "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -534,6 +534,9 @@ class OrderController extends Controller {
             $response2 = curl_exec($curl2);
             curl_close($curl2);
             $new_val2 = json_decode($response2, true);
+
+            // $addr = str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_2);
+            // echo $add;
             // echo str_replace( array( '\'', '"', ';', '-', '<', '>' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>' ), ' ', $order->address_2); die;
             // 36 & 37 Suyog Residency 2 , B wing , Flat no 104, Sector 8 , Sanpada, Navi Mumbai
             // var_dump($new_val2); die;
@@ -547,7 +550,7 @@ class OrderController extends Controller {
                 $postfields = 'format=json&data={
 					  "shipments": [
 						{
-						  "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>' ), ' ', $order->address_2) . '",
+						  "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_2) . '",
 						  "phone": ' . $order->phone . ',
 						  "payment_mode": "' . $payment_mode . '",
 						  "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -1492,21 +1495,25 @@ class OrderController extends Controller {
         $order_items2 = DB::table("waybill")->where('waybill.vid', intval($request->vid))->where('waybill.waybill_no', intval($request->dispatch))->limit(1)->get()->toArray();
         $order_items = array_merge($order_items1,$order_items2);
         // var_dump($order_items); die;
-        $orders = DB::table("orders")->where('orders.oid', intval($order_items[0]->order_id))->get()->toArray();
         // echo $orders[0]->status; die;
         // foreach ($order_items as $order) {
-        if($orders[0]->status == "packed"){
-            $this->changeOrderStatus(intval($request->vid), intval($order_items[0]->order_id), "dispatched");
-            $date = date('Y-m-d');
-            $confirm_order_data[]=[     
-            'vid'=>$request->vid,
-            'oid'=>$request->dispatch,
-            'order_dispatchdate'=>$date,
-            ];   
-            order_reldate::insert($confirm_order_data);        
-            return response()->json(['error' => false, 'msg' => "Success, Your order number " . intval($order_items[0]->order_id) . " with AWB number is " . intval($order_items[0]->waybill_no), "ErrorCode" => "000"], 200);
+        if(!empty($orders)){
+          $orders = DB::table("orders")->where('orders.oid', intval($order_items[0]->order_id))->get()->toArray();
+          if($orders[0]->status == "packed"){
+              $this->changeOrderStatus(intval($request->vid), intval($order_items[0]->order_id), "dispatched");
+              $date = date('Y-m-d');
+              $confirm_order_data[]=[     
+              'vid'=>$request->vid,
+              'oid'=>$request->dispatch,
+              'order_dispatchdate'=>$date,
+              ];   
+              order_reldate::insert($confirm_order_data);        
+              return response()->json(['error' => false, 'msg' => "Success, Your order number " . intval($order_items[0]->order_id) . " with AWB number is " . intval($order_items[0]->waybill_no), "ErrorCode" => "000"], 200);
+          }else{
+              return response()->json(['error' => true, 'msg' => "Order is not Packed.", "ErrorCode" => "000"], 200);
+          }
         }else{
-            return response()->json(['error' => true, 'msg' => "Order is not Packed.", "ErrorCode" => "000"], 200);
+            return response()->json(['error' => true, 'msg' => "Order ID not found.", "ErrorCode" => "000"], 200);
         }
         // }
         // var_dump($order_items); die;
