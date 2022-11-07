@@ -27,7 +27,12 @@ use PDF;
 use \Milon\Barcode\DNS1D;
 class OrderController extends Controller {
     public function OrderDetail(Request $request) {
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->join('products', 'orders.id', '=', 'products.id')->where('orders.vid', '=', $request->vid)->select("orders.*", "billings.*", "products.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+      $vid = $request->vid;
+        $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->join('products', 'orders.id', '=', 'products.id')->where('orders.vid', '=', $request->vid)->select("orders.*", "billings.*", "products.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
                         GROUP BY line_items.order_id) as quantity"))->get();
         return $orders;
@@ -74,9 +79,11 @@ class OrderController extends Controller {
      public function filter_Search (Request $request) {
         $vendor = $request->vid;
         $search = $request->filterit;
-       $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-    //    ->join('line_items','line_items.order_id','=','orders.oid')
-       ->where('orders.vid','=', $vendor)->where('billings.vid','=',$vendor)
+       $orders = DB::table("orders")->join('billings', function($join) use ($vendor)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vendor));
+        })->where('orders.vid','=', $vendor)->where('billings.vid','=',$vendor)
               ->where('orders.status','like','%'.$search.'%')->where('orders.vid','=',$vendor)
               ->orWhere('orders.oid','like','%'.$search.'%')->where('orders.vid','=',$vendor)
               ->orWhere('billings.city','like','%'.$search.'%')->where('billings.vid','=',$vendor)
@@ -90,7 +97,12 @@ class OrderController extends Controller {
            
     }
     public function order_Profile($oid) {
-        $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.oid', '=', $oid)->where('orders.vid', '=', intval($_REQUEST['vid']))->where('billings.vid', '=', intval($_REQUEST['vid']))->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($_REQUEST['vid']) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT SUM(line_items.total) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($_REQUEST['vid']) . " GROUP BY line_items.order_id) as total_main"))->get();
+      $vid = $_REQUEST['vid'];
+        $order = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.oid', '=', $oid)->where('orders.vid', '=', intval($_REQUEST['vid']))->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($_REQUEST['vid']) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT SUM(line_items.total) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($_REQUEST['vid']) . " GROUP BY line_items.order_id) as total_main"))->get();
         return $order;
     }
     public function order_items($oid) {
@@ -169,9 +181,11 @@ class OrderController extends Controller {
             }
         }
         if ($vendor != null) {
-            $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-            // ->join('waybill','orders.oid','=','waybill.order_id')
-            ->where('orders.vid', '=', intval($vendor))->where('billings.vid', '=', intval($vendor))->orderBy('oid', 'DESC')
+            $orders = DB::table("orders")->join('billings', function($join) use ($vendor)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vendor));
+        })->where('orders.vid', '=', intval($vendor))->orderBy('oid', 'DESC')
             // ->select("orders.*","waybill.waybill_no","orders.status as orderstatus","billings.*",
             ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
             // echo "abc";die();
@@ -184,9 +198,11 @@ class OrderController extends Controller {
         return $orders;
     }
     public function getPackdetail($vid) {
-        $orderItems = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-        // ->join('line_items','orders.oid','=','line_items.order_id')
-        ->where('orders.vid', $vid)->where('orders.status', "packed")->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))
+        $orderItems = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.vid', $vid)->where('orders.status', "packed")->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))
         // ->select("line_items.sku as SKU","line_items.name as Name","line_items.quantity as Qty")
         // DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
         //                      WHERE line_items.order_id = orders.oid
@@ -195,12 +211,20 @@ class OrderController extends Controller {
         return $orderItems;
     }
     public function get_packdetail_Refund($vid) {
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)->where('orders.status', "dtodelivered")->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
+        $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.vid', $vid)->where('orders.status', "dtodelivered")->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
         return $orders;
     }
     public function getOrderOnStatus($vid, $status) {
         // echo "string"; die;
-        $orderItems = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)
+        $orderItems = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.vid', $vid)
         // ->where('billings.vid',$vid)
         ->where('orders.status', $status)->get();
         return $orderItems;
@@ -209,7 +233,11 @@ class OrderController extends Controller {
     {
         // echo "string"; die;
         $int_check = 0;
-        $orderItems = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)
+        $orderItems = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)
         ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])
         ->orderBy('orders.oid','DESC')
         ->get();
@@ -229,14 +257,18 @@ class OrderController extends Controller {
         $phone = $my_data[0]->phone;
         $add = $my_data[0]->add;
         $token = $my_data[0]->token;
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', '=', $vid)->where('orders.oid', '=', $oid)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.vid', '=', $vid)->where('orders.oid', '=', $oid)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
 		                                WHERE line_items.order_id = orders.oid
 		                                GROUP BY line_items.order_id) as quantity"))->get();
         $curl = curl_init();
         curl_setopt_array($curl, array(CURLOPT_URL => 'https://track.delhivery.com/api/cmu/create.json', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . $orders[0]->address_1 . ', ' . $orders[0]->address_2 . '",
+                              "add": "' . htmlentities($orders[0]->address_1) . ', ' . htmlentities($orders[0]->address_2) . '",
                               "phone": ' . $orders[0]->phone . ',
                               "payment_mode": "Pickup",
                               "name": "' . $orders[0]->first_name . '",
@@ -268,7 +300,7 @@ class OrderController extends Controller {
         $wbill = $new_val["packages"][0]["waybill"];
         $order_items = DB::table("waybill")->where('waybill.vid', $vid)->where('waybill.order_id', $oid)->get()->toArray();
         // var_dump($order_items); die;
-        if (!empty($order_items)) {
+        if (count($order_items) >= 1) {
             $curl = curl_init();
             $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
             curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=dtobooked', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
@@ -315,10 +347,14 @@ class OrderController extends Controller {
     }
     public function assignAWB(Request $request) {
         $main = explode(',', $request->allSelected);
-        // var_dump($request);
+        $vid = $request->vid;
         // echo "strong"; die;
         for ($i = 0;$i < count($main);$i++) {
-            $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.oid', intval($main[$i]))->where('orders.vid', $request->vid)->where('orders.status', 'confirmed')->get();
+            $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.oid', intval($main[$i]))->where('orders.vid', $request->vid)->where('orders.status', 'confirmed')->get();
             $my_data = DB::table("way_data")->where('vid', $request->vid)->get();
             $city = $my_data[0]->city;
             $name = $my_data[0]->name;
@@ -356,7 +392,7 @@ class OrderController extends Controller {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_2) . '",
+                              "add": "' . htmlentities($order->address_1) . ', ' . htmlentities($order->address_2) . '",
                               "phone": ' . $order->phone . ',
                               "payment_mode": "COD",
                               "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -381,7 +417,7 @@ class OrderController extends Controller {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_2) . '",
+                              "add": "' . htmlentities($order->address_1) . ', ' . htmlentities($order->address_2) . '",
                               "phone": ' . $order->phone . ',
                               "payment_mode": "Prepaid",
                               "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -408,17 +444,17 @@ class OrderController extends Controller {
                     $new_val = json_decode($response, true);
                     // if (isset($new_val["packages"])) {
                         if (!empty($new_val["packages"])) {
-                            if($new_val["packages"][0]['status'] == "Fail"){
-                                $curl = curl_init();
-                                $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
-                                curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=on-hold', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
-                                $response = curl_exec($curl);
-                                curl_close($curl);
-                                $jsonResp = json_decode($response);
-                                DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
-                                // return response()->json(['error' => true, 'msg' => $new_val['rmk'], "ErrorCode" => - 2], 200);
-                                $msg = "Delivery is not available on this pincode.";
-                            }else{
+                            // if($new_val["packages"][0]['status'] == "Fail"){
+                            //     $curl = curl_init();
+                            //     $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+                            //     curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=on-hold', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
+                            //     $response = curl_exec($curl);
+                            //     curl_close($curl);
+                            //     $jsonResp = json_decode($response);
+                            //     DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
+                            //     // return response()->json(['error' => true, 'msg' => $new_val['rmk'], "ErrorCode" => - 2], 200);
+                            //     $msg = "Delivery is not available on this pincode.";
+                            // }else{
                                 $wbill = $new_val["packages"][0]["waybill"];
                                 $o_id = $order_id;
                                 $order_items = DB::table("waybill")->where('waybill.vid', $request->vid)->where('waybill.order_id', $order_id)->get()->toArray();
@@ -452,7 +488,7 @@ class OrderController extends Controller {
                                     $msg = "Already Assign AWB No.";
                                     // return response()->json(['error' => true, 'msg' => "Already Assign AWB No.","ErrorCode" => -2],200);
                                 }
-                            }
+                            // }
                         } else {
                             $error = true;
                             $curl = curl_init();
@@ -500,7 +536,12 @@ class OrderController extends Controller {
     }
     function assignAWBOrder(Request $request) {
         // dd($request); die;
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', intval($request->vid))->where('orders.oid', intval($request->oid))->get();
+        $vid = $request->vid;
+        $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.vid', intval($request->vid))->where('orders.oid', intval($request->oid))->get();
         // var_dump($orders); die;
         $my_data = DB::table("way_data")->where('vid', intval($request->vid))->get();
         // var_dump($my_data); die;
@@ -535,8 +576,8 @@ class OrderController extends Controller {
             curl_close($curl2);
             $new_val2 = json_decode($response2, true);
 
-            // $addr = str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_2);
-            // echo $add;
+            // echo $addr = str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_1);
+            // echo $add; Bhanusree Lade, 501 Block 10, Myhomeavatar, Hyderabad 500089, Telangana
             // echo str_replace( array( '\'', '"', ';', '-', '<', '>' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>' ), ' ', $order->address_2); die;
             // 36 & 37 Suyog Residency 2 , B wing , Flat no 104, Sector 8 , Sanpada, Navi Mumbai
             // var_dump($new_val2); die;
@@ -550,7 +591,7 @@ class OrderController extends Controller {
                 $postfields = 'format=json&data={
 					  "shipments": [
 						{
-						  "add": "' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '&', ';', '-', '<', '>', '_' ), ' ', $order->address_2) . '",
+						  "add": "' . htmlentities($order->address_1) . ', ' . htmlentities($order->address_2) . '",
 						  "phone": ' . $order->phone . ',
 						  "payment_mode": "' . $payment_mode . '",
 						  "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -581,16 +622,16 @@ class OrderController extends Controller {
                 // var_dump($new_val["packages"][0]['status']); die;
                 // if(isset($new_val["packages"])){
                 if (!empty($new_val["packages"])) {
-                    if($new_val["packages"][0]['status'] == "Fail"){
-                        $curl = curl_init();
-                        $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
-                        curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=on-hold', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
-                        $response = curl_exec($curl);
-                        curl_close($curl);
-                        $jsonResp = json_decode($response);
-                        DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
-                        return response()->json(['error' => true, 'msg' => $new_val['rmk'], "ErrorCode" => - 2], 200);
-                    }else{
+                    // if($new_val["packages"][0]['status'] == "Fail"){
+                    //     $curl = curl_init();
+                    //     $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+                    //     curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=on-hold', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
+                    //     $response = curl_exec($curl);
+                    //     curl_close($curl);
+                    //     $jsonResp = json_decode($response);
+                    //     DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "on-hold"]);
+                    //     return response()->json(['error' => true, 'msg' => $new_val['rmk'], "ErrorCode" => - 2], 200);
+                    // }else{
                         $wbill = $new_val["packages"][0]["waybill"];
                         $o_id = $order_id;
                         $order_items = DB::table("waybill")->where('waybill.vid', $request->vid)->where('waybill.order_id', $order_id)->get()->toArray();
@@ -619,7 +660,7 @@ class OrderController extends Controller {
                             DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "packed"]);
                             return response()->json(['error' => false, 'msg' => "Already Assign AWB No.", "ErrorCode" => - 2], 200);
                         }
-                    }
+                    // }
                 } else {
                     $curl = curl_init();
                     $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
@@ -658,7 +699,12 @@ class OrderController extends Controller {
         $phone = $my_data[0]->phone;
         $add = $my_data[0]->add;
         $token = $my_data[0]->token;
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', '=', intval($vid))->where('orders.oid', '=', intval($oid))->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        $order_prefix = $my_data[0]->order_prefix;
+        $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.vid', '=', intval($vid))->where('orders.oid', '=', intval($oid))->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
                                         GROUP BY line_items.order_id) as quantity"))->get();
         if ($request->vid == 1) {
@@ -673,12 +719,12 @@ class OrderController extends Controller {
         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . $orders[0]->address_1 . ', ' . $orders[0]->address_2 . '",
+                              "add": "' . htmlentities($orders[0]->address_1) . ', ' . htmlentities($orders[0]->address_2) . '",
                               "phone": ' . $orders[0]->phone . ',
                               "payment_mode": "Pickup",
                               "name": "' . $orders[0]->first_name . '",
                               "pin": ' . $orders[0]->postcode . ',
-                              "order": "bbb_' . $oid . '",
+                              "order": "' . $order_prefix . $orders[0]->oid . '",
                               "return_state": "' . $city . '",
                                 "return_city": "' . $city . '",
                                 "return_phone": "' . $phone . '",
@@ -706,7 +752,7 @@ class OrderController extends Controller {
         $wbill = $new_val["packages"][0]["waybill"];
         $order_items = DB::table("waybill")->where('waybill.vid', $vid)->where('waybill.order_id', $oid)->get()->toArray();
         // var_dump($order_items); die;
-        if (!empty($order_items)) {
+        if (count($order_items) >= 1) {
             DB::table('waybill')->where('order_id', intval($request->oid))->where('vid', intval($request->vid))->update(['return_waybill_no' => $wbill]);
             DB::table('orders')->where('oid', intval($request->oid))->where('vid', intval($request->vid))->update(['status' => "dtobooked"]);
             $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
@@ -823,7 +869,12 @@ class OrderController extends Controller {
         // define barcode style
         $style = array('position' => 'C', 'align' => 'C', 'stretch' => false, 'fitwidth' => true, 'cellfitalign' => '', 'border' => false, 'hpadding' => '0', 'vpadding' => '0', 'fgcolor' => array(0, 0, 0), 'bgcolor' => false, //array(255,255,255),
         'text' => true, 'font' => 'helvetica', 'fontsize' => 8, 'stretchtext' => 4);
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $request->vid)->whereIn('orders.oid', $listImp)->where('orders.status', 'packed')->get();
+        $vid = $request->vid;
+        $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.vid', $request->vid)->whereIn('orders.oid', $listImp)->where('orders.status', 'packed')->get();
 
         if($request->vid == 1){
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
@@ -832,7 +883,7 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
         }elseif($request->vid == 3){
-            $address_store = '<p><span class="c_name">HK Texfab Pvt Ltd<br>GST NO : 03AAFCH1375M1ZJ</span><br>E-207 IV-A Focal Point,<br>141010 - Ludhiana, Punjab, India</p>';
+            $address_store = '<p><span class="c_name">HK Texfab Pvt Ltd<br>GST NO : 03AAFCH1375M1ZJ</span><br>E-207 IV-A Focal Point, Focal Point, Focal Point,<br>141010 - Patiala, Punjab, India</p>';
             $industry_name = "HK Texfab Pvt Ltd";
         }elseif($request->vid == 4){
             $address_store = '<p><span class="c_name">INDRA HOSIERY MILLS<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
@@ -846,6 +897,9 @@ class OrderController extends Controller {
         }elseif($request->vid == 10){
             $address_store = '<p><span class="c_name">ABS ENTREPRISES<br>GST NO : 03ABXFA0812G1ZP</span><br>PC-10, BAHDAUR HOSUE, C-10 CALIBRE PLAZA <br>141009 - Ludhiana, Punjab, India</p>';
             $industry_name = "ABS ENTREPRISES";
+        }elseif($request->vid == 11){
+            $address_store = '<p><span class="c_name">Oh Ex<br>GST NO : 03EIIPP4249C1ZE</span><br>Deep Vihar, E-10/7530/9, Village Famra Bahadur ke Road<br>Deep Vihar, The Knit Lounge, <br>141004 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Oh Ex";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
@@ -856,7 +910,7 @@ class OrderController extends Controller {
         foreach ($orders as $order) {
             $oid = $order->oid;
             $results2 = DB::table("waybill")->where('vid', $request->vid)->where('order_id', $oid)->get()->toArray();
-            if (!empty($results2)) {
+            if (count($results2) >= 1) {
                 $wbill = $results2[0]->waybill_no;
                 $img_base64_encoded = 'data:image/png;base64,' . $d->getBarcodePNG($wbill, 'C128', 3, 33, array(1, 1, 1));
                 $params = '<img src="@' . preg_replace('#^data:image/[^;]+;base64,#', '', $img_base64_encoded) . '">';
@@ -1054,7 +1108,12 @@ class OrderController extends Controller {
         // define barcode style
         $style = array('position' => 'C', 'align' => 'C', 'stretch' => false, 'fitwidth' => true, 'cellfitalign' => '', 'border' => false, 'hpadding' => '0', 'vpadding' => '0', 'fgcolor' => array(0, 0, 0), 'bgcolor' => false, //array(255,255,255),
         'text' => true, 'font' => 'helvetica', 'fontsize' => 8, 'stretchtext' => 4);
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $request->vid)->where('orders.oid', $request->oid)->where('orders.status', 'packed')->get();
+        $vid = $request->vid;
+        $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.vid', $request->vid)->where('orders.oid', $request->oid)->where('orders.status', 'packed')->get();
 
         if($request->vid == 1){
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
@@ -1063,7 +1122,7 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
         }elseif($request->vid == 3){
-            $address_store = '<p><span class="c_name">HK Texfab Pvt Ltd<br>GST NO : 03AAFCH1375M1ZJ</span><br>E-207 IV-A Focal Point,<br>141010 - Ludhiana, Punjab, India</p>';
+            $address_store = '<p><span class="c_name">HK Texfab Pvt Ltd<br>GST NO : 03AAFCH1375M1ZJ</span><br>E-207 IV-A Focal Point, Focal Point, Focal Point,<br>141010 - Patiala, Punjab, India</p>';
             $industry_name = "HK Texfab Pvt Ltd";
         }elseif($request->vid == 4){
             $address_store = '<p><span class="c_name">INDRA HOSIERY MILLS<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
@@ -1077,6 +1136,9 @@ class OrderController extends Controller {
         }elseif($request->vid == 10){
             $address_store = '<p><span class="c_name">ABS ENTREPRISES<br>GST NO : 03ABXFA0812G1ZP</span><br>PC-10, BAHDAUR HOSUE, C-10 CALIBRE PLAZA <br>141009 - Ludhiana, Punjab, India</p>';
             $industry_name = "ABS ENTREPRISES";
+        }elseif($request->vid == 11){
+            $address_store = '<p><span class="c_name">Oh Ex<br>GST NO : 03EIIPP4249C1ZE</span><br>Deep Vihar, E-10/7530/9, Village Famra Bahadur ke Road<br>Deep Vihar, The Knit Lounge, <br>141004 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Oh Ex";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
@@ -1084,7 +1146,7 @@ class OrderController extends Controller {
 
         $oid = $request->oid;
         $results2 = DB::table("waybill")->where('vid', $request->vid)->where('order_id', $oid)->get()->toArray();
-        if (!empty($results2)) {
+        if (count($results2) >= 1) {
             $wbill = $results2[0]->waybill_no;
             $img_base64_encoded = 'data:image/png;base64,' . $d->getBarcodePNG($wbill, 'C128', 3, 33, array(1, 1, 1));
             $params = '<img src="@' . preg_replace('#^data:image/[^;]+;base64,#', '', $img_base64_encoded) . '">';
@@ -1283,7 +1345,12 @@ class OrderController extends Controller {
     }
     public function city_Search(Request $request) {
         // $order=orders::whereBetween('date_created_gmt',$range)->get();
-        $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $request->vid)->where('billings.vid', $request->vid)->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"))
+        $vid = $request->vid;
+        $order = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.vid', $request->vid)->where('billings.vid', $request->vid)->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"))
         // ->Where('billings.city', 'like', '%' . $request->city . '%')
         ->Where('billings.city', $request->city)->get();
         // ->select("orders.*","billings.*","line_items.*",
@@ -1295,7 +1362,11 @@ class OrderController extends Controller {
     }
     public function get_processing_data($vid, $status) {
         // echo $status; die;
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)->where('orders.status', $status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
+        $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.vid', $vid)->where('billings.vid', $vid)->where('orders.status', $status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
         return $orders;
     }
     public function state_Search(Request $request) {
@@ -1321,7 +1392,12 @@ class OrderController extends Controller {
         return $order;
     }
     public function status_Search(Request $request) {
-        $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"))->Where('orders.status', $request->status)->where('orders.vid', $request->vid)->where('billings.vid', $request->vid)->get();
+      $vid = $request->vid;
+        $order = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"))->Where('orders.status', $request->status)->where('orders.vid', $request->vid)->where('billings.vid', $request->vid)->get();
         return $order;
     }
     public function zone_Search(Request $request) {
@@ -1426,9 +1502,11 @@ class OrderController extends Controller {
     public function getProcessingOrder_Details(Request $request) {
         $vendor = $request->vid;
         if ($vendor != null) {
-            $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
-            // ->join('waybill','orders.oid','=','waybill.order_id')
-            ->where('orders.vid', '=', intval($vendor))->where('billings.vid', '=', intval($vendor))->orderBy('oid', 'DESC')
+            $orders = DB::table("orders")->join('billings', function($join) use ($vendor)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vendor));
+        })->where('orders.vid', '=', intval($vendor))->where('billings.vid', '=', intval($vendor))->orderBy('oid', 'DESC')
             // ->select("orders.*","waybill.waybill_no","orders.status as orderstatus","billings.*",
             ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
         } else {
@@ -1442,9 +1520,17 @@ class OrderController extends Controller {
         if ($request->allSelected) {
             $listImp = explode(',', $request->allSelected);
             $vid = intval($request->vid);
-            $orders[] = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->select("orders.oid as OrderID", "orders.date_created as OrderDate", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', $vid)->where('orders.status', "processing")->where('orders.vid', $vid)->whereIn('orders.oid', $listImp)->orderBy('oid', 'DESC')->get();
+            $orders[] = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->select("orders.oid as OrderID", "orders.date_created as OrderDate", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', $vid)->where('orders.status', "processing")->where('orders.vid', $vid)->whereIn('orders.oid', $listImp)->orderBy('oid', 'DESC')->get();
         } else {
-            $orders[] = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->select("orders.oid as OrderID", "orders.date_created as OrderDate", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', intval($request->vid))->where('orders.status', "processing")->where('billings.vid', intval($request->vid))->get();
+            $orders[] = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->select("orders.oid as OrderID", "orders.date_created as OrderDate", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', intval($request->vid))->where('orders.status', "processing")->where('billings.vid', intval($request->vid))->get();
         }
         return $orders;
     }
@@ -1452,9 +1538,17 @@ class OrderController extends Controller {
         if ($request->allSelected) {
             $listImp = explode(',', $request->allSelected);
             $vid = intval($request->vid);
-            $orders[] = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->select("orders.oid as OrderID", "orders.date_created as OrderDate", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', $vid)->where('orders.status', "on-hold")->where('orders.vid', $vid)->whereIn('orders.oid', $listImp)->orderBy('oid', 'DESC')->get();
+            $orders[] = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->select("orders.oid as OrderID", "orders.date_created as OrderDate", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', $vid)->where('orders.status', "on-hold")->where('orders.vid', $vid)->whereIn('orders.oid', $listImp)->orderBy('oid', 'DESC')->get();
         } else {
-            $orders[] = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->select("orders.oid as OrderID", "orders.date_created as OrderDate", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', intval($request->vid))->where('orders.status', "on-hold")->where('billings.vid', intval($request->vid))->get();
+            $orders[] = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->select("orders.oid as OrderID", "orders.date_created as OrderDate", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', intval($request->vid))->where('orders.status', "on-hold")->where('billings.vid', intval($request->vid))->get();
         }
         return $orders;
     }
@@ -1462,9 +1556,17 @@ class OrderController extends Controller {
         if ($request->allSelected) {
             $listImp = explode(',', $request->allSelected);
             $vid = intval($request->vid);
-            $orders[] = DB::table("orders")->join('line_items', 'orders.oid', '=', 'line_items.order_id')->select("orders.oid as OrderID", "orders.date_created as OrderDate", "line_items.product_id as Item ID", "line_items.name as Item Name", "line_items.sku as SKU", "line_items.quantity as Qty")->where('orders.vid', $vid)->where('line_items.vid', $vid)->where('orders.status', "confirmed")->whereIn('orders.oid', $listImp)->orderBy('oid', 'DESC')->get();
+            $orders[] = DB::table("orders")->join('line_items', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'line_items.order_id')
+                 ->where('line_items.vid', '=', intval($vid));
+        })->select("orders.oid as OrderID", "orders.date_created as OrderDate", "line_items.product_id as Item ID", "line_items.name as Item Name", "line_items.sku as SKU", "line_items.quantity as Qty")->where('orders.vid', $vid)->where('line_items.vid', $vid)->where('orders.status', "confirmed")->whereIn('orders.oid', $listImp)->orderBy('oid', 'DESC')->get();
         } else {
-            $orders[] = DB::table("orders")->join('line_items', 'orders.oid', '=', 'line_items.order_id')->select("orders.oid as OrderID", "orders.date_created as OrderDate", "line_items.product_id as Item ID", "line_items.name as Item Name", "line_items.sku as SKU", "line_items.quantity as Qty")->where('orders.vid', intval($request->vid))->where('orders.status', "confirmed")->where('line_items.vid', intval($request->vid))->get();
+            $orders[] = DB::table("orders")->join('line_items', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'line_items.order_id')
+                 ->where('line_items.vid', '=', intval($vid));
+        })->select("orders.oid as OrderID", "orders.date_created as OrderDate", "line_items.product_id as Item ID", "line_items.name as Item Name", "line_items.sku as SKU", "line_items.quantity as Qty")->where('orders.vid', intval($request->vid))->where('orders.status', "confirmed")->where('line_items.vid', intval($request->vid))->get();
         }
         return $orders;
     }
@@ -1472,9 +1574,17 @@ class OrderController extends Controller {
         if ($request->allSelected) {
             $listImp = explode(',', $request->allSelected);
             $vid = intval($request->vid);
-            $orders[] = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->select("orders.oid as OrderID", "orders.date_created as OrderDate", "orders.payment_method as Payment Method", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', $vid)->where('orders.status', $request->status)->where('orders.vid', $vid)->whereIn('orders.oid', $listImp)->orderBy('oid', 'DESC')->get();
+            $orders[] = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->select("orders.oid as OrderID", "orders.date_created as OrderDate", "orders.payment_method as Payment Method", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', $vid)->where('orders.status', $request->status)->where('orders.vid', $vid)->whereIn('orders.oid', $listImp)->orderBy('oid', 'DESC')->get();
         } else {
-            $orders[] = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->select("orders.oid as OrderID", "orders.date_created as OrderDate", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', intval($request->vid))->where('orders.status', $request->status)->where('billings.vid', intval($request->vid))->get();
+            $orders[] = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->select("orders.oid as OrderID", "orders.date_created as OrderDate", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', intval($request->vid))->where('orders.status', $request->status)->where('billings.vid', intval($request->vid))->get();
         }
         return $orders;
     }
@@ -1482,9 +1592,17 @@ class OrderController extends Controller {
         if ($request->selectall) {
             $listImp = explode(',', $request->selectall);
             $vid = intval($request->vid);
-            $orders[] = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->select("orders.oid as OrderID", "orders.date_created as OrderDate", "orders.payment_method as Payment Method", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', $vid)->where('orders.status', "dispatched")->where('orders.vid', $vid)->whereIn('orders.oid', $listImp)->orderBy('oid', 'DESC')->get();
+            $orders[] = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->select("orders.oid as OrderID", "orders.date_created as OrderDate", "orders.payment_method as Payment Method", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', $vid)->where('orders.status', "dispatched")->where('orders.vid', $vid)->whereIn('orders.oid', $listImp)->orderBy('oid', 'DESC')->get();
         } else {
-            $orders[] = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->select("orders.oid as OrderID", "orders.date_created as OrderDate", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', intval($request->vid))->where('orders.status', "dispatched")->where('billings.vid', intval($request->vid))->get();
+            $orders[] = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->select("orders.oid as OrderID", "orders.date_created as OrderDate", "billings.first_name as First Name", "billings.last_name as Last Name", "billings.city as City", "billings.state as State", "billings.email as Email", "billings.email as Email")->where('orders.vid', intval($request->vid))->where('orders.status', "dispatched")->where('billings.vid', intval($request->vid))->get();
         }
         return $orders;
     }
@@ -1494,10 +1612,10 @@ class OrderController extends Controller {
         $order_items1 = DB::table("waybill")->where('waybill.vid', intval($request->vid))->where('waybill.order_id', intval($request->dispatch))->limit(1)->get()->toArray();
         $order_items2 = DB::table("waybill")->where('waybill.vid', intval($request->vid))->where('waybill.waybill_no', intval($request->dispatch))->limit(1)->get()->toArray();
         $order_items = array_merge($order_items1,$order_items2);
-        // var_dump($order_items); die;
         // echo $orders[0]->status; die;
         // foreach ($order_items as $order) {
-        if(!empty($orders)){
+        if(count($order_items) >= 1){
+        // var_dump($order_items); die;
           $orders = DB::table("orders")->where('orders.oid', intval($order_items[0]->order_id))->get()->toArray();
           if($orders[0]->status == "packed"){
               $this->changeOrderStatus(intval($request->vid), intval($order_items[0]->order_id), "dispatched");
@@ -1711,7 +1829,7 @@ class OrderController extends Controller {
                     $pw=$product_weight[0]->weight;
                     if($pw==0)
                     {   
-                        $pw=250;
+                        $pw=490;
                     }
                     $qty=$line_items_qty[0]->quantity;
                     $total_weight=($pw)*($qty);
@@ -1734,7 +1852,7 @@ class OrderController extends Controller {
                     $cod_charges = 0;
                     if($pw==0)
                     {   
-                        $pw=250;
+                        $pw=490;
                     }
                     $qty=$line_items_qty[0]->quantity;
                     $total_weight=($pw)*($qty);
