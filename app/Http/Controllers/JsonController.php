@@ -91,10 +91,12 @@ class JsonController extends Controller
 
  	public function InsertOrderID($order, $vid, $url)
 	{
-
+		// var_dump($order); die;
 		$orderItems =DB::table("orders")->where('oid','=',$order->id)->where('vid','=',intval($vid))->get()->toArray();
-		
-		if(!empty($orderItems)){}else{
+		// var_dump($orderItems); die;
+		if(!empty($orderItems)){
+			// echo "string"; die;
+		}else{
 		
           	$Orders[]=[
 				'oid'=>$order->id,
@@ -429,6 +431,8 @@ class JsonController extends Controller
 				if ($status == "Manifested" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "dispatched";
 				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
+					$status = "intransit";
+				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "RT" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "intransit";
 				}else if ($status == "Dispatched" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "intransit";
@@ -887,29 +891,29 @@ class JsonController extends Controller
 			
 	public function insertLineItems($IDLineItem,$LineItemData,$vid)
 	{
-		foreach($LineItemData as $LineItem)
-		{
-			$LineItems[]=[
-				'vid'=>intval($vid),
-			 	'order_id'=>$IDLineItem,
-			 	'line_item_id'=>$LineItem->id,
-			 	'name'=>$LineItem->name,
-			 	'product_id'=>$LineItem->product_id,
-			 	'variation_id'=>$LineItem->variation_id,
-			 	'quantity'=>$LineItem->quantity,
-			 	'tax_class'=>$LineItem->tax_class,
-			 	'subtotal'=>$LineItem->subtotal,
-			 	'subtotal_tax'=>$LineItem->subtotal_tax,
-			 	'total'=>$LineItem->total,
-			 	'total_tax'=>$LineItem->total_tax,
-			 	'sku'=>$LineItem->sku,
-			 	'price'=>$LineItem->price,
-			 	'parent_name'=>$LineItem->parent_name,
-			];
-	  
-	  	
-	  	}
-		  LineItems::insert($LineItems);
+		if(!empty($LineItemData)){
+			foreach($LineItemData as $LineItem)
+			{
+				$LineItems2[]=[
+					'vid'=>intval($vid),
+				 	'order_id'=>$IDLineItem,
+				 	'line_item_id'=>$LineItem->id,
+				 	'name'=>$LineItem->name,
+				 	'product_id'=>$LineItem->product_id,
+				 	'variation_id'=>$LineItem->variation_id,
+				 	'quantity'=>$LineItem->quantity,
+				 	'tax_class'=>$LineItem->tax_class,
+				 	'subtotal'=>$LineItem->subtotal,
+				 	'subtotal_tax'=>$LineItem->subtotal_tax,
+				 	'total'=>$LineItem->total,
+				 	'total_tax'=>$LineItem->total_tax,
+				 	'sku'=>$LineItem->sku,
+				 	'price'=>$LineItem->price,
+				 	'parent_name'=>$LineItem->parent_name,
+				];
+		  	}
+			LineItems::insert($LineItems2);
+		}
 	}
 
 	/*public function OrderMetaData($OrderID,$Order_MetaData)
