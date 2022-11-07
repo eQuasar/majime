@@ -184,7 +184,11 @@ class OrderController extends Controller {
         return $orders;
     }
     public function getPackdetail($vid) {
-        $orderItems = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')
+        $orderItems = DB::table("orders")->join('billings', function($join)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', 10);
+        })
         // ->join('line_items','orders.oid','=','line_items.order_id')
         ->where('orders.vid', $vid)->where('orders.status', "packed")->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))
         // ->select("line_items.sku as SKU","line_items.name as Name","line_items.quantity as Qty")
@@ -199,8 +203,13 @@ class OrderController extends Controller {
         return $orders;
     }
     public function getOrderOnStatus($vid, $status) {
-        // echo "string"; die;
-        $orderItems = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)
+      // echo $vid;
+      //   echo "string"; die;
+        $orderItems = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.vid', $vid)
         // ->where('billings.vid',$vid)
         ->where('orders.status', $status)->get();
         return $orderItems;
@@ -1291,8 +1300,16 @@ class OrderController extends Controller {
         return $order;
     }
     public function get_processing_data($vid, $status) {
-        // echo $status; die;
-        $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', $vid)->where('orders.status', $status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
+        // global $vid; 
+      // echo $vid; die;
+        $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->where('orders.vid', $vid)->where('billings.vid', $vid)->where('orders.status', $status)->get();
+
+        // ->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
+       
         return $orders;
     }
     public function state_Search(Request $request) {

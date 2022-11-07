@@ -15,7 +15,12 @@ class ProductController extends Controller {
 
     public function productDetail(Request $request) {
         $vendor = $request->vid;
-        $order = DB::table('line_items')->join('orders', 'orders.oid', '=', 'line_items.order_id')
+
+        $order = DB::table('line_items')->join('orders', function($join) use ($vendor)
+        {
+            $join->on('orders.oid', '=', 'line_items.order_id')
+                 ->where('billings.vid', '=', intval($vendor));
+        })
         // ->distinct()
         // 					->select('line_items.*',
         // 							DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = 6726 AND line_items.vid = ".intval($vendor)." GROUP BY line_items.order_id) as quantity"))
