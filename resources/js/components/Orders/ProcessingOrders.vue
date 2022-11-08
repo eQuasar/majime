@@ -198,10 +198,9 @@ export default {
             label: 'Order ID',
             sortable: true
           },
-
           {
-            key: 'name' ,
-            label: 'Name',
+            key: 'date_created_gmt',
+            label: 'Order Date ',
             sortable: true
           },
 
@@ -216,6 +215,11 @@ export default {
             sortable: true
           },
           {
+            key: 'name' ,
+            label: 'Name',
+            sortable: true
+          },
+          {
             key: 'state',
             label: 'State',
             sortable: true
@@ -225,30 +229,24 @@ export default {
             label: 'City',
             sortable: true
           },
-       
-          {
-            key: 'date_created_gmt',
-            label: 'Order Date ',
-            sortable: true
-          },
-          
-          {
-            key: 'payment_method_title',
-            label: 'Payment Mode',
-            sortable: false
-          },
           {
             key: 'phone',
             label: 'Contact',
             sortable: false
           },
           {
+            key: 'payment_method_title',
+            label: 'Payment Mode',
+            sortable: false
+          },
+          
+          {
             key: 'status',
             label: 'Status',
             sortable: true
           },
           {
-            key: 'customer_note',
+            key: 'waybill_no',
             label: 'AWB',
             sortable: false
           },
