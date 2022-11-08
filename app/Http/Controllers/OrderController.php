@@ -181,14 +181,24 @@ class OrderController extends Controller {
             }
         }
         if ($vendor != null) {
+        //     $orders = DB::table("orders")->join('billings', function($join) use ($vendor)
+        // {
+        //     $join->on('orders.oid', '=', 'billings.order_id')
+        //          ->where('billings.vid', '=', intval($vendor));
+        // })->where('orders.vid', '=', intval($vendor))->orderBy('oid', 'DESC')
+        //     ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
+            // echo "abc";die();
             $orders = DB::table("orders")->join('billings', function($join) use ($vendor)
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vendor));
-        })->where('orders.vid', '=', intval($vendor))->orderBy('oid', 'DESC')
-            // ->select("orders.*","waybill.waybill_no","orders.status as orderstatus","billings.*",
-            ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
-            // echo "abc";die();
+        })->join('waybill', function($join) use ($vendor)
+        {
+            $join->on('orders.oid', '=', 'waybill.order_id')
+                 ->where('waybill.vid', '=', intval($vendor));
+        })->where('orders.vid', '=', intval($vendor))->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", "waybill.waybill_no", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                                        WHERE line_items.order_id = orders.oid
+                                        GROUP BY line_items.order_id) as quantity"))->get();
         } else {
             $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', '=', intval($vendor))->where('billings.vid', '=', intval($vendor))->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
@@ -1091,6 +1101,9 @@ class OrderController extends Controller {
         
     }
     function printOrderSlip(Request $request) {
+        
+    //   var_dump($request->ods); die;
+        $dis_status=$request->ods;
         $d = new DNS1D();
         // create new PDF document
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -1109,12 +1122,24 @@ class OrderController extends Controller {
         $style = array('position' => 'C', 'align' => 'C', 'stretch' => false, 'fitwidth' => true, 'cellfitalign' => '', 'border' => false, 'hpadding' => '0', 'vpadding' => '0', 'fgcolor' => array(0, 0, 0), 'bgcolor' => false, //array(255,255,255),
         'text' => true, 'font' => 'helvetica', 'fontsize' => 8, 'stretchtext' => 4);
         $vid = $request->vid;
+        if($dis_status == 'dispacthed')
+        {
+            
+            $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+            {
+                $join->on('orders.oid', '=', 'billings.order_id')
+                     ->where('billings.vid', '=', intval($vid));
+            })->where('orders.vid', $request->vid)->where('orders.oid', $request->oid)->where('orders.status', 'dispatched')->get();
+            
+        }
+        else{
         $orders = DB::table("orders")->join('billings', function($join) use ($vid)
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
         })->where('orders.vid', $request->vid)->where('orders.oid', $request->oid)->where('orders.status', 'packed')->get();
-
+    }
+    
         if($request->vid == 1){
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
@@ -1366,7 +1391,9 @@ class OrderController extends Controller {
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })->where('orders.vid', $vid)->where('billings.vid', $vid)->where('orders.status', $status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
+        })
+        ->where('orders.vid', $vid)->where('billings.vid', $vid)->where('orders.status', $status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
+        
         return $orders;
     }
     public function state_Search(Request $request) {
@@ -1485,6 +1512,15 @@ class OrderController extends Controller {
                 ];   
             }
             elseif($request->status_assign=='cancelled')
+            {
+                $date = date('Y-m-d');
+                $confirm_order_data[]=[     
+                'vid'=>$request->vid,
+                'oid'=>$listImp[$i],
+                'order_canceldate'=>$date,
+                ];   
+            }
+            elseif($request->status_assign=='dispatched')
             {
                 $date = date('Y-m-d');
                 $confirm_order_data[]=[     

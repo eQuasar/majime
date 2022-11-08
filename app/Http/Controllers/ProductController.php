@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 use PDF;
 class ProductController extends Controller {
 
+    
+
     public function productDetail(Request $request) {
         $vendor = $request->vid;
         $order = DB::table('line_items')->join('orders', function($join) use ($vendor)

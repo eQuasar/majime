@@ -28,11 +28,9 @@
                             </b-row>
                           </div>
                         </div>
-                     
-
-                          </div>
                         </div>
-                         </b-col>
+                        </div>
+                        </b-col>
                     </b-row>
    <!--  </br> -->
    <!--  <div class="content_bar"> 
@@ -115,6 +113,19 @@
                <p class="h3 mb-2">   <router-link :to="{ name: 'OrderProfile', params: { oid:(row.item.oid).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
                 &nbsp;&nbsp; <b-link @click="addstatus(row.item.oid)"><b-icon icon="type-strikethrough" variant="primary" aria-hidden="true" data-toggle="tooltip" title="Change Status"></b-icon></b-link></p>
               </template> -->
+              <template v-slot:cell(action)="row">
+                  <p class="h3 mb-2">
+                    <b-link @click="printOrderSlip(row.item.oid)"
+                      ><b-icon
+                        icon="printer-fill"
+                        aria-hidden="true"
+                        data-toggle="tooltip"
+                        title="Print Order Slip"
+                      ></b-icon></b-link
+                    >
+                  </p>
+                  <!-- v-model="statusAssign" -->
+                </template>
       </b-table>
           <div class="text-center" v-if="seen">
               <b-spinner variant="primary" label="Text Centered"></b-spinner>
@@ -155,8 +166,7 @@
                           <b-button type="submit" @click.prevent="assign_status" variant="primary">Submit</b-button>
                  </b-form> 
       </b-modal>
-
-       <b-modal id="modal-2" title="Set Dispatch Status:" hide-footer  size="lg">
+      <b-modal id="modal-2" title="Set Dispatch Status:" hide-footer  size="lg">
           <b-form>
             <b-form-input
               id="input-live"
@@ -268,11 +278,16 @@
             label: 'Status',
             sortable: true
           },
-            // {
-            //   key: 'action',
-            //   label: 'Action',
-            //   sortable: false
-            // }
+          {
+            key: 'customer_note',
+            label: 'AWB',
+            sortable: false
+          },
+            {
+              key: 'action',
+              label: 'Action',
+              sortable: false
+            }
         ],
         items:[],
         errors_create:[],
@@ -287,6 +302,49 @@ computed: {
       }
     },
     methods: {
+      printSlip() {
+      if (this.allSelected != "") {
+        this.show = true;
+        this.vid = JSON.parse(localStorage.getItem("ivid"));
+        let formData = new FormData();
+        formData.append("allSelected", this.allSelected);
+        formData.append("vid", this.vid);
+        order
+          .printSlip(formData)
+          .then((response) => {
+            this.$alert("", response.data.msg);
+            this.show = false;
+            window.open(response.data.pdf_url);
+          })
+          .catch((response) => {
+            this.successful = false;
+            this.$alert("something went wrong");
+          });
+      } else {
+        this.$alert("", "Please choose at least one value from checkbox...");
+      }
+    },
+      printOrderSlip(oid) {
+      this.show = true;
+      // alert('Assigned Successfully');
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      formData.append("oid", oid);
+      formData.append("ods","dispacthed");
+      order
+        .printOrderSlip(formData)
+        .then((response) => {
+          this.$alert("", response.data.msg);
+          // alert(response.data.msg);
+          this.show = false;
+          window.open(response.data.pdf_url);
+        })
+        .catch((response) => {
+          this.successful = false;
+          this.$alert("something went wrong");
+        });
+    },
       assign_dispatch() 
         {
           let formData = new FormData();
@@ -588,8 +646,7 @@ computed: {
           });
           this.show=false;
       }, 
-
-  },
+    },
 };  
 </script>
 

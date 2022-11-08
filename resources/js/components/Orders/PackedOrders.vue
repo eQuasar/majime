@@ -35,14 +35,14 @@
                   >
                 </b-col>
                 <b-col xl="6" lg="6" md="6">
-                  <!-- <button
+                  <button
                     type="button"
                     class="download-btn btn btn-primary"
                     v-on:click="confirmstatus"
                     style="margin-left: 15px"
                   >
                     Dispatch
-                  </button> -->
+                  </button>
                   <button
                     type="button"
                     class="download-btn btn btn-primary"
@@ -234,6 +234,16 @@ export default {
           label: "Payment",
           sortable: true,
         },
+        {
+            key: 'status',
+            label: 'Status',
+            sortable: true
+          },
+        {
+            key: 'customer_note',
+            label: 'AWB',
+            sortable: false
+          },
         {
           key: "action",
           label: "Action",

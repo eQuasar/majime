@@ -216,6 +216,11 @@ export default {
           label: "Status",
           sortable: true,
         },
+        {
+            key: 'customer_note',
+            label: 'AWB',
+            sortable: false
+          },
 
         {
           key: "action",
