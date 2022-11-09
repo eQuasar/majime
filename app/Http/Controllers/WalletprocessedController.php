@@ -121,12 +121,17 @@ class WalletprocessedController extends Controller
             $walletUsedAmt = $sale_Amount - $amtPaid;
             
             //calculate majime cost 
-            $majime_cost=(($order_table[0]->total)*($mjm_cost/100));
+            $majime_cost=(($order_table[0]->total-$walletUsedAmt)*($mjm_cost/100));
             if($order_table[0]->payment_method == 'cod' || $order_table[0]->payment_method == 'wps_wcb_wallet_payment_gateway')
             {
                 $payment_gateway=0;
             }else{
-                $payment_gateway=(($order_table[0]->total)*2.36/100);
+                if ($vendor == 10){         // This needs to be changed for Payment Gateway External or Internal
+                    $payment_gateway=0;
+                }else{
+                    $payment_gateway=(($order_table[0]->total)*2.36/100);
+                }
+                
             }
              
             if(count($oc_balance) >= 1){
@@ -179,9 +184,7 @@ class WalletprocessedController extends Controller
                     else{
                         $cod_cost=$zone_price;
                         $logistic_cost=$cod_cost+$cod_charges;
-                    }                        
-                        $net_amount=$sale_Amount-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
-                        $closing_bal=$opening_balance+$net_amount;
+                    } 
                 }
                 //caluclate logistic cost if payment method is Wallet Used
                 elseif ($order_table[0]->payment_method == 'wps_wcb_wallet_payment_gateway'){
@@ -204,9 +207,6 @@ class WalletprocessedController extends Controller
                         $cod_cost=$zone_price;
                         $logistic_cost=$cod_cost+$cod_charges;
                     }
-                    $net_amount=$sale_Amount-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
-                    $closing_bal=$opening_balance+$net_amount;
-                   
                 }
                 //caluclate logistic cost if payment method is prepaid
                 else{
@@ -228,16 +228,23 @@ class WalletprocessedController extends Controller
                         $cod_cost=$zone_price;
                         $logistic_cost=$cod_cost+$cod_charges;
                     }
-                    $net_amount=$sale_Amount-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
-                    $closing_bal=$opening_balance+$net_amount;
-                   
                 }
+                if($vendor!=10){
+                    $net_amount=$sale_Amount-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                }else{
+                    if ($order_table[0]->payment_method != 'wps_wcb_wallet_payment_gateway' && $order_table[0]->payment_method != 'cod'){
+                        $net_amount=0-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                    }else{
+                        $net_amount=$sale_Amount-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                    }
+                }
+                $closing_bal=$opening_balance+$net_amount;
             }
             else{
                 //order status is rto-delivered
                 $logistic_cost=$zone_price;
                 $majime_cost=0;
-                $net_amount=0-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                $net_amount=0-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                 $closing_bal=$opening_balance+$net_amount;
                 
             }

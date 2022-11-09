@@ -268,7 +268,7 @@ class OrderController extends Controller {
         curl_setopt_array($curl, array(CURLOPT_URL => 'https://track.delhivery.com/api/cmu/create.json', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . htmlentities($orders[0]->address_1) . ', ' . htmlentities($orders[0]->address_2) . '",
+                              "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
                               "phone": ' . $orders[0]->phone . ',
                               "payment_mode": "Pickup",
                               "name": "' . $orders[0]->first_name . '",
@@ -392,7 +392,7 @@ class OrderController extends Controller {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . htmlentities($order->address_1) . ', ' . htmlentities($order->address_2) . '",
+                              "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
                               "phone": ' . $order->phone . ',
                               "payment_mode": "COD",
                               "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -400,7 +400,7 @@ class OrderController extends Controller {
                               "cod_amount":' . $order->total . ',
                               "order": "' . $order_prefix . $order->oid . '",
                               "shipping_mode" : "Surface",
-                              "products_desc": "' . $product_name . '"
+                              "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '"
                             }
                           ],
                           "pickup_location": 
@@ -417,7 +417,7 @@ class OrderController extends Controller {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . htmlentities($order->address_1) . ', ' . htmlentities($order->address_2) . '",
+                              "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
                               "phone": ' . $order->phone . ',
                               "payment_mode": "Prepaid",
                               "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -425,7 +425,7 @@ class OrderController extends Controller {
                               "cod_amount":' . $order->total . ',
                               "order": "' . $order_prefix . $order->oid . '",
                               "shipping_mode" : "Surface",
-                              "products_desc": "' . $product_name . '"
+                              "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '"
                             }
                           ],
                           "pickup_location": 
@@ -543,6 +543,7 @@ class OrderController extends Controller {
                  ->where('billings.vid', '=', intval($vid));
         })->where('orders.vid', intval($request->vid))->where('orders.oid', intval($request->oid))->get();
         // var_dump($orders); die;
+        // echo "string"; die;
         $my_data = DB::table("way_data")->where('vid', intval($request->vid))->get();
         // var_dump($my_data); die;
         $city = $my_data[0]->city;
@@ -591,15 +592,15 @@ class OrderController extends Controller {
                 $postfields = 'format=json&data={
 					  "shipments": [
 						{
-						  "add": "' . htmlentities($order->address_1) . ', ' . htmlentities($order->address_2) . '",
+						  "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
 						  "phone": ' . $order->phone . ',
 						  "payment_mode": "' . $payment_mode . '",
-						  "name": "' . $order->first_name . ' ' . $order->last_name . '",
+						  "name": "' . htmlentities($order->first_name) . ' ' . htmlentities($order->last_name) . '",
 						  "pin": ' . $order->postcode . ',
 						  "cod_amount":' . $order->total . ',
 						  "order": "' . $order_prefix . $order->oid . '",
 						  "shipping_mode" : "Surface",
-						  "products_desc": "' . $product_name . '"
+						  "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '"
 						}
 					  ],
 					  "pickup_location": 
@@ -612,7 +613,7 @@ class OrderController extends Controller {
 						  "add": "' . $add . '"
 						}
 					}';
-                //     echo $token; echo "<br>";
+                    // echo $postfields; die;
                 // echo $postfields; die;
                 curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => $postfields, CURLOPT_HTTPHEADER => array('Authorization: Token ' . $token, 'Content-Type: application/json', 'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'),));
                 $response = curl_exec($curl);
@@ -719,7 +720,7 @@ class OrderController extends Controller {
         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . htmlentities($orders[0]->address_1) . ', ' . htmlentities($orders[0]->address_2) . '",
+                              "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
                               "phone": ' . $orders[0]->phone . ',
                               "payment_mode": "Pickup",
                               "name": "' . $orders[0]->first_name . '",
