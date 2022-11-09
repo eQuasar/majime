@@ -99,6 +99,7 @@
               No record found, choose date filter to found the result.
             </p>
           </template>
+          <template v-slot:cell(waybill_no)="row"> NA </template>
           <template v-slot:cell(oid)="row"> #{{ row.item.oid }} </template>
           <template v-slot:cell(sr)="row">
             {{ (currentPage - 1) * perPage + row.index + 1 }}
@@ -290,7 +291,7 @@ export default {
           {
             key: 'waybill_no',
             label: 'AWB',
-            sortable: false,
+            sortable: false
           },
           {
             key: 'action',
