@@ -81,6 +81,9 @@
               <template v-slot:cell(oid)="row">
                 #{{(row.item.oid)}}
               </template>
+              <template v-slot:cell(name)="row">
+                {{(row.item.first_name)}} {{(row.item.last_name)}} 
+              </template>
               <template v-slot:cell(status)="row">
                 <span :class="row.item.status"> {{(row.item.status)}}</span>
               </template>
@@ -208,6 +211,13 @@
             label: 'Order ID',
             sortable: true
           },
+
+          {
+            key: 'name' ,
+            label: 'Name',
+            sortable: true
+          },
+
           {
             key: 'quantity',
             label: 'Qty',
@@ -234,10 +244,26 @@
             label: 'Order Date ',
             sortable: true
           },
+          
+          {
+            key: 'payment_method_title',
+            label: 'Payment Mode',
+            sortable: false
+          },
+          {
+            key: 'phone',
+            label: 'Contact',
+            sortable: false
+          },
           {
             key: 'status',
             label: 'Status',
             sortable: true
+          },
+          {
+            key: 'waybill_no',
+            label: 'AWB',
+            sortable: false
           },
           {
             key: 'action',

@@ -35,14 +35,14 @@
                   >
                 </b-col>
                 <b-col xl="6" lg="6" md="6">
-                  <!-- <button
+                  <button
                     type="button"
                     class="download-btn btn btn-primary"
                     v-on:click="confirmstatus"
                     style="margin-left: 15px"
                   >
                     Dispatch
-                  </button> -->
+                  </button>
                   <button
                     type="button"
                     class="download-btn btn btn-primary"
@@ -95,8 +95,8 @@
                   />
                 </template>
                 <template v-slot:cell(name)="row">
-                  {{ row.item.name }}
-                </template>
+                {{(row.item.first_name)}} {{(row.item.last_name)}} 
+              </template>
                 <template v-slot:cell(action)="row">
                   <p class="h3 mb-2">
                     <b-link @click="printOrderSlip(row.item.oid)"
@@ -193,52 +193,74 @@ export default {
       filter: null,
       filterOn: [],
       fields: [
-        {
+      {
           key: "select",
           label: "",
           sortable: true,
         },
 
         {
-          key: "oid",
-          label: "Order ID",
-          sortable: true,
-        },
-        {
-          key: "date_created_gmt",
-          label: "Date",
-          sortable: true,
-        },
-        {
-          key: "first_name",
-          label: "First Name",
-          sortable: true,
-        },
-        {
-          key: "last_name",
-          label: "Last Name",
-          sortable: true,
-        },
-        {
-          key: "phone",
-          label: "Contact",
-          sortable: true,
-        },
-        {
-          key: "email",
-          label: "Email",
-          sortable: true,
-        },
-        {
-          key: "payment_method",
-          label: "Payment",
-          sortable: true,
-        },
-        {
-          key: "action",
-          label: "Action",
-          sortable: false,
-        },
+            key: 'oid',
+            label: 'Order ID',
+            sortable: true
+          },
+          {
+            key: 'date_created_gmt',
+            label: 'Order Date',
+            sortable: true
+          },
+
+          {
+            key: 'quantity',
+            label: 'Qty',
+            sortable: true
+          },
+          {
+            key: 'total',
+            label: 'Amount',
+            sortable: true
+          },
+          {
+            key: 'name',
+            label: 'Name',
+            sortable: true
+          },
+          {
+            key: 'state',
+            label: 'State',
+            sortable: true
+          },
+          {
+            key: 'city',
+            label: 'City',
+            sortable: true
+          },
+          {
+            key: 'phone',
+            label: 'Contact',
+            sortable: false
+          },
+          {
+            key: 'payment_method_title',
+            label: 'Payment Mode',
+            sortable: false
+          },
+          
+          {
+            key: 'status',
+            label: 'Status',
+            sortable: true
+          },
+          {
+            key: 'waybill_no',
+            label: 'AWB',
+            sortable: false
+          },
+          {
+            key: 'action',
+            label: 'Action',
+            sortable: false
+          }
       ],
       items: [],
       errors_create: [],

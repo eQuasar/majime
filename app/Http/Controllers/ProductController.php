@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 use PDF;
 class ProductController extends Controller {
 
+    
+
     public function productDetail(Request $request) {
         $vendor = $request->vid;
         $order = DB::table('line_items')->join('orders', function($join) use ($vendor)
@@ -116,7 +118,12 @@ class ProductController extends Controller {
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })->where('orders.vid', $request->vid)->where('orders.status', "dispatched")->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($request->vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($request->vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
+        })->join('waybill', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'waybill.order_id')
+                 ->where('waybill.vid', '=', intval($vid));
+        })
+        ->where('orders.vid', $request->vid)->where('orders.status', "dispatched")->select("orders.*", "billings.*","waybill.waybill_no", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($request->vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($request->vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
         return $orders;
     }
     function product_Sheet_download(Request $request) {

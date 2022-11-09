@@ -103,6 +103,9 @@
           <template v-slot:cell(sr)="row">
             {{ (currentPage - 1) * perPage + row.index + 1 }}
           </template>
+          <template v-slot:cell(name)="row">
+                {{(row.item.first_name)}} {{(row.item.last_name)}} 
+              </template>
           <template v-slot:cell(select)="row">
             <input
               type="checkbox"
@@ -233,52 +236,67 @@ export default {
       filter: null,
       filterOn: [],
       fields: [
-        {
+      {
           key: "select",
           label: "",
           sortable: true,
         },
 
         {
-          key: "oid",
-          label: "Order ID",
-          sortable: true,
-        },
-        {
-          key: "date_created_gmt",
-          label: "Date",
-          sortable: true,
-        },
-        {
-          key: "first_name",
-          label: "First Name",
-          sortable: true,
-        },
-        {
-          key: "last_name",
-          label: "Last Name",
-          sortable: true,
-        },
-        {
-          key: "phone",
-          label: "Contact",
-          sortable: true,
-        },
-        {
-          key: "email",
-          label: "Email",
-          sortable: true,
-        },
-        {
-          key: "payment_method",
-          label: "Payment",
-          sortable: true,
-        },
-        {
-          key: "action",
-          label: "Action",
-          sortable: false,
-        },
+            key: 'oid',
+            label: 'Order ID',
+            sortable: true
+          },
+          {
+            key: 'date_created_gmt',
+            label: 'Order Date ',
+            sortable: true
+          },
+          {
+            key: 'total',
+            label: 'Amount',
+            sortable: true
+          },
+          {
+            key: 'name' ,
+            label: 'Name',
+            sortable: true
+          },
+          {
+            key: 'state',
+            label: 'State',
+            sortable: true
+          },
+          {
+            key: 'city',
+            label: 'City',
+            sortable: true
+          },
+          {
+            key: 'phone',
+            label: 'Contact',
+            sortable: false
+          },
+          {
+            key: 'payment_method_title',
+            label: 'Payment Mode',
+            sortable: false
+          },
+          {
+            key: 'status',
+            label: 'Status',
+            sortable: true
+          },
+          {
+            key: 'waybill_no',
+            label: 'AWB',
+            sortable: false,
+          },
+          {
+            key: 'action',
+            label: 'Action',
+            sortable: false
+          }
       ],
       items: [],
       packedItems: [],
