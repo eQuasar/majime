@@ -232,7 +232,7 @@ export default {
             sortable: true
           },
           {
-            key: 'customer_note',
+            key: 'waybill_no',
             label: 'AWB',
             sortable: false
           },

@@ -282,7 +282,6 @@ export default {
             label: 'Payment Mode',
             sortable: false
           },
-          
           {
             key: 'status',
             label: 'Status',
@@ -291,7 +290,7 @@ export default {
           {
             key: 'waybill_no',
             label: 'AWB',
-            sortable: false
+            sortable: false,
           },
           {
             key: 'action',
