@@ -76,10 +76,9 @@
                     />&nbsp;{{ data.label }}</span
                   >
                 </template>
-          <template v-slot:cell(waybill_no)="row"> NA </template>
                 <template v-slot:cell(name)="row">
-                {{(row.item.first_name)}} {{(row.item.last_name)}} 
-              </template>
+                  {{(row.item.first_name)}} {{(row.item.last_name)}} 
+                </template>
                 <template #empty="scope">
                   <p style="text-align: center">
                     No record found, choose date filter to found the result.
@@ -193,70 +192,63 @@ export default {
           label: "",
           sortable: true,
         },
+        {
+          key: 'oid',
+          label: 'Order ID',
+          sortable: true
+        },
+        {
+          key: 'date_created_gmt',
+          label: 'Order Date ',
+          sortable: true
+        },
 
         {
-            key: 'oid',
-            label: 'Order ID',
-            sortable: true
-          },
-          {
-            key: 'date_created_gmt',
-            label: 'Order Date ',
-            sortable: true
-          },
-
-          {
-            key: 'quantity',
-            label: 'Qty',
-            sortable: true
-          },
-          {
-            key: 'total',
-            label: 'Amount',
-            sortable: true
-          },
-          {
-            key: 'name' ,
-            label: 'Name',
-            sortable: true
-          },
-          {
-            key: 'state',
-            label: 'State',
-            sortable: true
-          },
-          {
-            key: 'city',
-            label: 'City',
-            sortable: true
-          },
-          {
-            key: 'phone',
-            label: 'Contact',
-            sortable: false
-          },
-          {
-            key: 'payment_method_title',
-            label: 'Payment Mode',
-            sortable: false
-          },
-          
-          {
-            key: 'status',
-            label: 'Status',
-            sortable: true
-          },
-          {
-            key: 'waybill_no',
-            label: 'AWB',
-            sortable: false
-            
-          },
-          {
-            key: 'action',
-            label: 'Action',
-            sortable: false
-          }
+          key: 'quantity',
+          label: 'Qty',
+          sortable: true
+        },
+        {
+          key: 'total',
+          label: 'Amount',
+          sortable: true
+        },
+        {
+          key: 'name' ,
+          label: 'Name',
+          sortable: true
+        },
+        {
+          key: 'state',
+          label: 'State',
+          sortable: true
+        },
+        {
+          key: 'city',
+          label: 'City',
+          sortable: true
+        },
+        {
+          key: 'phone',
+          label: 'Contact',
+          sortable: false
+        },
+        {
+          key: 'payment_method_title',
+          label: 'Payment Mode',
+          sortable: false
+        },
+        
+        {
+          key: 'status',
+          label: 'Status',
+          sortable: true
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          sortable: false
+        }
       ],
       items: [],
       errors_create: [],

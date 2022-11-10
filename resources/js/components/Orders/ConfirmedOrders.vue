@@ -99,7 +99,6 @@
               No record found, choose date filter to found the result.
             </p>
           </template>
-          <template v-slot:cell(waybill_no)="row"> NA </template>
           <template v-slot:cell(oid)="row"> #{{ row.item.oid }} </template>
           <template v-slot:cell(sr)="row">
             {{ (currentPage - 1) * perPage + row.index + 1 }}
@@ -237,67 +236,61 @@ export default {
       filter: null,
       filterOn: [],
       fields: [
-      {
+        {
           key: "select",
           label: "",
           sortable: true,
         },
-
         {
-            key: 'oid',
-            label: 'Order ID',
-            sortable: true
-          },
-          {
-            key: 'date_created_gmt',
-            label: 'Order Date ',
-            sortable: true
-          },
-          {
-            key: 'total',
-            label: 'Amount',
-            sortable: true
-          },
-          {
-            key: 'name' ,
-            label: 'Name',
-            sortable: true
-          },
-          {
-            key: 'state',
-            label: 'State',
-            sortable: true
-          },
-          {
-            key: 'city',
-            label: 'City',
-            sortable: true
-          },
-          {
-            key: 'phone',
-            label: 'Contact',
-            sortable: false
-          },
-          {
-            key: 'payment_method_title',
-            label: 'Payment Mode',
-            sortable: false
-          },
-          {
-            key: 'status',
-            label: 'Status',
-            sortable: true
-          },
-          {
-            key: 'waybill_no',
-            label: 'AWB',
-            sortable: false
-          },
-          {
-            key: 'action',
-            label: 'Action',
-            sortable: false
-          }
+          key: 'oid',
+          label: 'Order ID',
+          sortable: true
+        },
+        {
+          key: 'date_created_gmt',
+          label: 'Order Date ',
+          sortable: true
+        },
+        {
+          key: 'total',
+          label: 'Amount',
+          sortable: true
+        },
+        {
+          key: 'name' ,
+          label: 'Name',
+          sortable: true
+        },
+        {
+          key: 'state',
+          label: 'State',
+          sortable: true
+        },
+        {
+          key: 'city',
+          label: 'City',
+          sortable: true
+        },
+        {
+          key: 'phone',
+          label: 'Contact',
+          sortable: false
+        },
+        {
+          key: 'payment_method_title',
+          label: 'Payment Mode',
+          sortable: false
+        },
+        {
+          key: 'status',
+          label: 'Status',
+          sortable: true
+        },
+        {
+          key: 'action',
+          label: 'Action',
+          sortable: false
+        }
       ],
       items: [],
       packedItems: [],

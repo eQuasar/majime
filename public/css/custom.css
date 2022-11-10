@@ -319,6 +319,7 @@ float:left;
 /*=========== Work Date 12 may ============*/
 /*=========== Work Date 12 may ============*/
 
+
 .search_field .btn-secondary {
     padding: 0;
     width: 100px;
@@ -337,3 +338,93 @@ tbody tr {
     line-height: 1.6;
     padding: 1.125rem 1vh;
 }
+
+.v-sidebar-menu .vsm--item .vsm--link i.vsm--icon{
+    color: #8dc0de!important;
+}
+
+.v-sidebar-menu .vsm--item .router-link-exact-active i.vsm--icon{
+    color: #000!important;
+}
+
+@media screen and (max-width: 991px) {
+
+    /* = = = = = = Dashboard css = = = = = = */
+
+    .sales{
+        flex-direction: column-reverse;
+    }
+
+    .sales .col-sm-4, .sales .col-sm-8{
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .sales .row{
+        display: block;
+    }
+    
+    .sales .col-sm-6{
+        max-width: 100%;
+        width: 100%;
+    }
+
+    #doughnut-chart {
+        height: 50px!important;
+    }
+
+    /* = = = = = = Sale css = = = = = = */
+
+    .main-panel .content-wrapper{
+        padding: 2.375rem 4.375rem;
+        padding-right: 15px;
+    }
+
+    .call-center-dashboard .row{
+        flex-direction: column;
+        align-content: space-between;
+    }
+
+    .call-center-dashboard .col-md-8{
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .date_range{
+        display: block;
+        padding-bottom: 15px;
+    }
+
+    .search_field {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        margin-top: 15px;
+    }
+
+    /* = = = = = = Transaction Detail Css = = = = = = */
+
+    .call-center-dashboard .col-md-6, .call-center-dashboard .col-md-3{
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .b-form-datepicker .form-control{
+        display: flex;
+        flex-direction: row;
+    }
+
+    .call-center-dashboard .col-md-3{
+        margin-top: 15px;
+    }
+    .b-calendar-grid-body .row{
+        display: flex;
+        flex-direction: row;   
+    }
+    .blue-bar{
+        padding: 0px 0px 20px;
+    }
+
+}
+
+

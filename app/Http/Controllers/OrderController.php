@@ -192,11 +192,7 @@ class OrderController extends Controller {
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vendor));
-        })->join('waybill', function($join) use ($vendor)
-        {
-            $join->on('orders.oid', '=', 'waybill.order_id')
-                 ->where('waybill.vid', '=', intval($vendor));
-        })->where('orders.vid', '=', intval($vendor))->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", "waybill.waybill_no", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        })->where('orders.vid', '=', intval($vendor))->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
                                         GROUP BY line_items.order_id) as quantity"))->get();
         } else {
@@ -276,13 +272,13 @@ class OrderController extends Controller {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
         })->where('orders.vid', '=', $vid)->where('orders.oid', '=', $oid)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-		                                WHERE line_items.order_id = orders.oid
-		                                GROUP BY line_items.order_id) as quantity"))->get();
+                                        WHERE line_items.order_id = orders.oid
+                                        GROUP BY line_items.order_id) as quantity"))->get();
         $curl = curl_init();
         curl_setopt_array($curl, array(CURLOPT_URL => 'https://track.delhivery.com/api/cmu/create.json', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . htmlentities($orders[0]->address_1) . ', ' . htmlentities($orders[0]->address_2) . '",
+                              "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
                               "phone": ' . $orders[0]->phone . ',
                               "payment_mode": "Pickup",
                               "name": "' . $orders[0]->first_name . '",
@@ -406,7 +402,7 @@ class OrderController extends Controller {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . htmlentities($order->address_1) . ', ' . htmlentities($order->address_2) . '",
+                              "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
                               "phone": ' . $order->phone . ',
                               "payment_mode": "COD",
                               "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -414,7 +410,7 @@ class OrderController extends Controller {
                               "cod_amount":' . $order->total . ',
                               "order": "' . $order_prefix . $order->oid . '",
                               "shipping_mode" : "Surface",
-                              "products_desc": "' . $product_name . '"
+                              "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '"
                             }
                           ],
                           "pickup_location": 
@@ -431,7 +427,7 @@ class OrderController extends Controller {
                         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . htmlentities($order->address_1) . ', ' . htmlentities($order->address_2) . '",
+                              "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
                               "phone": ' . $order->phone . ',
                               "payment_mode": "Prepaid",
                               "name": "' . $order->first_name . ' ' . $order->last_name . '",
@@ -439,7 +435,7 @@ class OrderController extends Controller {
                               "cod_amount":' . $order->total . ',
                               "order": "' . $order_prefix . $order->oid . '",
                               "shipping_mode" : "Surface",
-                              "products_desc": "' . $product_name . '"
+                              "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '"
                             }
                           ],
                           "pickup_location": 
@@ -557,6 +553,7 @@ class OrderController extends Controller {
                  ->where('billings.vid', '=', intval($vid));
         })->where('orders.vid', intval($request->vid))->where('orders.oid', intval($request->oid))->get();
         // var_dump($orders); die;
+        // echo "string"; die;
         $my_data = DB::table("way_data")->where('vid', intval($request->vid))->get();
         // var_dump($my_data); die;
         $city = $my_data[0]->city;
@@ -603,30 +600,30 @@ class OrderController extends Controller {
                     $payment_mode = "Prepaid";
                 }
                 $postfields = 'format=json&data={
-					  "shipments": [
-						{
-						  "add": "' . htmlentities($order->address_1) . ', ' . htmlentities($order->address_2) . '",
-						  "phone": ' . $order->phone . ',
-						  "payment_mode": "' . $payment_mode . '",
-						  "name": "' . $order->first_name . ' ' . $order->last_name . '",
-						  "pin": ' . $order->postcode . ',
-						  "cod_amount":' . $order->total . ',
-						  "order": "' . $order_prefix . $order->oid . '",
-						  "shipping_mode" : "Surface",
-						  "products_desc": "' . $product_name . '"
-						}
-					  ],
-					  "pickup_location": 
-						{
-						  "city": "' . $city . '",
-						  "name": "' . $name . '",
-						  "pin": "' . $pin . '",
-						  "country": "' . $country . '",
-						  "phone": "' . $phone . '",
-						  "add": "' . $add . '"
-						}
-					}';
-                //     echo $token; echo "<br>";
+                      "shipments": [
+                        {
+                          "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
+                          "phone": ' . $order->phone . ',
+                          "payment_mode": "' . $payment_mode . '",
+                          "name": "' . htmlentities($order->first_name) . ' ' . htmlentities($order->last_name) . '",
+                          "pin": ' . $order->postcode . ',
+                          "cod_amount":' . $order->total . ',
+                          "order": "' . $order_prefix . $order->oid . '",
+                          "shipping_mode" : "Surface",
+                          "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '"
+                        }
+                      ],
+                      "pickup_location": 
+                        {
+                          "city": "' . $city . '",
+                          "name": "' . $name . '",
+                          "pin": "' . $pin . '",
+                          "country": "' . $country . '",
+                          "phone": "' . $phone . '",
+                          "add": "' . $add . '"
+                        }
+                    }';
+                    // echo $postfields; die;
                 // echo $postfields; die;
                 curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => $postfields, CURLOPT_HTTPHEADER => array('Authorization: Token ' . $token, 'Content-Type: application/json', 'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'),));
                 $response = curl_exec($curl);
@@ -733,7 +730,7 @@ class OrderController extends Controller {
         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . htmlentities($orders[0]->address_1) . ', ' . htmlentities($orders[0]->address_2) . '",
+                              "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
                               "phone": ' . $orders[0]->phone . ',
                               "payment_mode": "Pickup",
                               "name": "' . $orders[0]->first_name . '",
