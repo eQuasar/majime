@@ -76,6 +76,7 @@
                     />&nbsp;{{ data.label }}</span
                   >
                 </template>
+          <template v-slot:cell(waybill_no)="row"> NA </template>
                 <template v-slot:cell(name)="row">
                 {{(row.item.first_name)}} {{(row.item.last_name)}} 
               </template>
@@ -244,6 +245,12 @@ export default {
             key: 'status',
             label: 'Status',
             sortable: true
+          },
+          {
+            key: 'waybill_no',
+            label: 'AWB',
+            sortable: false
+            
           },
           {
             key: 'action',
