@@ -10,6 +10,9 @@ export default {
     },
     getAWBLocation(data){
     	return axios.post('getAWBLocation', data)
-    }
+    },
+    getawbdata(data) {
+        return axios.post('getawbdata', data)
+    },
 
 }

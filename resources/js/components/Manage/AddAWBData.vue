@@ -165,6 +165,7 @@
     },
     mounted() {
       this.getAWBLocation();
+      this.getawbdata();
     },
     data() 
     {
@@ -177,6 +178,7 @@
         city: "",
         pin:"",
         country:"",
+        gateway:"",
         phone:"",
         add:"",
         token:"",
@@ -440,6 +442,34 @@
             this.successful = false;
             alert('something went wrong');
         })
+      },
+      getawbdata(){
+        let formData = new FormData();
+        formData.append("vid", this.vid);
+        // formData.append("user_id", this.$userId);
+        awb.getawbdata(formData)
+          .then((response) => {
+            if(response.data.msg){
+              alert(response.data.msg);
+            }
+            else{
+            this.city=response.data[0].city;
+            this.name=response.data[0].name;
+            this.pin=response.data[0].pin;
+            this.country=response.data[0].country;
+            this.phone=response.data[0].phone;
+            this.add=response.data[0].add;
+            this.token=response.data[0].token;
+            this.order_prefix=response.data[0].order_prefix;
+            }
+
+          })
+          .catch((error) => {
+              console.log(error);
+              if (error.response.status == 422) {
+                  this.errors_create = error.response.data.errors;
+              }
+          });
       }
     }
   };  

@@ -79,9 +79,15 @@ class WayDataController extends Controller
      * @param  \App\Models\WayData  $wayData
      * @return \Illuminate\Http\Response
      */
-    public function show(WayData $wayData)
+    public function show(Request $request)
     {
-        //
+        // dd($request->vid);die();
+        // $awb_record =DB::table("way_data")->where('way_data.vid',$request->vid)->get()->toArray();
+        //     if(!empty($awb_record)){
+        //         return $awb_record;
+        //     }else{
+        //        return response()->json(['error' => false, 'msg' => "No Data found.","ErrorCode" => "000"],200);
+        //     }
     }
 
     /**
@@ -150,7 +156,7 @@ class WayDataController extends Controller
     {
         $awb_record =DB::table("way_data")
             ->where('vid',$request->vid)
-            ->where('user_id',$request->user_id)
+            // ->where('user_id',$request->user_id)
             ->get()->toArray();
 
         if(!empty($awb_record)){
