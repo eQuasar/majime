@@ -14,7 +14,7 @@ export default {
     vendor_ratecard(data) {
         return axios.post('vendor_rate_card', data)
     },
-    getvendorinfo(data) {
-        return axios.post('getvendorinfo', data)
+    showzonedetail(data) {
+        return axios.post('showzonedetail', data)
     },
 }

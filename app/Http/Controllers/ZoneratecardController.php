@@ -106,12 +106,16 @@ class ZoneratecardController extends Controller
     {
         //
     }
-    public function getvendorinfo (Request  $request)
+    public function showzonedetail (Request  $request)
     {
-        $data=DB::table("vendors")->where('vendors.id','=',$request->vendor)->get();
-        $vendor_name=$data[0]->name;
-        return $vendor_name;
-
+     
+        $awb_record =DB::table("zoneratecards")->where('zoneratecards.vid',$request->vendor)->where('zoneno',$request->selectzone)->get()->toArray();;
+   
+            if(!empty($awb_record)){
+                return $awb_record;
+            }else{
+               return response()->json(['error' => false, 'msg' => "No Data found.","ErrorCode" => "000"],200);
+            }
 
      
     }

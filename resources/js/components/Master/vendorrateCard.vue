@@ -141,10 +141,11 @@ export default {
   mounted() {
     if (this.$route.query.vid) {
       this.getVendor();
-      this.getVidz();
+      // this.getVidz();
     } else {
       this.getVendor();
     }
+    this.getvendordata();
   },
   data() {
     return {
@@ -162,6 +163,7 @@ export default {
       codper: "",
       mjm_charges: "",
       above: "",
+      courier:"",
       sms: "",
       description: "",
       tranType: "",
@@ -215,6 +217,16 @@ export default {
         {
           key: "above",
           label: "Above 500 gm",
+          sortable: true,
+        },
+        {
+          key: "sms_charges",
+          label: "SMS Charges ",
+          sortable: true,
+        },
+        {
+          key: "majime_charges",
+          label: "Majime Charges",
           sortable: true,
         },
       ],
@@ -323,6 +335,34 @@ export default {
           }
           // loader.hide();
         });
+    },
+    getvendordata(){
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+        formData.append("vid", this.vid);
+        // formData.append("user_id", this.$userId);
+        vendors.getvendordata(formData)
+          .then((response) => {
+            if(response.data.msg){
+              alert(response.data.msg);
+            }
+            else{
+            this.cod=response.data[0].cod;
+            this.codper=response.data[0].codper;
+            this.above=response.data[0].after500gm;
+            this.sms=response.data[0].sms_charges;
+            this.mjm_charges=response.data[0].majime_charges;
+            // this.sms_charges=response.data[0].sms_charges;
+  
+            }
+
+          })
+          .catch((error) => {
+              console.log(error);
+              if (error.response.status == 422) {
+                  this.errors_create = error.response.data.errors;
+              }
+          });
     },
   },
 };

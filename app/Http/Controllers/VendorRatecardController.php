@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\vendor_ratecard;
 use Illuminate\Http\Request;
+use DB;
 
 class VendorRatecardController extends Controller
 {
@@ -107,4 +108,16 @@ class VendorRatecardController extends Controller
     {
         //
     }
+    public function getvedordata(Request $request)
+    {
+        
+         $awb_record =DB::table("vendor_ratecards")->where('vendor_ratecards.vid',$request->vid)->get()->toArray();
+         
+            if(!empty($awb_record)){
+                return $awb_record;
+            }else{
+               return response()->json(['error' => false, 'msg' => "No Data found.","ErrorCode" => "000"],200);
+            }
+    }
+    
 }

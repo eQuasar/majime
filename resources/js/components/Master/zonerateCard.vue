@@ -51,7 +51,7 @@
                 <!-- </b-form-group> -->
                   
                      <b-form-group id="input-group-zone" label=" Choose Zone" label-for="input-zone" placeholder="Select Zone">
-                  <b-form-select v-model="zone" :options="alloption" label="Zone " label-for="input-ZOne"></b-form-select>
+                  <b-form-select v-model="zone" :options="alloption" label="Zone " label-for="input-ZOne" v-on:change="showzonedetail"></b-form-select>
                      </b-form-group>
                 </b-form-select>
               </b-form-group>
@@ -140,7 +140,7 @@ export default {
       this.getVendor();
       this.getZone();
     }
-    this.getvendordetail();
+    // this.showzonedetail();
   },
   data() {
     return {
@@ -183,6 +183,8 @@ export default {
       pageOptions: [5, 10, 15, 20, 50, 100],
       filter: null,
       description: null,
+      zone: null,
+      courier:majime;
       descriptions: [
         { value: null, text: "Please select an option" },
         { value: "Setup Charges", text: "Setup Charges" },
@@ -308,17 +310,23 @@ export default {
           }
         });
     },
-    getvendordetail()
+    showzonedetail()
     {
       this.vid = JSON.parse(localStorage.getItem("ivid"));
       let formData = new FormData();
       formData.append("vendor", this.vid);
+      formData.append("selectzone", this.zone);
       master
-        .getvendorinfo(formData)
-        .then((response) => {
-          this.vendordetail=response.data;
-          console.log(this.vendordetail);
-    
+        .showzonedetail(formData)
+          .then((response) => {
+            if(response.data.msg){
+              alert(response.data.msg);
+            }
+            else{
+            this.fwd=response.data[0].fwd;
+            this.dto=response.data[0].dto;
+            this.rto=response.data[0].rto;
+            }
         })
         .catch((error) => {
           console.log(error);

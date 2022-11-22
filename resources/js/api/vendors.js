@@ -21,4 +21,8 @@ export default {
     deleteVendor(id) {
         return axios.delete('vendors/' + id)
     },
+    getvendordata(data)
+    {
+        return axios.post('getvedordata',data);
+    },
 }

@@ -130,5 +130,8 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('getsales_data/{vid}', 'DashboardController@getsales_data')->name('getsales_data');
 	Route::get('delpiechart_data/{vid}', 'DashboardController@delpiechart_data')->name('delpiechart_data');
 	Route::get('getmargin_report/{vid}', 'DashboardController@getmargin_report')->name('getmargin_report');
+	Route::get('getvedordata', 'DashboardController@getvedordata')->name('getvedordata');
+	Route::post('getvedordata','VendorRatecardController@getvedordata')->name('getvedordata');
+	Route::post('showzonedetail','ZoneratecardController@showzonedetail')->name('showzonedetail');
 }); 
 
