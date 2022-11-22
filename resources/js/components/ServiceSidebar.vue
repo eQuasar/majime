@@ -115,9 +115,31 @@ export default {
               title: "Complete Orders",
               // icon: 'fa fa-user',
             },
-             {
+            {
               href: { name: "deliveredorders" },
               title: "Delivered Orders",
+            },
+          ],
+        },
+        {
+          title: "Vendor Configuration",
+          icon: "fas fa-calendar-alt",
+          child: [
+            // {
+            //   href: { name: "zoneDetail" },
+            //   title: "Zone Detail",
+            // },
+            {
+              href: { name: "zonerateCard" },
+              title: "Zone Rate Card",
+            },
+            {
+              href: { name: "admin_awbdata" },
+              title: "Vendor Setting",
+            },
+            {
+              href: { name: "vendorrateCard" },
+              title: "Vendor Rate Card",
             },
           ],
         },

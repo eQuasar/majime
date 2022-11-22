@@ -108,6 +108,8 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('zone_Search', 'OrderController@zone_Search')->name('zone_Search');
 	Route::post('zonerate_card','ZoneratecardController@store')->name('zonerate_card');
 	Route::post('vendor_rate_card','VendorRatecardController@store')->name('vendor_rate_card');
+	Route::post('getvendorinfo','ZoneratecardController@getvendorinfo')->name('getvendorinfo');
+
 	// Route::post('assign_wallet', 'OrderController@assign_wallet')->name('assign_wallet');
 	Route::post('assign_wallet', 'WalletprocessedController@store')->name('assign_wallet'); 
 	Route::post('complete_download_sheet', 'WalletprocessedController@index')->name('complete_download_sheet');

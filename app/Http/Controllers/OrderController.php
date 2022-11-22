@@ -192,11 +192,12 @@ class OrderController extends Controller {
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vendor));
-        })->join('waybill', function($join) use ($vendor)
+        })
+        ->join('waybill', function($join) use ($vendor)
         {
             $join->on('orders.oid', '=', 'waybill.order_id')
                  ->where('waybill.vid', '=', intval($vendor));
-        })->where('orders.vid', '=', intval($vendor))->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", "waybill.waybill_no", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        })->where('orders.vid', '=', intval($vendor))->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*","waybill.waybill_no", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
                                         GROUP BY line_items.order_id) as quantity"))->get();
         } else {
@@ -251,6 +252,10 @@ class OrderController extends Controller {
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
+        })->join('waybill', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'waybill.order_id')
+                 ->where('waybill.vid', '=', intval($vid));
         })->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)
         ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])
         ->orderBy('orders.oid','DESC')
@@ -276,8 +281,8 @@ class OrderController extends Controller {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
         })->where('orders.vid', '=', $vid)->where('orders.oid', '=', $oid)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-		                                WHERE line_items.order_id = orders.oid
-		                                GROUP BY line_items.order_id) as quantity"))->get();
+                                        WHERE line_items.order_id = orders.oid
+                                        GROUP BY line_items.order_id) as quantity"))->get();
         $curl = curl_init();
         curl_setopt_array($curl, array(CURLOPT_URL => 'https://track.delhivery.com/api/cmu/create.json', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
@@ -604,29 +609,29 @@ class OrderController extends Controller {
                     $payment_mode = "Prepaid";
                 }
                 $postfields = 'format=json&data={
-					  "shipments": [
-						{
-						  "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
-						  "phone": ' . $order->phone . ',
-						  "payment_mode": "' . $payment_mode . '",
-						  "name": "' . htmlentities($order->first_name) . ' ' . htmlentities($order->last_name) . '",
-						  "pin": ' . $order->postcode . ',
-						  "cod_amount":' . $order->total . ',
-						  "order": "' . $order_prefix . $order->oid . '",
-						  "shipping_mode" : "Surface",
-						  "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '"
-						}
-					  ],
-					  "pickup_location": 
-						{
-						  "city": "' . $city . '",
-						  "name": "' . $name . '",
-						  "pin": "' . $pin . '",
-						  "country": "' . $country . '",
-						  "phone": "' . $phone . '",
-						  "add": "' . $add . '"
-						}
-					}';
+                      "shipments": [
+                        {
+                          "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
+                          "phone": ' . $order->phone . ',
+                          "payment_mode": "' . $payment_mode . '",
+                          "name": "' . htmlentities($order->first_name) . ' ' . htmlentities($order->last_name) . '",
+                          "pin": ' . $order->postcode . ',
+                          "cod_amount":' . $order->total . ',
+                          "order": "' . $order_prefix . $order->oid . '",
+                          "shipping_mode" : "Surface",
+                          "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '"
+                        }
+                      ],
+                      "pickup_location": 
+                        {
+                          "city": "' . $city . '",
+                          "name": "' . $name . '",
+                          "pin": "' . $pin . '",
+                          "country": "' . $country . '",
+                          "phone": "' . $phone . '",
+                          "add": "' . $add . '"
+                        }
+                    }';
                     // echo $postfields; die;
                 // echo $postfields; die;
                 curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => $postfields, CURLOPT_HTTPHEADER => array('Authorization: Token ' . $token, 'Content-Type: application/json', 'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'),));
@@ -1396,7 +1401,11 @@ class OrderController extends Controller {
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })->where('orders.vid', $vid)->where('billings.vid', $vid)->where('orders.status', $status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
+        })->join('waybill', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'waybill.order_id')
+                 ->where('waybill.vid', '=', intval($vid));
+        })->where('orders.vid', $vid)->where('billings.vid', $vid)->where('orders.status', $status)->select("orders.*", "billings.*","waybill.waybill_no", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
         
         return $orders;
     }

@@ -101,21 +101,29 @@
                 </b-col>
               </b-row>
               <b-row style="margin-bottom: 10px;">
+              <b-col xl="12" lg="12" md="12">
+                     <b-form-group id="input-group-payment" label="Payment Gateway" label-for="input-payment" placeholder="Select Payment Gateway Option">
+                  <b-form-select v-model="gateway" :options="payment" label="Description" label-for="input-payment"></b-form-select>
+                     </b-form-group>
+                </b-col>
+                </b-row>
+
+              <b-row style="margin-bottom: 10px;">
                 <b-col xl="12" lg="12" md="12">
                  
-                  <b-form-group
+                 <b-form-group
                       id="input-group-token"
                       label="Token"
                       label-for="input-token"
                       >
-                  <b-form-input
+                    <b-form-input
                         id="input-token"
                         v-model="token"
                         type="text" :value="this.token"
                         required
                         placeholder="Enter Token"
                       ></b-form-input>
-                  </b-form-group>
+                </b-form-group>
                   <b-form-group
                       id="input-group-prefix"
                       label="Order Prefix"
@@ -182,6 +190,12 @@
         pageOptions: [5, 10, 15, 20, 50, 100],
         filter: null,
         filterOn: [],
+        payment: [
+        // { value: null, text: "Please select payment gateway option" },
+        { value: "0", text: "Self" },
+        { value: "1", text: "Majime" },
+     
+      ],
         fields: [
           {
             key: 'city',
@@ -257,6 +271,9 @@
         if (!this.phone) {
           this.create_error += "Add Phone,";
         }
+        if (!this.gateway) {
+          this.create_error += "Please Select Paymnet Gateway,";
+        }
         if (!this.add) {
           this.create_error += "Add Address,";
         }
@@ -278,6 +295,8 @@
         formData.append("pin", this.pin);
         formData.append("country", this.country);
         formData.append("phone", this.phone);
+        formData.append("gateway", this.gateway);
+
         formData.append("add", this.add);
         formData.append("order_prefix", this.order_prefix);
         formData.append("token", this.token);
@@ -324,6 +343,10 @@
         if (!this.add) {
           this.create_error += "Add Address,";
         }
+        if (!this.gateway) {
+          this.create_error += "Please Select Payment Gateway,";
+        }
+
         if (!this.token) {
           this.create_error += "Add Token,";
         }
@@ -342,6 +365,8 @@
         formData.append("pin", this.pin);
         formData.append("country", this.country);
         formData.append("phone", this.phone);
+        formData.append("phone", this.gateway);
+
         formData.append("add", this.add);
         formData.append("token", this.token);
         formData.append("order_prefix", this.order_prefix);

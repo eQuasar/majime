@@ -3,14 +3,14 @@
    
     <div>
       <div class="card-body">
-        <h3><strong>Transaction Detail</strong></h3>
+        <h3><strong>Transaction Details</strong></h3>
         <br/>
         <b-form>
             <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
             <div :class="['form-group m-1 p-3', (successful ? 'alert-success' : '')]" v-show="successful">
               <span v-if="successful" class="label label-sucess">Transaction Detail Enter Sucessfully</span>
             </div>
-            <b-overlay :show="show" rounded="sm">
+            <b-overlay :show="show" rounded="sm" class="transaction_details">
               <b-row style="margin-bottom: 10px;">
                 <b-col xl="6" lg="6" md="6">
                      <b-form-group id="input-group-description" label="Description" label-for="input-name">

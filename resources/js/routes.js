@@ -31,6 +31,7 @@ import ZoneRateCard from './components/Master/zonerateCard.vue'
 import VendorRateCard from './components/Master/vendorrateCard.vue'
 import ZRCView from './components/Master/ZRCView.vue'
 import VRCView from './components/Master/VRCView.vue'
+import WayDataCard from './components/Master/waydata.vue'
 import demo from './components/Admin/demo.vue'
 import deliveredorders from './components/Admin/deliveredorders.vue'
 
@@ -43,6 +44,8 @@ export const routes = [
     // {path:'/admin/ZoneDetail',component: ZoneDetail,name:'zoneDetail',meta: { auth: true}},
     {path:'/admin/ZoneRateCard',component: ZoneRateCard,name:'zonerateCard',meta: { auth: true}},
     {path:'/admin/VendorRateCard',component: VendorRateCard,name:'vendorrateCard',meta: { auth: true}},
+    {path:'/admin/waydataCard',component: WayDataCard,name:'waydataCard',meta: { auth: true}},
+
     {path:'/admin/ZRCView',component: ZRCView,name:'ZRCView',meta: { auth: true}},
     {path:'/admin/VRCView',component: VRCView,name:'VRCView',meta: { auth: true}},
    //  {path:'/vendor/OrderProfile',component: OrderProfile,name:'OrderProfile',meta: { auth: true}},
