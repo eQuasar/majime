@@ -16,16 +16,16 @@
               >Transaction Detail Enter Sucessfully</span
             >
           </div>
-          <b-overlay :show="show" rounded="sm">
-            <b-row style="margin-bottom: 10px">
+          <b-overlay :show="show" rounded="sm" class="transaction_details">
+            <!-- <b-row style="margin-bottom: 10px">
               <b-col xl="6" lg="6" md="6">
                 <b-form-group
                   id="input-group-Vendor"
                   label="Choose Vendor"
                   label-for="input-Vendor"
                   placeholder="Select Vendor"
-                >
-                  <b-form-select
+                > -->
+                  <!-- <b-form-select
                     v-model="vendor"
                     class=""
                     :options="allvendors"
@@ -37,13 +37,29 @@
                         > Select Vendor </b-form-select-option
                       >
                     </template>
-                  </b-form-select>
-                </b-form-group>
+                  </b-form-select> -->
+                  <!-- <b-form-input
+                    id="input-fwd"
+                    :value="this.vendordetail"
+                    v-model="vendor"
+                    type="text"
+                    required
+                  ></b-form-input> -->
+                
+              
+           <!-- <span> {{this.vendordetail}}</span> -->
+                <!-- </b-form-group> -->
                   
                      <b-form-group id="input-group-zone" label=" Choose Zone" label-for="input-zone" placeholder="Select Zone">
                   <b-form-select v-model="zone" :options="alloption" label="Zone " label-for="input-ZOne"></b-form-select>
                      </b-form-group>
                 </b-form-select>
+              </b-form-group>
+                  
+                  <b-form-group id="input-group-zone" label=" Choose Courier Service" label-for="input-courier" placeholder="Select Courier Service">
+               <b-form-select v-model="courier" :options="courierdetail" label="Zone " label-for="input-courier"></b-form-select>
+                  </b-form-group>
+             </b-form-select>
     
 
                 <b-form-group
@@ -119,11 +135,12 @@ export default {
     if (this.$route.query.vid) {
       this.getVendor();
       this.getZone();
-      this.getVidz();
+      // this.getVidz();
     } else {
       this.getVendor();
       this.getZone();
     }
+    this.getvendordetail();
   },
   data() {
     return {
@@ -140,9 +157,12 @@ export default {
       city: "",
       date: "",
       pin: "",
+    
       allvendors: [],
       alloption:[],
       allzone: [],
+      courierdetail:[],
+      courier:"",
       amount: "",
       description: "",
       tranType: "",
@@ -152,6 +172,7 @@ export default {
       add: "",
       token: "",
       type: "",
+      vendordetail:"",
       role_id: 1,
       seen: false,
       sortBy: "date",
@@ -179,6 +200,11 @@ export default {
         { value: "D", text: "Zone D" },
         { value: "E", text: "Zone E" },
         { value: "F", text: "Zone F" },
+      ],
+      courierdetail: [
+        { value: null, text: "Please Select Courier Service" },
+        { value: "0", text: "Self" },
+        { value: "1", text: "Majime" },
       ],
 
       fields: [
@@ -226,11 +252,14 @@ export default {
     },
     create() {
       this.create_error = "";
-      if (!this.vendor) {
-        this.create_error += "Select Vendor,";
-      }
+      // if (!this.vendor) {
+      //   this.create_error += "Select Vendor,";
+      // }
       if (!this.zone) {
         this.create_error += "Select Zone,";
+      }
+      if (!this.courier) {
+        this.create_error += "Select Courier Serice,";
       }
       if (!this.fwd) {
         this.create_error += "Enter FWD ,";
@@ -244,10 +273,12 @@ export default {
       if (this.create_error != "") {
         return false;
       }
-      // this.vid = JSON.parse(localStorage.getItem("ivid"));
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
       let formData = new FormData();
+
       formData.append("zone", this.zone);
-      formData.append("vendor", this.vendor);
+      formData.append("courier", this.courier);
+      formData.append("vendor", this.vid);
       formData.append("fwd", this.fwd);
       formData.append("dto", this.dto);
       formData.append("rto", this.rto);
@@ -276,6 +307,28 @@ export default {
             this.errors_create = error.response.data.errors;
           }
         });
+    },
+    getvendordetail()
+    {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vendor", this.vid);
+      master
+        .getvendorinfo(formData)
+        .then((response) => {
+          this.vendordetail=response.data;
+          console.log(this.vendordetail);
+    
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+
+
+
     },
     getVendor() {
       vendors

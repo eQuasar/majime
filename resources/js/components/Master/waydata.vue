@@ -19,7 +19,7 @@
           <b-overlay :show="show" rounded="sm" class="transaction_details">
             <b-row style="margin-bottom: 10px">
               <b-col xl="6" lg="6" md="6">
-                <!-- <b-form-group
+                <b-form-group
                   id="input-group-Vendor"
                   label="Choose Vendor"
                   label-for="input-Vendor"
@@ -32,16 +32,13 @@
                     text-field="name"
                   >
                     <template v-slot:first>
-                      <b-form-select-option :value="0" disabled></b-form-select-option>
+                      <b-form-select-option :value="0" disabled>
                         Select Vendor
                       </b-form-select-option>
                     </template>
                   </b-form-select>
-                </b-form-group> -->
-                <b-form-group id="input-group-zone" label=" Choose Courier Service" label-for="input-courier" placeholder="Select Courier Service">
-               <b-form-select v-model="courier" :options="courierdetail" label="Zone " label-for="input-courier"></b-form-select>
-                  </b-form-group>
-             </b-form-select>
+                </b-form-group>
+
                 <b-form-group
                   id="input-group-cod"
                   label="Enter Value of COD"
@@ -190,11 +187,6 @@ export default {
         { value: "Digital Ads", text: "Digital Ads" },
         { value: "Recharge", text: "Recharge" },
       ],
-      courierdetail: [
-        { value: null, text: "Please Select Courier Service" },
-        { value: "0", text: "Self" },
-        { value: "1", text: "Majime" },
-      ],
 
       fields: [
         {
@@ -254,18 +246,15 @@ export default {
       if (!this.cod) {
         this.create_error += "Enter Cod,";
       }
-      if (!this.courier) {
-        this.create_error += "Select Courier Serice,";
-      }
       if (!this.codper) {
         this.create_error += "Enter  COD Percentage,";
       }
       if (!this.above) {
         this.create_error += "Enter Above 500gm ,";
       }
-      // if (!this.vendor) {
-      //   this.create_error += "Choose Vendor  ,";
-      // }
+      if (!this.vendor) {
+        this.create_error += "Choose Vendor  ,";
+      }
       if (!this.mjm_charges) {
         this.create_error += "Enter Majime Charges  ,";
       }
@@ -275,13 +264,12 @@ export default {
       if (this.create_error != "") {
         return false;
       }
-      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      // this.vid = JSON.parse(localStorage.getItem("ivid"));
       let formData = new FormData();
       formData.append("cod", this.cod);
       formData.append("codper", this.codper);
-      formData.append("courier", this.courier);
       formData.append("above", this.above);
-      formData.append("vendor", this.vid);
+      formData.append("vendor", this.vendor);
       formData.append("sms", this.sms);
       formData.append("mjm_charges", this.mjm_charges);
       master

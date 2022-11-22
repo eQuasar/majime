@@ -261,6 +261,11 @@
             sortable: true
           },
           {
+            key: 'waybill_no',
+            label: 'AWB',
+            sortable: false
+          },
+          {
             key: 'action',
             label: 'Action',
             sortable: false

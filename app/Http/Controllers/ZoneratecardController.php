@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\zoneratecard;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\Vendors;
 
 class ZoneratecardController extends Controller
 {
@@ -38,7 +40,9 @@ class ZoneratecardController extends Controller
         $request->validate([
             // 'id' => 'required',
             'zone' => 'required',
-            'vendor' => 'required',
+            'courier' => 'required',
+
+            // 'vendor' => 'required',
             'fwd' => 'required',
             'dto' => 'required',
             'rto' => 'required',
@@ -49,6 +53,7 @@ class ZoneratecardController extends Controller
         $zonerate_data = new zoneratecard();
         
         $zonerate_data->zoneno= $request->zone;
+        $zonerate_data->courier= $request->courier;
         $zonerate_data->vid= $request->vendor;
         $zonerate_data->fwd= $request->fwd;
         $zonerate_data->dto= $request->dto;
@@ -100,5 +105,14 @@ class ZoneratecardController extends Controller
     public function destroy(zoneratecard $zoneratecard)
     {
         //
+    }
+    public function getvendorinfo (Request  $request)
+    {
+        $data=DB::table("vendors")->where('vendors.id','=',$request->vendor)->get();
+        $vendor_name=$data[0]->name;
+        return $vendor_name;
+
+
+     
     }
 }

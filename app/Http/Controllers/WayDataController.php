@@ -64,6 +64,7 @@ class WayDataController extends Controller
             $wb_data->pin = $request->pin;
             $wb_data->country = $request->country;
             $wb_data->phone = $request->phone;
+            $wb_data->gateway = $request->gateway;
             $wb_data->add = $request->add;
             $wb_data->token = $request->token;
             $wb_data->order_prefix = $request->order_prefix;

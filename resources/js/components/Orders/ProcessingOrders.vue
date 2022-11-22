@@ -31,7 +31,7 @@
                     ></b-input-group-append
                   >
                 </b-col>
-                <b-col xl="6" lg="6" md="6">
+                <b-col xl="6" lg="6" md="6" class="confirm_orders">
                   <button
                     type="button"
                     class="download-btn btn btn-primary"
