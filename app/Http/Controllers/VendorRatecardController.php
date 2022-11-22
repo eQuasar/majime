@@ -36,31 +36,64 @@ class VendorRatecardController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);die();
-        $request->validate([
-            // 'id' => 'required',
-            'cod' => 'required',
-            'codper' => 'required',
-            'above' => 'required',
-            'vendor' => 'required',
-            'sms' => 'required',
-            'courier'=>'required',
-            'mjm_charges' => 'required',
+        
+        $awb_record =DB::table("vendor_ratecards")->where('vendor_ratecards.vid',$request->vendor)->get()->toArray();
+        $vendor_data=vendor_ratecard::all();
+        if(DB::table('vendor_ratecards')->where('vid',$request->vendor)->exists())
+        {
+            $request->validate([
+                'cod' => 'required',
+                'codper' => 'required',
+                'above' => 'required',
+                'vendor' => 'required',
+                'sms' => 'required',
+                'courier'=>'required',
+                'mjm_charges' => 'required',
+            ]);
             
-         ]);
-        
-        
-        $vendorrate_data = new vendor_ratecard();
-       
-        $vendorrate_data->cod= $request->cod;
-        $vendorrate_data->codper= $request->codper;
-        $vendorrate_data->courier= $request->courier;
-        $vendorrate_data->after500gm= $request->above;
-        $vendorrate_data->vid= $request->vendor;
-        $vendorrate_data->sms_charges= $request->sms;
-        $vendorrate_data->majime_charges= $request->mjm_charges;
+            $wb_data = vendor_ratecard::find((int)$request->vid);
 
-        $vendorrate_data->save();
+            $vendorrate_data = new vendor_ratecard();
+            $vendorrate_data->cod= $request->cod;
+            $vendorrate_data->codper= $request->codper;
+            $vendorrate_data->courier= $request->courier;
+            $vendorrate_data->after500gm= $request->above;
+            $vendorrate_data->vid= $request->vendor;
+            $vendorrate_data->sms_charges= $request->sms;
+            $vendorrate_data->majime_charges= $request->mjm_charges;
+    
+            $vendorrate_data->save();
+            // return response()->json(['error' => false,'data' => $wb_data],200);
+
+        }
+        else{
+            $request->validate([
+                // 'id' => 'required',
+                'cod' => 'required',
+                'codper' => 'required',
+                'above' => 'required',
+                'vendor' => 'required',
+                'sms' => 'required',
+                'courier'=>'required',
+                'mjm_charges' => 'required',
+             ]);
+            $vendorrate_data = new vendor_ratecard();
+            $vendorrate_data->cod= $request->cod;
+            $vendorrate_data->codper= $request->codper;
+            $vendorrate_data->courier= $request->courier;
+            $vendorrate_data->after500gm= $request->above;
+            $vendorrate_data->vid= $request->vendor;
+            $vendorrate_data->sms_charges= $request->sms;
+            $vendorrate_data->majime_charges= $request->mjm_charges;
+    
+            $vendorrate_data->save();
+        }
+
+        
+    
+        
+  
+       
     }
 
     /**
@@ -95,7 +128,7 @@ class VendorRatecardController extends Controller
      */
     public function update(Request $request, vendor_ratecard $vendor_ratecard)
     {
-        //
+        
     }
 
     /**

@@ -192,6 +192,7 @@ export default {
         { value: "Digital Ads", text: "Digital Ads" },
         { value: "Recharge", text: "Recharge" },
       ],
+      courier:'1',
       courierdetail: [
         { value: null, text: "Please Select Courier Service" },
         { value: "0", text: "Self" },

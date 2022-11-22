@@ -44,32 +44,32 @@ export default {
             },
           ],
         },
-        {
-          title: "Master",
-          icon: "fas fa-calendar-alt",
-          child: [
-            // {
-            //   href: { name: "zoneDetail" },
-            //   title: "Zone Detail",
-            // },
-            {
-              href: { name: "zonerateCard" },
-              title: "Zone Rate Card",
-            },
-            {
-              href: { name: "ZRCView" },
-              title: "ZRCView",
-            },
-            {
-              href: { name: "vendorrateCard" },
-              title: "Vendor Rate Card",
-            },
-            {
-              href: { name: "VRCView" },
-              title: "VRCView",
-            },
-          ],
-        },
+        // {
+        //   title: "Master",
+        //   icon: "fas fa-calendar-alt",
+        //   child: [
+        //     // {
+        //     //   href: { name: "zoneDetail" },
+        //     //   title: "Zone Detail",
+        //     // },
+        //     {
+        //       href: { name: "zonerateCard" },
+        //       title: "Zone Rate Card",
+        //     },
+        //     {
+        //       href: { name: "ZRCView" },
+        //       title: "ZRCView",
+        //     },
+        //     {
+        //       href: { name: "vendorrateCard" },
+        //       title: "Vendor Rate Card",
+        //     },
+        //     {
+        //       href: { name: "VRCView" },
+        //       title: "VRCView",
+        //     },
+        //   ],
+        // },
 
         {
           title: "Orders Mgt",

@@ -56,10 +56,10 @@
                 </b-form-select>
               </b-form-group>
                   
-                  <b-form-group id="input-group-zone" label=" Choose Courier Service" label-for="input-courier" placeholder="Select Courier Service">
+                  <!-- <b-form-group id="input-group-zone" label=" Choose Courier Service" label-for="input-courier" placeholder="Select Courier Service">
                <b-form-select v-model="courier" :options="courierdetail" label="Zone " label-for="input-courier"></b-form-select>
                   </b-form-group>
-             </b-form-select>
+             </b-form-select> -->
     
 
                 <b-form-group
@@ -184,7 +184,7 @@ export default {
       filter: null,
       description: null,
       zone: null,
-      courier:majime;
+      // courier:majime;
       descriptions: [
         { value: null, text: "Please select an option" },
         { value: "Setup Charges", text: "Setup Charges" },
