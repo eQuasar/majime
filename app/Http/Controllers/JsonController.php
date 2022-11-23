@@ -337,7 +337,7 @@ class JsonController extends Controller
 
 		// Forward Orders
  		$orders=DB::table("orders")
- 				->whereIn('orders.status',['dispatched','intransit'])
+ 				->whereIn('orders.status',['dispatched','packed','intransit'])
 				->where('orders.vid',intval($vid))
 				->orderBy('orders.oid','desc')
 				->get();

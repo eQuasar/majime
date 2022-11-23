@@ -283,7 +283,7 @@ class OrderController extends Controller {
         curl_setopt_array($curl, array(CURLOPT_URL => 'https://track.delhivery.com/api/cmu/create.json', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
+                              "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $orders[0]->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $orders[0]->address_2) . '",
                               "phone": ' . $orders[0]->phone . ',
                               "payment_mode": "Pickup",
                               "name": "' . $orders[0]->first_name . '",
@@ -735,7 +735,7 @@ class OrderController extends Controller {
         curl_setopt_array($curl, array(CURLOPT_URL => $curlopt_url, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 30, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => 'format=json&data={
                           "shipments": [
                             {
-                              "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $order->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $order->address_2) . '",
+                              "add": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $orders[0]->address_1) . ', ' . str_replace( array( '\'', '"', '-', ';', '<', '>', '&', '|' ), ' ', $orders[0]->address_2) . '",
                               "phone": ' . $orders[0]->phone . ',
                               "payment_mode": "Pickup",
                               "name": "' . $orders[0]->first_name . '",
@@ -1393,7 +1393,7 @@ class OrderController extends Controller {
     }
     public function get_processing_data($vid, $status) {
         // echo $status; die;
-        if ($status == 'processing'){
+        if ($status == 'processing' || $status == 'on-hold'){
             $orders = DB::table("orders")->join('billings', function($join) use ($vid)
             {
                 $join->on('orders.oid', '=', 'billings.order_id')
