@@ -51,9 +51,7 @@ class VendorRatecardController extends Controller
                 'mjm_charges' => 'required',
             ]);
             
-            $wb_data = vendor_ratecard::find((int)$request->vid);
-
-            $vendorrate_data = new vendor_ratecard();
+            $vendorrate_data = vendor_ratecard::find($request->vendor);
             $vendorrate_data->cod= $request->cod;
             $vendorrate_data->codper= $request->codper;
             $vendorrate_data->courier= $request->courier;
@@ -61,7 +59,6 @@ class VendorRatecardController extends Controller
             $vendorrate_data->vid= $request->vendor;
             $vendorrate_data->sms_charges= $request->sms;
             $vendorrate_data->majime_charges= $request->mjm_charges;
-    
             $vendorrate_data->save();
             // return response()->json(['error' => false,'data' => $wb_data],200);
 

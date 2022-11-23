@@ -184,7 +184,7 @@ export default {
       filter: null,
       description: null,
       zone: null,
-      // courier:majime;
+      
       descriptions: [
         { value: null, text: "Please select an option" },
         { value: "Setup Charges", text: "Setup Charges" },
@@ -260,9 +260,9 @@ export default {
       if (!this.zone) {
         this.create_error += "Select Zone,";
       }
-      if (!this.courier) {
-        this.create_error += "Select Courier Serice,";
-      }
+      // if (!this.courier) {
+      //   this.create_error += "Select Courier Serice,";
+      // }
       if (!this.fwd) {
         this.create_error += "Enter FWD ,";
       }

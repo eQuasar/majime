@@ -37,21 +37,26 @@ class ZoneratecardController extends Controller
      */
     public function store(Request $request)
     {
+        // $zonerate_data = zoneratecard::find($request->vendor);
+        // $zonerate_data =DB::table("zoneratecards")->where('zoneratecards.vid',$request->vendor)->where('zoneno',$request->zone)->get();
+        // $awb_record =DB::table("zoneratecards")->where('zoneratecards.vid',$request->vendor)->get()->toArray();
+        if(DB::table('zoneratecards')->where('vid',$request->vendor)->where('zoneno',$request->zone)->exists())
+        {
         $request->validate([
             // 'id' => 'required',
             'zone' => 'required',
-            'courier' => 'required',
-
+            // 'courier' => 'required',
             // 'vendor' => 'required',
             'fwd' => 'required',
             'dto' => 'required',
             'rto' => 'required',
-         
          ]);
-        
-        
-        $zonerate_data = new zoneratecard();
-        
+        // $zonerate_data = new zoneratecard();
+        // $zonerate_data =DB::table("zoneratecards")->where('zoneratecards.vid',$request->vendor)->where('zoneno',$request->zone);
+         $zonerate_data = zoneratecard::where('zoneratecards.vid',$request->vendor)->where('zoneno',$request->zone)->first();
+        // $zonerate_data = zoneratecard::find($request->vendor);
+        // ->where('zoneno',$request->zone);
+        // dd($zonerate_data);die();
         $zonerate_data->zoneno= $request->zone;
         $zonerate_data->courier= $request->courier;
         $zonerate_data->vid= $request->vendor;
@@ -60,6 +65,29 @@ class ZoneratecardController extends Controller
         $zonerate_data->rto= $request->rto;
         $zonerate_data->save();
     }
+    else
+    {
+        $request->validate([
+            // 'id' => 'required',
+            'zone' => 'required',
+            // 'courier' => 'required',
+
+            // 'vendor' => 'required',
+            'fwd' => 'required',
+            'dto' => 'required',
+            'rto' => 'required',
+         
+         ]);
+        $zonerate_data = new zoneratecard();
+        $zonerate_data->zoneno= $request->zone;
+        $zonerate_data->courier= $request->courier;
+        $zonerate_data->vid= $request->vendor;
+        $zonerate_data->fwd= $request->fwd;
+        $zonerate_data->dto= $request->dto;
+        $zonerate_data->rto= $request->rto;
+        $zonerate_data->save();
+    }
+}
 
     /**
      * Display the specified resource.
