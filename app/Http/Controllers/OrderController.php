@@ -38,11 +38,17 @@ class OrderController extends Controller {
         return $orders;
     }
     public function Order_Search(Request $request) {
-        $range = [$request->date_from, $request->date_to];
-        // $order=orders::whereBetween('date_created_gmt',$range)->get();
-        $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->whereBetween('date_created_gmt', $range)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        if($request->date_from == $request->date_to){
+            $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->whereDate('orders.date_created', '=', $request->date_from)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
-                                        GROUP BY line_items.order_id) as quantity"))->get();
+                                        GROUP BY line_items.order_id) as quantity"))->orderBy('orders.date_created','DESC')->get();
+        }else{
+            $range = [$request->date_from.' 00:00:00', $request->date_to.' 23:59:59'];
+            // $order=orders::whereBetween('date_created_gmt',$range)->get();
+            $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->whereBetween('orders.date_created', $range)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                                            WHERE line_items.order_id = orders.oid
+                                            GROUP BY line_items.order_id) as quantity"))->orderBy('orders.date_created','DESC')->get();
+        }
         return $order;
     }
     public function wallet_Search(Request $request) {
@@ -89,7 +95,7 @@ class OrderController extends Controller {
               ->orWhere('billings.city','like','%'.$search.'%')->where('billings.vid','=',$vendor)
              ->orWhere('billings.state','like','%'.$search.'%')->where('billings.vid','=',$vendor)
             //  ->orWhere('line_items.quantity','like','%'.$search.'%')->where('line_items.vid','=',$vendor)
-             ->orWhere('orders.date_created_gmt','like','%'.$search.'%')->where('orders.vid','=',$vendor)
+             ->orWhere('orders.date_created','like','%'.$search.'%')->where('orders.vid','=',$vendor)
              ->orWhere('orders.total','like','%'.$search.'%')->where('orders.vid','=',$vendor)
           ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND  line_items.vid = " . intval($vendor) . " GROUP BY line_items.order_id) as quantity"))->get();
         

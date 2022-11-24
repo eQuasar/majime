@@ -32,7 +32,7 @@
               <b-col xl="8" lg="8" md="8">
                   <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
                     <b-form @submit="onSubmit" class="date_range">
-                      <div class="datepiker-block"><span>From:&nbsp;</span> <b-form-datepicker id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: 'short', day: '2-digit', weekday: 'short' }"
+                      <div class="datepiker-block"><span>From:&nbsp;</span> <b-form-datepicker id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"
                           locale="en"></b-form-datepicker></div>
                       <div class="datepiker-block"><span>To:&nbsp;</span> <b-form-datepicker id="to" v-model="date_to" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }" locale="en"></b-form-datepicker></div>
                       <b-button type="submit" variant="primary">Submit</b-button>
@@ -240,7 +240,7 @@
           },
        
           {
-            key: 'date_created_gmt',
+            key: 'date_created',
             label: 'Order Date ',
             sortable: true
           },
