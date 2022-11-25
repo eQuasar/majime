@@ -192,11 +192,11 @@ export default {
         { value: "Digital Ads", text: "Digital Ads" },
         { value: "Recharge", text: "Recharge" },
       ],
-      courier:'1',
+      // courier:'1',
       courierdetail: [
         { value: null, text: "Please Select Courier Service" },
-        { value: "0", text: "Self" },
-        { value: "1", text: "Majime" },
+        { value: "1", text: "Self" },
+        { value: "0", text: "Majime" },
       ],
 
       fields: [
@@ -344,6 +344,7 @@ export default {
         // formData.append("user_id", this.$userId);
         vendors.getvendordata(formData)
           .then((response) => {
+            console.log(response);
             if(response.data.msg){
               alert(response.data.msg);
             }
@@ -352,6 +353,8 @@ export default {
             this.codper=response.data[0].codper;
             this.above=response.data[0].after500gm;
             this.sms=response.data[0].sms_charges;
+            this.courier=response.data[0].courier;
+
             this.mjm_charges=response.data[0].majime_charges;
             // this.sms_charges=response.data[0].sms_charges;
   

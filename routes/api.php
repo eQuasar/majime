@@ -66,8 +66,11 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('printOrderSlip', 'OrderController@printOrderSlip')->name('printOrderSlip');
 	Route::post('getVid', 'AuthController@getVid')->name('getVid');
 	Route::post('addWayData', 'WayDataController@getAWBLocation')->name('addWayData');
+	Route::post('addWayData', 'WayDataController@store')->name('addWayData');
+
 	Route::post('getawbdata', 'WayDataController@show')->name('getawbdata');
 	Route::post('updateWayData', 'WayDataController@update')->name('updateWayData');
+	Route::post('updateWayData', 'WayDataController@updatedata')->name('updateWayData');
 	Route::post('getAWBLocation', 'WayDataController@getAWBLocation')->name('getAWBLocation');
 	Route::post('city_Search', 'OrderController@city_Search')->name('city_Search');
 	Route::post('state_Search', 'OrderController@state_Search')->name('state_Search');

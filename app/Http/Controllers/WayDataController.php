@@ -110,6 +110,8 @@ class WayDataController extends Controller
      */
     public function update(Request $request, WayData $wayData)
     {
+        if(DB::table('way_data')->where('vid',$request->vendor)->exists())
+        {
         $request->validate([
                 'user_id' => 'required',
                 'vid' => 'required',
@@ -125,7 +127,7 @@ class WayDataController extends Controller
             
             
             $wb_data = WayData::find((int)$request->id);
-            
+            dd($wb_data);die();
             $wb_data->user_id = $request->user_id;
             $wb_data->vid = $request->vid;
             $wb_data->city = $request->city;
@@ -139,6 +141,41 @@ class WayDataController extends Controller
             
             $wb_data->save();
             return response()->json(['error' => false,'data' => $wb_data],200);
+        }
+    }
+    public function updatedata(Request $request)
+    {
+        if(DB::table('way_data')->where('vid',$request->vid)->exists())
+        {
+        $request->validate([
+                'user_id' => 'required',
+                'vid' => 'required',
+                'city' => 'required|string|max:255',
+                'name' => 'required|string|max:255',
+                'pin' => 'required',
+                'country' => 'required',
+                'phone' => 'required',
+                'add' => 'required',
+                'token' => 'required',
+                'order_prefix' => 'required',
+            ]);
+            
+            
+            $wb_data = WayData::find((int)$request->id);
+            $wb_data->user_id = $request->user_id;
+            $wb_data->vid = $request->vid;
+            $wb_data->city = $request->city;
+            $wb_data->name = $request->name;
+            $wb_data->pin = $request->pin;
+            $wb_data->country = $request->country;
+            $wb_data->phone = $request->phone;
+            $wb_data->add = $request->add;
+            $wb_data->token = $request->token;
+            $wb_data->order_prefix = $request->order_prefix;
+            
+            $wb_data->save();
+            return response()->json(['error' => false,'data' => $wb_data],200);
+        }
     }
 
     /**

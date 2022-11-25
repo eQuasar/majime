@@ -2,7 +2,7 @@
   <b-container fluid> 
    
       <div class="card-body">
-        <h3><strong>Add AWB Data</strong></h3>
+        <h3><strong>Vendor Setting</strong></h3>
         <br/>
         <b-form>
             <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
@@ -192,10 +192,11 @@
         pageOptions: [5, 10, 15, 20, 50, 100],
         filter: null,
         filterOn: [],
+        // gateway: '0',
         payment: [
         // { value: null, text: "Please select payment gateway option" },
-        { value: "0", text: "Self" },
-        { value: "1", text: "Majime" },
+        { value: "1", text: "Self" },
+        { value: "0", text: "Majime" },
      
       ],
         fields: [
@@ -367,7 +368,7 @@
         formData.append("pin", this.pin);
         formData.append("country", this.country);
         formData.append("phone", this.phone);
-        formData.append("phone", this.gateway);
+        formData.append("gateway", this.gateway);
 
         formData.append("add", this.add);
         formData.append("token", this.token);
@@ -433,6 +434,7 @@
             this.country=response.data[0].country;
             this.phone=response.data[0].phone;
             this.add=response.data[0].add;
+            this.gateway=response.data[0].gateway;
             this.token=response.data[0].token;
             this.order_prefix=response.data[0].order_prefix;
             this.awb_id=response.data[0].id;
@@ -449,6 +451,7 @@
         // formData.append("user_id", this.$userId);
         awb.getawbdata(formData)
           .then((response) => {
+            console.log(response);
             if(response.data.msg){
               alert(response.data.msg);
             }
@@ -459,6 +462,7 @@
             this.country=response.data[0].country;
             this.phone=response.data[0].phone;
             this.add=response.data[0].add;
+            this.gateway=response.data[0].gateway;
             this.token=response.data[0].token;
             this.order_prefix=response.data[0].order_prefix;
             }
