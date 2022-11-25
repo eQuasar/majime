@@ -105,6 +105,8 @@ class WalletprocessedController extends Controller
             $product_weight=DB::table("products")->where('products.product_id','=',$line_items[0]->product_id)->get();  
             //Get rate card according to the Vendor 
             $vendor_rate=DB::table("vendor_ratecards")->where('vendor_ratecards.vid','=',$order_table[0]->vid)->get();
+            //Get Vendor Data according to the Vendor 
+            $vendor_data=DB::table("way_data")->where('way_data.vid','=',$order_table[0]->vid)->get();
             //SMS Charges according to the vendor 
             $sms_cost=$vendor_rate[0]->sms_charges;
             //Majime Cost according to the vendor
@@ -126,7 +128,7 @@ class WalletprocessedController extends Controller
             {
                 $payment_gateway=0;
             }else{
-                if ($vendor == 10){         // This needs to be changed for Payment Gateway External or Internal
+                if ($vendor_data[0]->gateway==1){         // This needs to be changed for Payment Gateway External or Internal
                     $payment_gateway=0;
                 }else{
                     $payment_gateway=(($order_table[0]->total)*2.36/100);
@@ -229,7 +231,7 @@ class WalletprocessedController extends Controller
                         $logistic_cost=$cod_cost+$cod_charges;
                     }
                 }
-                if($vendor!=10){
+                if($vendor_data[0]->gateway==0){
                     $net_amount=$sale_Amount-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                 }else{
                     if ($order_table[0]->payment_method != 'wps_wcb_wallet_payment_gateway' && $order_table[0]->payment_method != 'cod'){
