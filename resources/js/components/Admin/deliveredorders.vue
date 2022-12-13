@@ -225,21 +225,21 @@ export default {
           label: "Email",
           sortable: true,
         },
-        // {
-        //   key: 'payment_method',
-        //   label: 'Payment',
-        //   sortable: true
-        // },
+        {
+          key: "payment_method",
+          label: "Payment Mod",
+          sortable: true,
+        },
         {
           key: "status",
           label: "Status",
           sortable: true,
         },
         {
-            key: 'waybill_no',
-            label: 'AWB',
-            sortable: false
-          },
+          key: "waybill_no",
+          label: "AWB",
+          sortable: false,
+        },
 
         {
           key: "action",

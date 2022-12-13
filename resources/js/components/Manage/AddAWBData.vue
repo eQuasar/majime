@@ -2,7 +2,7 @@
   <b-container fluid> 
    
       <div class="card-body">
-        <h3><strong>Vendor Setting</strong></h3>
+        <h3><strong>Vendor Settings</strong></h3>
         <br/>
         <b-form>
             <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
