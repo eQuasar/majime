@@ -114,6 +114,21 @@
                   ></b-form-input>
                 </b-form-group>
 
+                <b-form-group
+                  id="input-group-mjm"
+                  label="Enter Weight Per Product"
+                  label-for="input-mjm"
+                >
+                  <b-form-input
+                    id="input-sms"
+                    :value="this.mjm_Weightcharges"
+                    v-model="mjm_Weightcharges"
+                    type="text"
+                    required
+                    placeholder=" Majime Charges"
+                  ></b-form-input>
+                </b-form-group>
+
                 <b-button
                   type="submit"
                   @click.prevent="create"
@@ -162,6 +177,7 @@ export default {
       cod: "",
       codper: "",
       mjm_charges: "",
+      mjm_Weightcharges: "",
       above: "",
       courier:"",
       sms: "",
@@ -267,9 +283,9 @@ export default {
       if (!this.cod) {
         this.create_error += "Enter Cod,";
       }
-      if (!this.courier) {
-        this.create_error += "Select Courier Serice,";
-      }
+      // if (!this.courier) {
+      //   this.create_error += "Select Courier Serice,";
+      // }
       if (!this.codper) {
         this.create_error += "Enter  COD Percentage,";
       }
@@ -281,6 +297,9 @@ export default {
       // }
       if (!this.mjm_charges) {
         this.create_error += "Enter Majime Charges  ,";
+      }
+      if (!this.mjm_Weightcharges) {
+        this.create_error += "Enter Weight Per Product ,";
       }
       if (!this.sms) {
         this.create_error += "Enter SMS Charges  ,";
@@ -297,6 +316,7 @@ export default {
       formData.append("vendor", this.vid);
       formData.append("sms", this.sms);
       formData.append("mjm_charges", this.mjm_charges);
+      formData.append("mjm_weightcharges", this.mjm_Weightcharges);
       master
         .vendor_ratecard(formData)
         .then((response) => {
@@ -310,6 +330,7 @@ export default {
           this.above = "";
           this.mjm_charges = "";
           this.sms = "";
+          this.mjm_Weightcharges="";
           // this.country='';
           // this.phone='';
           // this.add='';
@@ -354,8 +375,8 @@ export default {
             this.above=response.data[0].after500gm;
             this.sms=response.data[0].sms_charges;
             this.courier=response.data[0].courier;
-
             this.mjm_charges=response.data[0].majime_charges;
+            this.mjm_Weightcharges=response.data[0].weight_perproduct;
             // this.sms_charges=response.data[0].sms_charges;
   
             }

@@ -47,11 +47,11 @@ class VendorRatecardController extends Controller
                 'above' => 'required',
                 'vendor' => 'required',
                 'sms' => 'required',
-                'courier'=>'required',
+                // 'courier'=>'required',
                 'mjm_charges' => 'required',
+                'mjm_weightcharges' => 'required',
             ]);
-            
-            $vendorrate_data = vendor_ratecard::find($request->vendor);
+            $vendorrate_data = vendor_ratecard::where('vid',$request->vendor)->first();
             $vendorrate_data->cod= $request->cod;
             $vendorrate_data->codper= $request->codper;
             $vendorrate_data->courier= $request->courier;
@@ -59,6 +59,7 @@ class VendorRatecardController extends Controller
             $vendorrate_data->vid= $request->vendor;
             $vendorrate_data->sms_charges= $request->sms;
             $vendorrate_data->majime_charges= $request->mjm_charges;
+            $vendorrate_data->weight_perproduct= $request->mjm_weightcharges;
             $vendorrate_data->save();
             // return response()->json(['error' => false,'data' => $wb_data],200);
 
@@ -73,6 +74,7 @@ class VendorRatecardController extends Controller
                 'sms' => 'required',
                 'courier'=>'required',
                 'mjm_charges' => 'required',
+                'mjm_weightcharges' => 'required',
              ]);
             $vendorrate_data = new vendor_ratecard();
             $vendorrate_data->cod= $request->cod;
@@ -82,15 +84,10 @@ class VendorRatecardController extends Controller
             $vendorrate_data->vid= $request->vendor;
             $vendorrate_data->sms_charges= $request->sms;
             $vendorrate_data->majime_charges= $request->mjm_charges;
+            $vendorrate_data->weight_perproduct= $request->mjm_weightcharges;
     
             $vendorrate_data->save();
-        }
-
-        
-    
-        
-  
-       
+            }
     }
 
     /**

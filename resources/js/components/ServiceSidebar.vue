@@ -130,16 +130,16 @@ export default {
             //   title: "Zone Detail",
             // },
             {
-              href: { name: "zonerateCard" },
-              title: "Zone Rate Card",
-            },
-            {
               href: { name: "admin_awbdata" },
-              title: "Vendor Setting",
+              title: "Vendor Settings",
             },
             {
               href: { name: "vendorrateCard" },
               title: "Vendor Rate Card",
+            },
+            {
+              href: { name: "zonerateCard" },
+              title: "Zone Rate Card",
             },
           ],
         },
