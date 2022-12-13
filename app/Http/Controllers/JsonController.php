@@ -25,6 +25,7 @@ use App\Models\ProductTag;
 use App\Models\UpdateStatus;
 use App\Models\Product_Attribute;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class JsonController extends Controller
 {	
@@ -147,7 +148,7 @@ class JsonController extends Controller
 		    $this->Order_refunds($order->id,$order->refunds,$vid);
 			$this->Order_links($order->id,$order->_links,$vid);
 
-			// $this->getWayBill($vid, $url);
+			$this->smsSend($vid,$order->id,"placed");
 	    
 	    	Orders::insert($Orders); 	
        }
@@ -333,6 +334,110 @@ class JsonController extends Controller
 		return  $jsonResp;
  	}
 
+	public function smsSend($vid,$order_id,$smsTemplate)
+	{
+		
+		
+
+		$vendor=DB::table("vendors")
+				->where('id',intval($vid))
+				->get();
+		$billing=DB::table("billings")
+				->where('order_id',intval($order_id))
+				->where('vid',intval($vid))
+				->get();
+		$phone = "91".$billing[0]->phone;
+		// $phone = "91"."8284840500";
+		$logInfo = "SMS - VID - ".$vid."  "."OID: ".$order_id."  "."SMSTemplate: ".$smsTemplate."  "."Phone: ".$phone." Date: ".date("d-m-y");
+		Log::info([$logInfo]);
+
+		switch ($smsTemplate) {
+			case "placed":
+				$msgBody = "{\n  \"flow_id\": \"637f4f117c38cf4cf62622e2\",\n  \"sender\": \"MAJIME\",\n  \"short_url\": \"0\",\n  \"mobiles\": \"".$phone
+					."\",\n  \"orderno\": \"".$order_id."\",\n  \"website\": \"".$vendor[0]->name
+					."\",\n  \"weblink\":\"".$vendor[0]->url."\"\n}";
+				break;
+			case "cancel-cod":
+				$msgBody = "{\n  \"flow_id\": \"6385ee531281a12b9812b8e2\",\n  \"sender\": \"MAJIME\",\n  \"short_url\": \"0\",\n  \"mobiles\": \"".$phone
+					."\",\n  \"orderno\": \"".$order_id."\",\n  \"website\": \"".$vendor[0]->name
+					."\",\n  \"weblink\":\"".$vendor[0]->url."\"\n}";
+				break;
+			case "cancel-prepaid":
+				$msgBody = "{\n  \"flow_id\": \"6385ef0b55758f69cc0a5962\",\n  \"sender\": \"MAJIME\",\n  \"short_url\": \"0\",\n  \"mobiles\": \"".$phone
+					."\",\n  \"orderno\": \"".$order_id."\",\n  \"website\": \"".$vendor[0]->name
+					."\",\n  \"weblink\":\"".$vendor[0]->url."\"\n}";
+				break;
+			case "dispatched":
+				$msgBody = "{\n  \"flow_id\": \"6385ef8befba0b1ab8266d68\",\n  \"sender\": \"MAJIME\",\n  \"short_url\": \"0\",\n  \"mobiles\": \"".$phone
+					."\",\n  \"orderno\": \"".$order_id."\",\n  \"website\": \"".$vendor[0]->name
+					."\",\n  \"weblink\":\"".$vendor[0]->url."\"\n}";
+				break;
+			case "outfordelivery":
+				$msgBody = "{\n  \"flow_id\": \"6385f03f0eb40a3057563d13\",\n  \"sender\": \"MAJIME\",\n  \"short_url\": \"0\",\n  \"mobiles\": \"".$phone
+					."\",\n  \"orderno\": \"".$order_id."\",\n  \"website\": \"".$vendor[0]->name
+					."\",\n  \"weblink\":\"".$vendor[0]->url."\"\n}";
+				break;
+			case "deliveredtocust":
+				$msgBody = "{\n  \"flow_id\": \"6385f0b16a49dc4e46765015\",\n  \"sender\": \"MAJIME\",\n  \"short_url\": \"0\",\n  \"mobiles\": \"".$phone
+					."\",\n  \"orderno\": \"".$order_id."\",\n  \"website\": \"".$vendor[0]->name
+					."\",\n  \"weblink\":\"".$vendor[0]->url."\"\n}";
+				break;
+			case "dtobooked":
+				$msgBody = "{\n  \"flow_id\": \"6385f103269ef8502c3a0f34\",\n  \"sender\": \"MAJIME\",\n  \"short_url\": \"0\",\n  \"mobiles\": \"".$phone
+					."\",\n  \"orderno\": \"".$order_id."\",\n  \"website\": \"".$vendor[0]->name
+					."\",\n  \"weblink\":\"".$vendor[0]->url."\"\n}";
+				break;
+			case "dtodelivered":
+				$msgBody = "{\n  \"flow_id\": \"6385f18d18a81617bc73f865\",\n  \"sender\": \"MAJIME\",\n  \"short_url\": \"0\",\n  \"mobiles\": \"".$phone
+					."\",\n  \"orderno\": \"".$order_id."\",\n  \"website\": \"".$vendor[0]->name
+					."\",\n  \"weblink\":\"".$vendor[0]->url."\"\n}";
+				break;
+			case "dtorefunded":
+				$msgBody = "{\n  \"flow_id\": \"6385f2032242b93f2d223c55\",\n  \"sender\": \"MAJIME\",\n  \"short_url\": \"0\",\n  \"mobiles\": \"".$phone
+					."\",\n  \"orderno\": \"".$order_id."\",\n  \"website\": \"".$vendor[0]->name
+					."\",\n  \"weblink\":\"".$vendor[0]->url."\"\n}";
+				break;
+		}
+		
+		if ($msgBody!=null){
+			echo $msgBody;
+			$curl = curl_init();
+
+			curl_setopt_array($curl, [
+			CURLOPT_URL => "https://api.msg91.com/api/v5/flow/",
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => "",
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 30,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => "POST",
+			CURLOPT_POSTFIELDS => $msgBody,
+			CURLOPT_HTTPHEADER => [
+				"authkey: 245817AwfugX7zT6246d820P1",
+				"content-type: application/json"
+			],
+			]);
+			
+			$response = curl_exec($curl);
+			$err = curl_error($curl);
+			
+			curl_close($curl);
+			
+			if ($err) {
+				echo "cURL Error #:" . $err;
+				Log::info(["SMS - cURL Error #:" . $err]);
+			} else {
+				echo $response;
+				Log::info(["SMS - Response #:" . $response]);
+			}
+		}
+	}
+
+	public function smsTrigger()
+	{
+		$this->smsSend("3","10879","placed");
+	}
+
  	public function cronOrderStatusUpdate($vid){
 
 		// Forward Orders
@@ -432,20 +537,27 @@ class JsonController extends Controller
 					$status = "dispatched";
 				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "intransit";
+					// $this->smsSend($vid,$order_id,"dispatched");
 				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "RT" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "intransit";
+					// $this->smsSend($vid,$order_id,"dispatched");
 				}else if ($status == "Dispatched" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "intransit";
+					$this->smsSend($vid,$order_id,"dispatched");
 				}else if ($status == "Pending" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "intransit";
+					// $this->smsSend($vid,$order_id,"dispatched");
 				} else if ($status == "RTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "rto-delivered";
 				} else if ($status == "Closed" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
 					$status = "deliveredtocust";
+					$this->smsSend($vid,$order_id,"deliveredtocust");
 				} else if ($status == "Canceled" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
 					$status = "deliveredtocust";
+					$this->smsSend($vid,$order_id,"deliveredtocust");
 				} else if ($status == "Delivered" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "deliveredtocust";
+					$this->smsSend($vid,$order_id,"deliveredtocust");
 				} 
 				else{
 					$status = "undefined";
@@ -488,14 +600,18 @@ class JsonController extends Controller
 					$status = "dtointransit";
 				} else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "dtodelivered";
+					$this->smsSend($vid,$order_id,"dtodelivered");
 				} else if ($status == "DTO" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] != "DL" ){
 					$status = "dtointransit";
 				} else if ($status == "Closed" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
 					$status = "deliveredtocust";
+					$this->smsSend($vid,$order_id,"deliveredtocust");
 				} else if ($status == "Canceled" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
 					$status = "deliveredtocust";
+					$this->smsSend($vid,$order_id,"deliveredtocust");
 				} else if ($status == "Delivered" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "deliveredtocust";
+					$this->smsSend($vid,$order_id,"deliveredtocust");
 				} 
 				else{
 					$status = "undefined";

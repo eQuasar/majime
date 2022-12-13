@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\JsonController;
 use App\Models\Orders;
 use App\Models\billings;
 use App\Models\shippings;
@@ -914,8 +915,8 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">ShopMetalm<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "ShopMetalm";
         }elseif($request->vid == 9){
-            $address_store = '<p><span class="c_name">Krelon Cosmetic<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
-            $industry_name = "Krelon Cosmetic";
+            $address_store = '<p><span class="c_name">Krelon Cosmetics (Opc) Pvt Ltd<br>GST NO : 03AAJCK4238L1ZE</span><br>374-A,Model Town Extension <br>Ludhiana, Punjab, India</p>';
+            $industry_name = "Krelon Cosmetics (Opc) Pvt Ltd";
         }elseif($request->vid == 10){
             $address_store = '<p><span class="c_name">ABS ENTREPRISES<br>GST NO : 03ABXFA0812G1ZP</span><br>PC-10, BAHDAUR HOSUE, C-10 CALIBRE PLAZA <br>141009 - Ludhiana, Punjab, India</p>';
             $industry_name = "ABS ENTREPRISES";
@@ -1168,8 +1169,8 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">ShopMetalm<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "ShopMetalm";
         }elseif($request->vid == 9){
-            $address_store = '<p><span class="c_name">Krelon Cosmetic<br>GST NO : 03AAAFI3516P1ZG</span><br>Plot 31,32,33 & 34,35,36 Behind Nagesh Building<br>Sharman Enclave near Jalandhar Bypass <br>141007 - Ludhiana, Punjab, India</p>';
-            $industry_name = "Krelon Cosmetic";
+            $address_store = '<p><span class="c_name">Krelon Cosmetics (Opc) Pvt Ltd<br>GST NO : 03AAJCK4238L1ZE</span><br>374-A,Model Town Extension <br>Ludhiana, Punjab, India</p>';
+            $industry_name = "Krelon Cosmetics (Opc) Pvt Ltd";
         }elseif($request->vid == 10){
             $address_store = '<p><span class="c_name">ABS ENTREPRISES<br>GST NO : 03ABXFA0812G1ZP</span><br>PC-10, BAHDAUR HOSUE, C-10 CALIBRE PLAZA <br>141009 - Ludhiana, Punjab, India</p>';
             $industry_name = "ABS ENTREPRISES";
@@ -1543,6 +1544,13 @@ class OrderController extends Controller {
                 'oid'=>$listImp[$i],
                 'order_canceldate'=>$date,
                 ];   
+
+                $orders = DB::table("orders")->where('vid', '=', intval($request->vid))->where('oid', '=', intval($listImp[$i]))->get()->toArray();
+                if($orders[0]['payment_method'] == "cod"){
+                    JsonController::smsSend($request->vid,$listImp[$i],"cancel-cod");
+                }else{
+                    JsonController::smsSend($request->vid,$listImp[$i],"cancel-prepaid");
+                }
             }
             elseif($request->status_assign=='dispatched')
             {

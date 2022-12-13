@@ -247,7 +247,7 @@ class DashboardController extends Controller
     }else {
       $dto_percentage=round((($total_dtoo/$total)*100),2);
     }
-    if($total_dtoo == 0){
+    if($dispatched_order_count == 0){
       $dispatch_percentage=0;
     }else{
       $dispatch_percentage=round((($dispatched_order_count/$total)*100),2);
