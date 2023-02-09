@@ -14,7 +14,7 @@
               <b-row style="margin-bottom: 10px;">
                 <b-col xl="6" lg="6" md="6">
                      <b-form-group id="input-group-description" label="Description" label-for="input-name">
-                  <b-form-select v-model="description" :options="descriptions" label="Description" label-for="input-city"></b-form-select>
+                             <b-form-select v-model="description" :options="descriptions" label="Description" label-for="input-city"></b-form-select>
                      </b-form-group>
                 </b-form-select>
      

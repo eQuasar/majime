@@ -78,8 +78,10 @@
             <template #head(select)="data">
               <span class="text-info"><input type="checkbox" v-model="allSelected" @click="selectedAll">&nbsp;{{ data.label }}</span>
             </template>
-            <template v-slot:cell(action)="row">
-               <p class="h3 mb-2">   <router-link :to="{ name: 'productprofile', params: { variation_id:(row.item.variation_id).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link></p>
+        
+              <template v-slot:cell(action)="row">
+                <p class="h3 mb-2">   <router-link :to="{ name: 'productprofile', params: { variation_id:(row.item.product_id).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
+                <router-link :to="{ name: 'editproductprofile', params: { product_id:(row.item.product_id).toString() }}"><b-icon icon="pencil-fill" aria-hidden="true"></b-icon></router-link></p>
               </template>
             <template #empty="scope">
                 <p style="text-align:center;">No record found, choose date filter to found the result.</p>
@@ -184,41 +186,32 @@
             sortable: true
           },
            {
-            key: 'order_id',
-            label: 'Order Id',
-            sortable: true
-          },
-          {
-            key: 'variation_id',
-            label: 'Variation Id',
-            sortable: true
-          },
-
-          {
             key: 'name',
             label: 'Name',
             sortable: true
           },
           {
-            key: 'quantity',
-            label: 'Quantity',
+            key: 'price',
+            label: 'Price',
+            sortable: true
+          },
+
+          {
+            key: 'categories',
+            label: 'Categories',
             sortable: true
           },
           {
-            key: 'size',
-            label: 'Size',
+            key: 'hsn_code',
+            label: 'HSN Code',
             sortable: true
           },
           {
-            key: 'color',
-            label: 'Color',
+            key: 'weight',
+            label: 'Weight',
             sortable: true
           },
-          {
-            key: 'date_created_gmt',
-            label: 'Order Date ',
-            sortable: true
-          },
+        
           {
             key: 'action',
             label: 'Action',
@@ -263,11 +256,13 @@ computed: {
 
 
     getProduct(){
-          product.getProduct()
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append('vid', this.vid);
+          product.getProduct(formData)
             .then((response) => {
                 this.allproductdata=response.data;
                 this.allproducts=response.data;
-
               })
                   .catch((error) => {
               if (error.response.status == 422) {

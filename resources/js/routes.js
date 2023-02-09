@@ -13,6 +13,7 @@ import AdminlistOrders from './components/Orders/listOrders.vue'
 //import ReportProfile from './components/Report/OrderDetail.vue'
 import OrderProfile2 from './components/Orders/OrderProfile.vue'
 import productprofile from './components/Products/productprofile.vue'
+import EditProductProfile from './components/Products/editproductprofile.vue'
 import ReadytopackOrders from './components/Orders/ReadytopackOrders.vue'
 import ConfirmedOrders from './components/Orders/ConfirmedOrders.vue'
 import CompleteOrders from './components/Orders/CompleteOrders.vue'
@@ -34,6 +35,8 @@ import VRCView from './components/Master/VRCView.vue'
 import WayDataCard from './components/Master/waydata.vue'
 import demo from './components/Admin/demo.vue'
 import deliveredorders from './components/Admin/deliveredorders.vue'
+import HsnDetail from './components/Manage/HsnDetail.vue'
+import HSNDeatil from './components/Manage/HSNView.vue'
 
 
 export const routes = [ 
@@ -78,6 +81,10 @@ export const routes = [
     {path:'/vendor/dtoDelivered',component:DtoDelivered,name:'dtoDelivered',meta: { auth: true}},
     {path:'/admin/demo',component: demo,name:'demo',meta: { auth: true}},
     {path:'/admin/deliveredorders',component: deliveredorders,name:'deliveredorders',meta: { auth: true}},
+    {path:'/admin/HsnDeatil',component: HsnDetail,name:'hsndetail',meta: { auth: true}},
+    {path:'/admin/HSNDeatil',component: HSNDeatil,name:'hsn_detail',meta: { auth: true}},
 
+    {path:'/vendor/Product_list/:product_id',component: EditProductProfile,props: true,name:'editproductprofile',meta: { auth: true}},
+    
   
 ];

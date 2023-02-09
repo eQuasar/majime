@@ -144,6 +144,24 @@ export default {
           ],
         },
         {
+          title: "Global Configuration",
+          icon: "fas fa-calendar-alt",
+          child: [
+            // {
+            //   href: { name: "zoneDetail" },
+            //   title: "Zone Detail",
+            // },
+            // {
+            //   href: { name: "hsndetail" },
+            //   title: "Enter HSN Detail",
+            // },
+            {
+              href: { name: "hsn_detail" },
+              title: "HSN Detail",
+            },
+          ],
+        },
+        {
           href: { name: "wallet" },
           title: "Wallet",
           icon: "fa fa-user",

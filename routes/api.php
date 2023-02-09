@@ -95,7 +95,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('city_data', 'OrderController@city_data')->name('city_data');
     Route::post('status_data', 'OrderController@status_data')->name('status_data');
     Route::get('get_packdetail_Refund/{vid}','OrderController@get_packdetail_Refund')->name('get_packdetail_Refund');
-    Route::get('product_data','ProductController@product_data')->name('product_data');
+    Route::post('product_data','ProductController@product_data')->name('product_data');
     Route::get('order_items/{variation_id}',[App\Http\Controllers\OrderController::class,'order_items']);
     Route::post('getDelivery_Details','ProductController@getDelivery_Details')->name('getDelivery_Details');
     Route::post('changeProcessing_Status', 'OrderController@changeProcessing_Status')->name('changeProcessing_Status');
@@ -137,5 +137,11 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('getvedordata', 'DashboardController@getvedordata')->name('getvedordata');
 	Route::post('getvedordata','VendorRatecardController@getvedordata')->name('getvedordata');
 	Route::post('showzonedetail','ZoneratecardController@showzonedetail')->name('showzonedetail');
+	Route::post('hsn_detail','HsnDetailController@store')->name('hsn_detail');
+	Route::get('get_hsn','HsnDetailController@show')->name('get_hsn');
+	Route::post('hsn_weight_update','HsnDetailController@update')->name('hsn_weight_update');
+	Route::post('getProduct_data','HsnDetailController@getProduct_data')->name('getProduct_data');
+	Route::post('getJson', 'JsonController@getJson')->name('getJson');
+	Route::post('insert_product/{vid}', 'JsonController@insert_product')->name('insert_product');
 }); 
 

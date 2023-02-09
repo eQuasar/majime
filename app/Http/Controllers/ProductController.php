@@ -13,45 +13,44 @@ use Illuminate\Support\Facades\Auth;
 use PDF;
 class ProductController extends Controller {
 
-    
-
-    public function productDetail(Request $request) {
+    public function productDetail(Request $request)
+     {
         $vendor = $request->vid;
-        $order = DB::table('line_items')->join('orders', function($join) use ($vendor)
-        {
-            $join->on('orders.oid', '=', 'line_items.order_id')
-                 ->where('orders.vid', '=', intval($vendor));
-        })
-        // ->distinct()
-        // 					->select('line_items.*',
-        // 							DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = 6726 AND line_items.vid = ".intval($vendor)." GROUP BY line_items.order_id) as quantity"))
-        ->select(DB::raw('
-							name,
-							variation_id,
-							product_id,
-							SUM(quantity) as quantity,
-							date_created_gmt,
-							order_id
-						') //,
-        // DB::raw("(SELECT categories FROM products WHERE products.product_id = line_items.product_id)")
-        )
-        // ->leftJoin('products','products.product_id','=','line_items.product_id')
-        ->where('line_items.vid', '=', intval($vendor))->whereNotIn('line_items.variation_id', [0])->groupBy('line_items.product_id')->groupBy('line_items.variation_id')->groupBy('line_items.sku')->groupBy('line_items.name')->groupBy('orders.date_created_gmt')->groupBy('line_items.order_id')->orderBy('line_items.name')->get();
-        // $order =	DB::table('line_items as s')
-        //   ->leftJoin ('products as e', 'e.product_id', '=' , 's.product_id')
-        //   ->select('s.name as name','s.variation_id as variation_id','s.product_id as product_id',
-        //               'e.categories as categories')
-        //   ->get();
+        $order=DB::table('products')->where('vid','=',$vendor)->get();
+        // $order = DB::table('line_items')->join('orders', function($join) use ($vendor)
+        // {
+        //     $join->on('orders.oid', '=', 'line_items.order_id')
+        //          ->where('orders.vid', '=', intval($vendor));
+        // })
+        // // ->distinct()
+        // // 					->select('line_items.*',
+        // // 							DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = 6726 AND line_items.vid = ".intval($vendor)." GROUP BY line_items.order_id) as quantity"))
+        // ->select(DB::raw('
+		// 					name,
+		// 					variation_id,
+		// 					product_id,
+		// 					SUM(quantity) as quantity,
+		// 					date_created_gmt,
+		// 					order_id
+		// 				') //,
+        // // DB::raw("(SELECT categories FROM products WHERE products.product_id = line_items.product_id)")
+        // )
+        // // ->leftJoin('products','products.product_id','=','line_items.product_id')
+        // ->where('line_items.vid', '=', intval($vendor))->whereNotIn('line_items.variation_id', [0])->groupBy('line_items.product_id')->groupBy('line_items.variation_id')->groupBy('line_items.sku')->groupBy('line_items.name')->groupBy('orders.date_created_gmt')->groupBy('line_items.order_id')->orderBy('line_items.name')->get();
+        // // $order =	DB::table('line_items as s')
+        // //   ->leftJoin ('products as e', 'e.product_id', '=' , 's.product_id')
+        // //   ->select('s.name as name','s.variation_id as variation_id','s.product_id as product_id',
+        // //               'e.categories as categories')
+        // //   ->get();
         return $order;
-    
-        
     }
     public function status_data(Request $request) {
         $order = DB::table('products')->distinct()->select('products.status')->get();
         return $order;
     }
     public function product_data(Request $request) {
-        $order = DB::table('line_items')->distinct()->select('line_items.name')->orderBy('line_items.name')->get();
+       
+        $order = DB::table('products')->where('products.vid','=',$request->vid)->select('products.name')->orderBy('products.name')->get();
         return $order;
     }
     public function product_Order_Search(Request $request) {
@@ -87,10 +86,13 @@ class ProductController extends Controller {
     }
     public function product_search(Request $request) {
         if ($request->name == "allproducts") {
-            $order = DB::table("orders")->join('line_items', 'orders.oid', '=', 'line_items.order_id')->where('orders.vid', $request->vid)->get();
+            // $order = DB::table("orders")->join('line_items', 'orders.oid', '=', 'line_items.order_id')->where('orders.vid', $request->vid)->get();
+            $order = DB::table("products")->where('name', '=', $request->name)->where('vid', $request->vid)->get();
             return $order;
         } else {
-            $order = DB::table("orders")->join('line_items', 'orders.oid', '=', 'line_items.order_id')->Where('line_items.name', 'like', '%' . $request->name . '%')->where('orders.vid', $request->vid)->get();
+            // $order = DB::table("orders")->join('line_items', 'orders.oid', '=', 'line_items.order_id')->Where('line_items.name', 'like', '%' . $request->name . '%')->where('orders.vid', $request->vid)->get();
+            $order = DB::table("products")->where('name', '=', $request->name)->Where('name', 'like', '%' . $request->name . '%')->where('vid', $request->vid)->get();
+
             return $order;
         }
     }

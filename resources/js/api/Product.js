@@ -15,7 +15,7 @@ export default {
         return axios.post('color_Search', data)
     },
     getProduct(data) {
-        return axios.get('product_data', data)
+        return axios.post('product_data', data)
     },
       getStatus(data) {
         return axios.post('status_data', data)

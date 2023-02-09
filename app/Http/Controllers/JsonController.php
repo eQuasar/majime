@@ -61,8 +61,6 @@ class JsonController extends Controller
     }
 
 
-
-
 	private function addOrderWP($url, $vid)
 	{
 		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
@@ -157,7 +155,7 @@ class JsonController extends Controller
     public function getWayBill($vid, $url){
     	// https://isdemo.in/fc/wp-json/waybill_import/waybill_import_data
     	$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
-		var_dump($vendor);
+		// var_dump($vendor);
     	$curl = curl_init();
 
 	    curl_setopt_array($curl, array(
@@ -336,9 +334,6 @@ class JsonController extends Controller
 
 	public function smsSend($vid,$order_id,$smsTemplate)
 	{
-		
-		
-
 		$vendor=DB::table("vendors")
 				->where('id',intval($vid))
 				->get();
@@ -793,9 +788,10 @@ class JsonController extends Controller
 
 	public function InsertProduct($ProductData,$vid)
 		{	
+			
 			// dd($ProductData);
 			foreach($ProductData as $InProduct)
-		 {
+		   {
 		 	$cat = '';
 		 	for ($i=0; $i < count($InProduct->categories); $i++) { 
 		 		// if($i == count($InProduct->categories)-1){
@@ -805,24 +801,29 @@ class JsonController extends Controller
 		 		// }
 		 		
 		 	}
-
+			 if (Products::where('product_id', $InProduct->id)->where('vid',$vid)->exists())
+			 {
+				 return response()->json([ 'msg' => "Product already Exist"]);	
+			 }
+			 else
+			 {
 			$product[]=[
 				'vid'=>intval($vid),
 				'product_id'=>$InProduct->id,
 				'name'=>$InProduct->name,
 				'slug'=>$InProduct->slug,
 				'permalink'=>$InProduct->permalink,
-//     'type'=>'',
-//     'status'=>'',
-// 'featured'=>'',
-// 'catalog_visibility'=>'',
-// 'description'=>'',
-// 'short_description'=>'',
-// 'sku'=>'',
-// 'price'=>'',
-// 'regular_price'=>'',
-// 'sale_price'=>'',
-// 'on_sale'=>'',
+				//     'type'=>'',
+				//     'status'=>'',
+				// 'featured'=>'',
+				// 'catalog_visibility'=>'',
+				// 'description'=>'',
+				// 'short_description'=>'',
+				// 'sku'=>'',
+				// 'price'=>'',
+				// 'regular_price'=>'',
+				// 'sale_price'=>'',
+				// 'on_sale'=>'',
 				'type'=>$InProduct->type,
 				'status'=>$InProduct->status,
 				'featured'=>$InProduct->featured,
@@ -834,12 +835,10 @@ class JsonController extends Controller
 				'regular_price'=>$InProduct->regular_price,
 				'sale_price'=>$InProduct->sale_price,
 				'on_sale'=>$InProduct->on_sale,
-
 				// 'purchasable'=>'',
 				//'total_sales'=>'',
 				//'virtual'=>'',
 				//'downloadable'=>'',
-			
 				//'download_limit'=>'',
 				//'download_expiry'=>'',
 				//'external_url'=>'',
@@ -864,9 +863,7 @@ class JsonController extends Controller
 				//'upsell_ids'=>'',
 				'cross_sell_ids'=>'',
 				//'parent_id'=>'',
-		
 				//'purchase_note'=>'',
-
 				'purchasable'=>$InProduct->purchasable,
 				'total_sales'=>$InProduct->total_sales,
 				 'virtual'=>$InProduct->virtual,
@@ -881,7 +878,6 @@ class JsonController extends Controller
 				 'stock_quantity'=>$InProduct->stock_quantity,
 				'backorders'=>$InProduct->backorders,
 				'backorders_allowed'=>$InProduct->backorders_allowed,
-				//
 				 //'low_stock_amount'=>$InProduct->low_stock_amount,
 				 //'sold_individually'=>$InProduct->sold_individually,
 				 //'weight'=>$InProduct->weight,
@@ -899,11 +895,10 @@ class JsonController extends Controller
 				'categories'=> $cat,
 				];
 			}
+		}
 
     	 Products::insert($product);
     }
-
-
     public function InsertProductCat($ProductCat,$vid)
 		{	
 			//dd($ProductCat);
@@ -1127,5 +1122,14 @@ class JsonController extends Controller
 	    }
 		Order_links::insert($Order_links);
     }
+	public function insert_product(Request $request)
+	{
+		$vid = $request->vid;
+		$url_data=DB::table("vendors")->where('user_id','=',intval($vid))->get();
+		$url=$url_data[0]->url;
+		$jsonResponse=$this->getProductWP($url, intval($vid));
+		dd($jsonResponse);die();
+		// $this->InsertProduct($jsonResponse, $vid);		
+	}
 	
 }
