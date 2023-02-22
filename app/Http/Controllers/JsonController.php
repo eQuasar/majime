@@ -494,34 +494,38 @@ class JsonController extends Controller
 				->orderBy('id','desc')
 				->get();
 				// var_dump($waybillnos); die;
-				if($fwdOrReturn == "fwd"){
-					$waybillno = $waybillnos[0]->waybill_no;
+				if (count($waybillnos)>=1){
+					
+				
+					if($fwdOrReturn == "fwd"){
+						$waybillno = $waybillnos[0]->waybill_no;
+					}else{
+						$waybillno = $waybillnos[0]->return_waybill_no ;
+					}
+					echo "\n<br/>WAY: ".$waybillno." Order: ".$order->oid;
+				$url = $del_url."waybill=".$waybillno."&token=ed99803a18868406584c6d724f71ebccc80a89f9";
+				$curl = curl_init();
+				curl_setopt_array($curl, array(
+					CURLOPT_URL => $url, 
+					CURLOPT_RETURNTRANSFER => true,
+					CURLOPT_ENCODING => '',
+					CURLOPT_MAXREDIRS => 10,
+					CURLOPT_TIMEOUT => 0,
+					CURLOPT_FOLLOWLOCATION => true,
+					CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+					CURLOPT_CUSTOMREQUEST => 'GET' 
+				));
+			
+				$response = curl_exec($curl);
+				$response = json_decode($response,true);
+				if (isset($response['Error'])){
+					$data['0'] = "Error: ".$response['Error'];
 				}else{
-					$waybillno = $waybillnos[0]->return_waybill_no ;
-				}
-				echo "\n<br/>WAY: ".$waybillno." Order: ".$order->oid;
-			$url = $del_url."waybill=".$waybillno."&token=ed99803a18868406584c6d724f71ebccc80a89f9";
-			$curl = curl_init();
-			curl_setopt_array($curl, array(
-				CURLOPT_URL => $url, 
-				CURLOPT_RETURNTRANSFER => true,
-				CURLOPT_ENCODING => '',
-				CURLOPT_MAXREDIRS => 10,
-				CURLOPT_TIMEOUT => 0,
-				CURLOPT_FOLLOWLOCATION => true,
-				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-				CURLOPT_CUSTOMREQUEST => 'GET' 
-			));
-		
-			$response = curl_exec($curl);
-			$response = json_decode($response,true);
-			if (isset($response['Error'])){
-				$data['0'] = "Error: ".$response['Error'];
-			}else{
-				if($fwdOrReturn == "fwd"){
-					$data[$order->oid] = $this->processAWBStatusFwd($response,$vid,$order->oid);
-				}else{
-					$data[$order->oid] = $this->processAWBStatusRev($response,$vid,$order->oid);
+					if($fwdOrReturn == "fwd"){
+						$data[$order->oid] = $this->processAWBStatusFwd($response,$vid,$order->oid);
+					}else{
+						$data[$order->oid] = $this->processAWBStatusRev($response,$vid,$order->oid);
+					}
 				}
 			}
 		}
@@ -533,9 +537,10 @@ class JsonController extends Controller
 			for($i=0; $i < sizeof($response['ShipmentData']) ; $i++){
 				// waybill table get orderId of awb = $response['ShipmentData'][$i]['Shipment']['AWB'];
 				$status = $response['ShipmentData'][$i]['Shipment']['Status']['Status'];
-				if ($status == "Manifested" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
-					$status = "dispatched";
-				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
+				// if ($status == "Manifested" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
+				// 	$status = "dispatched";
+				// }else 
+				if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "UD" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){
 					$status = "intransit";
 					// $this->smsSend($vid,$order_id,"dispatched");
 				}else if ($status == "In Transit" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "RT" && $response['ShipmentData'][$i]['Shipment']['ReverseInTransit'] == FALSE ){

@@ -17,6 +17,7 @@ class ProductController extends Controller {
 
     public function productDetail(Request $request) {
         $vendor = $request->vid;
+        $date = \Carbon\Carbon::today()->subDays(7);
         $order = DB::table('line_items')->join('orders', function($join) use ($vendor)
         {
             $join->on('orders.oid', '=', 'line_items.order_id')
@@ -36,7 +37,7 @@ class ProductController extends Controller {
         // DB::raw("(SELECT categories FROM products WHERE products.product_id = line_items.product_id)")
         )
         // ->leftJoin('products','products.product_id','=','line_items.product_id')
-        ->where('line_items.vid', '=', intval($vendor))->whereNotIn('line_items.variation_id', [0])->groupBy('line_items.product_id')->groupBy('line_items.variation_id')->groupBy('line_items.sku')->groupBy('line_items.name')->groupBy('orders.date_created_gmt')->groupBy('line_items.order_id')->orderBy('line_items.name')->get();
+        ->where('line_items.vid', '=', intval($vendor))->where('orders.date_created','>=',$date)->whereNotIn('line_items.variation_id', [0])->groupBy('line_items.product_id')->groupBy('line_items.variation_id')->groupBy('line_items.sku')->groupBy('line_items.name')->groupBy('orders.date_created_gmt')->groupBy('line_items.order_id')->orderBy('line_items.name')->get();
         // $order =	DB::table('line_items as s')
         //   ->leftJoin ('products as e', 'e.product_id', '=' , 's.product_id')
         //   ->select('s.name as name','s.variation_id as variation_id','s.product_id as product_id',
