@@ -10,10 +10,11 @@
       <div class="select-list">
           <b-row>
             <b-col xl="3" lg="3" md="3">
-                        <select class='form-control custom-select' v-model='name' :options="allproductdata" @change='onChangeproduct($event)'>
-                             <option disabled value="null">Select Product</option>
-                             <option  value="allproducts">All Product</option>
-                            <option v-for='data in allproductdata' :value='data.name'>{{data.name}}</option>
+              
+                        <select class='form-control custom-select' v-model='category' :options="allproductdata" @change='onChangeproduct($event)'>  
+                          <option disabled value="null">Select Categories</option>
+                             <option  value="allproducts">All Categories</option>
+                            <option v-for='data in allcategories' :value='data.categories'>{{data.categories}}</option>
                         </select>
                </b-col>
             </b-row>
@@ -63,7 +64,8 @@
                     </b-form-group>
                   </b-col>
                   <b-col>
-                    <button type="button" class="download-btn btn btn-primary" v-on:click="ProductList_download">Download</button>
+                    <button type="button" class="download-btn btn btn-primary" v-on:click="ProductList_download
+                    ">Download</button>
                   </b-col>
                 </b-row>
               </div>
@@ -80,8 +82,8 @@
             </template>
         
               <template v-slot:cell(action)="row">
-                <p class="h3 mb-2">   <router-link :to="{ name: 'productprofile', params: { variation_id:(row.item.product_id).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link>
-                <router-link :to="{ name: 'editproductprofile', params: { product_id:(row.item.product_id).toString() }}"><b-icon icon="pencil-fill" aria-hidden="true"></b-icon></router-link></p>
+                   <!-- <router-link :to="{ name: 'productprofile', params: {product_id:(row.item.product_id).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link> -->
+                   <p class="h3 mb-2"><router-link :to="{ name: 'editproductprofile', params: { product_id:(row.item.product_id).toString() }}"><b-icon icon="pencil-fill" aria-hidden="true"></b-icon></router-link></p>
               </template>
             <template #empty="scope">
                 <p style="text-align:center;">No record found, choose date filter to found the result.</p>
@@ -141,6 +143,7 @@
       this.getVidz();
       this.getProduct();
       this.getStatus();
+      this.getcategory();
       // this.getSize();
     },
     data() 
@@ -158,12 +161,15 @@
         seen: false,
         date_from: '',
         allSelected: false,
+        category:'',
         vid: 0,
         size:"",
         date_to: '',
         // color: null,
         // size: null,
         name: null,
+        sku:'',
+
         product: null,
         variation_id:"",
         sortBy: 'date',
@@ -191,8 +197,13 @@
             sortable: true
           },
           {
+            key: 'sku',
+            label: 'SKU',
+            sortable: true
+          },
+          {
             key: 'price',
-            label: 'Price',
+            label: 'Cost',
             sortable: true
           },
 
@@ -220,6 +231,7 @@
         ],
         pro_cat:'',
         items: [],
+        allcategories:[],
         items2: [],
         errors_create:[],
         successful: false,
@@ -282,14 +294,29 @@ computed: {
                 }
                 });
       },
+      getcategory() 
+         {
+          this.vid = JSON.parse(localStorage.getItem("ivid"));
+          let formData = new FormData();
+          formData.append('vid', this.vid);
+          product.getcategory(formData)
+            .then((response) => {
+                this.allcategoriesdata=response.data;
+                this.allcategories=response.data;
+              })
+                  .catch((error) => {
+              if (error.response.status == 422) {
+                this.errors_create = error.response.data.errors;
+                }
+                });
+          },
     onChangeproduct(event) 
          {
            this.show=true;
            this.vid = JSON.parse(localStorage.getItem("ivid"));
-          console.log(event.target.value);
           let formData = new FormData();
           formData.append('vid', this.vid);
-          formData.append('name', this.name);
+          formData.append('name', this.category);
           product.productSearch(formData)
               .then((response) => 
                    {
@@ -305,25 +332,7 @@ computed: {
                   }
                   });
           },
-         //  onChangeproduct(event) 
-         // {
-         //  console.log(event.target.value);
-         //  let formData = new FormData();
-         //  formData.append("product", this.product);
-         //  order.productSearch(formData)
-         //      .then((response) => 
-         //           {
-         //          this.items=response.data;
-         //          console.log(this.items);
-         //            })
-         //  .catch((error) => 
-         //          {
-         //      console.log(error);
-         //      if (error.response.product == 422) {
-         //          this.errors_create = error.response.data.errors;
-         //          }
-         //          });
-         //  },
+         
           onChangecolor(event) 
          {
           console.log(event.target.value);

@@ -58,6 +58,7 @@
                       </b-col>
                       <b-col>
                           <button type="button" class="download-btn btn btn-primary" v-on:click="selectdownload" style="margin-left: 15px;">Download</button>
+                          
                           <span v-if="saw5"><button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button></span>
                       </b-col>
                   </b-row>

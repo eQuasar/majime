@@ -5,12 +5,16 @@ use App\Http\Controllers\ProductController;
 use App\Models\Billings;
 use App\Models\LineItems;
 use App\Models\line_items_metas;
+use App\Models\product_variation;
 use App\Models\Orders;
 use App\Models\Products;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use PDF;
+use Input;
+use App\Imports\ProductsImport;
+use Maatwebsite\Excel\Facades\Excel;
 class ProductController extends Controller {
 
     public function productDetail(Request $request)
@@ -87,21 +91,34 @@ class ProductController extends Controller {
     public function product_search(Request $request) {
         if ($request->name == "allproducts") {
             // $order = DB::table("orders")->join('line_items', 'orders.oid', '=', 'line_items.order_id')->where('orders.vid', $request->vid)->get();
-            $order = DB::table("products")->where('name', '=', $request->name)->where('vid', $request->vid)->get();
+            $order = DB::table("products")->where('vid', $request->vid)->get();
             return $order;
         } else {
             // $order = DB::table("orders")->join('line_items', 'orders.oid', '=', 'line_items.order_id')->Where('line_items.name', 'like', '%' . $request->name . '%')->where('orders.vid', $request->vid)->get();
-            $order = DB::table("products")->where('name', '=', $request->name)->Where('name', 'like', '%' . $request->name . '%')->where('vid', $request->vid)->get();
+            $order = DB::table("products")->Where('categories', 'like', '%' . $request->name . '%')->where('vid', $request->vid)->get();
 
             return $order;
         }
     }
-    public function product_Profile($variation_id) {
-        $orderItems = DB::table("orders")->join("line_items", 'line_items.order_id', '=', 'orders.oid')->where('orders.vid', '=', intval($_REQUEST['vid']))->where('line_items.variation_id', '=', $variation_id)->where('line_items.vid', '=', $_REQUEST['vid'])->get();
+    public function product_Profile($pro_id) {
+        $orderItems = DB::table("orders")->join("line_items", 'line_items.order_id', '=', 'orders.oid')->where('orders.vid', '=', intval($_REQUEST['vid']))->where('line_items.variation_id', '=', $pro_id)->where('line_items.vid', '=', $_REQUEST['vid'])->get();
         return $orderItems;
     }
-    public function product_items($variation_id) {
-        $orderItems = DB::table("orders")->join("line_items", 'line_items.order_id', '=', 'orders.oid')->where('orders.vid', '=', intval($_REQUEST['vid']))->where('line_items.variation_id', '=', $variation_id)->where('line_items.vid', '=', $_REQUEST['vid'])->get();
+    public function product_items($pro_id) {
+
+         $orderItems = DB::table("product_variations")->join('product_variation_images','product_variation_images.variation_id','=','product_variations.variation_id')
+   ->join('product_variation_attributes','product_variation_attributes.variation_id','=','product_variations.variation_id')
+        ->where('product_variations.product_id', '=', $pro_id)
+        ->where('product_variation_images.product_id', '=', $pro_id)
+        ->where('product_variations.vid', '=', intval($_REQUEST['vid']))
+        ->where('product_variation_images.vid', '=', intval($_REQUEST['vid']))
+        // ->select('product_variations.product_id','product_variations.vid','product_variation_images.src','product_variations.variation_id','product_variations.sku','product_variations.stock_quantity','product_variations.stock_status','product_variations.price','product_variations.tax_status')
+        ->distinct()
+        ->get();
+        return $orderItems;
+    }
+    public function product_detail($pro_id) {
+        $orderItems = DB::table("products")->where('vid', '=', intval($_REQUEST['vid']))->where('product_id', '=', $pro_id)->get();
         return $orderItems;
     }
     public function color_Search(Request $request) {
@@ -205,5 +222,125 @@ class ProductController extends Controller {
         }
         //print message 
         return response()->json([ 'msg' => "orders closed Successfully"]);
+    }
+    public function update_product_detail(Request $request)
+    {
+        $data=DB::table('products')->where('product_id', intval($request->product_id))->where('products.vid', $request->vid)
+        ->update(['name' => $request->product_name,'hsn_code'=>$request->hsn,'weight'=>$request->weight,'slug'=>$request->slug,'sku'=>$request->sku,'price'=>$request->price,'categories'=>$request->categories]);
+          return response()->json([ 'msg' => "Update Successfully"]);
+    }
+    public function getProductVariation_detail(Request $request)
+    {
+        $data=DB::table('product_variations')
+        ->join('product_variation_attributes','product_variations.variation_id','=','product_variation_attributes.variation_id')
+        ->where('product_variations.product_id', intval($request->product_id))->where('product_variations.variation_id', intval($request->variation_id))->where('product_variations.vid', $request->vid)->get();
+         return response()->json(['data'=>$data]);
+
+    }
+    public function update_productVariation_detail(Request $request)
+    {
+        $data=DB::table('product_variations')->where('product_id', intval($request->product_id))->where('product_variations.vid', $request->vid)->where('product_variations.variation_id', $request->variation_id)
+        ->update(['sku' => $request->sku,'stock_status'=>$request->stock_status,'price'=>$request->price,'tax_status'=>$request->tax_status,'description'=>$request->description]);
+          return response()->json([ 'msg' => "Update Successfully"]);
+    }
+    public function get_category(Request $request)
+    {
+        $data=DB::table('products')->where('vid', intval($request->vid))->distinct()->select('products.categories')->get();
+        return $data;
+    }
+    // public function import_product_info(Request $request)
+    // {
+    //         //$data_file=$request->file;
+            
+
+    //     //     $uploaded_files = $data_file->store("Users/eq-mini/Documents");
+    //     // print_r($uploaded_files);
+    //     // exit();
+    // //   Excel::import(new ProductsImport,$request->file('file'));
+    //     // Excel::import(new ProductsImport, $request->file('select_users_file'));
+    //     // Excel::import(new ProductsImport,$data_file);
+    //     // return redirect()->back();
+    //     Excel::import(new ProductsImport,$request->file('file')->store('files'));
+    //     //return redirect();
+
+    // }
+    // public function import_product_info(Request $request)
+    // {
+    //     $input = Request::only('file');
+    //     if(Input::hasFile('file')){
+    //         $path = Input::file('file')->getRealPath();
+    //         $data = Excel::load($path, function($reader) {
+    //         })->get();
+    //         if(!empty($data) && $data->count()){
+    //             foreach ($data as $key => $value) {
+    //                 $insert[] = ['file' => $value->file];
+    //             }
+    //             if(!empty($insert)){
+    //                 DB::table('products')->insert($insert);
+    //               //  dd('Insert Record successfully.');
+    //             }
+    //         }
+    //     }
+    //     return back();    
+    // }
+    public function import_product_info(Request $request)
+    {
+         $input = Request::only('file');
+        // Get current data from items table
+        //$article->tags()->get()->toArray();
+        $products = DB::table('products')->get()->toArray();
+    
+        if(Input::hasFile('file')){
+            $path = Input::file('file')->getRealPath();
+            $data = Excel::load($path, function($reader) {
+            })
+            ->orderBy('created_at')
+            ->groupBy('created_at')
+            ->get();
+    
+            if(!empty($data) && $data->count()){
+                $insert = array();
+    
+                foreach ($data as $key => $value) {
+                    // Skip product previously added using in_array
+                    if (in_array($value->product, $products))
+                        continue;
+    
+                    $insert[] = ['file' => $value->file];
+    
+                    // Add new product to array
+                    $products[] = $value->product;
+                }
+    
+                if(!empty($insert)){
+                    DB::table('products')->insert($insert);
+                   //dd('Insert Record successfully.');
+                }
+               
+            }
+        }
+     
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //14.3.2023
+    public function category(Request $request){
+        $category = DB::table("categories")->where('vid', intval($request->vid))->get();
+        return $category; 
+
     }
 }

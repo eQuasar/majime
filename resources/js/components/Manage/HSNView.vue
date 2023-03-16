@@ -12,7 +12,8 @@
     </div>
     <b-button pill variant="info" style="float: right" @click="goToCreate()"
       >Enter HSN Detail</b-button>
-
+      <b-button pill variant="info" style="float: right" @click="first()"
+      >Download</b-button>
     <div class="content_bar">
       <div class="card-body card">
         <div class="call-center-dashboard">
@@ -117,6 +118,8 @@
 </template>
 <script>
 import hsn from "../../api/hsn.js";
+import * as XLSX from "xlsx/xlsx.mjs";
+
 
 export default {
   props: {},
@@ -135,6 +138,8 @@ export default {
       ariaDescribedby: "",
       time: "",
       date: "",
+     
+
       vid: 0,
       time_slots: [],
       status_assign_array: [],
@@ -150,6 +155,11 @@ export default {
       filter: null,
       filterOn: [],
       fields: [
+        {
+          key: "sr",
+          label: "S No.",
+          sortable: true,
+        },
         {
           key: "hsn_code",
           label: "HSN Detail",
@@ -208,6 +218,14 @@ export default {
           this.successful = false;
           alert("something went wrong");
         });
+    },
+      first: function () {
+      const data = XLSX.utils.json_to_sheet(this.items);
+      const wb = XLSX.utils.book_new();
+      /* fix headers */
+      XLSX.utils.sheet_add_aoa(data, [["HSN Detail","Slab 1","Slab 2","Amount","Description"]], { origin: "A1" });  
+      XLSX.utils.book_append_sheet(wb, data, "data");
+      XLSX.writeFile(wb, "hsn_masterdownload.xlsx");
     },
     goToCreate() {
       this.$router.push("/admin/HsnDeatil");

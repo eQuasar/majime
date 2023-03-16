@@ -682,7 +682,7 @@ export default {
         })
         .catch((response) => {
           this.successful = false;
-          this.$alert("",'Dashboard Data Not available');
+          // this.$alert("",'Dashboard Data Not available');
         });
     },
     margin_report(vid) {
@@ -755,7 +755,7 @@ export default {
         })
         .catch((response) => {
           this.successful = false;
-          this.$alert("",'Dashboard Data Not available')
+          // this.$alert("",'Dashboard Data Not available')
         });
     },
     dashboard_piedata(vid) {

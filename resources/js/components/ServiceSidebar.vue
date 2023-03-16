@@ -17,19 +17,34 @@ export default {
           icon: "fas fa-th",
         },
         {
-          title: "Sales",
-          icon: "fas fa-calendar-alt",
-          child: [
-            {
-              href: { name: "adminProductList" },
-              title: "Products",
-            },
-            {
-              href: { name: "adminlistOrders" },
-              title: "Orders",
-            },
-          ],
+          href: { name: "adminProductList" },
+          title: "Products",
+          icon: "fas fa-th",
         },
+        {
+          href: { name: "category" },
+          title: "Category",
+          icon: "fas fa-th",
+        },
+        {
+          href: { name: "adminlistOrders" },
+          title: "Orders",
+          icon: "fas fa-th",
+        },
+        // {
+        //   title: "Sales",
+        //   icon: "fas fa-calendar-alt",
+        //   child: [
+        //     {
+        //       href: { name: "adminProductList" },
+        //       title: "Products",
+        //     },
+        //     {
+        //       href: { name: "adminlistOrders" },
+        //       title: "Orders",
+        //     },
+        //   ],
+        // },
         {
           title: "Transactions",
           icon: "fas fa-calendar-alt",
@@ -157,7 +172,11 @@ export default {
             // },
             {
               href: { name: "hsn_detail" },
-              title: "HSN Detail",
+              title: "HSN Master",
+            },
+            {
+              href: { name: "import_file" },
+              title: "Import Data",
             },
           ],
         },
@@ -165,6 +184,11 @@ export default {
           href: { name: "wallet" },
           title: "Wallet",
           icon: "fa fa-user",
+        },
+        {
+          href: { name: "billing" },
+          title: "Billing",
+          icon: "fa-solid fa-file-invoice",
         },
 
         // {

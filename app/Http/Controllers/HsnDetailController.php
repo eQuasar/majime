@@ -88,7 +88,8 @@ class HsnDetailController extends Controller
         $product_id =$request->product_id;
         $hsn=$request->hsn;
         $weight=$request->weight;
-        DB::table('products')->where('product_id',$product_id)->update(['hsn_code' => $hsn,'weight'=>$weight]);
+        $price=$request->price;
+        DB::table('products')->where('product_id',$product_id)->update(['hsn_code' => $hsn,'weight'=>$weight,'price'=>$price]);
         return response()->json(['error' => false, 'msg' => "Answer update successfully", "ErrorCode" => "000"], 200);
     }
 

@@ -2,11 +2,18 @@
 .nav-pills{padding-bottom: 0 !important;}
 .vsm--list .vsm--item a{display:block; padding:5px 10px;}
     .back_logon {
-  background: #F5F7FF;
+  background: url(https://ik.imagekit.io/asiiiiiiffffff/4962038_Tah-qtoBKg.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1677061298085);
   width: 100%;
   position: absolute;
   top: 0;
   bottom: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.back_logon .card {
+    box-shadow: 3px 3px 10px rgb(207 218 240);
 }
 
 .back_logon div.content {

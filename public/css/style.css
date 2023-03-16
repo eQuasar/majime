@@ -1549,7 +1549,7 @@ pre code {
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: #4b49ac0a;
+  background-color: #8dc0de0a;
 }
 
 .table-hover tbody tr:hover {
@@ -22242,7 +22242,7 @@ label{
 
 .vsm--item_open {
     /* padding: 5px 0px 10px;*/
-    /*background: #4b49ac;*/
+    /*background: #8dc0de;*/
     border-radius: 8px 8px 0px 0px;
 }
 
@@ -22464,8 +22464,8 @@ content: '\f105';
 }
 
 .nav-pills .nav-item.active a {
-    background: #4b49ac;
-    border: 1px solid #4b49ac !important;
+    background: #8dc0de;
+    border: 1px solid #8dc0de !important;
 }
 
 .nav-pills .nav-item {
@@ -22514,8 +22514,8 @@ content: '\f105';
 .card-footer button {
     width: 300px;
     padding: 20px 0px;
-    background-color: #4b49ac !important;
-    border-color: #4b49ac !important;
+    background-color: #8dc0de !important;
+    border-color: #8dc0de !important;
     color: #fff !important;
 }
 
@@ -22584,7 +22584,7 @@ content: '\f105';
 .list-appointments .row{    align-items: center;}
 .list-appointments .form-group div{ font-size: 14px; font-weight: 500;}
 .list-appointments .form-group div select{ height: 35px!important; width: auto; font-size: 14px!important; border: 1px solid #D5E3D6!important;  border-radius: 8px!important;}
-.list-appointments .input-group-append button{ background: #4b49ac; color: #fff; font-weight: 600; border-radius: 0px 9px 8px 0px!important;}
+.list-appointments .input-group-append button{ background: #8dc0de; color: #fff; font-weight: 600; border-radius: 0px 9px 8px 0px!important;}
 
 .list-appointments .col-sm-12 {
     padding: 0;

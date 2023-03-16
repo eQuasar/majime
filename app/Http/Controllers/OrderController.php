@@ -121,7 +121,6 @@ class OrderController extends Controller {
         $vendor = $request->vid;
         $vendor2 = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
         $curl = curl_init();
-
         curl_setopt_array($curl, array(
           CURLOPT_URL => $vendor2[0]->url.'/wp-json/wc/v3/orders',
           // CURLOPT_URL => $vendor2[0]->url.'/wp-json/wc/v3/orders',
@@ -136,9 +135,7 @@ class OrderController extends Controller {
             'Authorization: Basic ' . $vendor2[0]->token
           ),
         ));
-
         $response = curl_exec($curl);
-
         curl_close($curl);
         $jsonResp = json_decode($response);
         foreach ($jsonResp as $jp) {

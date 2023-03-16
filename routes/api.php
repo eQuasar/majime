@@ -41,8 +41,10 @@ Route::group(['prefix' => 'v1'], function () {
 	 Route::get('order_Profile/{oid}',[App\Http\Controllers\OrderController::class,'OrdersProfile']);
     Route::get('order_Profile/{oid}', 'OrderController@order_Profile')->name('order_Profile');
     // Route::get('order_Profile/{oid}', 'OrderController@order_Profile')->name('order_Profile');
-	Route::get('product_Profile/{variation_id}', 'ProductController@product_Profile')->name('product_Profile');
-	Route::get('product_items/{variation_id}', 'ProductController@product_items')->name('product_items');
+	Route::get('product_Profile/{product_id}', 'ProductController@product_Profile')->name('product_Profile');
+	Route::get('product_items/{product_id}', 'ProductController@product_items')->name('product_items');
+	Route::get('product_detail/{product_id}', 'ProductController@product_detail')->name('product_detail');
+	Route::post('category', 'ProductController@category')->name('category');
 	Route::get('get_order_data', 'JsonController@get_order_data')->name('get_order_data');
 	Route::get('getOrderOnStatus/{vid}/{status}', 'OrderController@getOrderOnStatus')->name('getOrderOnStatus');
 	Route::get('getComplete_OrdersStatus/{vid}/{statrto}/{statdto}/{statcomp}/{clos}', 'OrderController@getComplete_OrdersStatus')->name('getComplete_OrdersStatus');
@@ -58,6 +60,7 @@ Route::group(['prefix' => 'v1'], function () {
   	Route::get('getAllLinks',[App\Http\Controllers\JsonController::class,'getAllLinks']);
   	// Route::get('getJson',[App\Http\Controllers\JsonController::class,'getJson']);
 	Route::post('getJson', 'JsonController@getJson')->name('getJson');
+	// Route::post('getJson', 'JsonController@getJson')->name('getJson');
 	Route::post('changeStatus', 'OrderController@changeStatus')->name('changeStatus');
 	Route::post('assignAWB', 'OrderController@assignAWB')->name('assignAWB');
 	Route::post('return_awb', 'OrderController@return_awb')->name('return_awb');
@@ -135,6 +138,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('delpiechart_data/{vid}', 'DashboardController@delpiechart_data')->name('delpiechart_data');
 	Route::get('getmargin_report/{vid}', 'DashboardController@getmargin_report')->name('getmargin_report');
 	Route::get('getvedordata', 'DashboardController@getvedordata')->name('getvedordata');
+	
 	Route::post('getvedordata','VendorRatecardController@getvedordata')->name('getvedordata');
 	Route::post('showzonedetail','ZoneratecardController@showzonedetail')->name('showzonedetail');
 	Route::post('hsn_detail','HsnDetailController@store')->name('hsn_detail');
@@ -143,5 +147,20 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('getProduct_data','HsnDetailController@getProduct_data')->name('getProduct_data');
 	Route::post('getJson', 'JsonController@getJson')->name('getJson');
 	Route::post('insert_product/{vid}', 'JsonController@insert_product')->name('insert_product');
+	Route::post('getorder_detail','JsonController@getorder_detail')->name('getorder_detail');
+	Route::post('suborder_detail','JsonController@suborder_detail')->name('suborder_detail');
+	Route::post('suborder_data','JsonController@suborder_data')->name('suborder_data');
+	Route::post('getproduct_detail','ProductController@getproduct_detail')->name('getproduct_detail');
+	Route::post('update_product_detail','ProductController@update_product_detail')->name('update_product_detail');
+	Route::post('getProductVariation_detail','ProductController@getProductVariation_detail')->name('getProductVariation_detail');
+	Route::post('update_productVariation_detail','ProductController@update_productVariation_detail')->name('update_productVariation_detail');
+	Route::post('billing_detail','BillingController@billing_detail')->name('billing_detail');
+	Route::post('get_category','ProductController@get_category')->name('get_category');
+	Route::get('get_product_info','BillingController@get_product_info')->name('product_HsnWeight_export');
+	// Route::get('import_product_info','BillingController@import_product_info')->name('import_product_info');
+	Route::post('import_product_info','ProductController@import_product_info')->name('import_product_info');
+	Route::post('product_insert','BillingController@product_insert')->name('product_insert');
+	Route::post('billing_process','BillingController@billing_process')->name('billing_process');
+
 }); 
 

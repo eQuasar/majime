@@ -5,13 +5,15 @@
         <div class="card-body">
           <!-- <b-button pill variant="info" style="float: right" @click="goToCreate()"
           >Go Back</b-button> -->
-          <h3><strong>HSN Detail Details</strong></h3>
+          <h3><strong>HSN Details</strong></h3>
           <br/>
+         
           <b-form>
               <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
               <div :class="['form-group m-1 p-3', (successful ? 'alert-success' : '')]" v-show="successful">
                 <span v-if="successful" class="label label-sucess">Transaction Detail Enter Sucessfully</span>
               </div>
+             
               <b-overlay :show="show" rounded="sm" class="transaction_details">
                 <b-row style="margin-bottom: 10px;">
                   <b-col xl="6" lg="6" md="6">
@@ -32,6 +34,7 @@
                         </template>
                   </b-form-select>
               </b-form-group>  -->
+
                   <b-form-group id="input-group-hsn" label="HSN Code" label-for="input-hsn">
                     <b-form-input id="input-amount"  v-model="hsn" type="text" required placeholder="Enter HSN Code"></b-form-input>
                     </b-form-group>
@@ -62,6 +65,7 @@
     import HSN from '../../api/hsn.js';
     import vendors from '../../api/vendors.js';
     import user from '../../api/user.js';
+    import * as XLSX from "xlsx/xlsx.mjs";
     // import apidata from '../../api/json.js';
     // import vendor from '../../api/vendors.js';
     export default {
@@ -76,7 +80,9 @@
            ariaDescribedby: "",
           name: "",
           vid:0,
+          first:"",
           status:"",
+          download1:'',
           city: "",
           date:"",
           pin:"",
@@ -217,6 +223,14 @@
                 }
             });
         },
+          first: function () {
+      const data = XLSX.utils.json_to_sheet(this.items);
+      const wb = XLSX.utils.book_new();
+      /* fix headers */
+      XLSX.utils.sheet_add_aoa(data, [["Employee Name","TL Name","Project Name","Pending Task","1st Appt.","De-Snag","2nd Appt.","KH Appt.","Final KH Done","Total OOP"]], { origin: "A1" });  
+      XLSX.utils.book_append_sheet(wb, data, "data");
+      XLSX.writeFile(wb, "hsn_masterdownload.xlsx");
+    },
     //    goToCreate() {
     //   this.$router.push("/admin/HSNDetail");
     // },
