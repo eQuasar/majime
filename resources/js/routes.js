@@ -13,6 +13,7 @@ import AdminlistOrders from './components/Orders/listOrders.vue'
 //import ReportProfile from './components/Report/OrderDetail.vue'
 import OrderProfile2 from './components/Orders/OrderProfile.vue'
 import productprofile from './components/Products/productprofile.vue'
+import EditProductProfile from './components/Products/editproductprofile.vue'
 import ReadytopackOrders from './components/Orders/ReadytopackOrders.vue'
 import ConfirmedOrders from './components/Orders/ConfirmedOrders.vue'
 import CompleteOrders from './components/Orders/CompleteOrders.vue'
@@ -34,6 +35,14 @@ import VRCView from './components/Master/VRCView.vue'
 import WayDataCard from './components/Master/waydata.vue'
 import demo from './components/Admin/demo.vue'
 import deliveredorders from './components/Admin/deliveredorders.vue'
+import HsnDetail from './components/Manage/HsnDetail.vue'
+import HSNDeatil from './components/Manage/HSNView.vue'
+import editbutton from './components/Products/editbutton.vue'
+import editbutton2 from './components/Products/editbutton2.vue'
+import Billing from './components/Billing/billing.vue'
+import category from './components/Billing/category.vue'
+import Import_File from './components/Report/import_file.vue'
+
 
 
 export const routes = [ 
@@ -68,7 +77,7 @@ export const routes = [
     {path:'/admin/import-vendor',component: ImportVendor,name:'importvendor',meta: { auth: true}},
     //{path:'/vendor/Order-detail/:clientid',component: ReportProfile,props: true,name:'orderdetail',meta: { auth: true}},
     {path:'/vendor/OrderProfile/:oid',component: OrderProfile2,props: true,name:'OrderProfile',meta: { auth: true}},
-    {path:'/vendor/ListOrdersforVariationID/:variation_id',component: productprofile,props: true,name:'productprofile',meta: { auth: true}},
+    {path:'/vendor/ListOrdersforVariationID/:product_id',component: productprofile,props: true,name:'productprofile',meta: { auth: true}},
      {path:'/admin/transaction',component:TransactionDetail ,props: true,name:'TransactionDetail',meta: { auth: true}},
      {path:'/admin/ViewTransaction',component:ViewTransaction ,props: true,name:'ViewTransaction',meta: { auth: true}},
      {path:'/vendor/ForDelivery',component:ForDelivery,name:'fordelivery',meta: { auth: true}},
@@ -78,6 +87,15 @@ export const routes = [
     {path:'/vendor/dtoDelivered',component:DtoDelivered,name:'dtoDelivered',meta: { auth: true}},
     {path:'/admin/demo',component: demo,name:'demo',meta: { auth: true}},
     {path:'/admin/deliveredorders',component: deliveredorders,name:'deliveredorders',meta: { auth: true}},
+    {path:'/admin/HsnDeatil',component: HsnDetail,name:'hsndetail',meta: { auth: true}},
+    {path:'/admin/HSNDeatil',component: HSNDeatil,name:'hsn_detail',meta: { auth: true}},
 
+    {path:'/vendor/Product_list/:product_id',component: EditProductProfile,props: true,name:'editproductprofile',meta: { auth: true}},
+    {path:'/vendor/Product_list/product_id',component: editbutton,props: true,name:'editbutton',meta: { auth: true}},
+    {path:'/vendor/editProduct_variation/:product_id/:variation_id',component: editbutton2,props: true,name:'editbutton2',meta: { auth: true}},
+    {path:'/admin/billing',component: Billing,name:'billing',meta: { auth: true}},
+    {path:'/admin/category',component: category,name:'category',meta: { auth: true}},
+    {path:'/admin/import/data',component: Import_File,name:'import_file',meta: { auth: true}},
+    
   
 ];

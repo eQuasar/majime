@@ -351,7 +351,10 @@ tbody tr {
 .navbar .navbar-brand-wrapper .navbar-brand.brand-logo{
     display: block;
 }
-
+.card-body .card-body-bg
+{
+    background-color:rgb(196, 228, 241);
+}
 @media screen and (max-width: 991px) {
 
     /* = = = = = = Nav = = = = = =*/
@@ -455,6 +458,7 @@ tbody tr {
         display: flex;
         margin-top: 15px;
     }
+  
 
 
 }

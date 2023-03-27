@@ -9,5 +9,8 @@ export default {
     getStatusDetails(data) {
         return axios.post('status_details', data)
     },
+    report_downloadsheet(data) {
+        return axios.post('report_download', data)
+    },
 
 }

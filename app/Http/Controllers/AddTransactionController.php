@@ -11,6 +11,8 @@ use App\Models\zonedetails;
 use App\Models\billings;
 use App\Models\Orders;
 use App\Models\line_items;
+use App\Models\hsn_detail;
+
 use Illuminate\Support\Facades\DB;
 
 class AddTransactionController extends Controller
@@ -189,4 +191,5 @@ class AddTransactionController extends Controller
     {
         //
     }
+  
 }

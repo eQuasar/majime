@@ -51,7 +51,7 @@
                 <!-- </b-form-group> -->
                   
                      <b-form-group id="input-group-zone" label=" Choose Zone" label-for="input-zone" placeholder="Select Zone">
-                  <b-form-select v-model="zone" :options="alloption" label="Zone " label-for="input-ZOne" v-on:change="showzonedetail"></b-form-select>
+                          <b-form-select v-model="zone" :options="alloption" label="Zone " label-for="input-ZOne" v-on:change="showzonedetail"></b-form-select>
                      </b-form-group>
                 </b-form-select>
               </b-form-group>

@@ -11,13 +11,18 @@ use App\Models\Billings;
 use App\Models\shippings;
 use App\Models\meta_data;
 use App\Models\LineItems;
+use App\Models\product_variation;
 use App\Models\LineItemsMeta;
+use App\Models\product_variation_categories;
 use App\Models\tax_lines;
 use App\Models\shipping_lines;
 use App\Models\Order_fee_lines;
 use App\Models\Order_Coupan_lines;
 use App\Models\Order_Refunds;
 use App\Models\Order_links;
+use App\Models\suborder_detail;
+use App\Models\product_variation_attributes;
+use App\Models\product_variation_images;
 use App\Models\meta_data_value;
 use App\Models\Products;
 use App\Models\Category;
@@ -59,8 +64,6 @@ class JsonController extends Controller
 		$jsonResponse=$this->OrderUpdateWP($url, $vid);
 		$this->InsertOrderID($jsonResponse, $vid, $url);
     }
-
-
 
 
 	private function addOrderWP($url, $vid)
@@ -136,28 +139,26 @@ class JsonController extends Controller
 				 'date_paid_gmt'=>$order->date_paid_gmt,
 				 'currency_symbol'=>$order->currency_symbol,
 			];
-			$this->InsertBilling($order->id,$order->billing,$vid);
-			$this->InsertShipping($order->id,$order->shipping,$vid);
+			// $this->InsertBilling($order->id,$order->billing,$vid);
+			// $this->InsertShipping($order->id,$order->shipping,$vid);
 		    //$this->OrderMetaData($order->id,$order->meta_data);
 		    $this->insertLineItems($order->id,$order->line_items,$vid);
 			//$this->LineItem_Metadata($order->id,$order->line_items);
-			$this->OrderTaxLines($order->id,$order->tax_lines,$vid);
-			$this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
-			$this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
-			$this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
-		    $this->Order_refunds($order->id,$order->refunds,$vid);
-			$this->Order_links($order->id,$order->_links,$vid);
-
-			$this->smsSend($vid,$order->id,"placed");
-	    
-	    	Orders::insert($Orders); 	
+			// $this->OrderTaxLines($order->id,$order->tax_lines,$vid);
+			// $this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
+			// $this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
+			// $this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
+		    // $this->Order_refunds($order->id,$order->refunds,$vid);
+			// $this->Order_links($order->id,$order->_links,$vid);
+			// $this->smsSend($vid,$order->id,"placed");
+	    	// Orders::insert($Orders); 	
        }
     }
 
     public function getWayBill($vid, $url){
     	// https://isdemo.in/fc/wp-json/waybill_import/waybill_import_data
     	$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
-		var_dump($vendor);
+		// var_dump($vendor);
     	$curl = curl_init();
 
 	    curl_setopt_array($curl, array(
@@ -192,14 +193,11 @@ class JsonController extends Controller
 
 	    }
     }
-
 	private function getProductWP($url, $vid)
 	{
 		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
 		$curl = curl_init();
-
 	    curl_setopt_array($curl, array(
-
 	    CURLOPT_URL => $url.'/wp-json/wc/v3/products?per_page=100',
 	    CURLOPT_RETURNTRANSFER => true,
 	    CURLOPT_ENCODING => '',
@@ -209,26 +207,19 @@ class JsonController extends Controller
 	    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	    CURLOPT_CUSTOMREQUEST => 'GET',
 	    CURLOPT_HTTPHEADER => array(
-
 	        'Authorization: Basic '.$vendor[0]->token
 	      ),
 	    ));
-
 	    $response = curl_exec($curl);
-
 	    curl_close($curl);
 	    $jsonResp = json_decode($response);
 		return  $jsonResp;
  	}
-
-
 	private function getProductCatWP($url, $vid)
 	{
 		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
 		$curl = curl_init();
-
 	    curl_setopt_array($curl, array(
-
 	    CURLOPT_URL => $url.'/wp-json/wc/v3/products/categories?per_page=100',
 	    CURLOPT_RETURNTRANSFER => true,
 	    CURLOPT_ENCODING => '',
@@ -238,7 +229,6 @@ class JsonController extends Controller
 	    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	    CURLOPT_CUSTOMREQUEST => 'GET',
 	    CURLOPT_HTTPHEADER => array(
-
 	        'Authorization: Basic '.$vendor[0]->token
 	      ),
 	    ));
@@ -250,14 +240,35 @@ class JsonController extends Controller
 		return  $jsonResp;
 
  	}
-	
+	public function getorder_detail(Request $request)
+	{
+		$url=$request->url;
+		$vid=$request->vid;
+		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
+			$curl = curl_init();
+			curl_setopt_array($curl, array(
+			CURLOPT_URL => $url.'/wp-json/wc/v3/orders?per_page=100',
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => 'GET',
+			CURLOPT_HTTPHEADER => array(
+				'Authorization: Basic '.$vendor[0]->token
+			),
+			));
+			$response = curl_exec($curl);
+			curl_close($curl);
+			$jsonResp = json_decode($response);
+			return  $jsonResp;
+	}
 	private function getOrderWP($url, $vid)
 	{
 		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
 		$curl = curl_init();
-
 	    curl_setopt_array($curl, array(
-
 	    CURLOPT_URL => $url.'/wp-json/wc/v3/orders?per_page=100',
 	    CURLOPT_RETURNTRANSFER => true,
 	    CURLOPT_ENCODING => '',
@@ -267,24 +278,19 @@ class JsonController extends Controller
 	    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	    CURLOPT_CUSTOMREQUEST => 'GET',
 	    CURLOPT_HTTPHEADER => array(
-
 	        'Authorization: Basic '.$vendor[0]->token
 	      ),
 	    ));
-
 	    $response = curl_exec($curl);
 	    curl_close($curl);
 	    $jsonResp = json_decode($response);
 		return  $jsonResp;
  	}
-
  	private function getProductTagWp($url, $vid)
 	{
 		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
 		$curl = curl_init();
-
 	    curl_setopt_array($curl, array(
-
 	    CURLOPT_URL => $url.'/wp-json/wc/v3/products/tags?per_page=100',
 	    CURLOPT_RETURNTRANSFER => true,
 	    CURLOPT_ENCODING => '',
@@ -294,13 +300,10 @@ class JsonController extends Controller
 	    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	    CURLOPT_CUSTOMREQUEST => 'GET',
 	    CURLOPT_HTTPHEADER => array(
-
 	        'Authorization: Basic '.$vendor[0]->token
 	      ),
 	    ));
-
 	    $response = curl_exec($curl);
-
 	    curl_close($curl);
 	    $jsonResp = json_decode($response);
 		return  $jsonResp;
@@ -326,19 +329,50 @@ class JsonController extends Controller
 	        'Authorization: Basic '.$vendor[0]->token
 	      ),
 	    ));
-
 	    $response = curl_exec($curl);
-
 	    curl_close($curl);
 	    $jsonResp = json_decode($response);
 		return  $jsonResp;
  	}
+	 private function getProductVariation($productvariation,$url, $vid)
+	 {
+		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
+		 $products =DB::table("products")->where('vid','=',intval($vid))->get();
+		 $product_id = array();
+		 foreach ($products as $item) { array_push($product_id,$item->product_id); }
+		 for($i=3;$i<count($product_id);$i++)
+		 {
+			echo $product_id[$i];
+		 $curl = curl_init();
+		 curl_setopt_array($curl, array(
+		   CURLOPT_URL => $url.'/wp-json/wc/v3/products/'.$product_id[$i],
+		   CURLOPT_RETURNTRANSFER => true,
+		   CURLOPT_ENCODING => '',
+		   CURLOPT_MAXREDIRS => 10,
+		   CURLOPT_TIMEOUT => 0,
+		   CURLOPT_FOLLOWLOCATION => true,
+		   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		   CURLOPT_CUSTOMREQUEST => 'GET',
+		   CURLOPT_HTTPHEADER => array(
+			'Authorization: Basic '.$vendor[0]->token
+		   ),
+		 ));
+		
+		// }
+		 $response = curl_exec($curl);
+		 curl_close($curl);
+		 $jsonResp = json_decode($response);
+		 $this->ProductVariation($jsonResp->variations, $productvariation,$url, $vid); 
+
+		 }
+		 
+		 exit();
+		
+		//  return  $jsonResp;
+	  }
 
 	public function smsSend($vid,$order_id,$smsTemplate)
 	{
-		
-		
-
 		$vendor=DB::table("vendors")
 				->where('id',intval($vid))
 				->get();
@@ -474,7 +508,6 @@ class JsonController extends Controller
 		exit();
 
  	}
-
  	public function getAWBStatus($orders,$vid,$fwdOrReturn)
 	{	
 		// if($vid == 1){
@@ -758,76 +791,74 @@ class JsonController extends Controller
 				 'date_paid_gmt'=>$order->date_paid_gmt,
 				 'currency_symbol'=>$order->currency_symbol,
 			];
-			$this->InsertBilling($order->id,$order->billing,$vid);
-			$this->InsertShipping($order->id,$order->shipping,$vid);
-		    //$this->OrderMetaData($order->id,$order->meta_data);
-		    $this->insertLineItems($order->id,$order->line_items,$vid);
-			//$this->LineItem_Metadata($order->id,$order->line_items);
-			$this->OrderTaxLines($order->id,$order->tax_lines,$vid);
-			$this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
-			$this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
-			$this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
-		    $this->Order_refunds($order->id,$order->refunds,$vid);
-			$this->Order_links($order->id,$order->_links,$vid);
+			// $this->InsertBilling($order->id,$order->billing,$vid);
+			// $this->InsertShipping($order->id,$order->shipping,$vid);
+		    // //$this->OrderMetaData($order->id,$order->meta_data);
+		    // $this->insertLineItems($order->id,$order->line_items,$vid);
+			// //$this->LineItem_Metadata($order->id,$order->line_items);
+			// $this->OrderTaxLines($order->id,$order->tax_lines,$vid);
+			// $this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
+			// $this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
+			// $this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
+		    // $this->Order_refunds($order->id,$order->refunds,$vid);
+			// $this->Order_links($order->id,$order->_links,$vid);
 
 	    }
        	
-	    if(!empty($Orders)){
-	       	Orders::insert($Orders); 	
+	    // if(!empty($Orders)){
+	    //    	Orders::insert($Orders); 	
 
-	       	$this->getWayBill($vid, $url);
-       	}
+	    //    	$this->getWayBill($vid, $url);
+       	// }
 			
-		$jsonResponse=$this->getProductWP($url, intval($vid));
-		$this->InsertProduct($jsonResponse, $vid);
+		// $jsonResponse=$this->getProductWP($url, intval($vid));
+		// $this->InsertProduct($jsonResponse, $vid);
+		
+		//  $jsonResponseVariation=$this->getProductVariation($jsonResponse,$url, intval($vid));
+
+		
 		// dd($jsonResponse);
 
-		$jsonResponsecat=$this->getProductCatWP($url, intval($vid));
-		$this->InsertProductCat($jsonResponsecat, $vid);
-		// dd($jsonResponsecat);
+		// $jsonResponsecat=$this->getProductCatWP($url, intval($vid));
+		// $this->InsertProductCat($jsonResponsecat, $vid);
+		// // dd($jsonResponsecat);
 
-		$jsonResponseTag=$this->getProductTagWp($url, intval($vid));
-		$this->InsertProductTag($jsonResponseTag, $vid);
-		//dd($jsonResponseTag);
+		// $jsonResponseTag=$this->getProductTagWp($url, intval($vid));
+		// $this->InsertProductTag($jsonResponseTag, $vid);
+		// // dd($jsonResponseTag);
 
-		$jsonResponseAtt=$this->getProductAttWp($url, intval($vid));
-		$this->InsertProductAtt($jsonResponseAtt, $vid);
-		// dd($jsonResponseAtt);
+		// $jsonResponseAtt=$this->getProductAttWp($url, intval($vid));
+		// $this->InsertProductAtt($jsonResponseAtt, $vid);
+		
 		
     }
 
 	public function InsertProduct($ProductData,$vid)
 		{	
-			// dd($ProductData);
+			
+			// var_dump($ProductData);
 			foreach($ProductData as $InProduct)
-		 {
+		   {
 		 	$cat = '';
 		 	for ($i=0; $i < count($InProduct->categories); $i++) { 
-		 		// if($i == count($InProduct->categories)-1){
-		 			// $cat .= $InProduct->categories[$i]->name;
-		 		// }else{
+		 		if($i == count($InProduct->categories)-1){
+		 			$cat .= $InProduct->categories[$i]->name;
+		 		}else{
 		 			$cat .= $InProduct->categories[$i]->name.",";
-		 		// }
-		 		
+		 		}
 		 	}
-
+			 if (Products::where('product_id', $InProduct->id)->where('vid',$vid)->exists())
+			 {
+				 return response()->json([ 'msg' => "Product already Exist"]);	
+			 }
+			 else
+			 {
 			$product[]=[
 				'vid'=>intval($vid),
 				'product_id'=>$InProduct->id,
 				'name'=>$InProduct->name,
 				'slug'=>$InProduct->slug,
 				'permalink'=>$InProduct->permalink,
-//     'type'=>'',
-//     'status'=>'',
-// 'featured'=>'',
-// 'catalog_visibility'=>'',
-// 'description'=>'',
-// 'short_description'=>'',
-// 'sku'=>'',
-// 'price'=>'',
-// 'regular_price'=>'',
-// 'sale_price'=>'',
-// 'on_sale'=>'',
 				'type'=>$InProduct->type,
 				'status'=>$InProduct->status,
 				'featured'=>$InProduct->featured,
@@ -839,39 +870,6 @@ class JsonController extends Controller
 				'regular_price'=>$InProduct->regular_price,
 				'sale_price'=>$InProduct->sale_price,
 				'on_sale'=>$InProduct->on_sale,
-
-				// 'purchasable'=>'',
-				//'total_sales'=>'',
-				//'virtual'=>'',
-				//'downloadable'=>'',
-			
-				//'download_limit'=>'',
-				//'download_expiry'=>'',
-				//'external_url'=>'',
-				//'button_text'=>'',
-				//'tax_status'=>'',
-				//'tax_class'=>'',
-				//'manage_stock'=>'',
-				//'stock_quantity'=>'',
-				//'backorders'=>'',
-				//'backorders_allowed'=>'',
-				'backordered'=>'',
-				'low_stock_amount'=>'',
-				'sold_individually'=>'',
-				'weight'=>'',
-				'shipping_required'=>'',
-				//'shipping_taxable'=>'',
-				//'shipping_class'=>'',
-			//	'shipping_class_id'=>'',
-			//	'reviews_allowed'=>'',
-				//'average_rating'=>'',
-				//'rating_count'=>'',
-				//'upsell_ids'=>'',
-				'cross_sell_ids'=>'',
-				//'parent_id'=>'',
-		
-				//'purchase_note'=>'',
-
 				'purchasable'=>$InProduct->purchasable,
 				'total_sales'=>$InProduct->total_sales,
 				 'virtual'=>$InProduct->virtual,
@@ -886,29 +884,23 @@ class JsonController extends Controller
 				 'stock_quantity'=>$InProduct->stock_quantity,
 				'backorders'=>$InProduct->backorders,
 				'backorders_allowed'=>$InProduct->backorders_allowed,
-				//
-				 //'low_stock_amount'=>$InProduct->low_stock_amount,
-				 //'sold_individually'=>$InProduct->sold_individually,
-				 //'weight'=>$InProduct->weight,
-				// 'shipping_required'=>$InProduct->shipping_required,
+				 'low_stock_amount'=>$InProduct->low_stock_amount,
+				 'sold_individually'=>$InProduct->sold_individually,
+				 'weight'=>$InProduct->weight,
+				'shipping_required'=>$InProduct->shipping_required,
 				 'shipping_taxable'=>$InProduct->shipping_taxable,
 				'shipping_class'=>$InProduct->shipping_class,
 				'shipping_class_id'=>$InProduct->shipping_class_id,
 				 'reviews_allowed'=>$InProduct->reviews_allowed,
 			 	'average_rating'=>$InProduct->average_rating,
-				// 'rating_count'=>$InProduct->rating_count,
-			//	'upsell_ids'=>$InProduct->upsell_ids,
-				//'cross_sell_ids'=>$InProduct->cross_sell_ids, 
-				'parent_id'=>$InProduct->purchase_note,
+				'rating_count'=>$InProduct->rating_count,
 			 	'purchase_note'=>$InProduct->purchase_note,
 				'categories'=> $cat,
 				];
 			}
-
+		}
     	 Products::insert($product);
     }
-
-
     public function InsertProductCat($ProductCat,$vid)
 		{	
 			//dd($ProductCat);
@@ -920,10 +912,8 @@ class JsonController extends Controller
 					'category_id'=>$InProductCat->id,
 					'name'=>$InProductCat->name,
 					'slug'=>$InProductCat->slug,
-		
 				];
 			}
-
     	  Category::insert($productCat);
     }
 
@@ -954,7 +944,6 @@ class JsonController extends Controller
 			$productAtts[]=[
 
 					'vid'=>intval($vid),
-				
 					'attribute_id'=>$InProductAtt->id,
 					'name'=>$InProductAtt->id,
 					'slug'=>$InProductAtt->id,
@@ -967,7 +956,186 @@ class JsonController extends Controller
 
     	  Product_Attribute::insert($productAtts);
     }
+	public function ProductVariation($variations,$ProductVariation,$url,$vid)
+	{
 
+		if(count($variations)!='0'){
+			$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
+			$products =DB::table("products")->where('vid','=',intval($vid))->pluck('product_id')->toArray();
+			// $product_id = array();
+			// foreach ($products as $item) { array_push($product_id,$item->product_id); }
+			for($i=0;$i<count($products);$i++)
+			{
+				for($j=0;$j<count($variations);$j++)
+				{
+					$curl = curl_init();
+					curl_setopt_array($curl, array(
+						CURLOPT_URL => $url.'/wp-json/wc/v3/products/'.$products[$i].'/variations/'.$variations[$j],
+						CURLOPT_RETURNTRANSFER => true,
+						CURLOPT_ENCODING => '',
+						CURLOPT_MAXREDIRS => 10,
+						CURLOPT_TIMEOUT => 0,
+						CURLOPT_FOLLOWLOCATION => true,
+						CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+						CURLOPT_CUSTOMREQUEST => 'GET',
+						CURLOPT_HTTPHEADER => array(
+							'Authorization: Basic '.$vendor[0]->token
+						),
+					));
+				$response = curl_exec($curl);
+				curl_close($curl);
+				$jsonResp = json_decode($response);
+				$this->InsertProductVariation($response,$vid,$products[$i]);
+				// $this->InsertProductVariation_categories($response,$vid,$product_id[$i]);
+				// $this->InsertProductVariation_attributes($response,$vid,$product_id[$i]);
+				// $this->InsertProductVariation_images($response,$vid,$product_id[$i]);
+				// $this->InsertProductVariation_tags($response,$vid,$product_id[$i]);
+				// $this->InsertProductVariation_images($response,$vid,$product_id[$i]);
+				// $this->InsertProductVariation_links($response,$vid,$product_id[$i]);
+				// $this->InsertProductVariation_dimensions($response,$vid,$product_id[$i]);
+			}
+			}	
+		}
+
+	}
+	public function InsertProductVariation($ProductVariation,$vid,$proId)
+		{
+			$Variation_data = json_decode($ProductVariation);
+			if (product_variation::where('variation_id', $Variation_data->id)->where('vid',$vid)->exists())
+			{
+				// return response()->json([ 'msg' => "Product Variation already Exist"]);	
+			}
+			else
+			{
+			// print_r($Variation_data);die();
+			$product_variation[]=[
+				'vid'=>intval($vid),
+				'product_id'=>$proId,
+				'variation_id'=>$Variation_data->id,
+				'sku'=>$Variation_data->sku,
+				'price'=>$Variation_data->price,
+				'regular_price'=>$Variation_data->regular_price,
+				'stock_quantity'=>$Variation_data->stock_quantity,
+				'stock_status'=>$Variation_data->stock_status,
+				'description'=>$Variation_data->description,
+				'permalink'=>$Variation_data->permalink,
+				'sale_price'=>$Variation_data->sale_price,
+				'date_on_sale_from'=>$Variation_data->date_on_sale_from,
+				'date_on_sale_from_gmt'=>$Variation_data->date_on_sale_from_gmt,
+				'date_on_sale_to'=>$Variation_data->date_on_sale_to,
+				'date_on_sale_to_gmt'=>$Variation_data->date_on_sale_to_gmt,
+				'on_sale'=>$Variation_data->on_sale,
+				'status'=>$Variation_data->status,
+				'purchasable'=>$Variation_data->purchasable,
+				'virtual'=>$Variation_data->virtual,
+				'downloadable'=>$Variation_data->downloadable,
+				'download_limit'=>$Variation_data->download_limit,
+				'download_expiry'=>$Variation_data->download_expiry,
+				'tax_status'=>$Variation_data->tax_status,
+				'tax_class'=>$Variation_data->tax_class,
+				'manage_stock'=>$Variation_data->manage_stock,
+				'backorders'=>$Variation_data->backorders,
+				'backorders_allowed'=>$Variation_data->backorders_allowed,
+				'backordered'=>$Variation_data->backordered,
+				'low_stock_amount'=>$Variation_data->low_stock_amount,
+				'weight'=>$Variation_data->weight,
+				'shipping_class'=>$Variation_data->shipping_class,
+				'shipping_class_id'=>$Variation_data->shipping_class_id,
+				// 'image'=>$Variation_data->image,
+				'menu_order'=>$Variation_data->menu_order,
+			];
+		// }
+			product_variation::insert($product_variation);
+		}
+	}
+public function InsertProductVariation_attributes($product_attributes,$vid,$proId)
+{
+	$attributes_data = json_decode($product_attributes);
+	$pro_attri=$attributes_data->attributes;
+	foreach($pro_attri as $attributes)
+	{
+		$productAtts[]=[
+			'vid'=>intval($vid),
+			'product_id'=>$proId,
+			'variation_id'=>$attributes_data->id,
+			'attribute_id'=>$attributes->id,
+			'color'=>$attributes->name,
+			'size'=>$attributes->option,
+		];
+	}
+	product_variation_attributes::insert($productAtts);
+}
+	public function InsertProductVariation_categories($ProductVariation,$vid,$proId)
+	{
+		$categories_data = json_decode($ProductVariation);	
+		foreach($categories_data as $categories)
+		{
+			// dd($categories);die();
+			$productAtts[]=[
+				'vid'=>intval($vid),
+				'product_id'=>$proId,
+				'variation_id'=>$categories_data->id,
+				'categories_id'=>$categories_data->id,
+				'name'=>$categories_data->name,
+				'slug'=>$categories_data->slug,
+			];
+			
+		}
+		product_variation_categories::insert($productAtts);
+	}
+	public function InsertProductVariation_images($ProductVariation,$vid,$proId)
+	{
+		$images_data = json_decode($ProductVariation);
+		$pro_images=$images_data->image;
+		if($pro_images==null)
+		{
+			return response()->json([ 'msg' => "Images Not Found"]);	
+			
+		}
+		else {
+			// foreach($images_data as $image)
+			// {
+				// dd($categories);die();
+				$productImages[]=[
+					'vid'=>intval($vid),
+					'product_id'=>$proId,
+					'variation_id'=>$images_data->id,
+					'image_id'=>$pro_images->id,
+					'date_created'=>$pro_images->date_created,
+					'date_created_gmt'=>$pro_images->date_created_gmt,
+					'date_modified'=>$pro_images->date_modified,
+					'date_modified_gmt'=>$pro_images->date_modified_gmt,
+					'src'=>$pro_images->src,
+					'name'=>$pro_images->name,
+					'alt'=>$pro_images->alt,
+
+				];
+			
+		// }
+		product_variation_images::insert($productImages);
+	     }
+		
+	
+	}
+	// public function InsertProductVariation_tags($ProductVariation,$vid,$proId)
+	// {
+	// 	$tags_data = json_decode($ProductVariation);
+	// }
+	// public function InsertProductVariation_images($ProductVariation,$vid,$proId)
+	// {
+	// 	$images_data = json_decode($ProductVariation);
+	// }
+	// public function InsertProductVariation_links($ProductVariation,$vid,$proId)
+	// {
+	// 	$links_data = json_decode($ProductVariation);
+	// }
+	// public function InsertProductVariation_dimensions($ProductVariation,$vid,$proId)
+	// {
+	// 	$dimensions_data = json_decode($ProductVariation);
+	// }
+
+
+		
 
 	public function InsertBilling($orderID,$BillingData,$vid)
     {
@@ -1132,5 +1300,86 @@ class JsonController extends Controller
 	    }
 		Order_links::insert($Order_links);
     }
+	public function suborder_detail(Request $request)
+	{
+		$vid=$request->vid;
+		$url=$request->url;
+		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
+		$curl = curl_init();
+	    curl_setopt_array($curl, array(
+	    CURLOPT_URL => $url.'/wp-json/wc/v3/orders?per_page=100',
+	    CURLOPT_RETURNTRANSFER => true,
+	    CURLOPT_ENCODING => '',
+	    CURLOPT_MAXREDIRS => 10,
+	    CURLOPT_TIMEOUT => 0,
+	    CURLOPT_FOLLOWLOCATION => true,
+	    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	    CURLOPT_CUSTOMREQUEST => 'GET',
+	    CURLOPT_HTTPHEADER => array(
+	        'Authorization: Basic '.$vendor[0]->token
+	      ),
+	    ));
+	    $response = curl_exec($curl);
+	    curl_close($curl);
+	    $jsonResp = json_decode($response);
+		$this->InsertSubOrder($jsonResp, $vid, $url);
+	}
+	public function InsertSubOrder($OrderData,$vid,$url)
+	{
+		
+		foreach($OrderData as $order)
+		{
+			
+			$current_year=date("Y");
+			$order_id=intval($order->id);
+			$vid=intval($vid);
+			$lineItem_data=$order->line_items;
+			$j="-";
+			$order_id_concat=$order_id.$j;
+			$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
+			//insert sub order detail of order
+			// foreach($lineItem_data as $line_data)
+			// {	
+			// 	$line_quantity=$line_data->quantity;
+			// 	for($i=0;$i<$line_quantity;$i++)
+			// 	{
+			// 		DB::table('suborder_details')->insert(['order_id'=>$order_id,'vid'=>$vid,'suborder_id'=>$order_id_concat.$i,'line_item_id'=>$line_data->id]);
+			// 	}
+			// }
+			// insert invoice related info
+			foreach($lineItem_data as $line_data)
+			{	
+				$line_quantity=$line_data->quantity;
+				for($i=0;$i<$line_quantity;$i++)
+				{
+					$way_data =DB::table("way_data")->where('vid','=',$vid)->get();
+					if(($way_data[0]->gateway)==0)
+					{
+						$vendor_name='MAJ';
+						$vendor_invoice_no=$vendor_name.$j.$current_year.$order_id.$j.$i;
+						$customer_invoice_no="-";
+					}
+					else
+					{
+						$customer_invoice_no=$vendor[0]->name.$j.$current_year.$order_id.$j.$i;
+						$vendor_invoice_no="-";
+					}
+					
+					
+					DB::table('invoice_infos')->insert(['invoice_no'=>$vendor_invoice_no,'customer_invoice_no'=>$customer_invoice_no,'order_id'=>$order_id,'vid'=>$vid,'suborder_id'=>$order_id_concat.$i,'line_item_id'=>$line_data->id,'total'=>$line_data->total]);
+				}
+			}
+		}
+	}
+	public function suborder_data(Request $request)
+	{
+		$vid=$request->vid;
+		$data =DB::table("suborder_details")->join('line_items','suborder_details.line_item_id','=','line_items.line_item_id')
+		->where('suborder_details.vid','=',intval($vid))
+		->where('line_items.vid','=',intval($vid))
+		->select('suborder_details.suborder_id','suborder_details.line_item_id','suborder_details.order_id','line_items.name','line_items.sku','line_items.quantity','line_items.price','line_items.subtotal')
+		->get();
+		return response()->json(['data'=>$data ,'msg' => "", "ErrorCode" => "000"], 200);
+	}
 	
 }

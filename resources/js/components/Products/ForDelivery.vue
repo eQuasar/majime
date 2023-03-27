@@ -23,7 +23,9 @@
                                 </b-col>
                                 <b-col xl="6" lg="6" md="6">
                                     <button type="button" class="download-btn btn btn-primary" v-on:click="fordeliverydownload" style=" margin-left: 15px;">Download</button>
-                                    <button type="button" class="download-btn btn btn-primary" v-on:click="dispatchstatus">Dispatch</button>                                    
+                                    <button type="button" class="download-btn btn btn-primary" v-on:click="dispatchstatus" >Dispatch</button>  
+                                
+                                    <button type="button" class="download-btn btn btn-primary" v-on:click="Billing_processed">Billing</button>                               
                                 </b-col>                                
                             </b-row>
                           </div>
@@ -188,6 +190,7 @@
     <script>
     import uniq from 'lodash/uniq';
     import product from '../../api/Product.js';
+    import billings from '../../api/billings.js';
     import order from '../../api/order.js';
     import user from '../../api/user.js';
     import * as XLSX from 'xlsx/xlsx.mjs';
@@ -665,6 +668,30 @@ computed: {
           });
           this.show=false;
       }, 
+      Billing_processed()
+      {
+        this.show=true;
+            let formData = new FormData();
+            formData.append("status",'intransit')
+            formData.append("vid",this.vid)
+            billings.billing_process(formData)
+             .then((response) => {
+                console.log(response.data[0]);
+                  this.items2=response.data[0];
+                  const data = XLSX.utils.json_to_sheet(this.items2)
+                const wb = XLSX.utils.book_new()
+                XLSX.utils.book_append_sheet(wb, data, 'data')
+                XLSX.writeFile(wb,'Dispacthed_orders.xlsx')
+          })
+          .catch((error) => {
+              console.log(error);
+              if (error.response.status == 422) {
+                  this.errors_create = error.response.data.errors;
+              }
+              // loader.hide();
+          });
+          this.show=false;
+      },
     },
 };  
 </script>

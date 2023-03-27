@@ -30,6 +30,7 @@ class CreateLineItemsTable extends Migration
             $table->string('sku')->nullable();
             $table->integer('price');
             $table->string('parent_name')->nullable();
+            $table->timestamps();
         });
     }
 

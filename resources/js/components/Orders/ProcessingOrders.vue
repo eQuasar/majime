@@ -77,7 +77,7 @@
                   >
                 </template>
                 <template v-slot:cell(name)="row">
-                  {{(row.item.first_name)}} {{(row.item.last_name)}} 
+                  {{ row.item.first_name }} {{ row.item.last_name }}
                 </template>
                 <template #empty="scope">
                   <p style="text-align: center">
@@ -193,62 +193,62 @@ export default {
           sortable: true,
         },
         {
-          key: 'oid',
-          label: 'Order ID',
-          sortable: true
+          key: "oid",
+          label: "Order ID",
+          sortable: true,
         },
         {
-          key: 'date_created_gmt',
-          label: 'Order Date ',
-          sortable: true
+          key: "date_created_gmt",
+          label: "Order Date ",
+          sortable: true,
         },
 
         {
-          key: 'quantity',
-          label: 'Qty',
-          sortable: true
+          key: "quantity",
+          label: "Qty",
+          sortable: true,
         },
         {
-          key: 'total',
-          label: 'Amount',
-          sortable: true
+          key: "total",
+          label: "Amount",
+          sortable: true,
         },
         {
-          key: 'name' ,
-          label: 'Name',
-          sortable: true
+          key: "name",
+          label: "Name",
+          sortable: true,
         },
         {
-          key: 'state',
-          label: 'State',
-          sortable: true
+          key: "state",
+          label: "State",
+          sortable: true,
         },
         {
-          key: 'city',
-          label: 'City',
-          sortable: true
+          key: "city",
+          label: "City",
+          sortable: true,
         },
         {
-          key: 'phone',
-          label: 'Contact',
-          sortable: false
+          key: "phone",
+          label: "Contact",
+          sortable: false,
         },
         {
-          key: 'payment_method_title',
-          label: 'Payment Mode',
-          sortable: false
+          key: "payment_method_title",
+          label: "Payment Mode",
+          sortable: false,
         },
-        
+
         {
-          key: 'status',
-          label: 'Status',
-          sortable: true
+          key: "status",
+          label: "Status",
+          sortable: true,
         },
         {
-          key: 'action',
-          label: 'Action',
-          sortable: false
-        }
+          key: "action",
+          label: "Action",
+          sortable: false,
+        },
       ],
       items: [],
       errors_create: [],
@@ -307,7 +307,7 @@ export default {
             order
               .changeProcessingStatus(formData)
               .then((response) => {
-                this.$alert("", "Status Update Successfully");
+                this.$alert("", response.data.msg);
                 this.show = false;
                 this.getVidz();
               })
