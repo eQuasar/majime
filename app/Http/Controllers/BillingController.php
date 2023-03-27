@@ -15,10 +15,13 @@ use App\Models\OtherUser;
 use App\Models\User;
 use App\Models\pnToken;
 use App\Models\Tower;
+use App\Models\Orders;
 use App\Models\Project;
+use App\Models\BillingProcessed;
 use App\Models\login_details;
 use App\Models\ProjectCategory;
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Intervention\Image\ImageManagerStatic as Image;
@@ -131,184 +134,437 @@ class BillingController extends Controller
     }
     public function billing_detail(Request $request)
     {
-        $vid = $request->vid;
-        ini_set('memory_limit', '-1');
-        $data=DB::table('vendors')->where('vendors.id','=',$vid)
-       ->join('way_data', 'way_data.vid', '=', 'vendors.id')
-       ->leftjoin('orders', function($join) use($vid){
-        $join->on('orders.vid','=','way_data.vid')
-        ->where('orders.vid', '=', intval($vid));
-    })
-    ->leftjoin('suborder_details', function($join) use($vid){
-        $join->on('orders.oid','=','suborder_details.order_id')
-        ->where('suborder_details.vid', '=', intval($vid));
-    })
-    ->leftjoin('line_items', function($join) use($vid){
-        $join->on('line_items.id','=','suborder_details.line_item_id')
-        ->where('line_items.vid', '=', intval($vid));
-    })
-    ->leftjoin('products', function($join) use($vid){
-        $join->on('products.product_id','=','line_items.product_id')
-        ->where('products.vid', '=', intval($vid));
-    })
-    ->leftjoin('invoice_infos', function($join) use($vid){
-        $join->on('invoice_infos.suborder_id','=','suborder_details.suborder_id')
-        ->where('invoice_infos.vid', '=', intval($vid));
-    }) 
-    ->leftjoin('billings', function($join) use($vid){
-        $join->on('billings.order_id','=','orders.oid')
-        ->on('billings.vid','=', 'orders.vid') 
-        ->where('billings.vid', '=', intval($vid));
-    }) 
-    ->leftjoin('order_reldates', function($join) use($vid){
-        $join->on('order_reldates.oid','=','orders.oid')
-        ->where('order_reldates.vid', '=', intval($vid));
-    })   
-    ->leftjoin('walletprocesseds', function($join) use($vid){
-        $join->on('walletprocesseds.oid','=','orders.oid')
-        ->where('walletprocesseds.vid', '=', intval($vid));
-    })   
-    ->leftjoin('waybill', function($join) use($vid){
-        $join->on('waybill.order_id','=','walletprocesseds.oid')
-        ->where('waybill.vid', '=', intval($vid));
-    })   
-       ->select( "vendors.name as vendor_name", DB::raw('(CASE WHEN way_data.gateway =0  THEN "Majime Invoicing" WHEN way_data.gateway =1  THEN "Self Invoicing" END) AS invoice_detail'),"orders.oid as order_no","suborder_details.suborder_id as suborder_id",
-       "suborder_details.invoice_no as invoice_no","suborder_details.created_at as invoice_date","suborder_details.total as invoice_amount"
-       ,"line_items.product_id as product_id"
-       ,"products.hsn_code as hsn","way_data.state as invoice_state_code_from",
-       "billings.state as invoice_state_code_to",
-       DB::raw('(CASE WHEN suborder_details.total<=1000 THEN "5%" WHEN suborder_details.total>1000 THEN "12%" END) AS tax_percentage'),
-       DB::raw('(CASE WHEN way_data.state=billings.state THEN "0" END) AS CGST'),
-       DB::raw('(CASE WHEN way_data.state=billings.state THEN "0" END) AS SGST'),
-       "order_reldates.order_deldate as delivery_date",
-       "walletprocesseds.date_created as wallet_process_date",
-       "waybill.waybill_no as waybill_no",
-       "orders.parent_id as parent_no",
-       "orders.status as order_status",
-       "orders.status as order_status", 
-       "orders.date_created as order_date",
-       "orders.date_created as order_date",
-       "billings.first_name as first_name",
-       "billings.last_name as second_name",
-       "billings.address_1 as address",
-       "billings.city as city",
-       "billings.state as state",
-       "billings.postcode as postcode",
-       "billings.country as country_code",
-       "billings.email as email",
-       "billings.phone as phone",
-       "orders.payment_method_title as payment_method_title",
-       "orders.total as order_subtotalo_amount",
-       "products.product_id as product_id",
-       "products.name as product_name",
-       "products.sku as product_sku",
-       "products.total_sales as product_qty",
-       "products.price as item_cost",
-       "products.weight as product_weight",
-       DB::raw('(CASE WHEN suborder_details.total<=1000 && way_data.state != billings.state THEN ((suborder_details.total)/(100+5)) WHEN suborder_details.total>1000 && way_data.state != billings.state THEN ((suborder_details.total)/(100+12)) END) AS IGST'),
-       "products.weight as product_weight",
-       "suborder_details.created_at as sale_return_date",
-       "order_reldates.order_dispatchdate as dispatch_date",
-       "order_reldates.dto_refunddate as refund_date",
-       "orders.oid as parent_order_number",
-       "orders.customer_note as parent_order_number",
-       "orders.discount_total as cart_discount_amount",
-       "orders.discount_total as wallet_used_temporary",
-       "suborder_details.sale_return_order_status as sale_return_status",
-
-       "suborder_details.customer_invoice_no as customer_invoice_no",
-       DB::raw('((orders.total)-(orders.discount_total)) as order_amount'),
-       DB::raw('(((orders.total)-(orders.discount_total))-(orders.discount_total)) as collectable_amount'),
-       DB::raw('(CASE WHEN suborder_details.sale_return_order_status="yes" THEN (((orders.total)-(orders.discount_total))-(orders.discount_total)) WHEN suborder_details.sale_return_order_status="no" THEN "0" END) AS order_refund_amount'),
-      
-
-       //    DB::raw('((suborder_details.total)-(CGST+SGST+IGST)) as Taxable_amount'),
-       )->get();
-    
-       $data = str_replace("null",'"NA"',$data);
-       $data = json_decode($data); 
-       return response()->json(['data'=>$data ,'msg' => "", "ErrorCode" => "000"], 200);
-    }
-    public function get_product_info()
-    {
-        return Excel::download(new product_HsnWeight_export, 'product_weight.xlsx');
-    }
-    public function product_insert(Request $request){
-        $intransit=$request->status;
-        // echo $intransit;
-        // exit();
-        $data=DB::table('orders')->where('orders.status','=',$intransit)->get();
-        return $data;
-    }
-   public function billing_process(Request $request){
-    $intransit=$request->status;
-    $vid = $request->vid;
-    $order_id=DB::table('orders')
-                ->where('orders.status','=',$intransit)
-                ->where('orders.vid','=',$vid)
-                ->get();
-                // dd($order_id);
-                // exit();
-    $orders = array();
-        foreach ($order_id as $item) array_push($orders,$item->oid);
-        $billing_process=DB::table('orders','orders.oid','=',$orders)->get();
-                //  dd($billing_process);
-                //  exit();
-
-        // $intransit=$request->status;
-        // $data=DB::table('orders')->where('orders.status','=',$intransit)->get();
-        // $billing_processed=$request->billing_processed;
-
-        if($billing_process->billing_processed == '0')
-        {
             $vid = $request->vid;
             ini_set('memory_limit', '-1');
             $data=DB::table('vendors')->where('vendors.id','=',$vid)
-           ->join('way_data', 'way_data.vid', '=', 'vendors.id')
-           ->leftjoin('orders', function($join) use($vid){
+            ->join('way_data', 'way_data.vid', '=', 'vendors.id')
+            ->leftjoin('orders', function($join) use($vid){
             $join->on('orders.vid','=','way_data.vid')
             ->where('orders.vid', '=', intval($vid));
-        })
-        ->leftjoin('suborder_details', function($join) use($vid){
-            $join->on('orders.oid','=','suborder_details.order_id')
-            ->where('suborder_details.vid', '=', intval($vid));
-        })
-        ->leftjoin('line_items', function($join) use($vid){
-            $join->on('line_items.id','=','suborder_details.line_item_id')
-            ->where('line_items.vid', '=', intval($vid));
-        })
-        ->leftjoin('products', function($join) use($vid){
-            $join->on('products.product_id','=','line_items.product_id')
-            ->where('products.vid', '=', intval($vid));
-        })
-        ->leftjoin('invoice_infos', function($join) use($vid){
-            $join->on('invoice_infos.suborder_id','=','suborder_details.suborder_id')
-            ->where('invoice_infos.vid', '=', intval($vid));
-        }) 
-        ->leftjoin('billings', function($join) use($vid){
-            $join->on('billings.order_id','=','orders.oid')
-            ->on('billings.vid','=', 'orders.vid') 
-            ->where('billings.vid', '=', intval($vid));
-        }) 
-        ->leftjoin('order_reldates', function($join) use($vid){
-            $join->on('order_reldates.oid','=','orders.oid')
-            ->where('order_reldates.vid', '=', intval($vid));
-        })   
-        ->leftjoin('walletprocesseds', function($join) use($vid){
-            $join->on('walletprocesseds.oid','=','orders.oid')
-            ->where('walletprocesseds.vid', '=', intval($vid));
-        })   
-        ->leftjoin('waybill', function($join) use($vid){
-            $join->on('waybill.order_id','=','walletprocesseds.oid')
-            ->where('waybill.vid', '=', intval($vid));
-        });   
-           }
-           else{
-            echo "already data exit";
-           }
+            })
+            ->leftjoin('suborder_details', function($join) use($vid){
+                $join->on('orders.oid','=','suborder_details.order_id')
+                ->where('suborder_details.vid', '=', intval($vid));
+            })
+            ->leftjoin('line_items', function($join) use($vid){
+                $join->on('line_items.id','=','suborder_details.line_item_id')
+                ->where('line_items.vid', '=', intval($vid));
+            })
+            ->leftjoin('products', function($join) use($vid){
+                $join->on('products.product_id','=','line_items.product_id')
+                ->where('products.vid', '=', intval($vid));
+            })
+            ->leftjoin('invoice_infos', function($join) use($vid){
+                $join->on('invoice_infos.suborder_id','=','suborder_details.suborder_id')
+                ->where('invoice_infos.vid', '=', intval($vid));
+            }) 
+            ->leftjoin('billings', function($join) use($vid){
+                $join->on('billings.order_id','=','orders.oid')
+                ->on('billings.vid','=', 'orders.vid') 
+                ->where('billings.vid', '=', intval($vid));
+            }) 
+            ->leftjoin('order_reldates', function($join) use($vid){
+                $join->on('order_reldates.oid','=','orders.oid')
+                ->where('order_reldates.vid', '=', intval($vid));
+            })   
+            ->leftjoin('walletprocesseds', function($join) use($vid){
+                $join->on('walletprocesseds.oid','=','orders.oid')
+                ->where('walletprocesseds.vid', '=', intval($vid));
+            })   
+            ->leftjoin('waybill', function($join) use($vid){
+                $join->on('waybill.order_id','=','walletprocesseds.oid')
+                ->where('waybill.vid', '=', intval($vid));
+            })   
+                ->select( "vendors.name as vendor_name", 
+                DB::raw('(CASE WHEN way_data.gateway =0  THEN "Majime Invoicing" WHEN way_data.gateway =1  THEN "Self Invoicing" END) AS invoice_detail'),"orders.oid as order_no","suborder_details.suborder_id as suborder_id",
+                "suborder_details.invoice_no as invoice_no","suborder_details.created_at as invoice_date","suborder_details.total as invoice_amount"
+                ,"line_items.product_id as product_id"
+                ,"products.hsn_code as hsn","way_data.state as invoice_state_code_from",
+                "billings.state as invoice_state_code_to",
+                DB::raw('(CASE WHEN suborder_details.total<=1000 THEN "5%" WHEN suborder_details.total>1000 THEN "12%" END) AS tax_percentage'),
+                DB::raw('(CASE WHEN way_data.state=billings.state THEN "0" END) AS CGST'),
+                DB::raw('(CASE WHEN way_data.state=billings.state THEN "0" END) AS SGST'),
+                "order_reldates.order_deldate as delivery_date",
+                "walletprocesseds.date_created as wallet_process_date",
+                "waybill.waybill_no as waybill_no",
+                "orders.parent_id as parent_no",
+                "orders.status as order_status",
+                "orders.status as order_status", 
+                "orders.date_created as order_date",
+                "orders.date_created as order_date",
+                "billings.first_name as first_name",
+                "billings.last_name as second_name",
+                "billings.address_1 as address",
+                "billings.city as city",
+                "billings.state as state",
+                "billings.postcode as postcode",
+                "billings.country as country_code",
+                "billings.email as email",
+                "billings.phone as phone",
+                "orders.payment_method_title as payment_method_title",
+                "orders.total as order_subtotalo_amount",
+                "products.product_id as product_id",
+                "products.name as product_name",
+                "products.sku as product_sku",
+                "products.total_sales as product_qty",
+                "products.price as item_cost",
+                "products.weight as product_weight",
+                DB::raw('(CASE WHEN suborder_details.total<=1000 && way_data.state != billings.state THEN ((suborder_details.total)/(100+5)) WHEN suborder_details.total>1000 && way_data.state != billings.state THEN ((suborder_details.total)/(100+12)) END) AS IGST'),
+                "products.weight as product_weight",
+                "suborder_details.created_at as sale_return_date",
+                "order_reldates.order_dispatchdate as dispatch_date",
+                "order_reldates.dto_refunddate as refund_date",
+                "orders.oid as parent_order_number",
+                "orders.customer_note as parent_order_number",
+                "orders.discount_total as cart_discount_amount",
+                "orders.discount_total as wallet_used_temporary",
+                "suborder_details.sale_return_order_status as sale_return_status",
+                "suborder_details.customer_invoice_no as customer_invoice_no",
+                DB::raw('((orders.total)-(orders.discount_total)) as order_amount'),
+                DB::raw('(((orders.total)-(orders.discount_total))-(orders.discount_total)) as collectable_amount'),
+                DB::raw('(CASE WHEN suborder_details.sale_return_order_status="yes" THEN (((orders.total)-(orders.discount_total))-(orders.discount_total)) WHEN suborder_details.sale_return_order_status="no" THEN "0" END) AS order_refund_amount'),
+                    //DB::raw('((suborder_details.total)-(CGST+SGST+IGST)) as Taxable_amount'),
+                )->get();
+                $data = str_replace("null",'"NA"',$data);
+                $data = json_decode($data); 
+                return response()->json(['data'=>$data ,'msg' => "", "ErrorCode" => "000"], 200);
+            }
+            public function get_product_info()
+            {
+                return Excel::download(new product_HsnWeight_export, 'product_weight.xlsx');
+            }
+            public function product_insert(Request $request){
+                $intransit=$request->status;
+                // echo $intransit;
+                // exit();
+                $data=DB::table('orders')->where('orders.status','=',$intransit)->get();
+                return $data;
+            }
+            public function billing_process(Request $request)
+            {  
+                        $intransit=$request->status;
+                        $zero='0';
+                        $vid = $request->vid;
+                        $order_id=DB::table('orders')
+                        
+                            ->leftjoin('line_items', function($join) use($vid){
+                            $join->on('line_items.order_id','=','orders.oid')
+                            ->where('line_items.vid', '=', intval($vid));
+                            })
+                            ->where('orders.status','=',$intransit)
+                            // ->where('orders.billing_processed','=','0')
+                            ->where('orders.vid','=',$vid)
+                            ->orderBy('orders.oid')
+                            ->select('orders.oid','line_items.quantity','line_items.line_item_id','line_items.product_id','line_items.total')
+                            ->get();
+                            // dd(count($order_id));die();
+                            // print_r($order_id);
+                        // echo "Before Billing - ".count($order_id);
+                        // die();
+                        $duplicate = 1;
+                        for($i=0;$i<count($order_id);$i++)
+                        {
+                            $current_year=date("Y");
+                            $orderid=$order_id[$i]->oid;
+                            // echo "--->".$orderid;
+                            // echo "/n";
+                            $j="-";
+                            $order_id_concat=$orderid.$j;
+                            $line_item_id=$order_id[$i]->line_item_id;
+                            $line_quantity=$order_id[$i]->quantity;
+                         
+                            // echo "QTY- ".$line_quantity=$order_id[$i]->quantity;
+                            $line_product_id=$order_id[$i]->product_id;
+                            $product_detail = DB::table("products")->where('product_id','=',$line_product_id)->get();
+                            // dd($product_name);die();
+                            $sub_total=$order_id[$i]->total;
+                            $way_data =DB::table("way_data")->where('vid','=',$vid)->get();
+                            $mytime = Carbon::now()->format('Y-m-d');
+                            for($k=1;$k<=$line_quantity;$k++)
+                            {
+                                    $count = $k;
+                                    $single = 1;
+                                    $prev = (int)$i - (int)$single;
+                                    if ($prev == -1
+                                    ){
+                                        //  echo "0";   
+                                    }else{
+                                        $prev = (int)$prev;
+                                        if($prev == ''){
+                                            $prev = 0;
+                                        }
+                                        // echo "--".$prev."--";   
+                                        // echo "\n".$orderid."\n";
+                                        // echo "\n".$order_id[$prev]->oid."\n";
+                                        // // echo "--".$prev."--";   
+                                        // if($line_item_id == $line_item_id[$prev]->oid){
+                                        //     $duplicate = $duplicate+1;
+                                        // }else{
+                                        //     $duplicate = 1;
+                                        // }
+                                    }
+                                    $count = ($duplicate == 1)?$count:$duplicate;
+                                    if(($way_data[0]->gateway)==0)
+                                    {
+                                        $vendor_name='MAJ';
+                                        $vendorPrefix=strtoupper(substr($way_data[0]->order_prefix, 0, -1));
+                                        $ven = $vendor_name.$j.$current_year.$j.$vendorPrefix.$j;    
+                                        $vendor_invoice = $ven;
+                                    }
+                                    else{
+                                        $vendorPrefix=strtoupper(substr($way_data[0]->order_prefix, 0, -1));
+                                        $ven = $vendorPrefix.$j.$current_year.$j;
+                                        $vendor_invoice = $ven.$orderid.$j;
+                                    }
+                                    $last2 = DB::table('suborder_details')->where('vid','=',$vid)->where('invoice_no', 'like', $ven. '%')->orderBy('id', 'DESC') ->first();
+                                    if (isset($last2)==1){
+                                        $created_att = explode(' ',$last2->created_at);
+                                    
+                                        if($created_att[0] == $mytime){
+                                            $last_invoice = substr($last2->invoice_no,strrpos($last2->invoice_no,"-")+1);
+                                            $new_invoice = $last_invoice;
+                                        }else{
+                                            $last_invoice = substr($last2->invoice_no,strrpos($last2->invoice_no,"-")+1);
+                                            $new_invoice = $last_invoice +1;
+                                        }
+                                    }else{
+                                        $new_invoice = 1;
+                                    }
+                                    $vendor_invoice = $vendor_invoice.$j.$new_invoice;
+                                    $customer_invoice_no="-";
+                                    $customer_invoice_date="-";
+                                    $suborder_id=$order_id_concat.$count;
+                                    // DB::table('invoice_infos')->insert(['invoice_no'=>$vendor_invoice,'customer_invoice_no'=>$customer_invoice_no,'customer_invoice_date'=>$customer_invoice_date,'order_id'=>$orderid,'vid'=>$vid,'suborder_id'=>$suborder_id,'line_item_id'=>$line_item_id,'total'=>$sub_total]);//2023
+                                    // DB::table('suborder_details')->insert(['order_id'=>$orderid,'vid'=>$vid,'suborder_id'=>$suborder_id,'line_item_id'=>$line_item_id,'invoice_no'=>$vendor_invoice,'total'=>$sub_total]);//2023  
+                            }
+                            
+                            $line_item_idd = DB::table('suborder_details')->where('vid','=',$vid)->where('suborder_details.suborder_id','=',$suborder_id)->get();
+                        
+                            $order_lineitem_id=$line_item_idd[0]->line_item_id;
+                     
+                            $line_item_id = DB::table('line_items')->where('vid','=',$vid)->where('line_item_id', '=', $order_lineitem_id)->get();
+                          
+                            $quantity=$line_item_id[0]->quantity;
+                           
+                            $item_cost=$line_item_id[0]->price;
+                            
+                            $get_order_id= $line_item_id[0]->order_id;
+                          
+                            $get_product_id= $line_item_id[0]->product_id;
+                           
+                            // dd($get_product_id);die();
+                            $way_data =DB::table("way_data")->where('vid','=',$vid)->get();
+                        
+                            $order_bill_processed =DB::table('orders')->where('vid','=',$vid)->where('orders.oid','=',$get_order_id)->get();
+                         
+                            $billing_processed=$order_bill_processed[0]->billing_processed;
+                         
+                            $parent_order_id=$order_bill_processed[0]->parent_id;
+                           
+                            $order_status=$order_bill_processed[0]->status;
+                           
+                            $order_date=$order_bill_processed[0]->date_created;
+                           
+                            $order_customer_note=$order_bill_processed[0]->customer_note;
+                          
+                            $payment_method=$order_bill_processed[0]->payment_method_title;
+                           
+                            $order_subtotal=$order_bill_processed[0]->total;
+                          
+                            $cart_discount='-';
+                            $coupan_discount='-';
+                            $order_amount=$order_bill_processed[0]->total;
+                          
+                            $product_data =DB::table("products")->where('vid','=',$vid)->where('product_id','=',$get_product_id)->get();
+                            
+                            $product_name= $product_data[0]->name;
+                           
+                            $product_sku= $product_data[0]->sku;
+                           
+                            $product_hsn= $product_data[0]->hsn_code;
+                            
+                            $product_weight= $product_data[0]->weight;
+                      
+                            $vendor_name=$way_data[0]->name;
+                            
+                            $hsn_code= $product_data[0]->hsn_code;
+                            
+                            // dd($line_item_idd);
+                            // die();
+                            if($billing_processed == '0')
+                            {
+                                $vendor_nam = DB::table('vendors')->where('id','=',$vid)->get();
+                                $vendor_namee=$vendor_nam[0]->name;
+                                $way_data_gateway=$way_data[0]->gateway;
+                                if($way_data_gateway==0)
+                                {
+                                    $invoice_type='Billing to Majime';
+                                }
+                                else{
+                                    $invoice_type='Billing to Customer';
+                                }
+                                $invoice_date=$line_item_idd[0]->created_at;
+                             
+                                $sub_orderId=$line_item_idd[0]->suborder_id;
+                                
+                                $invoice_amount=$line_item_idd[0]->total;
+                              
+                                $get_billing_data =DB::table("billings")->where('vid','=',$vid)->where('order_id','=',$get_order_id)->get();
+                                $order_from=$way_data[0]->state;
+                                $order_to=$get_billing_data[0]->state;
+                                $first_name=$get_billing_data[0]->first_name;
+                                $last_name=$get_billing_data[0]->last_name;
+                                $address=$get_billing_data[0]->address_1;
+                                $city=$get_billing_data[0]->city;
+                                $state=$get_billing_data[0]->state;
+                                $postcode=$get_billing_data[0]->postcode;
+                                $email=$get_billing_data[0]->email;
+                                $phone=$get_billing_data[0]->phone;
+                                $country=$get_billing_data[0]->country;
 
-        // return $data;
+                                if($invoice_amount<=1000)
+                                {
+                                    $tax_percentage="12";
+                                }
+                                else
+                                {
+                                    $tax_percentage="5";
+                                }
+                                $cgst=$tax_percentage/2;
+                              
+                                if($order_from==$order_to)
+                                {
+                                    $total_cgst=($invoice_amount)*($cgst/100);
+                                    $total_sgst=($invoice_amount)*($cgst/100);
+                                    $igst='0';
+                                    // $round_sgst=round($total_sgst,2);
+                                    
+                                }
+                                else
+                                {
+                                    $igst=($invoice_amount)/(100+($tax_percentage));
+                                    $total_cgst='0';
+                                    $total_sgst='0';
+                                    // dd($igst);die();
+                                }
+                               
+                                $order_related_dates =DB::table("order_reldates")->where('vid','=',$vid)->where('oid','=',$get_order_id)->get();
+                                if($order_related_dates->isEmpty())
+                                {
+                                    $delivery_date='-';
+                                    $dispatch_date='-';
+                                    $refund_date='-';
+                                }
+                                else{
+                                $delivery_date= $order_related_dates[0]->order_deldate;
+                                $dispatch_date= $order_related_dates[0]->order_dispatchdate;
+                                $refund_date= $order_related_dates[0]->dto_refunddate;
+                                }
+                                
+                                if($refund_date==null)
+                                {
+                                    $sale_return_status='No';
+                                }
+                                else
+                                {
+                                    $sale_return_status='Yes';
+                                }
+                                $wallet_processed =DB::table("walletprocesseds")->where('vid','=',$vid)->where('oid','=',$get_order_id)->get();
+                                if (count($wallet_processed) >1){
+                                    $wallet_processed_date= $wallet_processed[0]->date_created;
+                                    $wallet_used= $wallet_processed[0]->Wallet_used;
+                                    $collectable_amount=$order_amount-$wallet_used;
+                                }else{
+                                    $wallet_processed_date= "";
+                                    $wallet_used= "";
+                                    $collectable_amount=$order_amount;
+                                }
+                                
+                                
+                                $way_bill =DB::table("waybill")->where('vid','=',$vid)->where('order_id','=',$get_order_id)->get();
+                                echo "\n\nCount  - ".count($way_bill);
+                                if (count($way_bill)>1){
+                                    $Way_bill_no=$way_bill[0]->waybill_no;
+                                }else{
+                                    $Way_bill_no= "";
+                                }
+                            
+                                $billing_processdata[]=[     
+                                    'vendor_name'=>$vendor_namee,
+                                    'vid'=>$vid,
+                                    'invoicing_type'=>$invoice_type,
+                                    'invoice_no'=> $vendor_invoice,
+                                    'customer_invice_no'=>'-',
+                                    'customer_invoice_date'=>'-',
+                                    'sub_order_id'=> $sub_orderId,
+                                    // 'textable_amount'=>$data[$i]->textable_amount ?? 'NA',
+                                    'igst'=>$igst,
+                                    'sgst'=>$total_sgst,
+                                    'cgst'=>$total_cgst,
+                                    'invoice_amount'=>$invoice_amount,
+                                    'hsn_code'=>$hsn_code,
+                                    'text_percentage'=>$tax_percentage,
+                                    'dispatch_date'=> $dispatch_date,
+                                    'order_from'=>$order_from,
+                                    'order_to'=>$order_to,
+                                    'delivered_date'=> $delivery_date,
+                                    // 'dto_booked_date'=>$data[$i]->dto_booked_date ?? '2.2.2023',
+                                    // 'dto_delivered_to_warhouse_date'=>$data[$i]->dto_delivered_to_warhouse_date ?? '2.2.2023',
+                                    'sale_return_status'=>$sale_return_status,
+                                    'sale_return_date'=>'-',
+                                    'refund_date'=> $refund_date,
+                                    'wallet_procesed_date'=> $wallet_processed_date,
+                                    'waybill_no'=>$Way_bill_no,
+                                    'parent_order_number'=>$parent_order_id,
+                                    'order_status'=>$order_status,
+                                    'order_date'=>$order_date,
+                                    'customer_note'=>$order_customer_note,
+                                    'first_name'=>$first_name,
+                                    'last_name'=>$last_name,
+                                    'address'=> $address,
+                                    'post_code'=>$postcode,
+                                    'country_code'=>$country,
+                                    'email'=>$email,
+                                    'phone'=>$phone,
+                                    'pay_method_title'=>$payment_method,
+                                    'order_subtotal_amount'=>$order_subtotal,
+                                    'status_code'=>'-',
+                                    'cart_discount_amount'=>'-',
+                                    'coupon_discount'=>'-',
+                                    'order_amount'=>$order_subtotal,
+                                    'collectable_amount'=>$collectable_amount,
+                                    'orderrefund_amount'=>'-',
+                                    'product_id'=>$get_product_id,
+                                    'product_name'=>$product_name,
+                                    'sku'=>$product_sku,
+                                    'product_qty'=>$quantity,
+                                    'item_cost'=>$item_cost ,
+                                    // 'coupon_code'=>$data[$i]->coupon_code ?? '1',
+                                    'product_weight'=>$product_weight
+                                ];    
+                                // $oid=$order_id[$i]->oid;
+                                // DB::table('orders')->where('orders.oid','=',$oid)->update(["billing_processed" => "1"]);
+                                BillingProcessed::insert($billing_processdata);
+                                
+                            }
+                                        
+                        else{
+                             echo $lll = "already done"; 
+                            }
+                            
+                        }
+                        return response()->json(['msg' => "Billing Processed Successfully"], 200); 
+                       
+            }
+          
+          //return response()->json(['data'=>$data ,'msg' => "", "ErrorCode" => "000"], 200); 
+   
+    public function return_billing_process(Request $request){
+      $vid=$request->vid;
+        $retun_billing_processer_data = DB::table('billing_processeds')->where('vid','=',$vid)->get();
+        return $retun_billing_processer_data;
     }
+
 
     
 }

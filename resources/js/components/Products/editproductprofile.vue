@@ -35,6 +35,7 @@
           <div class="content_bar">
             <div class="card-body card-body-bg">
               <b-row>
+                <div>
               <b-col xl="6" lg="6" md="6"> 
                     <b-form-group id="input-group-hsndetail" label="HSN Code" label-for="input-hsndetail" >
                       <b-form-select v-model="hsndetail" class="" :options="allhsn"  value-field="hsn_code" text-field="hsn_code" >
@@ -44,6 +45,7 @@
                       </b-form-select>
                     </b-form-group> 
                   </b-col>
+                </div>
                   
 
                   <!-- 
@@ -194,7 +196,7 @@ import HSN from '../../api/hsn.js';
           },
           {
             key: 'price',
-            label: 'Cost',
+            label: 'Price',
             sortable: true
           },
           {
@@ -243,6 +245,7 @@ import HSN from '../../api/hsn.js';
         let formData = new FormData();
         formData.append("hsn", this.hsndetail);
         formData.append("weight", this.weight); 
+        formData.append("price", this.price); 
         formData.append("product_id", this.product_id); 
         HSN.update_hsn_weight(formData)
           .then((response) => {

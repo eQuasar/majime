@@ -120,7 +120,7 @@ export default {
           sortable: true,
         },
         {
-          key: "invoice_detail",
+          key: "invoicing_type",
           label: "Invoicing Type",
           sortable: true,
         },
@@ -129,45 +129,46 @@ export default {
           label: "Invoice No. To Majime",
           sortable: true,
         },
-
         {
-          key: "invoice_date",
-          label: "Invoice No. To Majime Date",
-          sortable: true,
-        },
-        {
-          key: "customer_invoice_no",
-          label: "Customer Invoice No.",
-          sortable: true,
-        },
-        {
-          key: "invoice_date",
-          label: "Customer Invoice No. Date",
+          key: "created_at",
+          label: "Date Invoice No. To Majime ",
           sortable: true,
         },
 
         {
-          key: "suborder_id",
+          key: "customer_invice_no",
+          label: "Customer Invoice No",
+          sortable: true,
+        },
+
+        {
+          key: "customer_invoice_date",
+          label: "Date Customer Invoice No.",
+          sortable: true,
+        },
+
+        {
+          key: "sub_order_id",
           label: "Sub Order ID",
           sortable: true,
         },
         {
-          key: "3",
+          key: "textable_amount",
           label: "Taxable Amount",
           sortable: true,
         },
         {
-          key: "IGST",
+          key: "igst",
           label: "IGST",
           sortable: true,
         },
         {
-          key: "CGST",
+          key: "cgst",
           label: "CGST",
           sortable: true,
         },
         {
-          key: "SGST",
+          key: "sgst",
           label: "SGST",
           sortable: true,
         },
@@ -177,12 +178,12 @@ export default {
           sortable: true,
         },
         {
-          key: "hsn",
+          key: "hsn_code",
           label: "HSN Code",
           sortable: true,
         },
         {
-          key: "tax_percentage",
+          key: "text_percentage",
           label: "Tax Percentage",
           sortable: true,
         },
@@ -192,27 +193,27 @@ export default {
           sortable: true,
         },
         {
-          key: "invoice_state_code_from",
+          key: "order_from",
           label: "Invoice State Code (From)",
           sortable: true,
         },
         {
-          key: "invoice_state_code_to",
+          key: "order_to",
           label: "Invoice State Code (To)",
           sortable: true,
         },
         {
-          key: "delivery_date",
+          key: "delivered_date",
           label: "Delivery Date",
           sortable: true,
         },
         {
-          key: "14",
+          key: "dto_booked_date",
           label: "DTO Booked Date",
           sortable: true,
         },
         {
-          key: "111111115",
+          key: "dto_delivered_to_warhouse_date",
           label: "DTO Delivered to Warehouse Date",
           sortable: true,
         },
@@ -232,7 +233,7 @@ export default {
           sortable: true,
         },
         {
-          key: "wallet_process_date",
+          key: "wallet_procesed_date",
           label: "Wallet Procesed Date",
           sortable: true,
         },
@@ -257,7 +258,7 @@ export default {
           sortable: true,
         },
         {
-          key: "36",
+          key: "customer_note",
           label: "Customer Note",
           sortable: true,
         },
@@ -267,7 +268,7 @@ export default {
           sortable: true,
         },
         {
-          key: "second_name",
+          key: "last_name",
           label: "Last Name",
           sortable: true,
         },
@@ -282,12 +283,12 @@ export default {
           sortable: true,
         },
         {
-          key: "state",
+          key: "status_code",
           label: "State Code",
           sortable: true,
         },
         {
-          key: "postcode",
+          key: "post_code",
           label: "Postcode",
           sortable: true,
         },
@@ -307,12 +308,12 @@ export default {
           sortable: true,
         },
         {
-          key: "payment_method_title",
+          key: "pay_method_title",
           label: "Payment Method Title",
           sortable: true,
         },
         {
-          key: "order_subtotalo_amount",
+          key: "order_subtotal_amount",
           label: "Order Subtotal Amount",
           sortable: true,
         },
@@ -321,18 +322,18 @@ export default {
           label: "Cart Discount Amount",
           sortable: true,
         },
-        // {
-        //   key: "38",
-        //   label: "Coupon Discount",
-        //   sortable: true,
-        // },
+        {
+          key: "coupon_discount",
+          label: "Coupon Discount",
+          sortable: true,
+        },
         {
           key: "order_amount",
           label: "Order Amount",
           sortable: true,
         },
         {
-          key: "wallet_used_temporary",
+          key: "wallet_used",
           label: "Wallet Used",
           sortable: true,
         },
@@ -342,7 +343,7 @@ export default {
           sortable: true,
         },
         {
-          key: "order_refund_amount",
+          key: "orderrefund_amount",
           label: "Order Refund Amount",
           sortable: true,
         },
@@ -357,7 +358,7 @@ export default {
           sortable: true,
         },
         {
-          key: "product_sku",
+          key: "sku",
           label: "SKU",
           sortable: true,
         },
@@ -372,7 +373,7 @@ export default {
           sortable: true,
         },
         {
-          key: "123",
+          key: "coupon_code",
           label: "Coupon Code",
           sortable: true,
         },
@@ -400,7 +401,7 @@ export default {
         .get_biiling_detail(formData)
         .then((response) => {
           console.log(response.data);
-          this.items = response.data.data;
+          this.items = response.data;
           this.show = false;
         })
         .catch((error) => {

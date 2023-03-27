@@ -21,7 +21,6 @@ class CreateHsnDetailsTable extends Migration
             $table->integer('slab_amount');
             $table->string('description');
             $table->timestamps();
-
         });
     }
 

@@ -223,7 +223,7 @@ export default {
       const data = XLSX.utils.json_to_sheet(this.items);
       const wb = XLSX.utils.book_new();
       /* fix headers */
-      XLSX.utils.sheet_add_aoa(data, [["HSN Detail","Slab 1","Slab 2","Amount","Description"]], { origin: "A1" });  
+      XLSX.utils.sheet_add_aoa(data, [["S no.","HSN Detail","Slab 1","Slab 2","Amount","Description"]], { origin: "A1" });  
       XLSX.utils.book_append_sheet(wb, data, "data");
       XLSX.writeFile(wb, "hsn_masterdownload.xlsx");
     },

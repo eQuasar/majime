@@ -138,7 +138,6 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('delpiechart_data/{vid}', 'DashboardController@delpiechart_data')->name('delpiechart_data');
 	Route::get('getmargin_report/{vid}', 'DashboardController@getmargin_report')->name('getmargin_report');
 	Route::get('getvedordata', 'DashboardController@getvedordata')->name('getvedordata');
-	
 	Route::post('getvedordata','VendorRatecardController@getvedordata')->name('getvedordata');
 	Route::post('showzonedetail','ZoneratecardController@showzonedetail')->name('showzonedetail');
 	Route::post('hsn_detail','HsnDetailController@store')->name('hsn_detail');
@@ -161,6 +160,9 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('import_product_info','ProductController@import_product_info')->name('import_product_info');
 	Route::post('product_insert','BillingController@product_insert')->name('product_insert');
 	Route::post('billing_process','BillingController@billing_process')->name('billing_process');
-
+	Route::post('return_billing_process','BillingController@return_billing_process')->name('return_billing_process');
+	Route::get('billing_process','BillingController@billing_process')->name('billing_process');
+	Route::post('get_import_data','ProductController@get_import_data')->name('get_import_data');
+	Route::post('order_hencode_weight','HsnDetailController@order_hencode_weight')->name('order_hencode_weight');
 }); 
 

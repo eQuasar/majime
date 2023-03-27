@@ -52,8 +52,11 @@ export default {
     getcategory(data)
     {
         return axios.post('get_category', data)
+    },
+    get_import_data(data)
+    {
+        return axios.post('get_import_data', data)
     }
-
 
 
 

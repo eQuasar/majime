@@ -17,15 +17,36 @@ class ProductsImport implements ToModel,WithHeadingRow
     * @return \Illuminate\Database\Eloquent\Model|null
     */
     public function model(array $row)
+
     {
-        return new Products([
+        $product = new Products([
             "vid"=>$row['vid'],
             "product_id"=>$row['product_id'],
-            "name"=>$row['product_name'],
+            "price"=>$row['price'],
+            "name"=>$row['name'],
+            "hsn_code"=>$row['hsn_code'],
             "weight"=>$row['weight'],
-            "hsn_code"=>$row['hsn'],
+            "categories"=>$row['categories'],
         ]);
+        // dd($row['product_id'],);
+        // die();
+        // $data = Products::where('product_id', $product_id)->first();
+        $row_data = DB::table("products")->where('vid','=',intval($row['vid']))->where('product_id','=',intval($row['product_id']))->get();
+        // dd($row_data);
+        // die();
+        if($row_data->isempty())
+        {
+            Products::insert(['vid'=>$row['vid'],'product_id' =>$row['product_id'], 'name'=>$row['name'],'weight'=>$row['weight']??'-', 'hsn_code'=>$row['hsn_code']??'-','categories'=>$row['categories']??'-']);
+        }
+        else
+        {
+         
+           DB::table('products')->where('products.product_id','=',$row['product_id'])->update(['name'=>$row['name'],'weight'=>$row['weight'],'price'=>$row['price'], 'hsn_code'=>$row['hsn_code'],'categories'=>$row['categories']]);
+        //    return response()->json([ 'msg' => "Update Successfully"]);
+        }
        
-    }
+ 
+    }    
+    
 }
 

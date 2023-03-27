@@ -119,7 +119,9 @@ class OrderController extends Controller {
     }
     public function getOrderDetails(Request $request) {
         $vendor = $request->vid;
+      
         $vendor2 = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+      
         $curl = curl_init();
         curl_setopt_array($curl, array(
           CURLOPT_URL => $vendor2[0]->url.'/wp-json/wc/v3/orders',
@@ -140,6 +142,7 @@ class OrderController extends Controller {
         $jsonResp = json_decode($response);
         foreach ($jsonResp as $jp) {
             $curl_data[] = $jp->id;
+            
         }
 
         // $orders = DB::table("orders")->where('vid', '=', intval($_REQUEST['vid']))->where('status', '=', "processing")->get();
@@ -1482,7 +1485,6 @@ class OrderController extends Controller {
         return $orderItems;
     }
     function changeProcessing_Status(Request $request) {
-       
         // var_dump($_REQUEST); die;
         // echo $request->loc; die;
         if ($request->loc == "wp") {
@@ -1496,6 +1498,13 @@ class OrderController extends Controller {
         }
         for ($i = 0;$i < count($listImp);$i++) 
         {
+            $data=DB::table('line_items')->join('products','products.product_id','=','line_items.product_id')
+            ->where('line_items.order_id','=', $listImp[$i])
+            ->where('line_items.vid', '=', intval($vid))
+            ->where('products.vid', '=', intval($vid))->get();
+            $hsn = $data[0]->hsn_code;
+            $weight=$data[0]->weight;
+            if(!is_null($hsn && $weight)){
             DB::table('orders')->where('oid', intval($listImp[$i]))->where('vid', intval($request->vid))->update(['status' => $request->status_assign]);
             // print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
             // https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
@@ -1508,6 +1517,7 @@ class OrderController extends Controller {
             // var_dump($jsonResp);
             if($request->status_assign=='confirmed')
             {
+
                 $date = date('Y-m-d');
                 $confirm_order_data[]=[     
                 'vid'=>$request->vid,
@@ -1557,12 +1567,17 @@ class OrderController extends Controller {
                 'oid'=>$listImp[$i],
                 'order_canceldate'=>$date,
                 ];   
-            }
-            
-          
-        }
+            }  
+        
         order_reldate::insert($confirm_order_data); 
         return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
+            }
+            else{
+                return response()->json(['error' => false, 'msg' => "Please Enter HSN Code and Weight", "ErrorCode" => "000"], 200);
+               }
+       }
+
+       
     }
     public function getProcessingOrder_Details(Request $request) {
         $vendor = $request->vid;

@@ -307,7 +307,7 @@ export default {
             order
               .changeProcessingStatus(formData)
               .then((response) => {
-                this.$alert("", "Status Update Successfully");
+                this.$alert("", response.data.msg);
                 this.show = false;
                 this.getVidz();
               })

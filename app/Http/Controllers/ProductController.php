@@ -248,99 +248,30 @@ class ProductController extends Controller {
         $data=DB::table('products')->where('vid', intval($request->vid))->distinct()->select('products.categories')->get();
         return $data;
     }
-    // public function import_product_info(Request $request)
-    // {
-    //         //$data_file=$request->file;
-            
-
-    //     //     $uploaded_files = $data_file->store("Users/eq-mini/Documents");
-    //     // print_r($uploaded_files);
-    //     // exit();
-    // //   Excel::import(new ProductsImport,$request->file('file'));
-    //     // Excel::import(new ProductsImport, $request->file('select_users_file'));
-    //     // Excel::import(new ProductsImport,$data_file);
-    //     // return redirect()->back();
-    //     Excel::import(new ProductsImport,$request->file('file')->store('files'));
-    //     //return redirect();
-
-    // }
-    // public function import_product_info(Request $request)
-    // {
-    //     $input = Request::only('file');
-    //     if(Input::hasFile('file')){
-    //         $path = Input::file('file')->getRealPath();
-    //         $data = Excel::load($path, function($reader) {
-    //         })->get();
-    //         if(!empty($data) && $data->count()){
-    //             foreach ($data as $key => $value) {
-    //                 $insert[] = ['file' => $value->file];
-    //             }
-    //             if(!empty($insert)){
-    //                 DB::table('products')->insert($insert);
-    //               //  dd('Insert Record successfully.');
-    //             }
-    //         }
-    //     }
-    //     return back();    
-    // }
     public function import_product_info(Request $request)
     {
-         $input = Request::only('file');
-        // Get current data from items table
-        //$article->tags()->get()->toArray();
-        $products = DB::table('products')->get()->toArray();
+        $data_file=$request->file;
+        //     $uploaded_files = $data_file->store("Users/eq-mini/Documents");
+        // print_r($uploaded_files);
+        // exit();
+     //Excel::import(new ProductsImport,$request->file('file'));
+     //Excel::import(new ProductsImport, $request->file('select_users_file'));
+         Excel::import(new ProductsImport,$data_file);
+         return response()->json(['msg' => "File Upload Successfully", "ErrorCode" => "000"], 200); 
+        //  return redirect()->back();
     
-        if(Input::hasFile('file')){
-            $path = Input::file('file')->getRealPath();
-            $data = Excel::load($path, function($reader) {
-            })
-            ->orderBy('created_at')
-            ->groupBy('created_at')
-            ->get();
-    
-            if(!empty($data) && $data->count()){
-                $insert = array();
-    
-                foreach ($data as $key => $value) {
-                    // Skip product previously added using in_array
-                    if (in_array($value->product, $products))
-                        continue;
-    
-                    $insert[] = ['file' => $value->file];
-    
-                    // Add new product to array
-                    $products[] = $value->product;
-                }
-    
-                if(!empty($insert)){
-                    DB::table('products')->insert($insert);
-                   //dd('Insert Record successfully.');
-                }
-               
-            }
-        }
-     
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   
     //14.3.2023
     public function category(Request $request){
         $category = DB::table("categories")->where('vid', intval($request->vid))->get();
         return $category; 
+
+    }
+    public function get_import_data(Request $request){
+       
+        $import_data = DB::table("products")->where('vid', intval($request->vid))->select('product_id','price','name','hsn_code','weight','categories','vid')->get();
+        return $import_data; 
 
     }
 }

@@ -203,7 +203,7 @@
           },
           {
             key: 'price',
-            label: 'Cost',
+            label: 'Price',
             sortable: true
           },
 

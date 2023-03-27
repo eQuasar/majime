@@ -1,5 +1,8 @@
 <template>
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="nav_btn">
+        <i class="fas fa-bars fa-fw"></i>
+      </div>
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
         <a class="navbar-brand brand-logo mr-5" href="/"><h6>MAJIME</h6></a>
       </div>
@@ -86,4 +89,5 @@ export default {
     },
  }
 };
+
 </script>																																																																																								
