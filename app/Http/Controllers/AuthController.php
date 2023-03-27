@@ -20,7 +20,7 @@ class AuthController extends Controller
     /**
      * Write code on Method
      *
-     * @return response()
+     * @return response() 
      */
     
     public function index()
@@ -149,4 +149,17 @@ class AuthController extends Controller
             return json_encode(["ErrorCode" => "-1", "msg" => $e->getMessage()]);
         }
     }
+
+
+     public function getVid(Request $request)
+     {
+        $vendor = $request->user_id;
+        $vid = DB::table("vendors")->where('vendors.user_id','=',intval($vendor))->get();
+        if(isset($vid)){
+            return $vid[0]->id;
+        }else{
+            return '';
+        }
+     }
+
 }

@@ -88,6 +88,10 @@ class __TwigTemplate_c9ddc712efb27e8853f3cfde791f5bd89893c00b84d82caf9ce611744f7
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "console/toolbar.twig", "/var/www/html/public/pma/templates/console/toolbar.twig");
+=======
+        return new Source("", "console/toolbar.twig", "/var/www/majime/public/pma/templates/console/toolbar.twig");
+>>>>>>> origin/newtemp
     }
 }

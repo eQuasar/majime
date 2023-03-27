@@ -86,6 +86,10 @@ class __TwigTemplate_fb660b53a3f031b783dabe5ca5a78efe33cfa774bccd3d3f22e3a01606d
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "navigation/tree/path.twig", "/var/www/html/public/pma/templates/navigation/tree/path.twig");
+=======
+        return new Source("", "navigation/tree/path.twig", "/var/www/majime/public/pma/templates/navigation/tree/path.twig");
+>>>>>>> origin/newtemp
     }
 }

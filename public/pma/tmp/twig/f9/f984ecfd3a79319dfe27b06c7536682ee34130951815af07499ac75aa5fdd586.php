@@ -497,6 +497,10 @@ $context["partition"]) && is_array($__internal_f769f712f3484f00110c86425acea59f5
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "columns_definitions/partitions.twig", "/var/www/html/public/pma/templates/columns_definitions/partitions.twig");
+=======
+        return new Source("", "columns_definitions/partitions.twig", "/var/www/majime/public/pma/templates/columns_definitions/partitions.twig");
+>>>>>>> origin/newtemp
     }
 }

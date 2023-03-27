@@ -69,6 +69,10 @@ class __TwigTemplate_feb47e4be66148f18ffd7c6dde267d0d80e5cc0d9a6606bdb95a4c1c262
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "display/results/page_selector.twig", "/var/www/html/public/pma/templates/display/results/page_selector.twig");
+=======
+        return new Source("", "display/results/page_selector.twig", "/var/www/majime/public/pma/templates/display/results/page_selector.twig");
+>>>>>>> origin/newtemp
     }
 }

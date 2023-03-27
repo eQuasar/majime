@@ -105,6 +105,10 @@ class __TwigTemplate_642cf01231f251bb82e8a5f51dce3d8b8451f1d327f5413dd8db4f95138
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "top_menu.twig", "/var/www/html/public/pma/templates/top_menu.twig");
+=======
+        return new Source("", "top_menu.twig", "/var/www/majime/public/pma/templates/top_menu.twig");
+>>>>>>> origin/newtemp
     }
 }

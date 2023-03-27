@@ -258,6 +258,10 @@ array_key_exists("cfg_bookmark", $context)) ? ([0 => "action bookmark", 1 => _ge
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "console/display.twig", "/var/www/html/public/pma/templates/console/display.twig");
+=======
+        return new Source("", "console/display.twig", "/var/www/majime/public/pma/templates/console/display.twig");
+>>>>>>> origin/newtemp
     }
 }

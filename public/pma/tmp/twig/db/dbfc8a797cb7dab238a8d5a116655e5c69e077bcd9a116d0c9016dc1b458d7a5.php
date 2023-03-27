@@ -114,6 +114,10 @@ class __TwigTemplate_7e24f67b016c158b5836574ff9ed206f4a091b8f5de496319665bb9f5a5
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "table/insert/continue_insertion_form.twig", "/var/www/html/public/pma/templates/table/insert/continue_insertion_form.twig");
+=======
+        return new Source("", "table/insert/continue_insertion_form.twig", "/var/www/majime/public/pma/templates/table/insert/continue_insertion_form.twig");
+>>>>>>> origin/newtemp
     }
 }

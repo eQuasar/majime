@@ -34,22 +34,19 @@ class HomeController extends Controller
     {
         if(Auth::user()->role_id == User::ROLE_ID_ADMIN)
         {
-            return redirect()->intended(RouteServiceProvider::HOME);
+            return redirect()->intended(RouteServiceProvider::ADMIN);
         }
-        else if(Auth::user()->role_id == User::ROLE_ID_SERVICE)
+        else if(Auth::user()->role_id == User::ROLE_ID_VENDOR)
         {
             // dd(RouteServiceProvider::SERVICE);
-            return redirect()->intended(RouteServiceProvider::SERVICE);
+            return redirect()->intended(RouteServiceProvider::VENDOR);
         }
-        else if(Auth::user()->role_id == User::ROLE_ID_GROMMER)
+        else if(Auth::user()->role_id == User::ROLE_ID_ACCOUNTS)
         {
             // dd(RouteServiceProvider::SERVICE);
-            return redirect()->intended(RouteServiceProvider::GROOMER);
+            return redirect()->intended(RouteServiceProvider::ACCOUNTS);
         }
-        else if(Auth::user()->role_id == User::ROLE_ID_CLIENT)
-        {
-            return redirect()->intended(RouteServiceProvider::CLIENT);
-        }
+     
         else
         {
             return redirect('login');

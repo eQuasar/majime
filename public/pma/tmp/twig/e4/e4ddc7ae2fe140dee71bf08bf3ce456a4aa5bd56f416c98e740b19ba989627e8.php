@@ -50,6 +50,10 @@ class __TwigTemplate_9675d4fb0b6628cb69fd489d54418ebfd4d5ad3a9e11e25fc55ad991fb5
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "config/form_display/tabs_bottom.twig", "/var/www/html/public/pma/templates/config/form_display/tabs_bottom.twig");
+=======
+        return new Source("", "config/form_display/tabs_bottom.twig", "/var/www/majime/public/pma/templates/config/form_display/tabs_bottom.twig");
+>>>>>>> origin/newtemp
     }
 }

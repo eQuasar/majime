@@ -59,6 +59,10 @@ class __TwigTemplate_3924451fdb2b0d1e3f36cb8c40ecfad5b55b6870f48c7c4115eb995fa7f
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "database/structure/collation_definition.twig", "/var/www/html/public/pma/templates/database/structure/collation_definition.twig");
+=======
+        return new Source("", "database/structure/collation_definition.twig", "/var/www/majime/public/pma/templates/database/structure/collation_definition.twig");
+>>>>>>> origin/newtemp
     }
 }

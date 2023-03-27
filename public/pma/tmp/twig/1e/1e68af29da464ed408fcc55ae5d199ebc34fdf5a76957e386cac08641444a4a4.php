@@ -92,6 +92,10 @@ class __TwigTemplate_9b4f5b2b32ae780681262d24a8a67c7cebd2906325aab14fdd504724d82
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "login/header.twig", "/var/www/html/public/pma/templates/login/header.twig");
+=======
+        return new Source("", "login/header.twig", "/var/www/majime/public/pma/templates/login/header.twig");
+>>>>>>> origin/newtemp
     }
 }

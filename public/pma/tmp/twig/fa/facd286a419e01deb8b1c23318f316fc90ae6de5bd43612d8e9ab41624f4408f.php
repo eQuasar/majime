@@ -131,6 +131,6 @@ class __TwigTemplate_320d142a1c85294fd8f5595deb7c86bc2d2209bd04b5b22738f322a45a3
 
     public function getSourceContext()
     {
-        return new Source("", "table/structure/drop_confirm.twig", "/var/www/html/public/pma/templates/table/structure/drop_confirm.twig");
+        return new Source("", "table/structure/drop_confirm.twig", "/var/www/majime/public/pma/templates/table/structure/drop_confirm.twig");
     }
 }

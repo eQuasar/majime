@@ -84,6 +84,10 @@ class __TwigTemplate_1aa4dbb87ac709efc744af3a35b6a22d6f35fed28fec8a069ba211a3b66
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "config/form_display/fieldset_bottom.twig", "/var/www/html/public/pma/templates/config/form_display/fieldset_bottom.twig");
+=======
+        return new Source("", "config/form_display/fieldset_bottom.twig", "/var/www/majime/public/pma/templates/config/form_display/fieldset_bottom.twig");
+>>>>>>> origin/newtemp
     }
 }

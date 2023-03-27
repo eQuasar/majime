@@ -19,7 +19,7 @@ class ServiceMiddleware
     {
         if(Auth::check())
         {
-            if(Auth::user()->role_id == User::ROLE_ID_SERVICE)
+            if(Auth::user()->role_id == User::ROLE_ID_ADMIN)
             {
                 return $next($request);
             }

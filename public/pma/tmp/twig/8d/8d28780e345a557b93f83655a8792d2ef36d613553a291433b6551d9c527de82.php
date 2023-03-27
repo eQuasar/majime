@@ -259,6 +259,10 @@ class __TwigTemplate_bac4d6de86bc56167d440deb818244c94ed2696d8cbacbe91dc4bcaa6b4
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "database/structure/table_header.twig", "/var/www/html/public/pma/templates/database/structure/table_header.twig");
+=======
+        return new Source("", "database/structure/table_header.twig", "/var/www/majime/public/pma/templates/database/structure/table_header.twig");
+>>>>>>> origin/newtemp
     }
 }

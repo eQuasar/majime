@@ -128,6 +128,10 @@ class __TwigTemplate_39ea829947eff86879d065c2de5e399c927b1da8098ffc8ac47574da93d
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "select_lang.twig", "/var/www/html/public/pma/templates/select_lang.twig");
+=======
+        return new Source("", "select_lang.twig", "/var/www/majime/public/pma/templates/select_lang.twig");
+>>>>>>> origin/newtemp
     }
 }

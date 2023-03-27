@@ -33,7 +33,7 @@ class LoginController extends Controller
      * Create a new controller instance.
      *
      * @return void
-     */
+     */ 
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
@@ -42,20 +42,17 @@ class LoginController extends Controller
 
         if(Auth::user()->role_id == User::ROLE_ID_ADMIN)
         {
-            return redirect()->intended(RouteServiceProvider::HOME);
+            return redirect()->intended(RouteServiceProvider::ADMIN);
         }
-        else if(Auth::user()->role_id == User::ROLE_ID_SERVICE)
+        else if(Auth::user()->role_id == User::ROLE_ID_VENDOR)
         {
-            return redirect()->intended(RouteServiceProvider::SERVICE);
+            return redirect()->intended(RouteServiceProvider::VENDOR);
         }
-        else if(Auth::user()->role_id == User::ROLE_ID_GROMMER)
+        else if(Auth::user()->role_id == User::ROLE_ID_ACCOUNTS)
         {
-            return redirect()->intended(RouteServiceProvider::GROOMER);
+            return redirect()->intended(RouteServiceProvider::ACCOUNTS);
         }
-        else if(Auth::user()->role_id == User::ROLE_ID_CLIENT)
-        {
-            return redirect()->intended(RouteServiceProvider::CLIENT);
-        }
+       
         else
         {
             return redirect()->intended(RouteServiceProvider::HOME);

@@ -151,6 +151,10 @@ class __TwigTemplate_9af88ba8fc9c8837bed8d7c32b7b77764822fb76fec4ad6e06b1a39353a
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "columns_definitions/column_name.twig", "/var/www/html/public/pma/templates/columns_definitions/column_name.twig");
+=======
+        return new Source("", "columns_definitions/column_name.twig", "/var/www/majime/public/pma/templates/columns_definitions/column_name.twig");
+>>>>>>> origin/newtemp
     }
 }

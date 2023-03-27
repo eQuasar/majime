@@ -1,75 +1,101 @@
 import App from './components/AppComponent.vue'
 import AdminDashboard from './components/Admin/Dashboard.vue'
-import AdminAppointments from './components/Appointment/Appointments.vue'
-import AddAppointment from './components/Appointment/AddAppointment.vue'
-import EditAppointment from './components/Appointment/EditAppointment.vue'
+import ImportVendor from './components/Admin/ImportVendor.vue'
+import wallet from './components/Wallet/wallet.vue'
+import AddAWBData from './components/Manage/AddAWBData.vue'
+import accounts from './components/Accounts/Accounts.vue'
+import ProductList from './components/Products/ProductList.vue'
+import AdminProductList from './components/Products/ProductList.vue'
+import vendorDashboard from './components/Vendor/Dashboard.vue'
+import listOrders from './components/Orders/listOrders.vue'
+import ProcessingOrders from './components/Orders/ProcessingOrders.vue'
+import AdminlistOrders from './components/Orders/listOrders.vue'
+//import ReportProfile from './components/Report/OrderDetail.vue'
+import OrderProfile2 from './components/Orders/OrderProfile.vue'
+import productprofile from './components/Products/productprofile.vue'
+import EditProductProfile from './components/Products/editproductprofile.vue'
+import ReadytopackOrders from './components/Orders/ReadytopackOrders.vue'
+import ConfirmedOrders from './components/Orders/ConfirmedOrders.vue'
+import CompleteOrders from './components/Orders/CompleteOrders.vue'
+import PrintSlip from './components/Orders/PrintSlip.vue'
+import TransactionDetail from './components/Admin/TransactionDetail.vue'
+import ViewTransaction from './components/Admin/ViewTransaction.vue'
+import PendingRefunds from './components/Orders/PendingRefunds.vue'
+import PackedOrders from './components/Orders/PackedOrders.vue'
+import ForDelivery from './components/Products/ForDelivery.vue'
+import OnHoldOrders from './components/Orders/OnHoldOrders.vue'
+import DtoIntransit from './components/Orders/dtoIntransit.vue'
+import DtoBooked from './components/Orders/dtoBooked.vue'
+import DtoDelivered from './components/Orders/dtoDelivered.vue'
+// import ZoneDetail from './components/Master/zoneDetail.vue'
+import ZoneRateCard from './components/Master/zonerateCard.vue'
+import VendorRateCard from './components/Master/vendorrateCard.vue'
+import ZRCView from './components/Master/ZRCView.vue'
+import VRCView from './components/Master/VRCView.vue'
+import WayDataCard from './components/Master/waydata.vue'
+import demo from './components/Admin/demo.vue'
+import deliveredorders from './components/Admin/deliveredorders.vue'
+import HsnDetail from './components/Manage/HsnDetail.vue'
+import HSNDeatil from './components/Manage/HSNView.vue'
+import editbutton from './components/Products/editbutton.vue'
+import editbutton2 from './components/Products/editbutton2.vue'
+import Billing from './components/Billing/billing.vue'
+import category from './components/Billing/category.vue'
+import Import_File from './components/Report/import_file.vue'
 
 
 
-export const routes = [
+export const routes = [ 
     {path: '/',component: App},
 	{path: '/home',component: App},
-    // {path:'/service/dashboard',component: ServiceDashboard,name:'servicedashboard',meta: { auth: true}},
-    // {path:'/service/appointments',component: AdminAppointments,name:'serviceappointments',meta: { auth: true}}, 
-    // {path:'/service/add-appointment',component: AddAppointment,name:'serviceaddappointment',meta: { auth: true}}, 
-    // {path:'/service/multi-appointment',component: MultiAppointment,name:'multiserviceappointment',meta: { auth: true}}, 
-    // {path:'/service/add-client',component: CreateClient,name:'servicecreateclient',meta: { auth: true}},
-    // {path:'/service/list-clients',component: ListClient,name:'servicelistclient',meta: { auth: true}},
-    {path:'/admin/editappointment/:appointmentid',component: EditAppointment,props: true,name:'editappointment',meta: { auth: true}},
-    // {path:'/service/editappointment/:appointmentid',component: EditAppointment,props: true,name:'serviceeditappointment',meta: { auth: true}},
-    // {path:'/admin/appointment/:appointmentid',component: ViewAppointment,props: true,name:'viewappointment',meta: { auth: true}},
-    // {path:'/service/appointment/:appointmentid',component: ViewAppointment,props: true,name:'serviceviewappointment',meta: { auth: true}},
-    // {path:'/service/excel-appointments',component: ExcelAppointment,name:'serviceexcelappointments',meta: { auth: true}},
-    // {path:'/admin/excel-appointments',component: ExcelAppointment,name:'adminexcelappointments',meta: { auth: true}},
-    
+    {path:'/vendor/ProductList',component: ProductList,name:'ProductList',meta: { auth: true}},
+    {path:'/admin/ProductList',component: AdminProductList,name:'adminProductList',meta: { auth: true}},
+    // {path:'/admin/ZoneDetail',component: ZoneDetail,name:'zoneDetail',meta: { auth: true}},
+    {path:'/admin/ZoneRateCard',component: ZoneRateCard,name:'zonerateCard',meta: { auth: true}},
+    {path:'/admin/VendorRateCard',component: VendorRateCard,name:'vendorrateCard',meta: { auth: true}},
+    {path:'/admin/waydataCard',component: WayDataCard,name:'waydataCard',meta: { auth: true}},
+
+    {path:'/admin/ZRCView',component: ZRCView,name:'ZRCView',meta: { auth: true}},
+    {path:'/admin/VRCView',component: VRCView,name:'VRCView',meta: { auth: true}},
+   //  {path:'/vendor/OrderProfile',component: OrderProfile,name:'OrderProfile',meta: { auth: true}},
+    {path:'/vendor/listOrders',component: listOrders,name:'listOrders',meta: { auth: true}},
+    {path:'/vendor/ProcessingOrders',component: ProcessingOrders,name:'ProcessingOrders',meta: { auth: true}},
+    {path:'/admin/listOrders',component: AdminlistOrders,name:'adminlistOrders',props: true,meta: { auth: true}},
+    {path:'/vendor/ReadytopackOrders',component: ReadytopackOrders,name:'readytopack_orders',meta: { auth: true}},
+    {path:'/vendor/PackedOrders',component: PackedOrders,name:'packedorders',meta: { auth: true}},
+    {path:'/vendor/PendingRefunds',component: PendingRefunds,name:'pendingrefunds',meta: { auth: true}},
+    {path:'/vendor/ConfirmedOrders',component: ConfirmedOrders,name:'confirmedorders',meta: { auth: true}},
+    {path:'/admin/CompleteOrders',component: CompleteOrders,name:'CompleteOrders',meta: { auth: true}},
+    {path:'/vendor/print-slip',component: PrintSlip,name:'printslip',meta: { auth: true}},
+    {path:'/vendor/dashboard',component: vendorDashboard,name:'vendorDashboard',meta: { auth: true}},
     {path:'/admin/dashboard',component: AdminDashboard,name:'admindashboard',meta: { auth: true}},
-    {path:'/admin/appointments',component: AdminAppointments,name:'appointments',meta: { auth: true}}, 
-    {path:'/admin/add-appointment',component: AddAppointment,name:'addappointment',meta: { auth: true}},
-    // {path:'/admin/multi-appointment',component: MultiAppointment,name:'multiappointment',meta: { auth: true}}, 
-    // {path:'/admin/add-client',component: CreateClient,name:'createclient',meta: { auth: true}},
-    // {path:'/admin/add-executive',component: CreateExecutive,name:'addexecutive',meta: { auth: true}},
-    // {path:'/admin/list-executive',component: ListExecutive,name:'listexecutive',meta: { auth: true}},
-    // {path:'/admin/add-groomer',component: CreateGroomer,name:'addgroomer',meta: { auth: true}},
-    // {path:'/admin/list-groomer',component: ListGroomer,name:'listgroomer',meta: { auth: true}},
-    // {path:'/admin/list-clients',component: ListClient,name:'listclient',meta: { auth: true}},
-    // {path:'/admin/editclient/:clientid',component: EditClient,props: true,name:'editclient',meta: { auth: true}},
-    // {path:'/service/editclient/:clientid',component: EditClient,props: true,name:'serviceeditclient',meta: { auth: true}},
-    // {path:'/admin/profile/:clientid',component: Profile,props: true,name:'addpet',meta: { auth: true}},
-    // {path:'/service/profile/:clientid',component: Profile,props: true,name:'serviceaddpet',meta: { auth: true}},
-    // {path:'/admin/groomer-profile/:clientid',component: GroomerProfile,props: true,name:'groomerprofile',meta: { auth: true}},
-    // {path:'/admin/editgroomer/:clientid',component: EditGroomer,props: true,name:'editgroomer',meta: { auth: true}},
-    // {path:'/admin/executive-profile/:clientid',component: ExecutiveProfile,props: true,name:'executiveprofile',meta: { auth: true}},
-    // {path:'/admin/editexecutive/:clientid',component: EditExecutive,props: true,name:'editexecutive',meta: { auth: true}},
-    // {path:'/admin/pet-breed',component: DogBreed,name:'petbreed',meta: { auth: true}},
-    // {path:'/admin/classification-month',component: ClassificationMonth,name:'classificationmonth',meta: { auth: true}},
-    // {path:'/admin/pet-classification',component: PetClassification,name:'petclassification',meta: { auth: true}},
-    // {path:'/admin/service',component: Service,name:'service',meta: { auth: true}},
-    // {path:'/admin/pet-category',component: PetCategory,name:'petcategory',meta: { auth: true}},
-    // {path:'/admin/pet-aggresive',component: PetAggresive,name:'petaggresive',meta: { auth: true}},
-    // {path:'/admin/pet-coat',component: PetCoat,name:'petcoat',meta: { auth: true}},
-    // {path:'/admin/pet-class',component: PetClass,name:'petclass',meta: { auth: true}},
-    // {path:'/admin/country',component: Country,name:'country',meta: { auth: true}},
-    // {path:'/admin/state',component: State,name:'state',meta: { auth: true}},
-    // {path:'/admin/city',component: City,name:'city',meta: { auth: true}},
-    // {path:'/admin/area',component: Area,name:'area',meta: { auth: true}},
-    // {path:'/admin/zone',component: Zone,name:'zone',meta: { auth: true}},
-    // {path:'/admin/vehicle',component: Vehicle,name:'vehicle',meta: { auth: true}},
-    // {path:'/admin/service-mode',component: ServiceMode,name:'servicemode',meta: { auth: true}},
-    // {path:'/admin/service-cost',component: ServiceCost,name:'servicecost',meta: { auth: true}},
-    // {path:'/admin/classification-cost',component: ClassificationCharge,name:'classificationcharge',meta: { auth: true}},
-    // {path:'/admin/time-slot',component: TimeSlot,name:'timeslot',meta: { auth: true}},
+    {path:'/admin/wallet',component: wallet,name:'wallet',meta: { auth: true}},
+    {path:'/admin/awb-data',component: AddAWBData,name:'admin_awbdata',meta: { auth: true}},
+    {path:'/vendor/awb-data',component: AddAWBData,name:'vendor_awbdata',meta: { auth: true}},
+    {path:'/vendor/accounts',component: accounts,name:'accounts',meta: { auth: true}},
+    {path:'/accounts/allaccounts',component: accounts,name:'allaccounts',meta: { auth: true}},
+    {path:'/admin/import-vendor',component: ImportVendor,name:'importvendor',meta: { auth: true}},
+    //{path:'/vendor/Order-detail/:clientid',component: ReportProfile,props: true,name:'orderdetail',meta: { auth: true}},
+    {path:'/vendor/OrderProfile/:oid',component: OrderProfile2,props: true,name:'OrderProfile',meta: { auth: true}},
+    {path:'/vendor/ListOrdersforVariationID/:product_id',component: productprofile,props: true,name:'productprofile',meta: { auth: true}},
+     {path:'/admin/transaction',component:TransactionDetail ,props: true,name:'TransactionDetail',meta: { auth: true}},
+     {path:'/admin/ViewTransaction',component:ViewTransaction ,props: true,name:'ViewTransaction',meta: { auth: true}},
+     {path:'/vendor/ForDelivery',component:ForDelivery,name:'fordelivery',meta: { auth: true}},
+     {path:'/vendor/OnHoldOrders',component:OnHoldOrders,name:'onholdorders',meta: { auth: true}},
+      {path:'/vendor/dtoIntransit',component:DtoIntransit,name:'dtoIntransit',meta: { auth: true}},
+      {path:'/vendor/dtoBooked',component:DtoBooked,name:'dtoBooked',meta: { auth: true}},
+    {path:'/vendor/dtoDelivered',component:DtoDelivered,name:'dtoDelivered',meta: { auth: true}},
+    {path:'/admin/demo',component: demo,name:'demo',meta: { auth: true}},
+    {path:'/admin/deliveredorders',component: deliveredorders,name:'deliveredorders',meta: { auth: true}},
+    {path:'/admin/HsnDeatil',component: HsnDetail,name:'hsndetail',meta: { auth: true}},
+    {path:'/admin/HSNDeatil',component: HSNDeatil,name:'hsn_detail',meta: { auth: true}},
 
-    // {path:'/groomer/dashboard',component: GroomerDashboard,name:'groomerdashboard',meta: { auth: true}},
-    // {path:'/groomer/booking-detail/:appointmentid',component: BookingDetails,props: true,name:'bookingdetail',meta: { auth: true}},
-    // {path:'/groomer/edit-appointment/:appointmentid',component: EditGroomerAppointment,props: true,name:'groomereditappointment',meta: { auth: true}},
-
-    // {path:'/client/home',component: ClientHome,name:'clienthome',meta: { auth: true}},
-    // {path:'/client/Payment',component: ClientPayment,name:'cpayment',meta: { auth: true}},
-    // {path:'/client/select',component: ClientSelectpet,name:'cselectpet',meta: { auth: true}},
-    // {path:'/client/service',component: ClientSelectservice,name:'cselectservice',meta: { auth: true}},
-    // {path:'/client/booking/:appointmentid',component: ClientBooking,name:'cbooking',props: true,meta: { auth: true}},
-    // {path:'/client/about',component: ClientAbout,name:'cabout',meta: { auth: true}},
-
-    // {path:'/signup',component: Register,name:'signup'}
+    {path:'/vendor/Product_list/:product_id',component: EditProductProfile,props: true,name:'editproductprofile',meta: { auth: true}},
+    {path:'/vendor/Product_list/product_id',component: editbutton,props: true,name:'editbutton',meta: { auth: true}},
+    {path:'/vendor/editProduct_variation/:product_id/:variation_id',component: editbutton2,props: true,name:'editbutton2',meta: { auth: true}},
+    {path:'/admin/billing',component: Billing,name:'billing',meta: { auth: true}},
+    {path:'/admin/category',component: category,name:'category',meta: { auth: true}},
+    {path:'/admin/import/data',component: Import_File,name:'import_file',meta: { auth: true}},
     
+  
 ];

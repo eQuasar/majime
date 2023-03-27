@@ -61,6 +61,10 @@ class __TwigTemplate_b8bc486c93b68196413f0de7ee1b5f1895983b00fb18cc637525e96f845
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "login/footer.twig", "/var/www/html/public/pma/templates/login/footer.twig");
+=======
+        return new Source("", "login/footer.twig", "/var/www/majime/public/pma/templates/login/footer.twig");
+>>>>>>> origin/newtemp
     }
 }

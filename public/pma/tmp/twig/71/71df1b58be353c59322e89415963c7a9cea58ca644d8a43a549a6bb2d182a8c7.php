@@ -78,6 +78,10 @@ class __TwigTemplate_363e9d8d2f5f024c28eaffee6523af07a8bc478df6d2fe1e8e940cf0df0
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "display/results/comment_for_row.twig", "/var/www/html/public/pma/templates/display/results/comment_for_row.twig");
+=======
+        return new Source("", "display/results/comment_for_row.twig", "/var/www/majime/public/pma/templates/display/results/comment_for_row.twig");
+>>>>>>> origin/newtemp
     }
 }

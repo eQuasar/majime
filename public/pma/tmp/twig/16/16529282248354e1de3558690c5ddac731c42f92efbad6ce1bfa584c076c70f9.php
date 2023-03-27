@@ -812,6 +812,10 @@ $context["database"], "name", [], "any", false, false, false, 243)]);
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "server/databases/index.twig", "/var/www/html/public/pma/templates/server/databases/index.twig");
+=======
+        return new Source("", "server/databases/index.twig", "/var/www/majime/public/pma/templates/server/databases/index.twig");
+>>>>>>> origin/newtemp
     }
 }

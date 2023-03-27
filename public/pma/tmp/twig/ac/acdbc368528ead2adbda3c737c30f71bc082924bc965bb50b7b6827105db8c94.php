@@ -75,6 +75,10 @@ class __TwigTemplate_28dd6a0360ae2200d57b48f612461364f69c512f067b9c4dc8c4c14d483
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "filter.twig", "/var/www/html/public/pma/templates/filter.twig");
+=======
+        return new Source("", "filter.twig", "/var/www/majime/public/pma/templates/filter.twig");
+>>>>>>> origin/newtemp
     }
 }

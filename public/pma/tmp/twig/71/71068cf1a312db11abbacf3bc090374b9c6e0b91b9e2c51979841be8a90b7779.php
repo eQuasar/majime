@@ -100,6 +100,10 @@ class __TwigTemplate_3f665294cac6e1d752b946fd5a4994a32746130d2cd12ac689ca228cccc
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "database/structure/drop_form.twig", "/var/www/html/public/pma/templates/database/structure/drop_form.twig");
+=======
+        return new Source("", "database/structure/drop_form.twig", "/var/www/majime/public/pma/templates/database/structure/drop_form.twig");
+>>>>>>> origin/newtemp
     }
 }

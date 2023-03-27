@@ -14,17 +14,15 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 Route::group(['middleware'  => ['admin']], function() {
-Route::get('/admin/{any}', 'PagesController@index')->where('any', '.*');
+Route::get('/admin/{any}', 'PagesController@admin')->where('any', '.*');
 });
-Route::group(['middleware'  => ['service']], function() {
-	Route::get('/service/{any}', 'PagesController@service')->where('any', '.*');
+Route::group(['middleware'  => ['vendor']], function() {
+	Route::get('/vendor/{any}', 'PagesController@vendor')->where('any', '.*');
 });
-Route::group(['middleware'  => ['groomer']], function() {
-	Route::get('/groomer/{any}', 'PagesController@groomer')->where('any', '.*');
+Route::group(['middleware'  => ['accounts']], function() {
+	Route::get('/accounts/{any}', 'PagesController@accounts')->where('any', '.*');
 });
-Route::group(['middleware'  => ['client']], function() {
-	Route::get('/client/{any}', 'PagesController@client')->where('any', '.*');
-});
+
 
 
 // Route::get('/', function () {

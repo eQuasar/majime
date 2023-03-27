@@ -128,6 +128,10 @@ class __TwigTemplate_8be3bd41ed1d96544048a7a0a79dcbd1a525db56ab3a99970d90cae9e1c
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "scripts.twig", "/var/www/html/public/pma/templates/scripts.twig");
+=======
+        return new Source("", "scripts.twig", "/var/www/majime/public/pma/templates/scripts.twig");
+>>>>>>> origin/newtemp
     }
 }

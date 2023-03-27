@@ -297,6 +297,10 @@ class __TwigTemplate_305b1cf79147ceb7659666f3f042c18f2085106dabf9edd60604c4c8188
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "login/form.twig", "/var/www/html/public/pma/templates/login/form.twig");
+=======
+        return new Source("", "login/form.twig", "/var/www/majime/public/pma/templates/login/form.twig");
+>>>>>>> origin/newtemp
     }
 }

@@ -17,19 +17,19 @@ class PagesController extends Controller
         //
         return view('welcome');
     }
-    public function service(Request $request)
+    public function admin(Request $request)
     {
         //
-        return view('service');
+        return view('admin');
     }
-    public function groomer(Request $request)
+    public function vendor(Request $request)
     {
         //
-        return view('groomer');
+        return view('vendor');
     }
-    public function client(Request $request)
+    public function accounts(Request $request)
     {
         //
-        return view('client');
+        return view('accounts');
     }
 }

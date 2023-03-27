@@ -108,6 +108,10 @@ class __TwigTemplate_c07efc681c0d975c08a807e14d9b4db2f32b913a51b74d5d0b9895beb67
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "database/structure/index.twig", "/var/www/html/public/pma/templates/database/structure/index.twig");
+=======
+        return new Source("", "database/structure/index.twig", "/var/www/majime/public/pma/templates/database/structure/index.twig");
+>>>>>>> origin/newtemp
     }
 }

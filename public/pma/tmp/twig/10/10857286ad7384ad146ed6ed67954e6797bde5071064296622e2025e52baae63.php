@@ -308,6 +308,10 @@ class __TwigTemplate_35d7053810359b2724e0742a0548c94dabd4dbc1c7a53756699c7f9454c
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "table/search/input_box.twig", "/var/www/html/public/pma/templates/table/search/input_box.twig");
+=======
+        return new Source("", "table/search/input_box.twig", "/var/www/majime/public/pma/templates/table/search/input_box.twig");
+>>>>>>> origin/newtemp
     }
 }

@@ -72,6 +72,10 @@ class __TwigTemplate_12303b40592b0e636e5ae38ad6103dc5490d8f604b6e200bc6a0689e4e8
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "display/results/null_display.twig", "/var/www/html/public/pma/templates/display/results/null_display.twig");
+=======
+        return new Source("", "display/results/null_display.twig", "/var/www/majime/public/pma/templates/display/results/null_display.twig");
+>>>>>>> origin/newtemp
     }
 }

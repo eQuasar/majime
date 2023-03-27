@@ -75,6 +75,10 @@ class __TwigTemplate_44cb38d085f3f1e0823c86a785588b913cbd4267438e98ac475ebda3d39
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "database/structure/favorite_anchor.twig", "/var/www/html/public/pma/templates/database/structure/favorite_anchor.twig");
+=======
+        return new Source("", "database/structure/favorite_anchor.twig", "/var/www/majime/public/pma/templates/database/structure/favorite_anchor.twig");
+>>>>>>> origin/newtemp
     }
 }

@@ -119,6 +119,10 @@ class __TwigTemplate_625461e12a199e907bf6cf0614be90b212a93673c501f83c07ac6e0ae58
 
     public function getSourceContext()
     {
+<<<<<<< HEAD
         return new Source("", "table/delete/confirm.twig", "/var/www/html/public/pma/templates/table/delete/confirm.twig");
+=======
+        return new Source("", "table/delete/confirm.twig", "/var/www/majime/public/pma/templates/table/delete/confirm.twig");
+>>>>>>> origin/newtemp
     }
 }

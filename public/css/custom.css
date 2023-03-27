@@ -35,7 +35,9 @@ margin: 0 auto;}
 .pet_info_main p{font-size:12px;}
 .search_field{position:relative;}
 .search_field .input-group-append{position:absolute; top:0;right: 15px;}
+
 .search_field .input-group-append button{border-radius:10px;}
+
 #per-page-select{  width: auto !important;}
 
 .b-nav-dropdown ul{top:100% !important}
@@ -139,8 +141,11 @@ float:left;
 }
 .date_range {
     display: flex;
+    justify-content: flex-start;
     align-items: center;
 }
+
+
 .date_range .filter_label {
     display: inline-block;
     float: left;
@@ -199,8 +204,8 @@ float:left;
 
 .call-center-dashboard .date_range .datepiker-block span {
     font-size: 14px;
-    color: #7E7E7E;
-    font-weight: 700;
+    color: #4d6676;
+    font-weight: 600;
 }
 .call-center-dashboard .date_range .datepiker-block .b-form-datepicker{
     margin: 0 !important;
@@ -218,11 +223,17 @@ float:left;
     color: #7e7e7e!important;
     font-weight: bolder;
     top: auto!important;
+    border: none!important;
 }
 .call-center-dashboard .btn.btn-primary {
     padding: 0.675rem 1.5rem;
-    font-weight: 700;
+    font-weight: 500;
 }
+
+.call-center-dashboard span .btn.btn-primary{
+    margin-right: 10px;
+}
+
 .call-center-dashboard .list-appointments .form-group div{
     color: #7E7E7E;
 }
@@ -275,6 +286,7 @@ float:left;
 .search_field input{
     height: auto!important;
     font-size: 14px!important;
+    padding: 10px 10px;
 }
 .search_field .input-group-append,
 .search_field .input-group-append button{
@@ -297,3 +309,158 @@ float:left;
 .login-btn{
     width: 100%;
 }
+
+.tenpxdiv{
+    height: 10px;
+}
+
+
+/*=========== Work Date 12 may ============*/
+/*=========== Work Date 12 may ============*/
+/*=========== Work Date 12 may ============*/
+
+
+.search_field .btn-secondary {
+    padding: 0;
+    width: 100px;
+    border-radius: 8px!important;
+    font-weight: 600;
+    background: #8dc0de;
+    color: #fff;
+}
+
+tbody tr {
+    background: #fdfdfd;
+    border: 1px solid #d5e3d6;
+}
+
+.d-table .table td{
+    line-height: 1.6;
+    padding: 1.125rem 1vh;
+}
+
+.v-sidebar-menu .vsm--item .vsm--link i.vsm--icon{
+    color: #8dc0de!important;
+}
+
+.v-sidebar-menu .vsm--item .router-link-exact-active i.vsm--icon{
+    color: #000!important;
+}
+
+
+.navbar .navbar-brand-wrapper .navbar-brand.brand-logo{
+    display: block;
+}
+.card-body .card-body-bg
+{
+    background-color:rgb(196, 228, 241);
+}
+@media screen and (max-width: 991px) {
+
+    /* = = = = = = Nav = = = = = =*/
+
+    .navbar .navbar-brand-wrapper {
+        width: 25%;
+    }
+
+    /* = = = = = = Dashboard css = = = = = = */
+
+    .sales{
+        flex-direction: column-reverse;
+    }
+
+    .sales .col-sm-4, .sales .col-sm-8{
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .sales .row{
+        display: block;
+    }
+    
+    .sales .col-sm-6{
+        max-width: 100%;
+        width: 100%;
+    }
+
+    #doughnut-chart {
+        height: 50px!important;
+    }
+
+    /* = = = = = = Sale css = = = = = = */
+
+    .main-panel .content-wrapper{
+        padding: 2.375rem 1.375rem;
+    }
+
+    .call-center-dashboard .row{
+        flex-direction: column;
+        align-content: space-between;
+    }
+
+    .call-center-dashboard .col-md-8{
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .date_range{
+        display: block;
+        padding-bottom: 15px;
+    }
+
+    .search_field {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        margin-top: 15px;
+    }
+
+    /* = = = = = = Transaction Detail Css = = = = = = */
+
+    .call-center-dashboard .col-md-6, .call-center-dashboard .col-md-3{
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .b-form-datepicker .form-control{
+        display: flex;
+        flex-direction: row;
+    }
+
+    .call-center-dashboard .col-md-3{
+        margin-top: 15px;
+    }
+    .b-calendar-grid-body .row{
+        display: flex;
+        flex-direction: row;   
+    }
+    .blue-bar{
+        padding: 0px 0px 20px;
+    }
+
+    .transaction_details .row {
+        width: 100%;
+        max-width: 100%;
+        display: block;
+    }
+
+    .transaction_details .row .col-md-6{
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .transaction_details .custom-select{
+        width: 100%;
+    }
+
+
+    .confirm_orders {
+        display: flex;
+        margin-top: 15px;
+    }
+  
+
+
+}
+
+
