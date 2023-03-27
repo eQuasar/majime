@@ -437,6 +437,7 @@ computed: {
           let formData = new FormData();
           formData.append("date_from", this.date_from);
           formData.append("date_to", this.date_to);
+          formData.append("vid", this.vid);
             order.orderSearch(formData)
               .then((response) => {    
                       this.items=response.data;

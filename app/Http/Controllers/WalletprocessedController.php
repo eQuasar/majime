@@ -8,6 +8,8 @@ use App\Models\line_items;
 use App\Models\AddTransaction;
 use App\Models\zonedetails;
 use App\Models\billings;
+use Illuminate\Support\Facades\Log;
+
 class WalletprocessedController extends Controller
 {
     /**
@@ -168,6 +170,7 @@ class WalletprocessedController extends Controller
                     if($getval > $vendor_rate[0]->cod){
                         $cod_charges = $getval;
                     }
+                    $cod_charges = $cod_charges*1.18;
                     if(isset($product_weight[0]))
                         $pw=$product_weight[0]->weight;
                     if($pw==0)
@@ -184,7 +187,7 @@ class WalletprocessedController extends Controller
                     {
                         $cod_cost=$zone_price;
                         $percent_price=(int)($total_weight/500);
-                        $pp_amount=($cod_cost*($above_value/100))*$percent_price;
+                        $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{
@@ -210,7 +213,7 @@ class WalletprocessedController extends Controller
                     {
                         $cod_cost=$zone_price;
                         $percent_price=(int)($total_weight/500);
-                        $pp_amount=($cod_cost*85/100)*$percent_price;
+                        $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{
@@ -235,7 +238,7 @@ class WalletprocessedController extends Controller
                     {
                         $cod_cost=$zone_price;
                         $percent_price=(int)($total_weight/500);
-                        $pp_amount=($cod_cost*85/100)*$percent_price;
+                        $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{
@@ -256,12 +259,37 @@ class WalletprocessedController extends Controller
             }
             else{
                 //order status is rto-delivered
-                $logistic_cost=$zone_price;
+                
+                    $cod_charges = 0;
+                    if($pw==0)
+                    {   
+                        if ($vendor_rate[0]->weight_perproduct != '' || $vendor_rate[0]->weight_perproduct!=null){
+                            $pw=$vendor_rate[0]->weight_perproduct;
+                        }else{
+                            $pw=510;
+                        }
+                    }
+                    $qty=$line_items_qty[0]->quantity;
+                    $total_weight=($pw)*($qty);
+                    if($total_weight>500)
+                    {
+                        $cod_cost=$zone_price;
+                        $percent_price=(int)($total_weight/500);
+                        $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
+                        $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
+                    }
+                    else{
+                        $cod_cost=$zone_price;
+                        $logistic_cost=$cod_cost+$cod_charges;
+                    }
+                    
+                    
                 $majime_cost=0;
                 $net_amount=0-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                 $closing_bal=$opening_balance+$net_amount;
                 
             }
+            // Log::info("Order ".$orders[$y]." vid-".$vendor." - COD Charges: ".$cod_charges."   ".$zone." Zone: ".$zone_price." - "."COD Cost ".$cod_cost."  percent_price ".$percent_price. " logistic_cost ".$logistic_cost );
             $wallet=$request->walletvalue;
             //insert values into Wallet Processed table into database
             $Wallet_order_data[]=[     

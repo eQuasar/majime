@@ -39,14 +39,23 @@ class OrderController extends Controller {
         return $orders;
     }
     public function Order_Search(Request $request) {
+        $vid = $request->vid;
         if($request->date_from == $request->date_to){
-            $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->whereDate('orders.date_created', '=', $request->date_from)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+            $order = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->whereDate('orders.date_created', '=', $request->date_from)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
                                         GROUP BY line_items.order_id) as quantity"))->orderBy('orders.date_created','DESC')->get();
         }else{
             $range = [$request->date_from.' 00:00:00', $request->date_to.' 23:59:59'];
             // $order=orders::whereBetween('date_created_gmt',$range)->get();
-            $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->whereBetween('orders.date_created', $range)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+            $order = DB::table("orders")->join('billings', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'billings.order_id')
+                 ->where('billings.vid', '=', intval($vid));
+        })->whereBetween('orders.date_created', $range)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                             WHERE line_items.order_id = orders.oid
                                             GROUP BY line_items.order_id) as quantity"))->orderBy('orders.date_created','DESC')->get();
         }
@@ -389,6 +398,7 @@ class OrderController extends Controller {
             $add = $my_data[0]->add;
             $token = $my_data[0]->token;
             $order_prefix = $my_data[0]->order_prefix;
+            $weight = '450';
             foreach ($orders as $order) {
                 // var_dump($order);die();
                 $order_id = $order->oid;
@@ -425,7 +435,8 @@ class OrderController extends Controller {
                               "cod_amount":' . $order->total . ',
                               "order": "' . $order_prefix . $order->oid . '",
                               "shipping_mode" : "Surface",
-                              "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '"
+                              "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '",
+                              "weight": "' . $weight . '"
                             }
                           ],
                           "pickup_location": 
@@ -577,6 +588,7 @@ class OrderController extends Controller {
         $country = $my_data[0]->country;
         $phone = $my_data[0]->phone;
         $add = $my_data[0]->add;
+        $weight = '450';
         $token = $my_data[0]->token;
         $order_prefix = $my_data[0]->order_prefix;
         if ($request->vid == 1) {
@@ -625,7 +637,8 @@ class OrderController extends Controller {
                           "cod_amount":' . $order->total . ',
                           "order": "' . $order_prefix . $order->oid . '",
                           "shipping_mode" : "Surface",
-                          "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '"
+                          "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '",
+                          "weight": "' . $weight . '"
                         }
                       ],
                       "pickup_location": 
@@ -912,7 +925,7 @@ class OrderController extends Controller {
         if($request->vid == 1){
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
-        }elseif($request->vid == 2){
+        }elseif($request->vid == 10){
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
         }elseif($request->vid == 3){
@@ -928,8 +941,8 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Krelon Cosmetics (Opc) Pvt Ltd<br>GST NO : 03AAJCK4238L1ZE</span><br>374-A,Model Town Extension <br>Ludhiana, Punjab, India</p>';
             $industry_name = "Krelon Cosmetics (Opc) Pvt Ltd";
         }elseif($request->vid == 10){
-            $address_store = '<p><span class="c_name">ABS ENTREPRISES<br>GST NO : 03ABXFA0812G1ZP</span><br>PC-10, BAHDAUR HOSUE, C-10 CALIBRE PLAZA <br>141009 - Ludhiana, Punjab, India</p>';
-            $industry_name = "ABS ENTREPRISES";
+            $address_store = '<p><span class="c_name">Yall<br>GST NO : 03ABXFA0812G1ZP</span><br>Shop #19-20, Lower Ground Floor (LGF), Society Plaza, Near Old Lakkar Bridge, Ludhiana 141008</p>';
+            $industry_name = "Yall";
         }elseif($request->vid == 11){
             $address_store = '<p><span class="c_name">Oh Ex<br>GST NO : 03EIIPP4249C1ZE</span><br>Deep Vihar, E-10/7530/9, Village Famra Bahadur ke Road<br>Deep Vihar, The Knit Lounge, <br>141004 - Ludhiana, Punjab, India</p>';
             $industry_name = "Oh Ex";
@@ -942,6 +955,21 @@ class OrderController extends Controller {
         }elseif($request->vid == 14){
             $address_store = '<p><span class="c_name">Menage<br>GST NO : 03AKFPS6566A1ZA</span><br>H.No. 3732 Sector 32-A, <br>Chandigarh Road<br>141010 - Ludhiana, Punjab, India</p>';
             $industry_name = "Menage";
+        }elseif($request->vid == 15){
+            $address_store = '<p><span class="c_name">Siko Customs<br>GST NO : 03ABQFM7484H1ZS</span><br>B/501 Aditya Aryan, Chogle Nagar, Near Shani Mandir,  <br>Borivali East, Chaogle Nagar, Shani Mandir<br>400066 - Mumbai, Maharashtra, India</p>';
+            $industry_name = "Siko Customs";
+        }elseif($request->vid == 16){
+            $address_store = '<p><span class="c_name">Algos Clothing<br>GST NO : 03ABQFM7484H1ZS</span><br>160, Dugri Phase 2, Dugri, Dugri, <br>141002 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Algos Clothing";
+        }elseif($request->vid == 17){
+            $address_store = '<p><span class="c_name">DripArt<br>GST NO : 03ABQFM7484H1ZS</span><br>160, Dugri Phase 2,<br> Dugri, Dugri,<br>141002 - Ludhiana, Punjab, India</p>';
+            $industry_name = "DripArt";
+        }elseif($request->vid == 18){
+            $address_store = '<p><span class="c_name">Raysa fabrics pvt ltd<br>GST NO : 03AALCR9865Q1ZC</span><br>Shop no-127,129,131,<br/>Bhadaur House,AC Market <br>141008 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Raysa fabrics pvt ltd";
+        }elseif($request->vid == 19){
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
@@ -1191,8 +1219,8 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Krelon Cosmetics (Opc) Pvt Ltd<br>GST NO : 03AAJCK4238L1ZE</span><br>374-A,Model Town Extension <br>Ludhiana, Punjab, India</p>';
             $industry_name = "Krelon Cosmetics (Opc) Pvt Ltd";
         }elseif($request->vid == 10){
-            $address_store = '<p><span class="c_name">ABS ENTREPRISES<br>GST NO : 03ABXFA0812G1ZP</span><br>PC-10, BAHDAUR HOSUE, C-10 CALIBRE PLAZA <br>141009 - Ludhiana, Punjab, India</p>';
-            $industry_name = "ABS ENTREPRISES";
+            $address_store = '<p><span class="c_name">Yall<br>GST NO : 03ABXFA0812G1ZP</span><br>Shop #19-20, Lower Ground Floor (LGF), Society Plaza, Near Old Lakkar Bridge, Ludhiana 141008</p>';
+            $industry_name = "Yall";
         }elseif($request->vid == 11){
             $address_store = '<p><span class="c_name">Oh Ex<br>GST NO : 03EIIPP4249C1ZE</span><br>Deep Vihar, E-10/7530/9, Village Famra Bahadur ke Road<br>Deep Vihar, The Knit Lounge, <br>141004 - Ludhiana, Punjab, India</p>';
             $industry_name = "Oh Ex";
@@ -1205,6 +1233,21 @@ class OrderController extends Controller {
         }elseif($request->vid == 14){
             $address_store = '<p><span class="c_name">Menage<br>GST NO : 03AKFPS6566A1ZA</span><br>H.No. 3732 Sector 32-A, <br>Chandigarh Road<br>141010 - Ludhiana, Punjab, India</p>';
             $industry_name = "Menage";
+        }elseif($request->vid == 15){
+            $address_store = '<p><span class="c_name">Siko Customs<br>GST NO : 03ABQFM7484H1ZS</span><br>B/501 Aditya Aryan, Chogle Nagar, Near Shani Mandir,  <br>Borivali East, Chaogle Nagar, Shani Mandir<br>400066 - Mumbai, Maharashtra, India</p>';
+            $industry_name = "Siko Customs";
+        }elseif($request->vid == 16){
+            $address_store = '<p><span class="c_name">Algos Clothing<br>GST NO : 03ABQFM7484H1ZS</span><br>160, Dugri Phase 2, Dugri, Dugri, <br>141002 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Algos Clothing";
+        }elseif($request->vid == 17){
+            $address_store = '<p><span class="c_name">DripArt<br>GST NO : 03ABQFM7484H1ZS</span><br>160, Dugri Phase 2,<br> Dugri, Dugri,<br>141002 - Ludhiana, Punjab, India</p>';
+            $industry_name = "DripArt";
+        }elseif($request->vid == 18){
+            $address_store = '<p><span class="c_name">Raysa fabrics pvt ltd<br>GST NO : 03AALCR9865Q1ZC</span><br>Shop no-127,129,131,<br/>Bhadaur House,AC Market <br>141008 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Raysa fabrics pvt ltd";
+        }elseif($request->vid == 19){
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
