@@ -1568,13 +1568,13 @@ class OrderController extends Controller {
         }
         for ($i = 0;$i < count($listImp);$i++) 
         {
-            $data=DB::table('line_items')->join('products','products.product_id','=','line_items.product_id')
-            ->where('line_items.order_id','=', $listImp[$i])
-            ->where('line_items.vid', '=', intval($vid))
-            ->where('products.vid', '=', intval($vid))->get();
-            $hsn = $data[0]->hsn_code;
-            $weight=$data[0]->weight;
-            if(!is_null($hsn && $weight)){
+            // $data=DB::table('line_items')->join('products','products.product_id','=','line_items.product_id')
+            // ->where('line_items.order_id','=', $listImp[$i])
+            // ->where('line_items.vid', '=', intval($vid))
+            // ->where('products.vid', '=', intval($vid))->get();
+            // $hsn = $data[0]->hsn_code;
+            // $weight=$data[0]->weight;
+            // if(!is_null($hsn && $weight)){
             DB::table('orders')->where('oid', intval($listImp[$i]))->where('vid', intval($request->vid))->update(['status' => $request->status_assign]);
             // print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
             // https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
@@ -1641,10 +1641,10 @@ class OrderController extends Controller {
         
         order_reldate::insert($confirm_order_data); 
         return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
-            }
-            else{
-                return response()->json(['error' => false, 'msg' => "Please Enter HSN Code and Weight", "ErrorCode" => "000"], 200);
-               }
+            // }
+            // else{
+            //     return response()->json(['error' => false, 'msg' => "Please Enter HSN Code and Weight", "ErrorCode" => "000"], 200);
+            //    }
        }
 
        

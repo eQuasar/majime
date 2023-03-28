@@ -355,6 +355,15 @@ tbody tr {
 {
     background-color:rgb(196, 228, 241);
 }
+
+.nav_btn {
+    position: absolute;
+    left: 20px;
+}
+.nav_btn i{
+    color: #fff;
+}
+
 @media screen and (max-width: 991px) {
 
     /* = = = = = = Nav = = = = = =*/

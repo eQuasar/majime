@@ -10,6 +10,7 @@ use PhpMyAdmin\Controllers\Setup\FormController;
 use PhpMyAdmin\Controllers\Setup\HomeController;
 use PhpMyAdmin\Controllers\Setup\ServersController;
 use PhpMyAdmin\Core;
+use PhpMyAdmin\Header;
 use PhpMyAdmin\Template;
 use PhpMyAdmin\Url;
 
@@ -19,7 +20,12 @@ if (! defined('ROOT_PATH')) {
     // phpcs:enable
 }
 
+/** @psalm-suppress InvalidGlobal */
 global $cfg;
+
+// phpcs:disable PSR1.Files.SideEffects
+define('PHPMYADMIN', true);
+// phpcs:enable
 
 require ROOT_PATH . 'setup/lib/common.inc.php';
 
@@ -27,17 +33,18 @@ if (@file_exists(CONFIG_FILE) && ! $cfg['DBG']['demo']) {
     Core::fatalError(__('Configuration already exists, setup is disabled!'));
 }
 
-$page = Core::isValid($_GET['page'], 'scalar') ? (string) $_GET['page'] : '';
-$page = preg_replace('/[^a-z]/', '', $page);
-if ($page === '') {
-    $page = 'index';
+$page = 'index';
+if (isset($_GET['page']) && in_array($_GET['page'], ['form', 'config', 'servers'], true)) {
+    $page = $_GET['page'];
 }
 
 Core::noCacheHeader();
 
+// Sent security-related headers
+(new Header())->sendHttpHeaders();
+
 if ($page === 'form') {
-    $controller = new FormController($GLOBALS['ConfigFile'], new Template());
-    echo $controller->index([
+    echo (new FormController($GLOBALS['ConfigFile'], new Template()))([
         'formset' => $_GET['formset'] ?? null,
     ]);
 
@@ -45,8 +52,7 @@ if ($page === 'form') {
 }
 
 if ($page === 'config') {
-    $controller = new ConfigController($GLOBALS['ConfigFile'], new Template());
-    echo $controller->index([
+    echo (new ConfigController($GLOBALS['ConfigFile'], new Template()))([
         'formset' => $_GET['formset'] ?? null,
         'eol' => $_GET['eol'] ?? null,
     ]);
@@ -56,7 +62,7 @@ if ($page === 'config') {
 
 if ($page === 'servers') {
     $controller = new ServersController($GLOBALS['ConfigFile'], new Template());
-    if (isset($_GET['mode']) && $_GET['mode'] === 'remove' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_GET['mode']) && $_GET['mode'] === 'remove' && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $controller->destroy([
             'id' => $_GET['id'] ?? null,
         ]);
@@ -74,9 +80,7 @@ if ($page === 'servers') {
     return;
 }
 
-$controller = new HomeController($GLOBALS['ConfigFile'], new Template());
-echo $controller->index([
+echo (new HomeController($GLOBALS['ConfigFile'], new Template()))([
     'formset' => $_GET['formset'] ?? null,
-    'action_done' => $_GET['action_done'] ?? null,
     'version_check' => $_GET['version_check'] ?? null,
 ]);
