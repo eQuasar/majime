@@ -56,11 +56,12 @@ export default {
   },
   methods: {
     onToggleCollapse(collapsed) {
-      console.log(collapsed);
+      document.getElementById("mySidebar").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
     },
     onItemClick(event, item) {
-      console.log(event);
-      console.log(item);
+      document.getElementById("Menu").style.width = "250px";
+      document.getElementById("main").style.marginLeft = "250px";
     },
   },
 };

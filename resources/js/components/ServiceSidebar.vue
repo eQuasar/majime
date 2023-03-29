@@ -1,5 +1,6 @@
 <template>
   <sidebar-menu
+    id="sidebar"
     :menu="menu"
     @update:collapsed="onToggleCollapse"
     @item-click="onItemClick"
@@ -219,8 +220,8 @@ export default {
       console.log(collapsed);
     },
     onItemClick(event, item) {
-      console.log(event);
-      console.log(item);
+      // document.getElementById(menu).style.width = "250px";
+      // document.getElementById("main").style.marginLeft = "250px";
     },
   },
 };

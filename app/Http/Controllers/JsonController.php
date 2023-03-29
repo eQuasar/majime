@@ -69,8 +69,9 @@ class JsonController extends Controller
 	private function addOrderWP($url, $vid)
 	{
 		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
+		
 		$curl = curl_init();
-
+		
 	    curl_setopt_array($curl, array(
 
 	    CURLOPT_URL => $url,
@@ -95,14 +96,14 @@ class JsonController extends Controller
 
  	public function InsertOrderID($order, $vid, $url)
 	{
-		// var_dump($order); die;
+		ini_set('display_errors', '1');
+		ini_set('display_startup_errors', '1');
 		$orderItems =DB::table("orders")->where('oid','=',$order->id)->where('vid','=',intval($vid))->get()->toArray();
-		// var_dump($orderItems); die;
-		if(!empty($orderItems)){
-			// echo "string"; die;
+		if(count($orderItems)>0){
+			echo "Already In The System"; die;
 		}else{
-		
-          	$Orders[]=[
+			
+			$Orders[]=[
 				'oid'=>$order->id,
 				'vid'=>intval($vid),
 				'parent_id'=>$order->parent_id,
@@ -139,19 +140,23 @@ class JsonController extends Controller
 				 'date_paid_gmt'=>$order->date_paid_gmt,
 				 'currency_symbol'=>$order->currency_symbol,
 			];
-			// $this->InsertBilling($order->id,$order->billing,$vid);
-			// $this->InsertShipping($order->id,$order->shipping,$vid);
+			// print_r($Orders);
+			// die();
+			$this->InsertBilling($order->id,$order->billing,$vid);
+			$this->InsertShipping($order->id,$order->shipping,$vid);
 		    //$this->OrderMetaData($order->id,$order->meta_data);
 		    $this->insertLineItems($order->id,$order->line_items,$vid);
-			//$this->LineItem_Metadata($order->id,$order->line_items);
-			// $this->OrderTaxLines($order->id,$order->tax_lines,$vid);
-			// $this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
-			// $this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
-			// $this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
-		    // $this->Order_refunds($order->id,$order->refunds,$vid);
-			// $this->Order_links($order->id,$order->_links,$vid);
+			// $this->LineItem_Metadata($order->id,$order->line_items);
+			$this->OrderTaxLines($order->id,$order->tax_lines,$vid);
+			$this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
+			$this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
+			$this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
+		    $this->Order_refunds($order->id,$order->refunds,$vid);
+			$this->Order_links($order->id,$order->_links,$vid);
 			// $this->smsSend($vid,$order->id,"placed");
-	    	// Orders::insert($Orders); 	
+			echo "Insert";
+
+	    	Orders::insert($Orders); 	
        }
     }
 

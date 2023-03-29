@@ -151,6 +151,8 @@
         sortBy: "date",
         sortDesc: true,
         perPage: 10,
+        // rows:'',
+        allcategories:'',
         currentPage: 1,
         pageOptions: [5, 10, 15, 20, 50, 100],
         filter: null,
@@ -197,7 +199,7 @@
     },
     computed: {
       rows() {
-        return this.items.length;
+        return this.allcategories.length;
       },
     },
     methods: {

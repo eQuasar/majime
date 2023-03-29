@@ -15,6 +15,7 @@ use PDF;
 use Input;
 use App\Imports\ProductsImport;
 use Maatwebsite\Excel\Facades\Excel;
+
 class ProductController extends Controller {
 
     public function productDetail(Request $request)

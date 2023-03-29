@@ -14,7 +14,8 @@
       <br>
       <b-button pill variant="primary" type="submit" style="float: left;">Submit</b-button>
       <!-- <button type="submit" style="float: left;" >Submit</button> -->
-      <b-button pill variant="outline-danger"  @click="clearFiles" style="float: left;">Reset</b-button>
+      <b-button pill variant="outline-danger"  input type="reset" value="Reset" style="float: left;">Reset</b-button>
+      <!-- <b-button pill variant="outline-danger"  @click="clearFiles" style="float: left;">Reset</b-button> -->
       <b-button pill variant="outline-success"  @click="downloadFile" style="float: left;">Download</b-button>
      
     </form>
@@ -135,6 +136,13 @@ export default {
       file: null,
       vid: 0,
       items:[],
+      sortBy: 'date',
+      sortDesc: true,
+      perPage: 10,
+      currentPage: 1,
+      pageOptions: [5, 10, 15, 20, 50, 100],
+      filter: null,
+      filterOn: [],
     };
   },
   mounted() {
@@ -193,6 +201,12 @@ export default {
       create_error: "",
     };
   },
+  computed: {
+      rows() {
+        return this.items.length
+        //  return this.items2.length
+      }
+    },
   methods: {
     paymentSuccessful () {
     Swal.fire({
@@ -229,7 +243,7 @@ export default {
       formData.append('vid', this.vid);
       formData.append('file', this.file);
 
-      axios.post('https://majimedev.isdemo.in/api/v1/import_product_info', formData).then((response) => {
+      axios.post('https://cl.majime.in/api/v1/import_product_info', formData).then((response) => {
         this.paymentSuccessful ();
         console.log(response.data);
       

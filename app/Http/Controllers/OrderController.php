@@ -1587,7 +1587,6 @@ class OrderController extends Controller {
             // var_dump($jsonResp);
             if($request->status_assign=='confirmed')
             {
-
                 $date = date('Y-m-d');
                 $confirm_order_data[]=[     
                 'vid'=>$request->vid,
@@ -1638,14 +1637,14 @@ class OrderController extends Controller {
                 'order_canceldate'=>$date,
                 ];   
             }  
-        
+        }
         order_reldate::insert($confirm_order_data); 
         return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
             // }
             // else{
             //     return response()->json(['error' => false, 'msg' => "Please Enter HSN Code and Weight", "ErrorCode" => "000"], 200);
             //    }
-       }
+    //    }
 
        
     }

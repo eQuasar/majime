@@ -364,6 +364,10 @@ tbody tr {
     color: #fff;
 }
 
+.navbar .brand-logo:hover{
+    color: #fff!important;
+}
+
 @media screen and (max-width: 991px) {
 
     /* = = = = = = Nav = = = = = =*/
