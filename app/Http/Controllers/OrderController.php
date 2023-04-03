@@ -480,7 +480,7 @@ class OrderController extends Controller {
                     $new_val = json_decode($response, true);
                     // if (isset($new_val["packages"])) {
                         if (!empty($new_val["packages"])) {
-                            // if($new_val["packages"][0]['status'] == "Fail"){
+                            if($new_val["packages"][0]['status'] != "Fail"){
                             //     $curl = curl_init();
                             //     $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
                             //     curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=on-hold', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
@@ -524,7 +524,7 @@ class OrderController extends Controller {
                                     $msg = "Already Assign AWB No.";
                                     // return response()->json(['error' => true, 'msg' => "Already Assign AWB No.","ErrorCode" => -2],200);
                                 }
-                            // }
+                            }
                         } else {
                             $error = true;
                             $curl = curl_init();
@@ -925,7 +925,7 @@ class OrderController extends Controller {
         if($request->vid == 1){
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
-        }elseif($request->vid == 10){
+        }elseif($request->vid == 2){
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
         }elseif($request->vid == 3){
@@ -974,6 +974,7 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
         }
+
 
         // dd($orders); die;
         $i = 1;
