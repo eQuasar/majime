@@ -418,8 +418,8 @@ export default {
         data,
         [
           [
-            "EMPLOYEE NAME",
-            "TL NAME",
+            "Sr No",
+            "Vendor Name",
             "PROJECT NAME",
             "PENDING TASKS",
             "1ST APPOINTMENT",
@@ -432,7 +432,7 @@ export default {
         { origin: "A1" }
       );
       XLSX.utils.book_append_sheet(wb, data, "data");
-      XLSX.writeFile(wb, "TaskReport-Civil.xlsx");
+      XLSX.writeFile(wb, "Billing_detail.xlsx");
     },
     getVidz() {
       if (this.$userId == 1) {

@@ -136,4 +136,7 @@ export default {
     walletSearch(data) {
         return axios.post('wallet_Search',data)
     },
+    changeProcessing_Status(data) {
+        return axios.post('change_Processing_Status', data)
+    },
 }

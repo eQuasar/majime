@@ -88,8 +88,8 @@ class HsnDetailController extends Controller
         $product_id =$request->product_id;
         $hsn=$request->hsn;
         $weight=$request->weight;
-        $price=$request->price;
-        DB::table('products')->where('product_id',$product_id)->update(['hsn_code' => $hsn,'weight'=>$weight,'price'=>$price]);
+        $price=$request->cost;
+        DB::table('products')->where('product_id',$product_id)->update(['hsn_code' => $hsn,'weight'=>$weight,'cost'=>$price]);
         return response()->json(['error' => false, 'msg' => "Answer update successfully", "ErrorCode" => "000"], 200);
     }
 
@@ -111,29 +111,25 @@ class HsnDetailController extends Controller
         return $data;
     }
     public function order_hencode_weight(Request $request){
+
         $order_id=$request->order_id;
         $vid=$request->vid;
-      
-        // // $product_id=$request->product_id;
-        // $data=DB::table('orders')->where('oid',$order_id)->where('vid',$vid)->get();
-        // // $product=DB::table('products')->where('product_id',$product_id)->where('vid', intval($request->vid))->get();
-        // $product = DB::table('products')->select('products.hsn_code')->where('weight',$weight)->get();
-        // echo $product;
-        // dd($product);
-        // die();
-        // $data=DB::table('orders')->where('oid',$order_id)->where('vid',$vid)->get();
         $data=DB::table('line_items')->join('products','products.product_id','=','line_items.product_id')
         ->where('line_items.order_id','=', $order_id)
         ->where('line_items.vid', '=', intval($vid))
         ->where('products.vid', '=', intval($vid))->get();
-        $hsn = $data[0]->hsn_code;
-        $weight=$data[0]->weight;
-        if(!is_null($hsn && $weight)){
-            echo "please hsn code and weight fill";
-        }
-        else{
-            echo "no";
-        }
+        for ($i = 0; $i<count($data); $i++) {
+            //->where('products.vid', '=', intval($vid))->get();
+            $hsn = $data[$i]->hsn_code;
+            $weight=$data[$i]->weight;
+            // dd($product_id);
+            // die();
+            if(is_null($hsn && $weight)){
+                echo "Please fill hsn code and weight";
+            }
+            else{
+                echo "Aleady have ";
+            }
     } 
-       
+}     
 }

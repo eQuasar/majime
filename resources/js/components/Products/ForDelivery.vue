@@ -677,6 +677,7 @@ computed: {
             billings.billing_process(formData)
              .then((response) => {
                 console.log(response.data[0]);
+                this.$alert("", response.data.msg);
                   this.items2=response.data[0];
                   const data = XLSX.utils.json_to_sheet(this.items2)
                 const wb = XLSX.utils.book_new()

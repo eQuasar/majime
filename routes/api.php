@@ -102,6 +102,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('order_items/{variation_id}',[App\Http\Controllers\OrderController::class,'order_items']);
     Route::post('getDelivery_Details','ProductController@getDelivery_Details')->name('getDelivery_Details');
     Route::post('changeProcessing_Status', 'OrderController@changeProcessing_Status')->name('changeProcessing_Status');
+    Route::post('change_Processing_Status', 'OrderController@changeProcessing_Status_confirmed')->name('change_Processing_Status');
     Route::post('getProcessingOrder_Details', 'OrderController@getProcessingOrder_Details')->name('getProcessingOrder_Details');
     Route::get('get_processing_data/{vid}/{status}','OrderController@get_processing_data')->name('get_processing_data');
     Route::post('product_Sheet_download', 'ProductController@product_Sheet_download')->name('product_Sheet_download');

@@ -168,8 +168,8 @@ export default {
           sortable: true,
         },
         {
-          key: "price",
-          label: "Price",
+          key: "cost",
+          label: "Cost",
           sortable: true,
         },
 
@@ -253,7 +253,7 @@ export default {
                   const data = XLSX.utils.json_to_sheet(this.items);
                 const wb = XLSX.utils.book_new()
                 XLSX.utils.book_append_sheet(wb, data, 'data')
-                XLSX.writeFile(wb,'Export.xlsx')
+                XLSX.writeFile(wb,'product details.xlsx')
     },
     clearFiles() {
       this.form.reset();

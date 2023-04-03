@@ -14,6 +14,7 @@ import AdminlistOrders from './components/Orders/listOrders.vue'
 import OrderProfile2 from './components/Orders/OrderProfile.vue'
 import productprofile from './components/Products/productprofile.vue'
 import EditProductProfile from './components/Products/editproductprofile.vue'
+import EditProductProfile2 from './components/Orders/editproductprofile2.vue'
 import ReadytopackOrders from './components/Orders/ReadytopackOrders.vue'
 import ConfirmedOrders from './components/Orders/ConfirmedOrders.vue'
 import CompleteOrders from './components/Orders/CompleteOrders.vue'
@@ -96,6 +97,8 @@ export const routes = [
     {path:'/admin/billing',component: Billing,name:'billing',meta: { auth: true}},
     {path:'/admin/category',component: category,name:'category',meta: { auth: true}},
     {path:'/admin/import/data',component: Import_File,name:'import_file',meta: { auth: true}},
+    {path:'/vendor/order_profile/:product_id',component: EditProductProfile2,props: true,name:'editproductprofile2',meta: { auth: true}},
+
     
   
 ];

@@ -271,7 +271,7 @@ class ProductController extends Controller {
     }
     public function get_import_data(Request $request){
        
-        $import_data = DB::table("products")->where('vid', intval($request->vid))->select('product_id','price','name','hsn_code','weight','categories','vid')->get();
+        $import_data = DB::table("products")->where('vid', intval($request->vid))->select('product_id','cost','name','hsn_code','weight','categories','vid')->get();
         return $import_data; 
 
     }
