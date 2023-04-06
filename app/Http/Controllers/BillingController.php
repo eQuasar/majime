@@ -481,6 +481,7 @@ class BillingController extends Controller
                                     $collectable_amount=$order_amount;
                                 }          
                                 $way_bill =DB::table("waybill")->where('vid','=',$vid)->where('order_id','=',$get_order_id)->get();
+                                dd($way_bill);die();
                                 // echo "\n\nCount  - ".count($way_bill);
                                 if (count($way_bill)>1){
                                     $Way_bill_no=$way_bill[0]->waybill_no;
