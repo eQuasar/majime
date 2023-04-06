@@ -1094,7 +1094,7 @@ class OrderController extends Controller {
                 $itm_sub = $itm_sub + $product->subtotal;
                 $html2.= '<tr>
                                 <td width="40" height="' . $height . '">' . $j . '</td>
-                                <td width="250">' . $product->name . '</td>
+                                <td width="250">' . $product->name . '<br>SKU: ' . $product->sku . '</td>
                                 <td width="100">Rs.' . $product->subtotal . '</td>
                                 <td width="80" align="center">' . $product->quantity . '</td>
                                 <td width="90">Rs.0</td>
@@ -1379,7 +1379,7 @@ class OrderController extends Controller {
                 $itm_sub = $itm_sub + $product->subtotal;
                 $html2.= '<tr>
                                 <td width="40" height="' . $height . '">' . $j . '</td>
-                                <td width="250">' . $product->name . '</td>
+                                <td width="250">' . $product->name . '<br>SKU: ' . $product->sku . '</td>
                                 <td width="100">Rs.' . $product->subtotal . '</td>
                                 <td width="80" align="center">' . $product->quantity . '</td>
                                 <td width="90">Rs.0</td>

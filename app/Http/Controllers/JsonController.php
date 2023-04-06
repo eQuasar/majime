@@ -515,9 +515,10 @@ class JsonController extends Controller
  	}
  	public function getAWBStatus($orders,$vid,$fwdOrReturn)
 	{	
-		// if($vid == 1){
-		// 	$curlopt_url = "https://staging-express.delhivery.com/api/v1/packages/json/?";
-		// 	$del_url = "https://staging-express.delhivery.com/api/v1/packages/json/?";
+		$way_data=DB::table("way_data")
+		->where('vid',intval($vid))
+		->get();
+	
 			
 		// }else{
 			$curlopt_url = "https://track.delhivery.com/api/v1/packages/json/?";
@@ -541,7 +542,7 @@ class JsonController extends Controller
 						$waybillno = $waybillnos[0]->return_waybill_no ;
 					}
 					echo "\n<br/>WAY: ".$waybillno." Order: ".$order->oid;
-				$url = $del_url."waybill=".$waybillno."&token=ed99803a18868406584c6d724f71ebccc80a89f9";
+				$url = $del_url."waybill=".$waybillno."&token=".$way_data[0]->token;
 				$curl = curl_init();
 				curl_setopt_array($curl, array(
 					CURLOPT_URL => $url, 
