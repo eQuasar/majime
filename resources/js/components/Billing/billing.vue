@@ -45,6 +45,46 @@
             Download
           </button>
         </b-col>
+        <b-col>
+          <button
+            type="button"
+            class="download-btn btn btn-primary"
+            style="margin-top: 30px"
+            v-on:click="hsn_download"
+          >
+            HSN Wise Report
+          </button>
+        </b-col>
+        <b-col>
+          <button
+            type="button"
+            class="download-btn btn btn-primary"
+            style="margin-top: 30px"
+            v-on:click="state_download"
+          >
+            State Wise Report
+          </button>
+        </b-col>
+        <b-col>
+          <button
+            type="button"
+            class="download-btn btn btn-primary"
+            style="margin-top: 30px"
+            v-on:click="salereturn_download"
+          >
+            Sale Return
+          </button>
+        </b-col>
+        <b-col>
+          <button
+            type="button"
+            class="download-btn btn btn-primary"
+            style="margin-top: 30px"
+            v-on:click="saleinvoice_download"
+          >
+            Sale Invoice
+          </button>
+        </b-col>
       </div>
     </div>
     <div class="clear">&nbsp;</div>
@@ -98,6 +138,10 @@ export default {
   mounted() {
     this.getVidz();
     this.getBilling_detail();
+    this.gethsn_detail();
+    this.getstate_detail();
+    this.salereturn_detail();
+    this.saleinvoice_detail();
   },
   data() {
     return {
@@ -233,8 +277,8 @@ export default {
           sortable: true,
         },
         {
-          key: "wallet_procesed_date",
-          label: "Wallet Procesed Date",
+          key: "refund_amount",
+          label: "Refund Amount",
           sortable: true,
         },
         {
@@ -369,7 +413,12 @@ export default {
         },
         {
           key: "item_cost",
-          label: "Item Cost",
+          label: "Item Price",
+          sortable: true,
+        },
+        {
+          key: "item_cost",
+          label: "Shipping Cost",
           sortable: true,
         },
         {
@@ -384,6 +433,9 @@ export default {
         },
       ],
       items: [],
+      items_sale_return: [],
+      itemshsn: [],
+      itemsstate: [],
     };
   },
   computed: {
@@ -402,6 +454,74 @@ export default {
         .then((response) => {
           console.log(response.data);
           this.items = response.data;
+          this.show = false;
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+    },
+    gethsn_detail() {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      billings
+        .get_hsn_detail(formData)
+        .then((response) => {
+          console.log(response.data);
+          this.itemshsn = response.data;
+          this.show = false;
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+    },
+    getstate_detail() {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      billings
+        .get_state_detail(formData)
+        .then((response) => {
+          console.log(response.data);
+          this.itemsstate = response.data;
+          this.show = false;
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+    },
+    saleinvoice_detail() {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      billings
+        .get_saleinvoice_detail(formData)
+        .then((response) => {
+          console.log(response.data);
+          this.items_sale_invoice = response.data;
+          this.show = false;
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+    },
+    salereturn_detail() {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      billings
+        .get_salereturn_detail(formData)
+        .then((response) => {
+          console.log(response.data);
+          this.items_sale_return = response.data;
           this.show = false;
         })
         .catch((error) => {
@@ -433,6 +553,102 @@ export default {
       );
       XLSX.utils.book_append_sheet(wb, data, "data");
       XLSX.writeFile(wb, "Billing_detail.xlsx");
+    },
+    hsn_download: function () {
+      const data = XLSX.utils.json_to_sheet(this.itemshsn);
+      const wb = XLSX.utils.book_new();
+      /* fix headers */
+      // XLSX.utils.sheet_add_aoa(
+      //   data,
+      //   [
+      //     [
+      //       "Sr No",
+      //       "Vendor Name",
+      //       "PROJECT NAME",
+      //       "PENDING TASKS",
+      //       "1ST APPOINTMENT",
+      //       "DE-SNAGGING",
+      //       "2ND APPOINTMENT",
+      //       "KEY HANDOVER APPOINTMENT",
+      //       "FINAL KEY HANDOVER DONE",
+      //     ],
+      //   ],
+      //   { origin: "A1" }
+      // );
+      XLSX.utils.book_append_sheet(wb, data, "data");
+      XLSX.writeFile(wb, "hsn_detail.xlsx");
+    },
+    state_download: function () {
+      const data = XLSX.utils.json_to_sheet(this.itemsstate);
+      const wb = XLSX.utils.book_new();
+      /* fix headers */
+      // XLSX.utils.sheet_add_aoa(
+      //   data,
+      //   [
+      //     [
+      //       "Sr No",
+      //       "Vendor Name",
+      //       "PROJECT NAME",
+      //       "PENDING TASKS",
+      //       "1ST APPOINTMENT",
+      //       "DE-SNAGGING",
+      //       "2ND APPOINTMENT",
+      //       "KEY HANDOVER APPOINTMENT",
+      //       "FINAL KEY HANDOVER DONE",
+      //     ],
+      //   ],
+      //   { origin: "A1" }
+      // );
+      XLSX.utils.book_append_sheet(wb, data, "data");
+      XLSX.writeFile(wb, "statewise_detail.xlsx");
+    },
+    salereturn_download: function () {
+      const data = XLSX.utils.json_to_sheet(this.items_sale_return);
+      const wb = XLSX.utils.book_new();
+      /* fix headers */
+      // XLSX.utils.sheet_add_aoa(
+      //   data,
+      //   [
+      //     [
+      //       "Sr No",
+      //       "Vendor Name",
+      //       "PROJECT NAME",
+      //       "PENDING TASKS",
+      //       "1ST APPOINTMENT",
+      //       "DE-SNAGGING",
+      //       "2ND APPOINTMENT",
+      //       "KEY HANDOVER APPOINTMENT",
+      //       "FINAL KEY HANDOVER DONE",
+      //     ],
+      //   ],
+      //   { origin: "A1" }
+      // );
+      XLSX.utils.book_append_sheet(wb, data, "data");
+      XLSX.writeFile(wb, "sale_return_detail.xlsx");
+    },
+    saleinvoice_download: function () {
+      const data = XLSX.utils.json_to_sheet(this.items_sale_invoice);
+      const wb = XLSX.utils.book_new();
+      /* fix headers */
+      // XLSX.utils.sheet_add_aoa(
+      //   data,
+      //   [
+      //     [
+      //       "Sr No",
+      //       "Vendor Name",
+      //       "PROJECT NAME",
+      //       "PENDING TASKS",
+      //       "1ST APPOINTMENT",
+      //       "DE-SNAGGING",
+      //       "2ND APPOINTMENT",
+      //       "KEY HANDOVER APPOINTMENT",
+      //       "FINAL KEY HANDOVER DONE",
+      //     ],
+      //   ],
+      //   { origin: "A1" }
+      // );
+      XLSX.utils.book_append_sheet(wb, data, "data");
+      XLSX.writeFile(wb, "saleinvoice_detail.xlsx");
     },
     getVidz() {
       if (this.$userId == 1) {

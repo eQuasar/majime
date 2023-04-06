@@ -37,6 +37,7 @@ class ZonedetailController extends Controller
      */
     public function store(Request $request)
     {
+        //use for validation check zoneno,pincode(required)
         $request->validate([
             // 'id' => 'required',
             'zoneno' => 'required',
@@ -44,12 +45,10 @@ class ZonedetailController extends Controller
          
          ]);
         
-        
         $zone_data = new zonedetail();
-        
         $zone_data->zoneno= $request->zoneno;
         $zone_data->pincode= $request->pincode;
-        $zone_data->save();
+        $zone_data->save();//save zone_data into database table zonedetails
     }
 
     /**
@@ -58,6 +57,7 @@ class ZonedetailController extends Controller
      * @param  \App\Models\zonedetail  $zonedetail
      * @return \Illuminate\Http\Response
      */
+    //listing  from table zonedetail get zoneno
     public function show(zonedetail $zonedetail)
     {
         $data=DB::table('zonedetails')->distinct()->select('zonedetails.zoneno')->get();

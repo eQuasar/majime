@@ -127,7 +127,7 @@
       </div>
     </div>
 <!-- modal show -->
-<b-modal   id="modal-1" title="Edt Product Details" hide-footer size="lg">
+<b-modal   id="modal-1" title="Edit Hsn Code and Weight of the Product" hide-footer size="lg">
           <div class="content_bar card">
             <div class="card-body">
               <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
@@ -201,10 +201,10 @@ export default {
       required: true,
       default: 0,
     },
-    product_id: {
-          type: String,
-          required: true
-        },
+    // product_id: {
+    //       type: String,
+    //       required: true
+    //     },
   },
   mounted() {
     this.getOrder();
@@ -251,7 +251,6 @@ export default {
       vid: 0,
       perPage: 10,
       weight:0,
-      product_id:'',
       // oid: 0,
       email: "",
       total_amount:"",
@@ -274,6 +273,7 @@ export default {
       create_error: "",
       selected: "first",
       vid: 0,
+      product_id:"",
       variation_id:"",
       perPage: 10,
       options: [],
@@ -287,11 +287,11 @@ export default {
           label: "Product ID",
           sortable: true,
         },
-        {
-          key: "variation_id",
-          label: "Variation ID",
-          sortable: true,
-        },
+        // {
+        //   key: "variation_id",
+        //   label: "Variation ID",
+        //   sortable: true,
+        // },
         {
           key: "name",
           label: "Name",
@@ -307,14 +307,14 @@ export default {
           label: "Weight",
           sortable: true,
         },
+        // {
+        //   key: "quantity",
+        //   label: "Quantity",
+        //   sortable: true,
+        // },
         {
-          key: "quantity",
-          label: "Quantity",
-          sortable: true,
-        },
-        {
-          key: "price",
-          label: "Price",
+          key: "cost",
+          label: "Cost",
           sortable: true,
         },
         {
@@ -361,12 +361,12 @@ export default {
           formData.append("hsn", this.hsndetail);
           formData.append("weight", this.weight); 
           formData.append("cost", this.cost); 
-          formData.append("product_id", this.product_id); 
+          formData.append("product_id", this.order_product_id); 
           HSN.update_hsn_weight(formData)
             .then((response) => {
               this.successful = true;
               this.error = true;
-              this.ProductDetail();
+              this.getOrderItems();
               this.$router.push({name: 'OrderProfile'});
             })
             .catch((error) => {
@@ -439,6 +439,26 @@ export default {
           console.log(error);
         });
     },
+    returnAWB() {
+      // alert("asdas");
+      // alert(this.oid);
+      // this.show=true;
+      // // alert('Assigned Successfully');
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      formData.append("oid", this.oid);
+      order
+        .returnAWB(formData)
+        .then((response) => {
+          alert(response.data.msg);
+          // this.show=false;
+        })
+        .catch((response) => {
+          this.successful = false;
+          alert("something went wrong");
+        });
+    },
     goBack() {
       return this.$router.go(-1);
     },
@@ -450,6 +470,8 @@ export default {
           this.order_product_id=response.data[0].product_id;
           this.weight=response.data[0].weight;
           this.cost=response.data[0].cost;
+          this.hsndetail=response.data[0].hsn_code;
+          this.$bvModal.hide('modal-1')
           if (response.data) {
             this.items = response.data;
           
@@ -458,6 +480,32 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    previewImage: function (event) {
+      // Reference to the DOM input element
+      var input = event.target;
+      // Ensure that you have a file before attempting to read it
+      if (input.files && input.files[0]) {
+        // create a new FileReader to read this image and convert to base64 format
+        var reader = new FileReader();
+        // Define a callback function to run, when FileReader finishes its job
+        reader.onload = (e) => {
+          // Note: arrow function used here, so that "this.imageData" refers to the imageData of Vue component
+          // Read image as base64 and set to imageData
+          this.imageData = e.target.result;
+          this.image_file = e.target.result;
+        };
+        // Start the reader job - read file as a data url (base64 format)
+        reader.readAsDataURL(input.files[0]);
+      }
+    },
+    deleteImage() {
+      this.image = null;
+      this.image_file = null;
+    },
+    getImgUrl(pet) {
+      var images = "/public/uploads/otheruser/" + pet;
+      return images;
     },
   },
 };

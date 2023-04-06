@@ -22,6 +22,7 @@ class AddTransactionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    //listing data from table AddTransaction
     public function index()
     {
           $data = AddTransaction::all();
@@ -44,8 +45,10 @@ class AddTransactionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    // api save data from table AddTransaction
     public function store(Request $request)
     {
+        //check validiton
          $request->validate([
             // 'id' => 'required',
             'description' => 'required',
@@ -60,12 +63,14 @@ class AddTransactionController extends Controller
         $trans_data->type=$request->type;
         $trans_data->amount=$request->amount;
         $trans_data->date=$request->date;
-        $trans_data->save();
+        $trans_data->save();//save data into table AddTransaction
+        //get data from table opening_closing_tables 
         $openclose_data =DB::table("opening_closing_tables")
               ->where('opening_closing_tables.vid',$request->vid)
               ->orderBy('id','DESC')
               ->limit(1)
               ->get();
+              //if condition count function check table(data) opening_closing_tables lessthan equal one
                 if(count($openclose_data) >= 1){
                 $opening_balance=$openclose_data[0]->closing_bal+$request->amount;
                 $opening_balance2=$openclose_data[0]->closing_bal-$request->amount;
@@ -73,12 +78,9 @@ class AddTransactionController extends Controller
                 $opening_balance=$request->amount;
                 $opening_balance2=0-$request->amount;
             }
-
         $wallet_data = new OpeningClosingTable();
         $wallet_data->vid=$request->vid;
-        
         if($trans_data->type=='In'){  
-
             if(count($openclose_data) == 0){
                $wallet_data->opening_bal= $request->amount;
                $wallet_data->closing_bal=$request->amount;
@@ -86,7 +88,6 @@ class AddTransactionController extends Controller
                 $wallet_data->opening_bal=$openclose_data[0]->closing_bal;
                 $wallet_data->closing_bal=$openclose_data[0]->closing_bal+$request->amount;
             }           
-
             $Wallet_order_data[]=[     
                 'date_created'=> $request->date,
                 'transaction_id'=>"N/A",
@@ -111,7 +112,6 @@ class AddTransactionController extends Controller
         }else{
             $wallet_data->opening_bal=$openclose_data[0]->closing_bal;
             $wallet_data->closing_bal=$openclose_data[0]->closing_bal-$request->amount;
-
             $Wallet_order_data[]=[     
                 'date_created'=> $request->date,
                 'transaction_id'=>"N/A",
@@ -131,11 +131,8 @@ class AddTransactionController extends Controller
                 'zone_amt'=> 0,
                 'description'=> $request->description,
                 'created_at'=>$request->date,
-            
             ];    
-
         }
-
         $wallet_data->save();  
         walletprocessed::insert($Wallet_order_data);
         // DB::table('walletprocesseds')->where('walletprocesseds.vid', intval($request->vid))->update(['created_at' => $request->date]);
@@ -149,6 +146,7 @@ class AddTransactionController extends Controller
      * @param  \App\Models\AddTransaction  $addTransaction
      * @return \Illuminate\Http\Response
      */
+    //show data  from table AddTransaction sortBy vid
     public function show(AddTransaction $addTransaction)
     {
         //

@@ -34,11 +34,14 @@ class VendorRatecardController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    //api use function store from table vendor_ratecards get vendor convert toArray
     public function store(Request $request)
     {
         
-        $awb_record =DB::table("vendor_ratecards")->where('vendor_ratecards.vid',$request->vendor)->get()->toArray();
+        $awb_record =DB::table("vendor_ratecards")
+        ->where('vendor_ratecards.vid',$request->vendor)->get()->toArray();
         $vendor_data=vendor_ratecard::all();
+        //if condition cheak table from vendor_ratecards vendor_ratecards exits()yes/no
         if(DB::table('vendor_ratecards')->where('vid',$request->vendor)->exists())
         {
             $request->validate([
@@ -96,6 +99,7 @@ class VendorRatecardController extends Controller
      * @param  \App\Models\vendor_ratecard  $vendor_ratecard
      * @return \Illuminate\Http\Response
      */
+    //listing all show data from table vendor_ratecard 
     public function show(vendor_ratecard $vendor_ratecard)
     {
         $data = vendor_ratecard::all();
@@ -135,11 +139,13 @@ class VendorRatecardController extends Controller
     {
         //
     }
+    // use api get vandor data from table vendor_ratecards get vid convert toArray
     public function getvedordata(Request $request)
     {
         
-         $awb_record =DB::table("vendor_ratecards")->where('vendor_ratecards.vid',$request->vid)->get()->toArray();
-         
+         $awb_record =DB::table("vendor_ratecards")
+         ->where('vendor_ratecards.vid',$request->vid)->get()->toArray();
+         // if condition !empty awb record
             if(!empty($awb_record)){
                 return $awb_record;
             }else{

@@ -14,6 +14,7 @@ class ZoneController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    //listing get  from zone table
     public function index()
     {
         //
@@ -37,6 +38,7 @@ class ZoneController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    //save data
     public function store(Request $request)
     {
         //

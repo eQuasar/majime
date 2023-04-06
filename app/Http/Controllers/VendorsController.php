@@ -16,6 +16,7 @@ class VendorsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    //listing from table vendors
     public function index()
     {
         //
@@ -39,23 +40,26 @@ class VendorsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    //api use function save data
     public function store(Request $request)
     {
         //dd($request);
+        //use for validation
         $request->validate([
                 'name' => 'required|string|max:255',
                 'url' => 'required|string|max:255',
             ]);
-
+                //  $userinfo(variable) from table users   get user phone and email convert array
             $userinfo = DB::table("users")
                 ->where("phone", $request->user_phone)
                 ->orWhere("email", $request->email)->get()->toArray();
-                       
+              //if condition check !empty from $userinfo         
             if(!empty($userinfo)){
                 //   dd($userinfo);
                 $uid = $userinfo[0]->id;
                 $vendors = DB::table("vendors")
                 ->where("user_id", $uid)->get()->toArray();
+            // True because $vendors is set
                 if(isset($vendors)){
                     $import = new Vendors();
                     $import->user_id = $uid;

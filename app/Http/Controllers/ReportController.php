@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
-   
+   //api use get report detail use from table orders and billings
 	public function Report_detail()
 	{
         $obj=orders::join('billings','orders.oid','=','billings.order_id')

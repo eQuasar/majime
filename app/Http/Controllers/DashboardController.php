@@ -14,6 +14,7 @@ use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
+
    public function dashboard_detail($vid)
    {
       $clos='closed';
@@ -25,19 +26,31 @@ class DashboardController extends Controller
 
 
       $date = \Carbon\Carbon::today()->subDays(7);
-    $processing_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->where('date_created', '>=', $date)->get();
+      //get data from table orders base vid, table orders according to status equal to processing
+    $processing_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->where('date_created', '>=', $date)->get();// get table from orders date created lessthan equal $data
+    // count function check processing orders  from table orders 
     $processing_order_count=count($processing_orders);
+     // sum function use total processing orders  from table orders 
     $processing_saleAmount=$processing_orders->sum('total');
-
-    $confirm_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','confirmed')->where('date_created', '>=', $date)->get();
+      //get data from table orders base vid, table orders according to status equal to confirmed
+    $confirm_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','confirmed')
+   // get table from orders date created lessthan equal $data
+    ->where('date_created', '>=', $date)->get();
+     // count function check confirm orders  from table orders 
     $confirm_order_count=count($confirm_orders);
     $confirm_saleAmount=$confirm_orders->sum('total');
-
-    $packed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','packed')->where('date_created', '>=', $date)->get();
+     //get data from table orders base vid, table orders according to status equal to packed
+    $packed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','packed')
+       // get table from orders date created lessthan equal $data
+    ->where('date_created', '>=', $date)->get();
+       // count function check packed orders  from table orders 
     $packed_order_count=count($packed_orders);
     $packed_saleAmount=$packed_orders->sum('total');
-
-    $hold_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','on-hold')->where('date_created', '>=', $date)->get();
+     //get data from table orders base vid, table orders according to status equal to on hold
+    $hold_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','on-hold')
+        // get table from orders date created lessthan equal $data
+    ->where('date_created', '>=', $date)->get();
+      // get table from orders date created lessthan equal $data
     $hold_order_count=count($hold_orders);
     $hold_saleAmount=$hold_orders->sum('total');
 
@@ -76,12 +89,13 @@ class DashboardController extends Controller
       $hold='on-hold';
 
       $date = \Carbon\Carbon::today()->subDays(7);
-
+    //get date_created lessthan equal $data from table orders base vid
     $gross_orders=Orders::where('orders.vid','=',$vid)->where('date_created', '>=', $date)->get();
     $gross_count=count($gross_orders);
     $gross_saleAmount=$gross_orders->sum('total');
     $net_count=round($gross_count*33/100);
     $net_sale=round($gross_saleAmount*33/100);
+     //get date_created lessthan equal $data from table walletprocesseds base vid
     $logistic_orders=walletprocessed::where('walletprocesseds.vid','=',$vid)->where('created_at', '>=', $date)->get();
     $logistic_count=count($logistic_orders);
     $logistic_saleAmount=$logistic_orders->sum('logistic_cost');
@@ -104,7 +118,7 @@ class DashboardController extends Controller
   
 
    }
-
+   //dashboard search api
    public function dashboard_search(Request $request)
    {
     $vid=$request->vid;
@@ -134,99 +148,139 @@ class DashboardController extends Controller
     $onhold='on-hold';
 
     $range = [$request->date_from, $request->date_to];
-    $date = \Carbon\Carbon::today()->subDays(7);
-    $processing_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->whereBetween('orders.date_created_gmt',$range)->get();
+    $date = \Carbon\Carbon::today()->subDays(7);// Carbon function use for date
+    $processing_orders=DB::table("orders")->where('orders.vid','=',$vid)
+    //use table orders.status equal to processing
+    ->where('orders.status','=','processing')
+    //use table orders.date_created_gmt $range(date_from into date_to)
+    ->whereBetween('orders.date_created_gmt',$range)->get();
     $process_order_count=count($processing_orders);
     $processed_saleAmount=$processing_orders->sum('total');
-    $confirmed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','confirmed')->whereBetween('orders.date_created_gmt',$range)->get();
+     //use table orders.status equal to confirmed get data
+    $confirmed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','confirmed')
+        //use table orders.date_created_gmt $range(date_from into date_to)
+    ->whereBetween('orders.date_created_gmt',$range)->get();
     $confirm_order_count=count($confirmed_orders);
     $confirm_saleAmount=$confirmed_orders->sum('total');
+      //use table orders.status equal to packed
     $packed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','packed')->whereBetween('orders.date_created_gmt',$range)->get();
     $packed_order_count=count($packed_orders);
     $packed_saleAmount=$packed_orders->sum('total');
+     //use table orders.status equal to dispatched get data
     $dispatched_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dispatched')->whereBetween('orders.date_created_gmt',$range)->get();
     $dispatched_order_count=count($dispatched_orders);
     $dispatch_saleAmount=$dispatched_orders->sum('total');
+      //use table orders.status equal to intransit get data
     $intransit_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','intransit')->whereBetween('orders.date_created_gmt',$range)->get();
     $intransit_order_count=count($intransit_orders);
     $intransit_saleAmount=$intransit_orders->sum('total');
+    //use table orders.status equal to deliveredtocust get data
     $deliveredtocust_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','deliveredtocust')->whereBetween('orders.date_created_gmt',$range)->get();
     $deliveredtocust_order_count=count($deliveredtocust_orders);
     $deliver_saleAmount=$deliveredtocust_orders->sum('total');
+      //use table orders.status equal to completed get data
     $completed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','completed')->whereBetween('orders.date_created_gmt',$range)->get();
     $completed_order_count=count($completed_orders);
     $complete_saleAmount=$completed_orders->sum('total');
+      //use table orders.status equal to closed get data
     $closed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','closed')->whereBetween('orders.date_created_gmt',$range)->get();
     $closed_order_count=count($closed_orders);
     $closed_saleAmount=$closed_orders->sum('total');
+      //use table orders.status equal to dtobooked get data
     $dtobooked_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dtobooked')->whereBetween('orders.date_created_gmt',$range)->get();
     $dtobooked_order_count=count($dtobooked_orders);
     $dtobooked_saleAmount=$dtobooked_orders->sum('total');
+      //use table orders.status equal to on_hold get data
     $onhold_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','on-hold')->whereBetween('orders.date_created_gmt',$range)->get();
     $onhold_order_count=count($onhold_orders);
     $onhold_saleAmount=$onhold_orders->sum('total');
-    $rtodelivered_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->whereBetween('orders.date_created_gmt',$range)->get();
+      //use table orders.status equal to rto-delivered get data
+    $rtodelivered_orders=DB::table("orders")->where('orders.vid','=',$vid)
+    ->where('orders.status','=','rto-delivered')->whereBetween('orders.date_created_gmt',$range)->get();
     $rtodelivered_order_count=count($rtodelivered_orders);
     $rtodelivered_saleAmount=$rtodelivered_orders->sum('total');
+       //use table orders.status equal to dto-delivered get data
     $dtodelivered_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dto-delivered')->whereBetween('orders.date_created_gmt',$range)->get();
     $dtodelivered_order_count=count($dtodelivered_orders);
     $dtodelivered_saleAmount=$dtodelivered_orders->sum('total');
+       //use table orders.status equal to rto-refunded get data
     $dtorefunded_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dto-refunded')->whereBetween('orders.date_created_gmt',$range)->get();
     $dtorefunded_order_count=count($dtorefunded_orders);
     $dtorefunded_saleAmount=$dtorefunded_orders->sum('total');
+       //use table orders.status equal to pickedup get data
     $picked_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','pickedup')->whereBetween('orders.date_created_gmt',$range)->get();
     $picked_order_count=count($picked_orders);
     $picked_saleAmount=$picked_orders->sum('total');
+    //use table orders.status equal to dtointransit get data
     $dtoIntras_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dtointransit')->whereBetween('orders.date_created_gmt',$range)->get();
     $dtoIntra_order_count=count($dtoIntras_orders);
     $dtoIntrans_saleAmount=$dtoIntras_orders->sum('total');
+     //use table orders.status equal to dtodel2warehouse get data
     $dtowarehouse_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','dtodel2warehouse')->whereBetween('orders.date_created_gmt',$range)->get();
     $dtowarehouse_order_count=count($dtowarehouse_orders);
     $dtowarehouse_saleAmount=$dtowarehouse_orders->sum('total');
+        //use table orders.status whereIn to [$clos,$del] get data
     $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$clos,$del])->whereBetween('orders.date_created_gmt',$range)->get();
     $total_Processed=count($orders);
     $total_amount=$orders->sum('total');
+          //use table orders.status equal to delivered get data
     $rto=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->whereBetween('orders.date_created_gmt',$range)->get();
     $total_rtoo=count($rto);
     $rto_amount=$rto->sum('total');
+     //use table orders.status whereIn to [$dto_ref,$dto_del, $dtointrans,$dtobook] get data
     $dto=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dto_ref,$dto_del, $dtointrans,$dtobook])->whereBetween('orders.date_created_gmt',$range)->get();
     $total_dtoo=count($dto);
     $dto_amount=$dto->sum('total');
+     //use table orders.status whereIn to [$intrans,$dis] get data
     $dispatched_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$intrans,$dis])->whereBetween('orders.date_created_gmt',$range)->get();
     $dispatched_order_count=count($dispatched_orders);
     $dispatched_amount=$dispatched_orders->sum('total');
+      //use table orders.status whereIn to [$clos,$del] get data
     $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$clos,$del])->whereBetween('orders.date_created_gmt',$range)->get();
     $total_Processedd=$orders->sum('total');
     $total_count_process=count($orders);
+     //use table orders.status equal to [$clos,$del] get data
     $rto=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->whereBetween('orders.date_created_gmt',$range)->get();
     $total_rto=$rto->sum('total');
     $count_rto=count($rto);
+     //use table orders.status whereIn to [$clos,$del] get data
     $dto=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dto_ref,$dto_del, $dtointrans,$dtobook])->whereBetween('orders.date_created_gmt',$range)->get();
     $total_dto=$dto->sum('total');
     $count_dto=count($dto);
+      //use table orders.status equal to confirmed get data
     $confirmed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','confirmed')->whereBetween('orders.date_created_gmt',$range)->get();
     $confirmed_amount=$confirmed_orders->sum('total');
+     //use table orders.status equal to intransit get data
     $intransit_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','intransit')->whereBetween('orders.date_created_gmt',$range)->get();
     $intransit_amount=$intransit_orders->sum('total');
+       //use table orders.status whereIn to [$intrans,$dis] get data
     $dispatched_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$intrans,$dis])->whereBetween('orders.date_created_gmt',$range)->get();
     $dispatched_amount=$dispatched_orders->sum('total');
+      //use table orders.status equal to packed get data
     $packed=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','packed')->whereBetween('orders.date_created_gmt',$range)->get();
     $packed_amount=$packed->sum('total');
+     //use table orders.status equal to processing get data
     $processing=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->whereBetween('orders.date_created_gmt',$range)->get();
     $processing_amount=$processing->sum('total');
+      //use table orders.status equal to completed get data
     $complete=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','completed')->whereBetween('orders.date_created_gmt',$range)->get();
     $complete_amount=$complete->sum('total');
+      //use table orders.status equal to on-hold get data
     $hold=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','on-hold')->whereBetween('orders.date_created_gmt',$range)->get();
     $hold_amount=$hold->sum('total');
+         //use table orders.status equal to processing get data
     $processing_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->whereBetween('orders.date_created_gmt',$range)->get();
     $processing_order_count=count($processing_orders);
     $processing_saleAmount=$processing_orders->sum('total');
+         //use table orders.status equal to confirmed get data
     $confirm_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','confirmed')->whereBetween('orders.date_created_gmt',$range)->get();
     $confirm_order_count=count($confirm_orders);
     $confirm_saleAmount=$confirm_orders->sum('total');
+      //use table orders.status equal to packed get data
     $packed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','packed')->whereBetween('orders.date_created_gmt',$range)->get();
     $packed_order_count=count($packed_orders);
     $packed_saleAmount=$packed_orders->sum('total');
+      //use table orders.status equal to on_hold get data
     $hold_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','on-hold')->whereBetween('orders.date_created_gmt',$range)->get();
     $hold_order_count=count($hold_orders);
     $hold_saleAmount=$hold_orders->sum('total');
@@ -365,11 +419,11 @@ class DashboardController extends Controller
     ] ;
 
    }
-
+//api fetch  chart data from table orders
    public function chart_data($vid)
    {
 
-    $date = \Carbon\Carbon::today()->subDays(7);
+    $date = \Carbon\Carbon::today()->subDays(7); //carbon use function date 
     $processing_orders=DB::table("orders")
                               ->select(
                                 DB::raw('SUM(orders.total) As total'),
@@ -412,15 +466,19 @@ class DashboardController extends Controller
         $rt='RTO';
         $dt='DTO';
       $date = \Carbon\Carbon::today()->subDays(7);
+        //use table orders.status whereIn to [$clos,$del] get data
       $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$clos,$del])->where('date_created', '>=', $date)->get();
       $total_Processedd=count($orders);  
       $total_amount=$orders->sum('total');
+       //use table orders.status equal to rto-delivered get data
       $rto=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->where('date_created', '>=', $date)->get();
       $total_rto=count($rto);
       $rto_amount=$rto->sum('total');
+      //use table orders.status whereIn to [$dto_ref,$dto_del, $dtointrans,$dtobook] get data
       $dto=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dto_ref,$dto_del, $dtointrans,$dtobook])->where('date_created', '>=', $date)->get();
       $total_dto=count($dto);
       $dto_amount=$dto->sum('total');
+       //use table orders.status whereIn to [$intrans,$dis] get data
       $dispatched_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$intrans,$dis])->where('date_created', '>=', $date)->get();
       $dispatched_order_count=count($dispatched_orders);
       $dispatched_amount=$dispatched_orders->sum('total');
@@ -458,6 +516,7 @@ class DashboardController extends Controller
       ] ;
 
    }
+   //api get second piechart data from table orders
     public function secondpiechart_data($vid)
    {
               $dtobook='dtobooked';
@@ -477,24 +536,34 @@ class DashboardController extends Controller
               $cancel='cancelled';
               $fail='failed';
             $date = \Carbon\Carbon::today()->subDays(7);
+             //use table orders.status whereIn to [$clos,$del] get data
             $orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$clos,$del])->where('date_created', '>=', $date)->get();
             $total_Processed=$orders->sum('total');
+             //use table orders.status equal to rto-delivered get data
             $rto=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->where('date_created', '>=', $date)->get();
             $total_rto=$rto->sum('total');
+               //use table orders.status whereIn to [$dto_ref,$dto_del, $dtointrans,$dtobook] get data
             $dto=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dto_ref,$dto_del, $dtointrans,$dtobook])->where('date_created', '>=', $date)->get();
             $total_dto=$dto->sum('total');
+            //use table orders.status equal to confirmed get data
             $confirmed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','confirmed')->where('date_created', '>=', $date)->get();
             $confirmed_amount=$confirmed_orders->sum('total');
+               //use table orders.status equal to intransit get data
             $intransit_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','intransit')->where('date_created', '>=', $date)->get();
             $intransit_amount=$intransit_orders->sum('total');
+              //use table orders.status whereIn to [$intrans,$dis] get data
             $dispatched_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$intrans,$dis])->where('date_created', '>=', $date)->get();
             $dispatched_amount=$dispatched_orders->sum('total');
+              //use table orders.status equal to packed get data
             $packed=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','packed')->where('date_created', '>=', $date)->get();
             $packed_amount=$packed->sum('total');
+              //use table orders.status equal to processing get data
             $processing=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->where('date_created', '>=', $date)->get();
             $processing_amount=$processing->sum('total');
+              //use table orders.status equal to completed get data
             $complete=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','completed')->where('date_created', '>=', $date)->get();
             $complete_amount=$complete->sum('total');
+             //use table orders.status equal to on-hold get data
             $hold=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','on-hold')->where('date_created', '>=', $date)->get();
             $hold_amount=$hold->sum('total');
 
@@ -511,6 +580,7 @@ class DashboardController extends Controller
             return $pieData;
 
    }
+   //api get sales data from table orders
      public function getsales_data($vid)
    {
     $dtobook='dtobooked';
@@ -535,12 +605,15 @@ class DashboardController extends Controller
     $retr='Returns';
     $can='Cancellations';
     $date = \Carbon\Carbon::today()->subDays(7);
+      //use table orders.status whereIn to [$dtobook,$intrans,$dtointrans,$Comple,$dto_ref,$clos,$process,$confirm,$pack,$hold,$dis,$del,$dto_del,$pick,$warehouse] get data
     $sales_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$dtobook,$intrans,$dtointrans,$Comple,$dto_ref,$clos,$process,$confirm,$pack,$hold,$dis,$del,$dto_del,$pick,$warehouse])->where('date_created', '>=', $date)->get();
     $sales_order_count=count($sales_orders);
     $salesorder_saleAmount=$sales_orders->sum('total');
+      //use table orders.status equal to rto-delivered get data
     $salesrtodelivered_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','rto-delivered')->where('date_created', '>=', $date)->get();
     $salesrtodelivered_order_count=count($salesrtodelivered_orders);
     $salesrtodelivered_saleAmount=$salesrtodelivered_orders->sum('total');
+     //use table orders.status whereIn to [$cancel,$fail] get data
     $salescancel_orders=DB::table("orders")->where('orders.vid','=',$vid)->whereIn("orders.status",[$cancel,$fail])->where('date_created', '>=', $date)->get();
     $salescancel_order_count=count($salescancel_orders);
     $salescancel_order_saleAmount=$salescancel_orders->sum('total');
@@ -556,7 +629,7 @@ class DashboardController extends Controller
      return $sales ;
 
    }
-
+  
    public function delpiechart_data($vid)
    {
         $clos='closed';
@@ -566,15 +639,19 @@ class DashboardController extends Controller
         $pack='packed';
         $hold='on-hold';
         $date = \Carbon\Carbon::today()->subDays(7);
+         //use table orders.status equal to processing get data
         $processing_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->where('date_created', '>=', $date)->get();
         $processing_order_count=count($processing_orders);
         $processing_saleAmount=$processing_orders->sum('total');
+          //use table orders.status equal to confirmed get data
         $confirm_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','confirmed')->where('date_created', '>=', $date)->get();
         $confirm_order_count=count($confirm_orders);
         $confirm_saleAmount=$confirm_orders->sum('total');
+          //use table orders.status equal to picked get data
         $packed_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','packed')->where('date_created', '>=', $date)->get();
         $packed_order_count=count($packed_orders);
         $packed_saleAmount=$packed_orders->sum('total');
+          //use table orders.status equal to on_hold get data
         $hold_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','on-hold')->where('date_created', '>=', $date)->get();
         $hold_order_count=count($hold_orders);
         $hold_saleAmount=$hold_orders->sum('total');

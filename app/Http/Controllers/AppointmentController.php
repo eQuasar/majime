@@ -30,6 +30,7 @@ class AppointmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    //listing data use table appointments
     public function index()
     {
         //
@@ -53,6 +54,7 @@ class AppointmentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    //save data use store function
     public function store(Request $request)
     {
         if($request->myserv != ''){
@@ -141,6 +143,7 @@ class AppointmentController extends Controller
      * @param  \App\Models\Appointment  $appointment
      * @return \Illuminate\Http\Response
      */
+    // listing data
     public function show(Appointment $appointment)
     {
         //
@@ -166,6 +169,7 @@ class AppointmentController extends Controller
      * @param  \App\Models\Appointment  $appointment
      * @return \Illuminate\Http\Response
      */
+    //update data
     public function update(Request $request, Appointment $appointment)
     {
         //

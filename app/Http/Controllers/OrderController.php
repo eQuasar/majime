@@ -43,12 +43,13 @@ class OrderController extends Controller {
     //order_search with table orders and billings  (orders.oid == billing.order_id)
     public function Order_Search(Request $request) {
         $vid = $request->vid;
+        //if condition date from equal data to
         if($request->date_from == $request->date_to){
             $order = DB::table("orders")->join('billings', function($join) use ($vid)
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })->whereDate('orders.date_created', '=', $request->date_from)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        })->whereDate('orders.date_created', '=', $request->date_from)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
                                         GROUP BY line_items.order_id) as quantity"))->orderBy('orders.date_created','DESC')->get();
         }else{
@@ -58,7 +59,7 @@ class OrderController extends Controller {
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })->whereBetween('orders.date_created', $range)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        })->whereBetween('orders.date_created', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                             WHERE line_items.order_id = orders.oid
                                             GROUP BY line_items.order_id) as quantity"))->orderBy('orders.date_created','DESC')->get();
         }
@@ -84,12 +85,16 @@ class OrderController extends Controller {
                 $Closing_balance=$Clos->current_wallet_bal;
                 $open=$order[0]->current_wallet_bal;
             }
+            //get data from table walletprocesseds according to vid and
             $OBalorder=DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
+                        //this is from table walletprocesseds greaterthan data from
                         ->where('walletprocesseds.created_at', '<', $request->date_from." 00:00:00")
                         ->orderBy('id','DESC')->get();
+                //if condtion check is empty yes /no
             if($OBalorder->isEmpty()){
                 $opening_balance=0;   
             }else{
+                //method return the first record found from the database first()
                 $OpnBal = $OBalorder->first();
                 $opening_balance=$OpnBal->current_wallet_bal;
             }
@@ -141,9 +146,7 @@ class OrderController extends Controller {
     //getOrderDetails   vendors table according to vendors id=vid
     public function getOrderDetails(Request $request) {
         $vendor = $request->vid;
-      
         $vendor2 = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
-      
         $curl = curl_init();
         curl_setopt_array($curl, array(
           CURLOPT_URL => $vendor2[0]->url.'/wp-json/wc/v3/orders',

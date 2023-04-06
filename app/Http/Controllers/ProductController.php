@@ -18,46 +18,26 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller {
 
+    //api use acccording to products table product detail get  vid
     public function productDetail(Request $request)
      {
         $vendor = $request->vid;
         $order=DB::table('products')->where('vid','=',$vendor)->get();
-        // $order = DB::table('line_items')->join('orders', function($join) use ($vendor)
-        // {
-        //     $join->on('orders.oid', '=', 'line_items.order_id')
-        //          ->where('orders.vid', '=', intval($vendor));
-        // })
-        // // ->distinct()
-        // // 					->select('line_items.*',
-        // // 							DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = 6726 AND line_items.vid = ".intval($vendor)." GROUP BY line_items.order_id) as quantity"))
-        // ->select(DB::raw('
-		// 					name,
-		// 					variation_id,
-		// 					product_id,
-		// 					SUM(quantity) as quantity,
-		// 					date_created_gmt,
-		// 					order_id
-		// 				') //,
-        // // DB::raw("(SELECT categories FROM products WHERE products.product_id = line_items.product_id)")
-        // )
-        // // ->leftJoin('products','products.product_id','=','line_items.product_id')
-        // ->where('line_items.vid', '=', intval($vendor))->whereNotIn('line_items.variation_id', [0])->groupBy('line_items.product_id')->groupBy('line_items.variation_id')->groupBy('line_items.sku')->groupBy('line_items.name')->groupBy('orders.date_created_gmt')->groupBy('line_items.order_id')->orderBy('line_items.name')->get();
-        // // $order =	DB::table('line_items as s')
-        // //   ->leftJoin ('products as e', 'e.product_id', '=' , 's.product_id')
-        // //   ->select('s.name as name','s.variation_id as variation_id','s.product_id as product_id',
-        // //               'e.categories as categories')
-        // //   ->get();
+
         return $order;
     }
+    //api  use for get status of the product from product table 
     public function status_data(Request $request) {
         $order = DB::table('products')->distinct()->select('products.status')->get();
         return $order;
     }
+    //api use for get product data according to product name
     public function product_data(Request $request) {
        
         $order = DB::table('products')->where('products.vid','=',$request->vid)->select('products.name')->orderBy('products.name')->get();
         return $order;
     }
+    //api use prodcut order search according to use table orders,with line_items
     public function product_Order_Search(Request $request) {
         $vendor = $request->vid;
         $range = [$request->date_from, $request->date_to];
@@ -79,6 +59,7 @@ class ProductController extends Controller {
         ->whereNotIn('line_items.variation_id', [0])->groupBy('line_items.product_id')->groupBy('line_items.variation_id')->groupBy('line_items.sku')->groupBy('line_items.name')->whereBetween('orders.date_created_gmt', $range)->groupBy('orders.date_created_gmt')->orderBy('orders.date_created_gmt', 'ASC')->get();
         return $order;
     }
+    //api use category search according to table billings with orders use order_id 
     public function category_Search(Request $request) {
         // $order=orders::whereBetween('date_created_gmt',$range)->get();
         $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->Where('category', 'like', '%' . $request->category . '%')->get();
@@ -89,6 +70,7 @@ class ProductController extends Controller {
         // ->get();
         return $order;
     }
+    //api use product search according to use table orders with line_items 
     public function product_search(Request $request) {
         if ($request->name == "allproducts") {
             // $order = DB::table("orders")->join('line_items', 'orders.oid', '=', 'line_items.order_id')->where('orders.vid', $request->vid)->get();
@@ -101,10 +83,12 @@ class ProductController extends Controller {
             return $order;
         }
     }
+    // api use accroding to procduct profile use table orders with line_items
     public function product_Profile($pro_id) {
         $orderItems = DB::table("orders")->join("line_items", 'line_items.order_id', '=', 'orders.oid')->where('orders.vid', '=', intval($_REQUEST['vid']))->where('line_items.variation_id', '=', $pro_id)->where('line_items.vid', '=', $_REQUEST['vid'])->get();
         return $orderItems;
     }
+       // api use accroding to procduct item use table product_variations() with product_variation_images according variation_id,
     public function product_items($pro_id) {
 
          $orderItems = DB::table("product_variations")->join('product_variation_images','product_variation_images.variation_id','=','product_variations.variation_id')
@@ -118,10 +102,12 @@ class ProductController extends Controller {
         ->get();
         return $orderItems;
     }
+    //api use fetch product detail acording to product_id
     public function product_detail($pro_id) {
         $orderItems = DB::table("products")->where('vid', '=', intval($_REQUEST['vid']))->where('product_id', '=', $pro_id)->get();
         return $orderItems;
     }
+    //api use color search according to use table orders with billings base order_id
     public function color_Search(Request $request) {
         // $order=orders::whereBetween('date_created_gmt',$range)->get();
         $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->Where('color', 'like', '%' . $request->color . '%')->get();
@@ -132,6 +118,7 @@ class ProductController extends Controller {
         // ->get();
         return $order;
     }
+    //api use get delivery details  use for table orders,billings,waybill
     public function getDelivery_Details(Request $request) {
         $vid = $request->vid;
         $orders = DB::table("orders")->join('billings', function($join) use ($vid)
@@ -146,6 +133,7 @@ class ProductController extends Controller {
         ->where('orders.vid', $request->vid)->where('orders.status', "dispatched")->select("orders.*", "billings.*","waybill.waybill_no", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($request->vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($request->vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
         return $orders;
     }
+    //api use product sheet download according to use for table line_items.variation_id select "line_items.sku as SKU", "line_items.name as Name", "line_items.quantity as Qty", "line_items.parent_name as Parent", "line_items.variation_id as VariationID"
     function product_Sheet_download(Request $request) {
         if ($request->selectall) {
             $listImp = explode(',', $request->selectall);
@@ -157,6 +145,7 @@ class ProductController extends Controller {
         }
         return $orderItems;
     }
+    //api fetch all status completed,closed,processing,confirmed,packed,on-hold,dispatched,deliveredtocust,dtodelivered
     function stat($vid) {
         
         $dtobook='dtobooked';
@@ -198,6 +187,7 @@ class ProductController extends Controller {
         
     }
 
+    //api use fetch data dispatched order toclose  get all orders with deltocustomer status
     function dispatched_order_toclose($vid) 
     {
         $del='deliveredtocust';
@@ -224,12 +214,14 @@ class ProductController extends Controller {
         //print message 
         return response()->json([ 'msg' => "orders closed Successfully"]);
     }
+    //api use product detail update name,hsn code weight slug sku,price,categories
     public function update_product_detail(Request $request)
     {
         $data=DB::table('products')->where('product_id', intval($request->product_id))->where('products.vid', $request->vid)
         ->update(['name' => $request->product_name,'hsn_code'=>$request->hsn,'weight'=>$request->weight,'slug'=>$request->slug,'sku'=>$request->sku,'price'=>$request->price,'categories'=>$request->categories]);
           return response()->json([ 'msg' => "Update Successfully"]);
     }
+    //api use get productvariation detail according to product
     public function getProductVariation_detail(Request $request)
     {
         $data=DB::table('product_variations')
@@ -238,17 +230,20 @@ class ProductController extends Controller {
          return response()->json(['data'=>$data]);
 
     }
+    //api use update productvariation detail according to use table product_variations
     public function update_productVariation_detail(Request $request)
     {
         $data=DB::table('product_variations')->where('product_id', intval($request->product_id))->where('product_variations.vid', $request->vid)->where('product_variations.variation_id', $request->variation_id)
         ->update(['sku' => $request->sku,'stock_status'=>$request->stock_status,'price'=>$request->price,'tax_status'=>$request->tax_status,'description'=>$request->description]);
           return response()->json([ 'msg' => "Update Successfully"]);
     }
+    //api use get category according to products table
     public function get_category(Request $request)
     {
         $data=DB::table('products')->where('vid', intval($request->vid))->distinct()->select('products.categories')->get();
         return $data;
     }
+    //api use import product info upload file
     public function import_product_info(Request $request)
     {
         $data_file=$request->file;
@@ -264,11 +259,13 @@ class ProductController extends Controller {
     }
    
     //14.3.2023
+    //api use fetch  all category get vid
     public function category(Request $request){
         $category = DB::table("categories")->where('vid', intval($request->vid))->get();
         return $category; 
 
     }
+    //api use get import data according to products  select product_id,cost,name,hsn code weight,categoies vid
     public function get_import_data(Request $request){
        
         $import_data = DB::table("products")->where('vid', intval($request->vid))->select('product_id','cost','name','hsn_code','weight','categories','vid')->get();
