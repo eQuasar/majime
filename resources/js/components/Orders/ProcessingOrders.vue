@@ -305,7 +305,7 @@ export default {
             formData.append("vid", this.vid);
             formData.append("status", this.status);
             order
-              .changeProcessingStatus(formData)
+              .changeProcessing_Status(formData)
               .then((response) => {
                 this.$alert("", response.data.msg);
                 this.show = false;

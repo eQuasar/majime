@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Http\Request;
@@ -102,6 +103,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('order_items/{variation_id}',[App\Http\Controllers\OrderController::class,'order_items']);
     Route::post('getDelivery_Details','ProductController@getDelivery_Details')->name('getDelivery_Details');
     Route::post('changeProcessing_Status', 'OrderController@changeProcessing_Status')->name('changeProcessing_Status');
+    Route::post('change_Processing_Status', 'OrderController@changeProcessing_Status_confirmed')->name('change_Processing_Status');
     Route::post('getProcessingOrder_Details', 'OrderController@getProcessingOrder_Details')->name('getProcessingOrder_Details');
     Route::get('get_processing_data/{vid}/{status}','OrderController@get_processing_data')->name('get_processing_data');
     Route::post('product_Sheet_download', 'ProductController@product_Sheet_download')->name('product_Sheet_download');
@@ -159,10 +161,15 @@ Route::group(['prefix' => 'v1'], function () {
 	// Route::get('import_product_info','BillingController@import_product_info')->name('import_product_info');
 	Route::post('import_product_info','ProductController@import_product_info')->name('import_product_info');
 	Route::post('product_insert','BillingController@product_insert')->name('product_insert');
-	Route::post('billing_process','BillingController@billing_process')->name('billing_process');
+	// Route::post('billing_process','BillingController@billing_process')->name('billing_process');
 	Route::post('return_billing_process','BillingController@return_billing_process')->name('return_billing_process');
-	Route::get('billing_process','BillingController@billing_process')->name('billing_process');
+	Route::post('billing_process','BillingController@billing_process')->name('billing_process');
 	Route::post('get_import_data','ProductController@get_import_data')->name('get_import_data');
 	Route::post('order_hencode_weight','HsnDetailController@order_hencode_weight')->name('order_hencode_weight');
+	Route::post('sale_invoice_wise_detail','HsnDetailController@sale_invoice_wise_detail')->name('sale_invoice_wise_detail');
+	Route::post('sale_return_wise_detail','HsnDetailController@sale_return_wise_detail')->name('sale_return_wise_detail');
+	Route::post('state_wise_detail','HsnDetailController@state_wise_detail')->name('state_wise_detail');
+	Route::post('hsn_wise_detail','HsnDetailController@hsn_wise_detail')->name('hsn_wise_detail');
+	Route::get('hsn_wise_detail_copy','HsnDetailController@hsn_wise_detail_copy')->name('hsn_wise_detail_copy');
 }); 
 

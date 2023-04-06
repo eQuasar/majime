@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\JsonController;
 use App\Models\Orders;
 use App\Models\billings;
+use App\Models\Products;
 use App\Models\shippings;
 use App\Models\meta_data;
 use App\Models\LineItemsMeta;
@@ -27,6 +28,7 @@ use Carbon\Carbon;
 use PDF;
 use \Milon\Barcode\DNS1D;
 class OrderController extends Controller {
+    //featch data orderdetails with orders,billing,product table
     public function OrderDetail(Request $request) {
       $vid = $request->vid;
         $orders = DB::table("orders")->join('billings', function($join) use ($vid)
@@ -38,14 +40,16 @@ class OrderController extends Controller {
                         GROUP BY line_items.order_id) as quantity"))->get();
         return $orders;
     }
+    //order_search with table orders and billings  (orders.oid == billing.order_id)
     public function Order_Search(Request $request) {
         $vid = $request->vid;
+        //if condition date from equal data to
         if($request->date_from == $request->date_to){
             $order = DB::table("orders")->join('billings', function($join) use ($vid)
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })->whereDate('orders.date_created', '=', $request->date_from)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        })->whereDate('orders.date_created', '=', $request->date_from)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
                                         GROUP BY line_items.order_id) as quantity"))->orderBy('orders.date_created','DESC')->get();
         }else{
@@ -55,12 +59,13 @@ class OrderController extends Controller {
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })->whereBetween('orders.date_created', $range)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        })->whereBetween('orders.date_created', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                             WHERE line_items.order_id = orders.oid
                                             GROUP BY line_items.order_id) as quantity"))->orderBy('orders.date_created','DESC')->get();
         }
         return $order;
     }
+    //wallet_Search walletprocesseds table search with oid base
     public function wallet_Search(Request $request) {
         $date = date('Y-m-d H:i:s');
         $from = $request->date_from." 00:00:00";
@@ -80,18 +85,23 @@ class OrderController extends Controller {
                 $Closing_balance=$Clos->current_wallet_bal;
                 $open=$order[0]->current_wallet_bal;
             }
+            //get data from table walletprocesseds according to vid and
             $OBalorder=DB::table("walletprocesseds")->where('walletprocesseds.vid',$vendor)
+                        //this is from table walletprocesseds greaterthan data from
                         ->where('walletprocesseds.created_at', '<', $request->date_from." 00:00:00")
                         ->orderBy('id','DESC')->get();
+                //if condtion check is empty yes /no
             if($OBalorder->isEmpty()){
                 $opening_balance=0;   
             }else{
+                //method return the first record found from the database first()
                 $OpnBal = $OBalorder->first();
                 $opening_balance=$OpnBal->current_wallet_bal;
             }
         return response()->json([ 'order'=> $order,'closing_bal'=> $Closing_balance,'opening_bal'=> $opening_balance], 200);
       
     }
+    // filter search orders.status,orders.oid,billings.city,billings.state
      public function filter_Search (Request $request) {
         $vendor = $request->vid;
         $search = $request->filterit;
@@ -112,6 +122,7 @@ class OrderController extends Controller {
          return $orders;
            
     }
+    //fetch order profile  orders.oid(table)with billings.order_id base pa
     public function order_Profile($oid) {
       $vid = $_REQUEST['vid'];
         $order = DB::table("orders")->join('billings', function($join) use ($vid)
@@ -121,16 +132,21 @@ class OrderController extends Controller {
         })->where('orders.oid', '=', $oid)->where('orders.vid', '=', intval($_REQUEST['vid']))->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($_REQUEST['vid']) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT SUM(line_items.total) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($_REQUEST['vid']) . " GROUP BY line_items.order_id) as total_main"))->get();
         return $order;
     }
+    //fetch order items table line_items.order_id = oid(match)and next line_items.vid(match)next pluck product_id use for toArray
     public function order_items($oid) {
-        $orderItems = DB::table("line_items")->where('order_id', '=', $oid)->where('vid', '=', $_REQUEST['vid'])->get();
-      
-        return $orderItems;
+        $orderItems = DB::table("line_items")       
+        ->where('line_items.order_id', '=', $oid)
+        ->where('line_items.vid', '=', intval($_REQUEST['vid']))
+        ->pluck('product_id')->toArray();//table line_item to fetch product_id
+        //get detail products table according to product_id (match)$orderItems(variable)
+        $get_detail=DB::table("products")->whereIn('product_id',$orderItems)->where('vid', '=', intval($_REQUEST['vid']))->get();
+        
+        return $get_detail;
     }
+    //getOrderDetails   vendors table according to vendors id=vid
     public function getOrderDetails(Request $request) {
         $vendor = $request->vid;
-      
         $vendor2 = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
-      
         $curl = curl_init();
         curl_setopt_array($curl, array(
           CURLOPT_URL => $vendor2[0]->url.'/wp-json/wc/v3/orders',
@@ -221,6 +237,7 @@ class OrderController extends Controller {
         }
         return $orders;
     }
+    //packed order use table orders and billings
     public function getPackdetail($vid) {
         $orderItems = DB::table("orders")->join('billings', function($join) use ($vid)
         {
@@ -238,6 +255,7 @@ class OrderController extends Controller {
         ->orderBy('oid', 'DESC')->get();
         return $orderItems;
     }
+    //fetch packed details refund according to orders table and billings
     public function get_packdetail_Refund($vid) {
         $orders = DB::table("orders")->join('billings', function($join) use ($vid)
         {
@@ -246,6 +264,7 @@ class OrderController extends Controller {
         })->where('orders.vid', $vid)->where('orders.status', "dtodelivered")->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))->orderBy('oid', 'DESC')->get();
         return $orders;
     }
+    //fetch order stataus (api send)$vid,$status(variavle) according to orders table and billings
     public function getOrderOnStatus($vid, $status) {
         // echo "string"; die;
         $orderItems = DB::table("orders")->join('billings', function($join) use ($vid)
@@ -257,6 +276,7 @@ class OrderController extends Controller {
         ->where('orders.status', $status)->get();
         return $orderItems;
     }
+     //fetch order stataus (api send)$vid, $statrto,$statdto,$statcomp,$clos(variavle) according to orders table and billings
     public function getComplete_OrdersStatus($vid, $statrto,$statdto,$statcomp,$clos) 
     {
         // echo "string"; die;
@@ -278,6 +298,7 @@ class OrderController extends Controller {
         // ->where('orders.status',$status)->where('orders.status',$state)->get();
         return $orderItems;
     }
+    //return order order_id fetch to data table way_data city,name,pin ,country,phone,add,token,order_perfix
     public function return_order() {
         $oid = $_REQUEST['order_id'];
         $vid = $_REQUEST['vid'];
@@ -379,6 +400,7 @@ class OrderController extends Controller {
             return response()->json(['error' => false, 'abn_no' => $wbill, "ErrorCode" => "000"], 200);
         }
     }
+    //assign number according to packed order
     public function assignAWB(Request $request) {
         $main = explode(',', $request->allSelected);
         $vid = $request->vid;
@@ -570,6 +592,7 @@ class OrderController extends Controller {
             return response()->json(['error' => true, 'msg' => $msg, "ErrorCode" => - 2], 200);
         }
     }
+    //assign aws number packed order
     function assignAWBOrder(Request $request) {
         // dd($request); die;
         $vid = $request->vid;
@@ -733,7 +756,7 @@ class OrderController extends Controller {
             }
         }
     }
-
+    // RETURN 
     function return_awb(Request $request) {
         $oid = $request->oid;
         $vid = $request->vid;
@@ -842,6 +865,7 @@ class OrderController extends Controller {
             return response()->json(['error' => false, 'msg' => 'Successfully Done', 'abn_no' => $wbill, "ErrorCode" => "000"], 200);
         }
     }
+    //this api use all status cancelled,processing,confirmed,
     function changeStatus(Request $request) {
         // if ($request->status_assign == 'cancelled') {
         //     // echo $request->status; die;
@@ -881,6 +905,7 @@ class OrderController extends Controller {
             return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
     //    } 
     }
+    //all status api use changeOrderStatus
     public function changeOrderStatus($vid, $oid, $status) {
         // var_dump($vid);
         // var_dump($oid);
@@ -1161,6 +1186,7 @@ class OrderController extends Controller {
         return response()->json(['error' => false, 'msg' => "PDF Generated Successfully.", "pdf_url" => $file_url, "ErrorCode" => "000"], 200); //response()->download(public_path($filename));
         
     }
+    //api use printOrderSlip according to order slip
     function printOrderSlip(Request $request) {
         
     //   var_dump($request->ods); die;
@@ -1446,6 +1472,7 @@ class OrderController extends Controller {
         return response()->json(['error' => false, 'msg' => "PDF Generated Successfully.", "pdf_url" => $file_url, "ErrorCode" => "000"], 200); //response()->download(public_path($filename));
         
     }
+    //use delete data oders table
     public function delete($id) {
         $Orders = Orders::find($id);
         if (empty($orders)) {
@@ -1453,6 +1480,7 @@ class OrderController extends Controller {
         }
         $Orders->delete();
     }
+    //api use city serach use table accroding to orders tavle and billings
     public function city_Search(Request $request) {
         // $order=orders::whereBetween('date_created_gmt',$range)->get();
         $vid = $request->vid;
@@ -1470,6 +1498,7 @@ class OrderController extends Controller {
         // ->get();
         return $order;
     }
+    // api fetch data get proccesing data according to orders table billings 
     public function get_processing_data($vid, $status) {
         // echo $status; die;
         if ($status == 'processing' || $status == 'on-hold'){
@@ -1492,6 +1521,7 @@ class OrderController extends Controller {
         
         return $orders;
     }
+    // api state serch according to orders table billings 
     public function state_Search(Request $request) {
         // $order=orders::whereBetween('date_created_gmt',$range)->get();
         $order = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->Where('state', 'like', '%' . $request->state . '%')->get();
@@ -1502,18 +1532,22 @@ class OrderController extends Controller {
         // ->get();
         return $order;
     }
+     // api state data according to orders table billings 
     public function state_data(Request $request) {
         $order = DB::table('billings')->distinct()->select('billings.state')->where('billings.vid', $request->vid)->get();
         return $order;
     }
+    // api city data fetch according  table billings 
     public function city_data(Request $request) {
         $order = DB::table('billings')->distinct()->select('billings.city')->where('billings.vid', $request->vid)->get();
         return $order;
-    }
+    }    
+    // api state data fetch according  table orders 
     public function status_data(Request $request) {
         $order = DB::table("orders")->distinct()->select('orders.status')->where('orders.vid', $request->vid)->get();
         return $order;
     }
+       // api state search fetch according  table billings 
     public function status_Search(Request $request) {
       $vid = $request->vid;
         $order = DB::table("orders")->join('billings', function($join) use ($vid)
@@ -1523,11 +1557,13 @@ class OrderController extends Controller {
         })->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"))->Where('orders.status', $request->status)->where('orders.vid', $request->vid)->where('billings.vid', $request->vid)->get();
         return $order;
     }
+       // api zone search fetch according  table zonedetails 
     public function zone_Search(Request $request) {
         $data=DB::table('zonedetails')->distinct()->select('zonedetails.zoneno')->get();
         // $order = DB::table("orders")->distinct()->select('orders.status')->where('orders.vid', $request->vid)->get();
         return $data;
     }
+    //api refund change status  
     function Refundchange_Status(Request $request) {
         $imp = explode(',', $request->allSelected);
         for ($i = 0;$i < count($imp);$i++) {
@@ -1541,6 +1577,7 @@ class OrderController extends Controller {
         }
         return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
     }
+    //api according to table orders download Sheet
     function download_Sheet(Request $request) {
         if ($request->selectall) {
             $listImp = explode(',', $request->selectall);
@@ -1555,13 +1592,16 @@ class OrderController extends Controller {
         }
         return $orderItems;
     }
+    //api all use according to status
     function changeProcessing_Status(Request $request) {
         // var_dump($_REQUEST); die;
         // echo $request->loc; die;
+       
         if ($request->loc == "wp") {
             $listImp['0'] = $request->oid;
         } elseif ($request->allSelected == "false") {
             $listImp['0'] = $request->oid;
+            
             // var_dump($listImp); die;
             
         } else {
@@ -1569,13 +1609,7 @@ class OrderController extends Controller {
         }
         for ($i = 0;$i < count($listImp);$i++) 
         {
-            // $data=DB::table('line_items')->join('products','products.product_id','=','line_items.product_id')
-            // ->where('line_items.order_id','=', $listImp[$i])
-            // ->where('line_items.vid', '=', intval($vid))
-            // ->where('products.vid', '=', intval($vid))->get();
-            // $hsn = $data[0]->hsn_code;
-            // $weight=$data[0]->weight;
-            // if(!is_null($hsn && $weight)){
+         
             DB::table('orders')->where('oid', intval($listImp[$i]))->where('vid', intval($request->vid))->update(['status' => $request->status_assign]);
             // print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
             // https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
@@ -1639,17 +1673,172 @@ class OrderController extends Controller {
                 ];   
             }  
         }
+        // else
+        // {
+        //     return response()->json(['error' => false, 'msg' => "Please Enter HSN Code and Weight.", "ErrorCode" => "000"], 200);
+        // }
+            // hsn code and weight with processing confirmed(if )
         order_reldate::insert($confirm_order_data); 
         return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
             // }
             // else{
             //     return response()->json(['error' => false, 'msg' => "Please Enter HSN Code and Weight", "ErrorCode" => "000"], 200);
             //    }
-    //    }
+            
 
        
     }
-    public function getProcessingOrder_Details(Request $request) {
+    //// hsn code and weight with processing confirmed(if start)
+    public function changeProcessing_Status_confirmed(Request $request){
+        // function changeProcessing_Status(Request $request) {
+            //echo "asdsad";die();
+            // var_dump($_REQUEST); die;
+            // echo $request->loc; die;
+           
+            if ($request->loc == "wp") {
+                $listImp['0'] = $request->oid;
+            } elseif ($request->allSelected == "false") {
+                $listImp['0'] = $request->oid;
+                
+                // var_dump($listImp); die;
+                
+            } else {
+                $listImp = explode(',', $request->allSelected);
+            }
+
+            for ($i = 0;$i < count($listImp);$i++) 
+            {
+                // dd($listImp);die();
+              // hsn code and weight with processing confirmed(start code)
+                $data=DB::table('line_items')->join('products','products.product_id','=','line_items.product_id')
+                ->where('line_items.order_id','=', $listImp[$i])
+                ->where('line_items.vid', '=', intval($request->vid))
+                ->where('products.vid', '=', intval($request->vid))->get();
+                // dd(count($data));die();
+                // $hsn = $data[0]->hsn_code;
+                // $weight=$data[0]->weight;
+                // $product_id = $data[0]->product_id;
+                // dd($product_id);die();
+                // dd($data);die();
+                    // hsn code and weight with processing confirmed(if start)
+                    //check product id data 
+                    if(count($data)=='0'){
+                        return response()->json(['error' => false, 'msg' => "Product Not Found", "ErrorCode" => "000"], 200);
+                        // echo "0";die();
+                        //     $hsn = $data[0]->hsn_code;
+                        //     $weight=$data[0]->weight;
+                        //     $product_id = $data[0]->product_id;
+                        //     // dd(count($data)==1);
+                            // die();
+                    } 
+                    
+                    if(count($data)=='1'){
+                        // echo "0";die();
+                            $hsn = $data[0]->hsn_code;
+                            $weight=$data[0]->weight;
+                            $product_id = $data[0]->product_id;
+                        //     // dd(count($data)==1);
+                            // die();
+                    }
+
+                    if(count($data)<1){
+                   
+                        for ($i = 0;$i < count($data);$i++){
+                         $hsn = $data[$i]->hsn_code;
+                        $weight=$data[$i]->weight;
+                        $product_id = $data[$i]->product_id;
+
+                        }
+                        //  dd(count($data)<1);
+                        //     die();
+                    }
+                  
+                    // dd(count($data)< 1);die();
+                
+                if(!empty($hsn && $weight)){
+                
+                    // dd($datas);die();
+                    DB::table('orders')->where('oid', intval($listImp[$i]))->where('vid', intval($request->vid))->update(['status' => $request->status_assign]);
+                    // print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
+                    // https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
+                    $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+                    $curl = curl_init();
+                    curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $listImp[$i] . '?status=' . $request->status_assign, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
+                    $response = curl_exec($curl);
+                    curl_close($curl);
+                    $jsonResp = json_decode($response);
+                    // var_dump($jsonResp);
+                    if($request->status_assign=='confirmed')
+                    {
+                        $date = date('Y-m-d');
+                        $confirm_order_data[]=[     
+                        'vid'=>$request->vid,
+                        'oid'=>$listImp[$i],
+                        'order_confirmdate'=>$date,
+                        ];   
+                    
+                    }elseif($request->status_assign=='dto-refunded')
+                    {
+                        $date = date('Y-m-d');
+                        $confirm_order_data[]=[     
+                        'vid'=>$request->vid,
+                        'oid'=>$listImp[$i],
+                        'dto_refunddate'=>$date,
+                        ];   
+                        
+                    }elseif($request->status_assign=='closed')
+                    {
+                        $date = date('Y-m-d');
+                        $confirm_order_data[]=[     
+                        'vid'=>$request->vid,
+                        'oid'=>$listImp[$i],
+                        'order_closedate'=>$date,
+                        ];   
+                    }
+                    elseif($request->status_assign=='cancelled')
+                    {
+                        $date = date('Y-m-d');
+                        $confirm_order_data[]=[     
+                        'vid'=>$request->vid,
+                        'oid'=>$listImp[$i],
+                        'order_canceldate'=>$date,
+                        ];   
+        
+                        $orders = DB::table("orders")->where('vid', '=', intval($request->vid))->where('oid', '=', intval($listImp[$i]))->get()->toArray();
+                        if($orders[0]['payment_method'] == "cod"){
+                            JsonController::smsSend($request->vid,$listImp[$i],"cancel-cod");
+                        }else{
+                            JsonController::smsSend($request->vid,$listImp[$i],"cancel-prepaid");
+                        }
+                    }
+                    elseif($request->status_assign=='dispatched')
+                    {
+                        $date = date('Y-m-d');
+                        $confirm_order_data[]=[     
+                        'vid'=>$request->vid,
+                        'oid'=>$listImp[$i],
+                        'order_canceldate'=>$date,
+                        ];   
+                    }  
+                }
+                else
+                {
+                    return response()->json(['error' => false, 'msg' => "Please Enter HSN Code and Weight.",'product_id' => $product_id, "ErrorCode" => "000"], 200);
+                }
+                    // hsn code and weight with processing confirmed(if )
+                    order_reldate::insert($confirm_order_data); 
+                    return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
+                        // }
+                    // else{
+                    //     return response()->json(['error' => false, 'msg' => "Please Enter HSN Code and Weight", "ErrorCode" => "000"], 200);
+                //    }
+            }
+    
+           
+        
+        }
+    
+        public function getProcessingOrder_Details(Request $request) {
         $vendor = $request->vid;
         if ($vendor != null) {
             $orders = DB::table("orders")->join('billings', function($join) use ($vendor)
@@ -1666,6 +1855,7 @@ class OrderController extends Controller {
         }
         return $orders;
     }
+    // api  proceesing download sheet according to table orders and billings
     function processing_download_Sheet(Request $request) {
         if ($request->allSelected) {
             $listImp = explode(',', $request->allSelected);
@@ -1684,6 +1874,7 @@ class OrderController extends Controller {
         }
         return $orders;
     }
+    //api on hold download sheet according to table orders and billings
     function onhold_download_Sheet(Request $request) {
         if ($request->allSelected) {
             $listImp = explode(',', $request->allSelected);
@@ -1702,6 +1893,7 @@ class OrderController extends Controller {
         }
         return $orders;
     }
+    //api confirm download sheet  according to table orders and line_items 
     function confirm_download_Sheet(Request $request) {
         if ($request->allSelected) {
             $listImp = explode(',', $request->allSelected);
@@ -1720,6 +1912,7 @@ class OrderController extends Controller {
         }
         return $orders;
     }
+      //api pending download sheet  according to table orders and billings 
     function pending_download_Sheet(Request $request) {
         if ($request->allSelected) {
             $listImp = explode(',', $request->allSelected);
@@ -1738,6 +1931,7 @@ class OrderController extends Controller {
         }
         return $orders;
     }
+     //api delivery download sheet  according to table orders and billings 
     function delivery_download_Sheet(Request $request) {
         if ($request->selectall) {
             $listImp = explode(',', $request->selectall);
@@ -1756,6 +1950,7 @@ class OrderController extends Controller {
         }
         return $orders;
     }
+    // api change status dispatch table waybill
     function changeStatusDispatch(Request $request) {
         // echo $request->dispatch;
         // echo $request->vid; die;
@@ -1786,8 +1981,8 @@ class OrderController extends Controller {
         // }
         // var_dump($order_items); die;
         
-    }
-
+    } 
+    //api use assign wallet according table orders update table wallet_processed
     public function assign_wallet(Request $request) {
          $main = explode(',', $request->allSelected);
         //  var_dump($main);
@@ -1884,6 +2079,7 @@ class OrderController extends Controller {
             echo "No record found.";
         }
     }
+    //api complete order according to vendr  use table orders
     public function Complete_orders($vendr)
     {        $pw=0;
         //if single value passed 

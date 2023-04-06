@@ -61,15 +61,15 @@
                               <b-col xl="6" lg="6" md="6">
                                 <b-form-group
                                     id="price"
-                                    label="Price"
-                                    label-for="price"
+                                    label="Cost"
+                                    label-for="Cost"
                                     >
                                     <b-form-input
                                       id="price"
-                                      v-model="price"
+                                      v-model="cost"
                                       type="text"
                                       required
-                                      placeholder="Price"
+                                      placeholder="Cost"
                                     ></b-form-input>
                                 </b-form-group>
                                 </b-col>
@@ -146,6 +146,7 @@ import HSN from '../../api/hsn.js';
         status:'',
         sku:'',
         price:'',
+        cost:'',
         parent_name:'',
         total:'',
         filter: null,
@@ -195,8 +196,8 @@ import HSN from '../../api/hsn.js';
             sortable: true
           },
           {
-            key: 'price',
-            label: 'Price',
+            key: 'cost',
+            label: 'Cost',
             sortable: true
           },
           {
@@ -214,6 +215,7 @@ import HSN from '../../api/hsn.js';
         items: [],
         errors_create:[],
         successful: false,
+      
         create_error:'',
       };
     },
@@ -236,8 +238,8 @@ import HSN from '../../api/hsn.js';
         if (!this.weight) {
           this.create_error += "Enter Weight of prduct,";
         }
-        if (!this.price) {
-            this.create_error += "Enter Price,";
+        if (!this.cost) {
+            this.create_error += "Enter Cost,";
           }
         if (this.create_error != "") {
           return false;
@@ -245,7 +247,7 @@ import HSN from '../../api/hsn.js';
         let formData = new FormData();
         formData.append("hsn", this.hsndetail);
         formData.append("weight", this.weight); 
-        formData.append("price", this.price); 
+        formData.append("cost", this.cost); 
         formData.append("product_id", this.product_id); 
         HSN.update_hsn_weight(formData)
           .then((response) => {

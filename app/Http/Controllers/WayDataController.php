@@ -15,6 +15,7 @@ class WayDataController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    //listing data from table waydata
     public function index()
     {
         $data = WayData::all();
@@ -37,8 +38,10 @@ class WayDataController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    //save data
     public function store(Request $request)
     {
+        // use for validation check requried
         $request->validate([
                 'user_id' => 'required',
                 'vid' => 'required',
@@ -69,7 +72,7 @@ class WayDataController extends Controller
             $wb_data->token = $request->token;
             $wb_data->order_prefix = $request->order_prefix;
             
-            $wb_data->save();
+            $wb_data->save();//save into database table WayData
             return response()->json(['error' => false,'data' => $wb_data],200);
     }
 
@@ -108,10 +111,13 @@ class WayDataController extends Controller
      * @param  \App\Models\WayData  $wayData
      * @return \Illuminate\Http\Response
      */
+    // function update from table way_data
     public function update(Request $request, WayData $wayData)
     {
+        //if condition check from table waydata api use(vendor) exists(yes/no)
         if(DB::table('way_data')->where('vid',$request->vendor)->exists())
         {
+            //if exist
         $request->validate([
                 'user_id' => 'required',
                 'vid' => 'required',
@@ -127,7 +133,6 @@ class WayDataController extends Controller
             
             
             $wb_data = WayData::find((int)$request->id);
-            dd($wb_data);die();
             $wb_data->user_id = $request->user_id;
             $wb_data->vid = $request->vid;
             $wb_data->city = $request->city;
@@ -143,8 +148,10 @@ class WayDataController extends Controller
             return response()->json(['error' => false,'data' => $wb_data],200);
         }
     }
+    //api use updatedata
     public function updatedata(Request $request)
     {
+         //if condition check from table waydata vid exists(yes/no)
         if(DB::table('way_data')->where('vid',$request->vid)->exists())
         {
         $request->validate([
@@ -188,7 +195,7 @@ class WayDataController extends Controller
     {
         //
     }
-
+    //api get awbl location form table way_data
     public function getAWBLocation(Request $request)
     {
         $awb_record =DB::table("way_data")

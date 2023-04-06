@@ -35,38 +35,34 @@ class ZoneratecardController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    // according to  Zone No  and status of the product save chrarges
     public function store(Request $request)
     {
-        // $zonerate_data = zoneratecard::find($request->vendor);
-        // $zonerate_data =DB::table("zoneratecards")->where('zoneratecards.vid',$request->vendor)->where('zoneno',$request->zone)->get();
-        // $awb_record =DB::table("zoneratecards")->where('zoneratecards.vid',$request->vendor)->get()->toArray();
-        if(DB::table('zoneratecards')->where('vid',$request->vendor)->where('zoneno',$request->zone)->exists())
+        //if condition check the exist of zoneno and vid from table zoneratecards use(vendor,zone)
+        if(DB::table('zoneratecards')
+        ->where('vid',$request->vendor)
+        ->where('zoneno',$request->zone)->exists())
         {
+            //zoneno exist
+            //use for validation requried
         $request->validate([
-            // 'id' => 'required',
             'zone' => 'required',
-            // 'courier' => 'required',
-            // 'vendor' => 'required',
             'fwd' => 'required',
             'dto' => 'required',
             'rto' => 'required',
          ]);
-        // $zonerate_data = new zoneratecard();
-        // $zonerate_data =DB::table("zoneratecards")->where('zoneratecards.vid',$request->vendor)->where('zoneno',$request->zone);
-         $zonerate_data = zoneratecard::where('zoneratecards.vid',$request->vendor)->where('zoneno',$request->zone)->first();
-        // $zonerate_data = zoneratecard::find($request->vendor);
-        // ->where('zoneno',$request->zone);
-        // dd($zonerate_data);die();
+         $zonerate_data = zoneratecard::where('zoneratecards.vid',$request->vendor)->where('zoneno',$request->zone)->first();//method will help us to return the first record found from the database
         $zonerate_data->zoneno= $request->zone;
         $zonerate_data->courier= $request->courier;
         $zonerate_data->vid= $request->vendor;
         $zonerate_data->fwd= $request->fwd;
         $zonerate_data->dto= $request->dto;
         $zonerate_data->rto= $request->rto;
-        $zonerate_data->save();
+        $zonerate_data->save();//save zonerate_data(database)
     }
     else
     {
+        //if zoenno and vid doesnot exist then save with new entry 
         $request->validate([
             // 'id' => 'required',
             'zone' => 'required',
@@ -95,6 +91,7 @@ class ZoneratecardController extends Controller
      * @param  \App\Models\zoneratecard  $zoneratecard
      * @return \Illuminate\Http\Response
      */
+    //show all record of the zone rate card into table
     public function show(zoneratecard $zoneratecard)
     {
         $data = zoneratecard::all();
@@ -134,10 +131,13 @@ class ZoneratecardController extends Controller
     {
         //
     }
+    //api use get show all zone no for using dropdown.
     public function showzonedetail (Request  $request)
     {
      
-        $awb_record =DB::table("zoneratecards")->where('zoneratecards.vid',$request->vendor)->where('zoneno',$request->selectzone)->get()->toArray();;
+        $awb_record =DB::table("zoneratecards")
+        ->where('zoneratecards.vid',$request->vendor)
+        ->where('zoneno',$request->selectzone)->get()->toArray();
    
             if(!empty($awb_record)){
                 return $awb_record;

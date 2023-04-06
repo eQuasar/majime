@@ -10,18 +10,29 @@
     <div class="content_bar">
       <div class="select-list">
     <b-row>
-      <b-col xl="3" lg="3" md="3">
+      <b-form @submit="onSubmit" class="date_range">
+      <b-col xl="2" lg="2" md="2">
             <select class="form-control custom-select" v-model="status" :options="allstatusdata" @change="onChangeStatus($event)">
                 <option disabled value="null">Select status</option>
                 <option v-for="data in allstatusdata" :value="data.status">{{data.status}}</option>
             </select>
         </b-col>
-        <b-col xl="3" lg="3" md="3">
+        <!-- <b-col xl="2" lg="2" md="2">
             <select class="form-control custom-select" v-model="city" :options="allcitydata" @change="onChangeCity($event)">
                 <option disabled value="null">Select city</option>
                 <option v-for="data in allcitydata" :value="data.city">{{data.city}}</option>
             </select>
-        </b-col>
+        </b-col> -->
+        <b-col xl="6" lg="6" md="6">
+                  <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
+                    
+                      <div class="datepiker-block"><span>From:&nbsp;</span> <b-form-datepicker id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"
+                          locale="en"></b-form-datepicker></div>
+                      <div class="datepiker-block"><span>To:&nbsp;</span> <b-form-datepicker id="to" v-model="date_to" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }" locale="en"></b-form-datepicker></div>
+                      <b-button type="submit" variant="primary">Submit</b-button>
+                 
+              </b-col>
+            </b-form>
     </b-row>
   </div>
 </div>
@@ -29,15 +40,7 @@
   <div class="card-body card">
     <div class="call-center-dashboard">
           <b-row>
-              <b-col xl="8" lg="8" md="8">
-                  <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
-                    <b-form @submit="onSubmit" class="date_range">
-                      <div class="datepiker-block"><span>From:&nbsp;</span> <b-form-datepicker id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"
-                          locale="en"></b-form-datepicker></div>
-                      <div class="datepiker-block"><span>To:&nbsp;</span> <b-form-datepicker id="to" v-model="date_to" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }" locale="en"></b-form-datepicker></div>
-                      <b-button type="submit" variant="primary">Submit</b-button>
-                    </b-form>
-              </b-col>
+            
                <b-col xl="4" lg="4" md="4" class="search_field">
                 <b-form-input
                         id="search"
@@ -158,7 +161,7 @@
     mounted() {
       this.getVidz();
       //this.getState();
-      this.getCity();
+      // this.getCity();
       this.getStatus();
     },
     data() 
@@ -183,7 +186,7 @@
         date: "",
         vid: 0,
         allstatesdata:[],
-        allcitydata:[],
+        // allcitydata:[],
         allstatusdata:[],
         time_slots: [],
         status_assign_array:[],
@@ -295,29 +298,29 @@ computed: {
           this.selectall = selected;
         }
       },
-         onChangeCity(event)
-         {
-           this.show=true;
-          this.vid = JSON.parse(localStorage.getItem("ivid"));
-          console.log(event.target.value);
-          let formData = new FormData();
-          formData.append('vid', this.vid);
-          formData.append("city", this.city);
-          order.citySearch(formData)
-              .then((response) => 
-                   {
-                  this.items=response.data;
-                  this.show=false;
-                  console.log(this.items);
-                    })
-          .catch((error) => 
-                  {
-              console.log(error);
-              if (error.response.city == 422) {
-                  this.errors_create = error.response.data.errors;
-                  }
-                  });
-          },
+        //  onChangeCity(event)
+        //  {
+        //    this.show=true;
+        //   this.vid = JSON.parse(localStorage.getItem("ivid"));
+        //   console.log(event.target.value);
+        //   let formData = new FormData();
+        //   formData.append('vid', this.vid);
+        //   formData.append("city", this.city);
+        //   order.citySearch(formData)
+        //       .then((response) => 
+        //            {
+        //           this.items=response.data;
+        //           this.show=false;
+        //           console.log(this.items);
+        //             })
+        //   .catch((error) => 
+        //           {
+        //       console.log(error);
+        //       if (error.response.city == 422) {
+        //           this.errors_create = error.response.data.errors;
+        //           }
+        //           });
+        //   },
         getStatus(){
         	 this.vid = JSON.parse(localStorage.getItem("ivid"));
         	  let formData = new FormData();
@@ -348,21 +351,21 @@ computed: {
         });
        this.show=false;
         },
-        getCity(){
-        	 this.vid = JSON.parse(localStorage.getItem("ivid"));
-        	  let formData = new FormData();
-          formData.append('vid', this.vid);
-          order.getCity(formData)
-             .then((response) => {
-                 this.allcitydata=response.data;
-                   console.log(this.allcitydata);
-        })
-        .catch((error) => {
-            if (error.response.city == 422) {
-              this.errors_create = error.response.data.errors;
-              }
-                 });
-              },
+        // getCity(){
+        // 	 this.vid = JSON.parse(localStorage.getItem("ivid"));
+        // 	  let formData = new FormData();
+        //   formData.append('vid', this.vid);
+        //   order.getCity(formData)
+        //      .then((response) => {
+        //          this.allcitydata=response.data;
+        //            console.log(this.allcitydata);
+        // })
+        // .catch((error) => {
+        //     if (error.response.city == 422) {
+        //       this.errors_create = error.response.data.errors;
+        //       }
+        //          });
+        //       },
         onChangeState(event) {
           this.show=true;
           console.log(event.target.value);
@@ -438,6 +441,8 @@ computed: {
           let formData = new FormData();
           formData.append("date_from", this.date_from);
           formData.append("date_to", this.date_to);
+          // formData.append("city", this.city);
+          formData.append("status", this.status);
           formData.append("vid", this.vid);
             order.orderSearch(formData)
               .then((response) => {    

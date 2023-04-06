@@ -132,6 +132,7 @@ class BillingController extends Controller
     {
         //
     }
+    // api use billing detail
     public function billing_detail(Request $request)
     {
             $vid = $request->vid;
@@ -242,37 +243,43 @@ class BillingController extends Controller
             }
             public function billing_process(Request $request)
             {  
-                        $intransit=$request->status;
+                        $dtobook='dtobooked';
+                        $intrans='intransit';
+                        $dtointrans='dtointransit';
+                        $Comple='completed';
+                        $rto_del='rto-delivered';
+                        $dto_ref='dto-refunded';
+                        $clos='closed';
+                        $dis='dispatched';
+                        $del='deliveredtocust';
+                        $dto_del='dtodelivered';
                         $zero='0';
                         $vid = $request->vid;
                         $order_id=DB::table('orders')
-                        
                             ->leftjoin('line_items', function($join) use($vid){
                             $join->on('line_items.order_id','=','orders.oid')
                             ->where('line_items.vid', '=', intval($vid));
                             })
-                            ->where('orders.status','=',$intransit)
+                            ->whereIn("orders.status",[$dtobook,$intrans,$dtointrans,$Comple,$rto_del,$dto_ref,$clos,$dis,$del,$dto_del])
                             // ->where('orders.billing_processed','=','0')
                             ->where('orders.vid','=',$vid)
                             ->orderBy('orders.oid')
-                            ->select('orders.oid','line_items.quantity','line_items.line_item_id','line_items.product_id','line_items.total')
+                            ->select('orders.oid','line_items.quantity','line_items.line_item_id','line_items.product_id','line_items.total','orders.total as order_amount')
                             ->get();
                             // dd(count($order_id));die();
                             // print_r($order_id);
                         // echo "Before Billing - ".count($order_id);
                         // die();
                         $duplicate = 1;
+                        $billing_processdata = array();
                         for($i=0;$i<count($order_id);$i++)
                         {
                             $current_year=date("Y");
                             $orderid=$order_id[$i]->oid;
-                            // echo "--->".$orderid;
-                            // echo "/n";
                             $j="-";
                             $order_id_concat=$orderid.$j;
                             $line_item_id=$order_id[$i]->line_item_id;
                             $line_quantity=$order_id[$i]->quantity;
-                         
                             // echo "QTY- ".$line_quantity=$order_id[$i]->quantity;
                             $line_product_id=$order_id[$i]->product_id;
                             $product_detail = DB::table("products")->where('product_id','=',$line_product_id)->get();
@@ -304,6 +311,7 @@ class BillingController extends Controller
                                         // }
                                     }
                                     $count = ($duplicate == 1)?$count:$duplicate;
+                                 
                                     if(($way_data[0]->gateway)==0)
                                     {
                                         $vendor_name='MAJ';
@@ -334,61 +342,40 @@ class BillingController extends Controller
                                     $customer_invoice_no="-";
                                     $customer_invoice_date="-";
                                     $suborder_id=$order_id_concat.$count;
+                                         
                                     // DB::table('invoice_infos')->insert(['invoice_no'=>$vendor_invoice,'customer_invoice_no'=>$customer_invoice_no,'customer_invoice_date'=>$customer_invoice_date,'order_id'=>$orderid,'vid'=>$vid,'suborder_id'=>$suborder_id,'line_item_id'=>$line_item_id,'total'=>$sub_total]);//2023
-                                    // DB::table('suborder_details')->insert(['order_id'=>$orderid,'vid'=>$vid,'suborder_id'=>$suborder_id,'line_item_id'=>$line_item_id,'invoice_no'=>$vendor_invoice,'total'=>$sub_total]);//2023  
+                                    // DB::table('suborder_details')->insert(['order_id'=>$orderid,'vid'=>$vid,'suborder_id'=>$suborder_id,'line_item_id'=>$line_item_id,'invoice_no'=>$vendor_invoice,'total'=>$sub_total]);
                             }
-                            
                             $line_item_idd = DB::table('suborder_details')->where('vid','=',$vid)->where('suborder_details.suborder_id','=',$suborder_id)->get();
-                        
                             $order_lineitem_id=$line_item_idd[0]->line_item_id;
-                     
                             $line_item_id = DB::table('line_items')->where('vid','=',$vid)->where('line_item_id', '=', $order_lineitem_id)->get();
-                          
                             $quantity=$line_item_id[0]->quantity;
-                           
                             $item_cost=$line_item_id[0]->price;
-                            
                             $get_order_id= $line_item_id[0]->order_id;
-                          
                             $get_product_id= $line_item_id[0]->product_id;
-                           
                             // dd($get_product_id);die();
                             $way_data =DB::table("way_data")->where('vid','=',$vid)->get();
-                        
                             $order_bill_processed =DB::table('orders')->where('vid','=',$vid)->where('orders.oid','=',$get_order_id)->get();
                          
+                            $discount_amount=$order_bill_processed[0]->discount_total;
                             $billing_processed=$order_bill_processed[0]->billing_processed;
-                         
                             $parent_order_id=$order_bill_processed[0]->parent_id;
-                           
                             $order_status=$order_bill_processed[0]->status;
-                           
                             $order_date=$order_bill_processed[0]->date_created;
-                           
                             $order_customer_note=$order_bill_processed[0]->customer_note;
-                          
                             $payment_method=$order_bill_processed[0]->payment_method_title;
-                           
                             $order_subtotal=$order_bill_processed[0]->total;
-                          
                             $cart_discount='-';
                             $coupan_discount='-';
                             $order_amount=$order_bill_processed[0]->total;
-                          
                             $product_data =DB::table("products")->where('vid','=',$vid)->where('product_id','=',$get_product_id)->get();
-                            
                             $product_name= $product_data[0]->name;
-                           
                             $product_sku= $product_data[0]->sku;
-                           
                             $product_hsn= $product_data[0]->hsn_code;
-                            
                             $product_weight= $product_data[0]->weight;
-                      
                             $vendor_name=$way_data[0]->name;
-                            
                             $hsn_code= $product_data[0]->hsn_code;
-                            
+
                             // dd($line_item_idd);
                             // die();
                             if($billing_processed == '0')
@@ -404,11 +391,8 @@ class BillingController extends Controller
                                     $invoice_type='Billing to Customer';
                                 }
                                 $invoice_date=$line_item_idd[0]->created_at;
-                             
                                 $sub_orderId=$line_item_idd[0]->suborder_id;
-                                
                                 $invoice_amount=$line_item_idd[0]->total;
-                              
                                 $get_billing_data =DB::table("billings")->where('vid','=',$vid)->where('order_id','=',$get_order_id)->get();
                                 $order_from=$way_data[0]->state;
                                 $order_to=$get_billing_data[0]->state;
@@ -421,44 +405,61 @@ class BillingController extends Controller
                                 $email=$get_billing_data[0]->email;
                                 $phone=$get_billing_data[0]->phone;
                                 $country=$get_billing_data[0]->country;
-
                                 if($invoice_amount<=1000)
-                                {
-                                    $tax_percentage="12";
-                                }
-                                else
                                 {
                                     $tax_percentage="5";
                                 }
-                                $cgst=$tax_percentage/2;
-                              
-                                if($order_from==$order_to)
-                                {
-                                    $total_cgst=($invoice_amount)*($cgst/100);
-                                    $total_sgst=($invoice_amount)*($cgst/100);
-                                    $igst='0';
-                                    // $round_sgst=round($total_sgst,2);
-                                    
-                                }
                                 else
                                 {
-                                    $igst=($invoice_amount)/(100+($tax_percentage));
-                                    $total_cgst='0';
-                                    $total_sgst='0';
-                                    // dd($igst);die();
+                                    $tax_percentage="12";
                                 }
-                               
+                                if($order_bill_processed[0]->status=='rto-delivered')
+                                {
+                                    $refund_amount=  $invoice_amount;
+                                }
+                                if($order_bill_processed[0]->status=='dto-refunded')
+                                {
+                                    $refund_amount=  $invoice_amount;
+                                }
+                             
+                                // if($order_from==$order_to)
+                                // {
+                                //     $total_cgst=($invoice_amount)*($cgst/100);
+                                //     $total_sgst=($invoice_amount)*($cgst/100);
+                                //     $igst='0';
+                                //     // $round_sgst=round($total_sgst,2);                                  }
+                                // else
+                                // {
+                                //     $igst=($invoice_amount)/(100+($tax_percentage));
+                                //     $total_cgst='0';
+                                //     $total_sgst='0';
+                                //     // dd($igst);die();
+                                // }
+                                    if($order_from == $order_to)
+                                    {
+                                        $total_cgst=($invoice_amount)/($tax_percentage+100)*($tax_percentage/2);
+                                        $total_sgst=($invoice_amount)/($tax_percentage+100)*($tax_percentage/2);
+                                        $igst='0';
+                                    }
+                                    else{
+                                        $total_cgst=0;
+                                        $total_sgst=0;
+                                        $igst= (($invoice_amount)/($tax_percentage+100))*($tax_percentage/2);
+                                    }
+                                $taxable_amount=$invoice_amount-($total_cgst+ $total_sgst+$igst);
                                 $order_related_dates =DB::table("order_reldates")->where('vid','=',$vid)->where('oid','=',$get_order_id)->get();
                                 if($order_related_dates->isEmpty())
                                 {
                                     $delivery_date='-';
                                     $dispatch_date='-';
                                     $refund_date='-';
+                                    $sale_return_date='-';
                                 }
                                 else{
                                 $delivery_date= $order_related_dates[0]->order_deldate;
                                 $dispatch_date= $order_related_dates[0]->order_dispatchdate;
                                 $refund_date= $order_related_dates[0]->dto_refunddate;
+                                $sale_return_date=$order_related_dates[0]->rto_deldate;;
                                 }
                                 
                                 if($refund_date==null)
@@ -478,17 +479,14 @@ class BillingController extends Controller
                                     $wallet_processed_date= "";
                                     $wallet_used= "";
                                     $collectable_amount=$order_amount;
-                                }
-                                
-                                
+                                }          
                                 $way_bill =DB::table("waybill")->where('vid','=',$vid)->where('order_id','=',$get_order_id)->get();
-                                echo "\n\nCount  - ".count($way_bill);
+                                // echo "\n\nCount  - ".count($way_bill);
                                 if (count($way_bill)>1){
                                     $Way_bill_no=$way_bill[0]->waybill_no;
                                 }else{
                                     $Way_bill_no= "";
                                 }
-                            
                                 $billing_processdata[]=[     
                                     'vendor_name'=>$vendor_namee,
                                     'vid'=>$vid,
@@ -497,25 +495,25 @@ class BillingController extends Controller
                                     'customer_invice_no'=>'-',
                                     'customer_invoice_date'=>'-',
                                     'sub_order_id'=> $sub_orderId,
-                                    // 'textable_amount'=>$data[$i]->textable_amount ?? 'NA',
+                                     'textable_amount'=>$data[$i]->textable_amount ?? 'NA',
                                     'igst'=>$igst,
                                     'sgst'=>$total_sgst,
                                     'cgst'=>$total_cgst,
                                     'invoice_amount'=>$invoice_amount,
                                     'hsn_code'=>$hsn_code,
                                     'text_percentage'=>$tax_percentage,
-                                    'dispatch_date'=> $dispatch_date,
+                                    'dispatch_date'=> $dispatch_date ?? '-',
                                     'order_from'=>$order_from,
                                     'order_to'=>$order_to,
-                                    'delivered_date'=> $delivery_date,
-                                    // 'dto_booked_date'=>$data[$i]->dto_booked_date ?? '2.2.2023',
-                                    // 'dto_delivered_to_warhouse_date'=>$data[$i]->dto_delivered_to_warhouse_date ?? '2.2.2023',
+                                    'delivered_date'=> $delivery_date ?? '-',
+                                    'dto_booked_date'=>$data[$i]->dto_booked_date ?? '-',
+                                    'dto_delivered_to_warhouse_date'=>$data[$i]->dto_delivered_to_warhouse_date ?? '-',
                                     'sale_return_status'=>$sale_return_status,
                                     'sale_return_date'=>'-',
                                     'refund_date'=> $refund_date,
                                     'wallet_procesed_date'=> $wallet_processed_date,
                                     'waybill_no'=>$Way_bill_no,
-                                    'parent_order_number'=>$parent_order_id,
+                                    'parent_order_number'=>$orderid,
                                     'order_status'=>$order_status,
                                     'order_date'=>$order_date,
                                     'customer_note'=>$order_customer_note,
@@ -524,12 +522,14 @@ class BillingController extends Controller
                                     'address'=> $address,
                                     'post_code'=>$postcode,
                                     'country_code'=>$country,
+                                    'city'=>$city,
+                                    'state'=>$state,
                                     'email'=>$email,
                                     'phone'=>$phone,
                                     'pay_method_title'=>$payment_method,
                                     'order_subtotal_amount'=>$order_subtotal,
-                                    'status_code'=>'-',
-                                    'cart_discount_amount'=>'-',
+                                    'status'=>$order_status,
+                                    'cart_discount_amount'=>$discount_amount,
                                     'coupon_discount'=>'-',
                                     'order_amount'=>$order_subtotal,
                                     'collectable_amount'=>$collectable_amount,
@@ -540,31 +540,25 @@ class BillingController extends Controller
                                     'product_qty'=>$quantity,
                                     'item_cost'=>$item_cost ,
                                     // 'coupon_code'=>$data[$i]->coupon_code ?? '1',
-                                    'product_weight'=>$product_weight
+                                    'product_weight'=>$product_weight,
                                 ];    
-                                // $oid=$order_id[$i]->oid;
-                                // DB::table('orders')->where('orders.oid','=',$oid)->update(["billing_processed" => "1"]);
-                                BillingProcessed::insert($billing_processdata);
-                                
-                            }
-                                        
-                        else{
-                             echo $lll = "already done"; 
+                                // $oid=$order_id[$i]->oi    
+                            }           
+                            else{
+                            return response()->json(['error' => false,'msg' => "Already Processed", "ErrorCode" => "000"], 200); 
                             }
                             
                         }
-                        return response()->json(['msg' => "Billing Processed Successfully"], 200); 
-                       
+                        BillingProcessed::insert($billing_processdata);
+                        DB::table('orders')->where('orders.oid','=', $orderid)->update(["billing_processed" => "1"]);
+                        return response()->json(['error' => false,'msg' => "Billing Processed Successfully", "ErrorCode" => "000"], 200); 
             }
           
           //return response()->json(['data'=>$data ,'msg' => "", "ErrorCode" => "000"], 200); 
-   
+   //   api use return billing process according vid and billing_processeds(table)
     public function return_billing_process(Request $request){
       $vid=$request->vid;
         $retun_billing_processer_data = DB::table('billing_processeds')->where('vid','=',$vid)->get();
         return $retun_billing_processer_data;
     }
-
-
-    
 }

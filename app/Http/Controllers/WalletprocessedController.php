@@ -38,6 +38,7 @@ class WalletprocessedController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    // use function save data
     public function store(Request $request)
     {
         $pw=0;
@@ -116,7 +117,6 @@ class WalletprocessedController extends Controller
             //if weight is above 500g charges accordingly 
             $above_value=$vendor_rate[0]->after500gm;
             $oc_balance=DB::table("opening_closing_tables")->where('opening_closing_tables.vid','=',$order_table[0]->vid)->orderBy('id','DESC')->limit(1)->get();
-            
             // Value total of all line items clubbed together to make order total
             $orderTotalAmt = DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.total) FROM line_items WHERE line_items.order_id = ".intval($orders[$y])." AND line_items.vid = " . intval($order_table[0]->vid) . " GROUP BY line_items.order_id) as total_main"))->first();
 
@@ -329,6 +329,7 @@ class WalletprocessedController extends Controller
      * @param  \App\Models\walletprocessed  $walletprocessed
      * @return \Illuminate\Http\Response
      */
+    //listing data
     public function show(Request $request)
     {
         //get wallet processed table
@@ -358,7 +359,7 @@ class WalletprocessedController extends Controller
      * @param  \App\Models\walletprocessed  $walletprocessed
      * @return \Illuminate\Http\Response
      */
-
+    //api use wallet sheet download  from  table walletprocesseds 
     public function wallet_Sheet_download()
     {
         $order = DB::table("walletprocesseds")->where('walletprocesseds.vid', intval($request->vid))->select("walletprocesseds.*","walletprocesseds.oid as orderno")->get();

@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-    <div class="nav_btn" @click="openNav()">
+    <div class="nav_btn" id="toggle_btn">
       <i class="fas fa-bars fa-fw"></i>
     </div>
     <div

@@ -46,6 +46,7 @@ class JsonController extends Controller
 		$url = $request->url;
 		$vid = $request->vid;
 		$jsonResponse=$this->getOrderWP($url, $vid);
+		dd($jsonResponse);die();
 		$this->InsertOrder($jsonResponse, $vid, $url);
 	}
 
