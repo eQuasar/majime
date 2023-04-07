@@ -115,6 +115,9 @@
           { value: 'Cash', text: 'Cash' },
           { value: 'Debit Note', text: 'Debit Note' },
           { value: 'Credit Note', text: 'Credit Note' },
+          { value: 'Customer Bank Refund', text: 'Customer Bank Refund' },
+          { value: 'Server Charges', text: 'Server Charges' },
+          { value: 'CDC Charges', text: 'CDC Charges' },
         ],
          
            

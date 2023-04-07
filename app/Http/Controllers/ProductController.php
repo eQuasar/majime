@@ -268,7 +268,7 @@ class ProductController extends Controller {
     //api use get import data according to products  select product_id,cost,name,hsn code weight,categoies vid
     public function get_import_data(Request $request){
        
-        $import_data = DB::table("products")->where('vid', intval($request->vid))->select('product_id','cost','name','hsn_code','weight','categories','vid')->get();
+        $import_data = DB::table("products")->where('vid', intval($request->vid))->get();
         return $import_data; 
 
     }

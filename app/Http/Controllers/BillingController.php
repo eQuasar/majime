@@ -177,7 +177,8 @@ class BillingController extends Controller
                 ->where('waybill.vid', '=', intval($vid));
             })   
                 ->select( "vendors.name as vendor_name", 
-                DB::raw('(CASE WHEN way_data.gateway =0  THEN "Majime Invoicing" WHEN way_data.gateway =1  THEN "Self Invoicing" END) AS invoice_detail'),"orders.oid as order_no","suborder_details.suborder_id as suborder_id",
+                DB::raw('(CASE WHEN way_data.gateway =0  THEN "Majime Invoicing" WHEN way_data.gateway =1  THEN "Self Invoicing" END) AS invoice_detail'),
+                "orders.oid as order_no","suborder_details.suborder_id as suborder_id",
                 "suborder_details.invoice_no as invoice_no","suborder_details.created_at as invoice_date","suborder_details.total as invoice_amount"
                 ,"line_items.product_id as product_id"
                 ,"products.hsn_code as hsn","way_data.state as invoice_state_code_from",
@@ -243,6 +244,7 @@ class BillingController extends Controller
             }
             public function billing_process(Request $request)
             {  
+                $oldorderid =0;
                         $dtobook='dtobooked';
                         $intrans='intransit';
                         $dtointrans='dtointransit';
@@ -255,31 +257,40 @@ class BillingController extends Controller
                         $dto_del='dtodelivered';
                         $zero='0';
                         $vid = $request->vid;
+                        $date_from='2023-04-01 00:00:00';
+                        $date_to='2023-04-03 00:00:00';
+                        $range = [$date_from, $date_to];
                         $order_id=DB::table('orders')
                             ->leftjoin('line_items', function($join) use($vid){
                             $join->on('line_items.order_id','=','orders.oid')
                             ->where('line_items.vid', '=', intval($vid));
                             })
                             ->whereIn("orders.status",[$dtobook,$intrans,$dtointrans,$Comple,$rto_del,$dto_ref,$clos,$dis,$del,$dto_del])
+                            ->whereBetween('orders.date_created_gmt',$range)
                             // ->where('orders.billing_processed','=','0')
+                            // ->where('orders.oid','=','12465')
                             ->where('orders.vid','=',$vid)
                             ->orderBy('orders.oid')
-                            ->select('orders.oid','line_items.quantity','line_items.line_item_id','line_items.product_id','line_items.total','orders.total as order_amount')
+                            ->select('orders.oid','line_items.quantity','line_items.line_item_id','line_items.product_id','line_items.total','orders.total as order_amount','orders.status')
                             ->get();
+                            // dd($order_id);die();
                             // dd(count($order_id));die();
                             // print_r($order_id);
                         // echo "Before Billing - ".count($order_id);
                         // die();
+                        // dd(count($order_id));die();
                         $duplicate = 1;
                         $billing_processdata = array();
                         for($i=0;$i<count($order_id);$i++)
                         {
+
                             $current_year=date("Y");
                             $orderid=$order_id[$i]->oid;
                             $j="-";
                             $order_id_concat=$orderid.$j;
                             $line_item_id=$order_id[$i]->line_item_id;
                             $line_quantity=$order_id[$i]->quantity;
+                            
                             // echo "QTY- ".$line_quantity=$order_id[$i]->quantity;
                             $line_product_id=$order_id[$i]->product_id;
                             $product_detail = DB::table("products")->where('product_id','=',$line_product_id)->get();
@@ -289,63 +300,74 @@ class BillingController extends Controller
                             $mytime = Carbon::now()->format('Y-m-d');
                             for($k=1;$k<=$line_quantity;$k++)
                             {
-                                    $count = $k;
-                                    $single = 1;
-                                    $prev = (int)$i - (int)$single;
-                                    if ($prev == -1
-                                    ){
-                                        //  echo "0";   
-                                    }else{
-                                        $prev = (int)$prev;
-                                        if($prev == ''){
-                                            $prev = 0;
-                                        }
-                                        // echo "--".$prev."--";   
-                                        // echo "\n".$orderid."\n";
-                                        // echo "\n".$order_id[$prev]->oid."\n";
-                                        // // echo "--".$prev."--";   
-                                        // if($line_item_id == $line_item_id[$prev]->oid){
-                                        //     $duplicate = $duplicate+1;
-                                        // }else{
-                                        //     $duplicate = 1;
-                                        // }
-                                    }
-                                    $count = ($duplicate == 1)?$count:$duplicate;
-                                 
-                                    if(($way_data[0]->gateway)==0)
-                                    {
-                                        $vendor_name='MAJ';
-                                        $vendorPrefix=strtoupper(substr($way_data[0]->order_prefix, 0, -1));
-                                        $ven = $vendor_name.$j.$current_year.$j.$vendorPrefix.$j;    
-                                        $vendor_invoice = $ven;
-                                    }
-                                    else{
-                                        $vendorPrefix=strtoupper(substr($way_data[0]->order_prefix, 0, -1));
-                                        $ven = $vendorPrefix.$j.$current_year.$j;
-                                        $vendor_invoice = $ven.$orderid.$j;
-                                    }
-                                    $last2 = DB::table('suborder_details')->where('vid','=',$vid)->where('invoice_no', 'like', $ven. '%')->orderBy('id', 'DESC') ->first();
-                                    if (isset($last2)==1){
-                                        $created_att = explode(' ',$last2->created_at);
+                                    // if(($way_data[0]->gateway)==0)
+                                    // {
+                                    //     $vendor_name='MAJ';
+                                    //     $vendorPrefix=strtoupper(substr($way_data[0]->order_prefix, 0, -1));
+                                    //     $ven = $vendor_name.$j.$current_year.$j.$vendorPrefix.$j;    
+                                    //     $vendor_invoice = $ven;
+                                    // }
+                                    // else{
+                                        $vendorPrefix="OWR-".strtoupper(substr($way_data[0]->order_prefix, 0, -1));
+
+                                        /* BY HS -  NEED TO CHANGE IT TO DYNAMIC FINANCIAL YEAR USING CARBON */
+                                        $ven = $vendorPrefix.$j;    
+                                        $vendor_invoice = $ven."23-24";
+                                        // $vendor_invoice = $ven.$orderid.$j;
+                                    // }
+                                    $last2 = DB::table('billing_processeds')->where('vid','=',$vid)->where('invoice_no', 'like', $ven. '%')->orderBy('id', 'DESC') ->first();
+                                    // print_r($last2);
+                                    // die();
                                     
-                                        if($created_att[0] == $mytime){
-                                            $last_invoice = substr($last2->invoice_no,strrpos($last2->invoice_no,"-")+1);
-                                            $new_invoice = $last_invoice;
-                                        }else{
+                                    if (isset($last2)==1){
+                                        // $created_att = explode(' ',$last2->created_at);
+                                    
+                                        // if($created_att[0] == $mytime){
+                                        //     $last_invoice = substr($last2->invoice_no,strrpos($last2->invoice_no,"-")+1);
+                                        //     $new_invoice = $last_invoice;
+                                        // }else{
                                             $last_invoice = substr($last2->invoice_no,strrpos($last2->invoice_no,"-")+1);
                                             $new_invoice = $last_invoice +1;
-                                        }
+                                        // }
                                     }else{
                                         $new_invoice = 1;
                                     }
+                                    // echo "--".$new_invoice;
                                     $vendor_invoice = $vendor_invoice.$j.$new_invoice;
+                                    // die();
+                                    
                                     $customer_invoice_no="-";
                                     $customer_invoice_date="-";
-                                    $suborder_id=$order_id_concat.$count;
-                                         
-                                    // DB::table('invoice_infos')->insert(['invoice_no'=>$vendor_invoice,'customer_invoice_no'=>$customer_invoice_no,'customer_invoice_date'=>$customer_invoice_date,'order_id'=>$orderid,'vid'=>$vid,'suborder_id'=>$suborder_id,'line_item_id'=>$line_item_id,'total'=>$sub_total]);//2023
-                                    // DB::table('suborder_details')->insert(['order_id'=>$orderid,'vid'=>$vid,'suborder_id'=>$suborder_id,'line_item_id'=>$line_item_id,'invoice_no'=>$vendor_invoice,'total'=>$sub_total]);
+                                    if($orderid == $oldorderid){
+
+                                        $lastSO = DB::table('suborder_details')->where('vid','=',$vid)->where('suborder_id', 'like', $order_id_concat. '%')->orderBy('id', 'DESC') ->first();
+                                        // print_r($last2);
+                                        // die();
+                                        
+                                        if (isset($lastSO)==1){
+                                            // $created_att = explode(' ',$last2->created_at);
+                                        
+                                            // if($created_att[0] == $mytime){
+                                            //     $last_invoice = substr($last2->invoice_no,strrpos($last2->invoice_no,"-")+1);
+                                            //     $new_invoice = $last_invoice;
+                                            // }else{
+                                                $last_subOrder = substr($lastSO->suborder_id,strrpos($lastSO->suborder_id,"-")+1);
+                                                $new_subOrder = $last_subOrder +1;
+                                            // }
+                                        }else{
+                                            $new_subOrder = 1;
+                                        }
+                                        // echo $new_invoice;
+                                        $suborder_id=$order_id_concat.$new_subOrder;
+                                    }else{
+                                        $suborder_id=$order_id_concat.$k;
+                                    }
+                                    
+                                    
+                                    DB::table('invoice_infos')->insert(['invoice_no'=>$vendor_invoice,'customer_invoice_no'=>$customer_invoice_no,'customer_invoice_date'=>$customer_invoice_date,'order_id'=>$orderid,'vid'=>$vid,'suborder_id'=>$suborder_id,'line_item_id'=>$line_item_id,'total'=>$sub_total]);
+                                    DB::table('suborder_details')->insert(['order_id'=>$orderid,'vid'=>$vid,'suborder_id'=>$suborder_id,'line_item_id'=>$line_item_id,'invoice_no'=>$vendor_invoice,'total'=>$sub_total]);
                             }
+                           
                             $line_item_idd = DB::table('suborder_details')->where('vid','=',$vid)->where('suborder_details.suborder_id','=',$suborder_id)->get();
                             $order_lineitem_id=$line_item_idd[0]->line_item_id;
                             $line_item_id = DB::table('line_items')->where('vid','=',$vid)->where('line_item_id', '=', $order_lineitem_id)->get();
@@ -355,8 +377,10 @@ class BillingController extends Controller
                             $get_product_id= $line_item_id[0]->product_id;
                             // dd($get_product_id);die();
                             $way_data =DB::table("way_data")->where('vid','=',$vid)->get();
+// print_r($way_data);die();
                             $order_bill_processed =DB::table('orders')->where('vid','=',$vid)->where('orders.oid','=',$get_order_id)->get();
-                         
+// print_r($order_bill_processed);
+// die();
                             $discount_amount=$order_bill_processed[0]->discount_total;
                             $billing_processed=$order_bill_processed[0]->billing_processed;
                             $parent_order_id=$order_bill_processed[0]->parent_id;
@@ -383,13 +407,16 @@ class BillingController extends Controller
                                 $vendor_nam = DB::table('vendors')->where('id','=',$vid)->get();
                                 $vendor_namee=$vendor_nam[0]->name;
                                 $way_data_gateway=$way_data[0]->gateway;
-                                if($way_data_gateway==0)
-                                {
-                                    $invoice_type='Billing to Majime';
-                                }
-                                else{
+                                // if($way_data_gateway==0)
+                                // {
+                                //     $invoice_type='Billing to Majime';
+                                // }
+                                // else{
                                     $invoice_type='Billing to Customer';
-                                }
+                                // }
+
+
+
                                 $invoice_date=$line_item_idd[0]->created_at;
                                 $sub_orderId=$line_item_idd[0]->suborder_id;
                                 $invoice_amount=$line_item_idd[0]->total;
@@ -435,18 +462,42 @@ class BillingController extends Controller
                                 //     $total_sgst='0';
                                 //     // dd($igst);die();
                                 // }
+                                $sum_qty = DB::table("line_items")->select(DB::raw("(SELECT SUM(quantity) FROM line_items WHERE line_items.order_id = ".intval($get_order_id)." AND line_items.vid = " . intval($vid) . ") as val"))->first();
+                                $sum_total = DB::table("line_items")->select(DB::raw("(SELECT SUM(total) FROM line_items WHERE line_items.order_id = ".intval($get_order_id)." AND line_items.vid = " . intval($vid) . ") as val"))->first();
+
+                                    // print_r($sum_qty->val);
+                                    // die();
+
+                                $orderTotalAmt = DB::table("line_items")->select(DB::raw("(SELECT SUM(line_items.total) FROM line_items WHERE line_items.order_id = ".intval($get_order_id)." AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as total_main"))->first();
+
+                                $amtPaid=$order_bill_processed[0]->total;
+                                $sale_Amount = $orderTotalAmt->total_main;
+                                $walletUsedAmt = $sale_Amount - $amtPaid;
+                                
+
+                                $shippingCharges = 0;
+                                // here we need to minus actual wallet used from below:
+                                $cartDisc = ((int)$walletUsedAmt/(int)$sum_total->val)*(int)$item_cost;
+                                $discount_amount = ((int)$discount_amount/(int)$sum_total->val)*(int)$item_cost;
+                                $inv_amt = (int)$item_cost - ((int)$cartDisc + (int)$discount_amount) - $shippingCharges;
+
                                     if($order_from == $order_to)
                                     {
-                                        $total_cgst=($invoice_amount)/($tax_percentage+100)*($tax_percentage/2);
-                                        $total_sgst=($invoice_amount)/($tax_percentage+100)*($tax_percentage/2);
+                                        $total_cgst=($inv_amt)/($tax_percentage+100)*($tax_percentage/2);
+                                        $total_sgst=($inv_amt)/($tax_percentage+100)*($tax_percentage/2);
                                         $igst='0';
                                     }
                                     else{
                                         $total_cgst=0;
                                         $total_sgst=0;
-                                        $igst= (($invoice_amount)/($tax_percentage+100))*($tax_percentage/2);
+                                        $igst= (($inv_amt)/($tax_percentage+100))*($tax_percentage/2);
                                     }
-                                $taxable_amount=$invoice_amount-($total_cgst+ $total_sgst+$igst);
+                                    // echo $invoice_amount."--".$total_cgst;
+                                    
+                                
+
+
+                                $taxable_amount=$inv_amt-($total_cgst+ $total_sgst+$igst);
                                 $order_related_dates =DB::table("order_reldates")->where('vid','=',$vid)->where('oid','=',$get_order_id)->get();
                                 if($order_related_dates->isEmpty())
                                 {
@@ -481,7 +532,6 @@ class BillingController extends Controller
                                     $collectable_amount=$order_amount;
                                 }          
                                 $way_bill =DB::table("waybill")->where('vid','=',$vid)->where('order_id','=',$get_order_id)->get();
-                                dd($way_bill);die();
                                 // echo "\n\nCount  - ".count($way_bill);
                                 if (count($way_bill)>1){
                                     $Way_bill_no=$way_bill[0]->waybill_no;
@@ -496,11 +546,11 @@ class BillingController extends Controller
                                     'customer_invice_no'=>'-',
                                     'customer_invoice_date'=>'-',
                                     'sub_order_id'=> $sub_orderId,
-                                     'textable_amount'=>$data[$i]->textable_amount ?? 'NA',
+                                    'textable_amount'=>$taxable_amount ?? 'NA',
                                     'igst'=>$igst,
                                     'sgst'=>$total_sgst,
                                     'cgst'=>$total_cgst,
-                                    'invoice_amount'=>$invoice_amount,
+                                    'invoice_amount'=>$inv_amt,
                                     'hsn_code'=>$hsn_code,
                                     'text_percentage'=>$tax_percentage,
                                     'dispatch_date'=> $dispatch_date ?? '-',
@@ -544,10 +594,12 @@ class BillingController extends Controller
                                     'product_weight'=>$product_weight,
                                 ];    
                                 // $oid=$order_id[$i]->oi    
+                               
                             }           
                             else{
-                            return response()->json(['error' => false,'msg' => "Already Processed", "ErrorCode" => "000"], 200); 
+                                return response()->json(['error' => false,'msg' => "Already Processed", "ErrorCode" => "000"], 200); 
                             }
+                            $oldorderid = $orderid;
                             
                         }
                         BillingProcessed::insert($billing_processdata);
@@ -562,4 +614,41 @@ class BillingController extends Controller
         $retun_billing_processer_data = DB::table('billing_processeds')->where('vid','=',$vid)->get();
         return $retun_billing_processer_data;
     }
+    public function update_dispatch_date(Request $request)
+    {
+     $vid=$request->vid;
+     $dtobook='dtobooked';
+     $intrans='intransit';
+     $dtointrans='dtointransit';
+     $Comple='completed';
+     $rto_del='rto-delivered';
+     $dto_ref='dto-refunded';
+     $clos='closed';
+     $dis='dispatched';
+     $del='deliveredtocust';
+     $dto_del='dtodelivered';
+     $zero='0';
+     $vid = $request->vid;
+     $date_from='2023-04-01 00:00:00';
+     $date_to='2023-04-03 00:00:00';
+     $range = [$date_from, $date_to];
+     $order_id=DB::table('orders')
+         ->leftjoin('line_items', function($join) use($vid){
+         $join->on('line_items.order_id','=','orders.oid')
+         ->where('line_items.vid', '=', intval($vid));
+         })
+         ->whereIn("orders.status",[$dtobook,$intrans,$dtointrans,$Comple,$rto_del,$dto_ref,$clos,$dis,$del,$dto_del])
+         ->whereBetween('orders.date_created_gmt',$range)
+         // ->where('orders.billing_processed','=','0')
+         ->where('orders.vid','=',$vid)
+         ->orderBy('orders.oid')
+         ->select('orders.oid','line_items.quantity','line_items.line_item_id','line_items.product_id','line_items.total','orders.total as order_amount','orders.status')
+         ->pluck('oid')->toArray();
+        
+     
+
+    }
+
+
+
 }

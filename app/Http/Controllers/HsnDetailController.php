@@ -122,7 +122,8 @@ public function order_hencode_weight(Request $request){
         $data=DB::table('line_items')->join('products','products.product_id','=','line_items.product_id')
         ->where('line_items.order_id','=', $order_id)
         ->where('line_items.vid', '=', intval($vid))
-        ->where('products.vid', '=', intval($vid))->get();
+        ->where('products.vid', '=', intval($vid))
+        ->get();
         for ($i = 0; $i<count($data); $i++) {
             //->where('products.vid', '=', intval($vid))->get();
             $hsn = $data[$i]->hsn_code;

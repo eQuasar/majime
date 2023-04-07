@@ -134,14 +134,9 @@ class OrderController extends Controller {
     }
     //fetch order items table line_items.order_id = oid(match)and next line_items.vid(match)next pluck product_id use for toArray
     public function order_items($oid) {
-        $orderItems = DB::table("line_items")       
-        ->where('line_items.order_id', '=', $oid)
-        ->where('line_items.vid', '=', intval($_REQUEST['vid']))
-        ->pluck('product_id')->toArray();//table line_item to fetch product_id
-        //get detail products table according to product_id (match)$orderItems(variable)
-        $get_detail=DB::table("products")->whereIn('product_id',$orderItems)->where('vid', '=', intval($_REQUEST['vid']))->get();
-        
-        return $get_detail;
+        $orderItems = DB::table("line_items")->where('order_id', '=', $oid)->where('vid', '=', $_REQUEST['vid'])->get();
+      
+        return $orderItems;
     }
     //getOrderDetails   vendors table according to vendors id=vid
     public function getOrderDetails(Request $request) {
@@ -713,6 +708,12 @@ class OrderController extends Controller {
                                 $response2 = curl_exec($curl2);
                                 curl_close($curl2);
                                 $jsonResp2 = json_decode($response2);
+                                $confirm_order_data[]=[     
+                                    'vid'=>$request->vid,
+                                    'oid'=>$request->dispatch,
+                                    'order_dispatchdate'=>$date,
+                                    ];   
+                                order_reldate::insert($confirm_order_data);        
                                 return response()->json(['error' => false, 'msg' => "WayBill successfully added.", "ErrorCode" => "000"], 200);
                             }
                         } else {
@@ -1965,12 +1966,12 @@ class OrderController extends Controller {
           if($orders[0]->status == "packed"){
               $this->changeOrderStatus(intval($request->vid), intval($order_items[0]->order_id), "dispatched");
               $date = date('Y-m-d');
-              $confirm_order_data[]=[     
-              'vid'=>$request->vid,
-              'oid'=>$request->dispatch,
-              'order_dispatchdate'=>$date,
-              ];   
-              order_reldate::insert($confirm_order_data);        
+            //   $confirm_order_data[]=[     
+            //     'vid'=>$request->vid,
+            //     'oid'=>$request->dispatch,
+            //     'order_dispatchdate'=>$date,
+            //     ];   
+            //     order_reldate::insert($confirm_order_data);        
               return response()->json(['error' => false, 'msg' => "Success, Your order number " . intval($order_items[0]->order_id) . " with AWB number is " . intval($order_items[0]->waybill_no), "ErrorCode" => "000"], 200);
           }else{
               return response()->json(['error' => true, 'msg' => "Order is not Packed.", "ErrorCode" => "000"], 200);
@@ -2273,6 +2274,16 @@ class OrderController extends Controller {
         return $order;
 
      }
-  
-
+     public function order_product_profile(Request $request)
+     {
+        $oid=$request->oid;
+        $orderItems = DB::table("line_items")       
+        ->where('line_items.order_id', '=', $oid)
+        ->where('line_items.vid', '=', intval($_REQUEST['vid']))
+        ->pluck('product_id')->toArray();//table line_item to fetch product_id
+        //get detail products table according to product_id (match)$orderItems(variable)
+        $get_detail=DB::table("products")->whereIn('product_id',$orderItems)->where('vid', '=', intval($_REQUEST['vid']))->get();
+        return response()->json(['error' => false, 'data' => $get_detail, "ErrorCode" => "000"], 200);
+        
+     }
 }

@@ -42,7 +42,7 @@
             style="margin-top: 30px"
             v-on:click="Billing_download"
           >
-            Download
+            Master Download
           </button>
         </b-col>
         <b-col>
@@ -72,7 +72,7 @@
             style="margin-top: 30px"
             v-on:click="salereturn_download"
           >
-            Sale Return
+            Bill Wise Sales Return
           </button>
         </b-col>
         <b-col>
@@ -82,7 +82,7 @@
             style="margin-top: 30px"
             v-on:click="saleinvoice_download"
           >
-            Sale Invoice
+            Bill Wise Sales
           </button>
         </b-col>
       </div>
@@ -107,7 +107,7 @@
             <template v-slot:cell(sr)="row">
               {{ (currentPage - 1) * perPage + row.index + 1 }}
             </template>
-            <!-- <template v-slot:cell(name)="row">
+            <template v-slot:cell(name)="row">
               <span v-if='row.item.user'>{{row.item.user.name}}</span>
             </template> 
             <template v-slot:cell(email)="row">
@@ -116,7 +116,7 @@
             <template v-slot:cell(phone)="row">
               <span v-if='row.item.user'>{{row.item.user.phone}}</span>
             </template>  -->
-          </b-table>
+          </b-table> 
           <b-pagination
             v-model="currentPage"
             :total-rows="rows"
@@ -506,23 +506,16 @@ export default {
       const data = XLSX.utils.json_to_sheet(this.items);
       const wb = XLSX.utils.book_new();
       /* fix headers */
-      // XLSX.utils.sheet_add_aoa(
-      //   data,
-      //   [
-      //     [
-      //       "Sr No",
-      //       "Vendor Name",
-      //       "PROJECT NAME",
-      //       "PENDING TASKS",
-      //       "1ST APPOINTMENT",
-      //       "DE-SNAGGING",
-      //       "2ND APPOINTMENT",
-      //       "KEY HANDOVER APPOINTMENT",
-      //       "FINAL KEY HANDOVER DONE",
-      //     ],
-      //   ],
-      //   { origin: "A1" }
-      // );
+      XLSX.utils.sheet_add_aoa(
+        data,
+        [
+          [
+            "Sr No",
+            
+          ],
+        ],
+        { origin: "A1" }
+      );
       XLSX.utils.book_append_sheet(wb, data, "data");
       XLSX.writeFile(wb, "Billing_detail.xlsx");
     },

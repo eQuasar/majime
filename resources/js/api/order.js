@@ -139,4 +139,8 @@ export default {
     changeProcessing_Status(data) {
         return axios.post('change_Processing_Status', data)
     },
+    orderproduct_detail(data)
+    {
+        return axios.post('order_product_profile', data)
+    },
 }

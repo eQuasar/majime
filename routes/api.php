@@ -61,6 +61,7 @@ Route::group(['prefix' => 'v1'], function () {
   	Route::get('getAllLinks',[App\Http\Controllers\JsonController::class,'getAllLinks']);
   	// Route::get('getJson',[App\Http\Controllers\JsonController::class,'getJson']);
 	Route::post('getJson', 'JsonController@getJson')->name('getJson');
+	Route::post('productgetJson', 'JsonController@productgetJson')->name('productgetJson');
 	// Route::post('getJson', 'JsonController@getJson')->name('getJson');
 	Route::post('changeStatus', 'OrderController@changeStatus')->name('changeStatus');
 	Route::post('assignAWB', 'OrderController@assignAWB')->name('assignAWB');
@@ -103,7 +104,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('order_items/{variation_id}',[App\Http\Controllers\OrderController::class,'order_items']);
     Route::post('getDelivery_Details','ProductController@getDelivery_Details')->name('getDelivery_Details');
     Route::post('changeProcessing_Status', 'OrderController@changeProcessing_Status')->name('changeProcessing_Status');
-    Route::post('change_Processing_Status', 'OrderController@changeProcessing_Status_confirmed')->name('change_Processing_Status');
+    Route::post('change_Processing_Status', 'OrderController@changeProcessing_Status')->name('change_Processing_Status');
     Route::post('getProcessingOrder_Details', 'OrderController@getProcessingOrder_Details')->name('getProcessingOrder_Details');
     Route::get('get_processing_data/{vid}/{status}','OrderController@get_processing_data')->name('get_processing_data');
     Route::post('product_Sheet_download', 'ProductController@product_Sheet_download')->name('product_Sheet_download');
@@ -171,5 +172,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('state_wise_detail','HsnDetailController@state_wise_detail')->name('state_wise_detail');
 	Route::post('hsn_wise_detail','HsnDetailController@hsn_wise_detail')->name('hsn_wise_detail');
 	Route::get('hsn_wise_detail_copy','HsnDetailController@hsn_wise_detail_copy')->name('hsn_wise_detail_copy');
+	Route::post('order_product_profile','OrderController@order_product_profile')->name('order_product_profile');
+	Route::post('update_dispatch_date','BillingController@update_dispatch_date')->name('update_dispatch_date');
 }); 
 

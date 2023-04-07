@@ -46,8 +46,24 @@ class JsonController extends Controller
 		$url = $request->url;
 		$vid = $request->vid;
 		$jsonResponse=$this->getOrderWP($url, $vid);
-		dd($jsonResponse);die();
+		// dd($jsonResponse);die();
 		$this->InsertOrder($jsonResponse, $vid, $url);
+	}
+
+	public function productgetJson(Request $request)
+	{
+		//DD($request);
+		if(isset($request->url) && $request->url != ''){
+			$url = $request->url;
+		}else{
+			$vid = $request->vid;
+			$vendor =DB::table("vendors")->where('id','=',intval($vid))->get()->toArray();
+			$url = $vendor[0]->url;
+		}
+		$vid = $request->vid;
+		$jsonResponse=$this->getOrderWP($url, $vid);
+		// dd($jsonResponse);die();
+		$this->readdProduct($jsonResponse, $vid, $url);
 	}
 
     public function get_order_data(Request $request)
@@ -154,8 +170,8 @@ class JsonController extends Controller
 			$this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
 		    $this->Order_refunds($order->id,$order->refunds,$vid);
 			$this->Order_links($order->id,$order->_links,$vid);
-			// $this->smsSend($vid,$order->id,"placed");
-			echo "Insert";
+			$this->smsSend($vid,$order->id,"placed");
+			// echo "Insert";
 
 	    	Orders::insert($Orders); 	
        }
@@ -800,14 +816,14 @@ class JsonController extends Controller
 			];
 			// $this->InsertBilling($order->id,$order->billing,$vid);
 			// $this->InsertShipping($order->id,$order->shipping,$vid);
-		    // //$this->OrderMetaData($order->id,$order->meta_data);
-		    // $this->insertLineItems($order->id,$order->line_items,$vid);
+		    //$this->OrderMetaData($order->id,$order->meta_data);
+		 //    $this->insertLineItems($order->id,$order->line_items,$vid);
 			// //$this->LineItem_Metadata($order->id,$order->line_items);
 			// $this->OrderTaxLines($order->id,$order->tax_lines,$vid);
 			// $this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
 			// $this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
 			// $this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
-		    // $this->Order_refunds($order->id,$order->refunds,$vid);
+		 //    $this->Order_refunds($order->id,$order->refunds,$vid);
 			// $this->Order_links($order->id,$order->_links,$vid);
 
 	    }
@@ -815,19 +831,21 @@ class JsonController extends Controller
 	    // if(!empty($Orders)){
 	    //    	Orders::insert($Orders); 	
 
-	    //    	$this->getWayBill($vid, $url);
-       	// }
+	    //    	// $this->getWayBill($vid, $url);
+     //   	}
 			
 		// $jsonResponse=$this->getProductWP($url, intval($vid));
+		// // var_dump($jsonResponse); die;
 		// $this->InsertProduct($jsonResponse, $vid);
 		
-		//  $jsonResponseVariation=$this->getProductVariation($jsonResponse,$url, intval($vid));
+		 // $jsonResponseVariation=$this->getProductVariation($jsonResponse,$url, intval($vid));
 
 		
 		// dd($jsonResponse);
 
 		// $jsonResponsecat=$this->getProductCatWP($url, intval($vid));
 		// $this->InsertProductCat($jsonResponsecat, $vid);
+		// // var_dump($jsonResponsecat);
 		// // dd($jsonResponsecat);
 
 		// $jsonResponseTag=$this->getProductTagWp($url, intval($vid));
@@ -854,12 +872,12 @@ class JsonController extends Controller
 		 			$cat .= $InProduct->categories[$i]->name.",";
 		 		}
 		 	}
-			 if (Products::where('product_id', $InProduct->id)->where('vid',$vid)->exists())
-			 {
-				 return response()->json([ 'msg' => "Product already Exist"]);	
-			 }
-			 else
-			 {
+			 // if (Products::where('product_id', $InProduct->id)->where('vid',$vid)->exists())
+			 // {
+				//  return response()->json([ 'msg' => "Product already Exist"]);	
+			 // }
+			 // else
+			 // {
 			$product[]=[
 				'vid'=>intval($vid),
 				'product_id'=>$InProduct->id,
@@ -905,7 +923,7 @@ class JsonController extends Controller
 				'categories'=> $cat,
 				];
 			}
-		}
+		// }
     	 Products::insert($product);
     }
     public function InsertProductCat($ProductCat,$vid)
@@ -921,6 +939,7 @@ class JsonController extends Controller
 					'slug'=>$InProductCat->slug,
 				];
 			}
+			// var_dump($productCat); die;
     	  Category::insert($productCat);
     }
 
@@ -989,18 +1008,18 @@ class JsonController extends Controller
 							'Authorization: Basic '.$vendor[0]->token
 						),
 					));
-				$response = curl_exec($curl);
-				curl_close($curl);
-				$jsonResp = json_decode($response);
-				$this->InsertProductVariation($response,$vid,$products[$i]);
-				// $this->InsertProductVariation_categories($response,$vid,$product_id[$i]);
-				// $this->InsertProductVariation_attributes($response,$vid,$product_id[$i]);
-				// $this->InsertProductVariation_images($response,$vid,$product_id[$i]);
-				// $this->InsertProductVariation_tags($response,$vid,$product_id[$i]);
-				// $this->InsertProductVariation_images($response,$vid,$product_id[$i]);
-				// $this->InsertProductVariation_links($response,$vid,$product_id[$i]);
-				// $this->InsertProductVariation_dimensions($response,$vid,$product_id[$i]);
-			}
+					$response = curl_exec($curl);
+					curl_close($curl);
+					$jsonResp = json_decode($response);
+					$this->InsertProductVariation($response,$vid,$products[$i]);
+					// $this->InsertProductVariation_categories($response,$vid,$product_id[$i]);
+					// $this->InsertProductVariation_attributes($response,$vid,$product_id[$i]);
+					// $this->InsertProductVariation_images($response,$vid,$product_id[$i]);
+					// $this->InsertProductVariation_tags($response,$vid,$product_id[$i]);
+					// $this->InsertProductVariation_images($response,$vid,$product_id[$i]);
+					// $this->InsertProductVariation_links($response,$vid,$product_id[$i]);
+					// $this->InsertProductVariation_dimensions($response,$vid,$product_id[$i]);
+				}
 			}	
 		}
 
@@ -1388,5 +1407,95 @@ public function InsertProductVariation_attributes($product_attributes,$vid,$proI
 		->get();
 		return response()->json(['data'=>$data ,'msg' => "", "ErrorCode" => "000"], 200);
 	}
+
+
+	public function readdProduct($InOrder, $vid, $url){
+		// echo $url; die;
+		DB::table('products')->where('vid', intval($vid))->delete();
+		// echo "string"; die;
+		foreach($InOrder as $order)
+		{
+			// var_dump($order); die;
+          	$Orders[]=[
+				'oid'=>intval($order->id),
+				'vid'=>intval($vid),
+				'parent_id'=>$order->parent_id,
+				'status'=>$order->status,
+				'currency'=>$order->currency,
+				 'version'=>$order->version,
+				 'prices_include_tax'=>$order->prices_include_tax,
+				 'date_created'=>$order->date_created,
+				 'date_modified'=>$order->date_modified,
+				 'discount_total'=>$order->discount_total,
+				 'discount_tax'=>$order->discount_tax,
+				 'shipping_total'=>$order->shipping_total,
+				 'shipping_tax'=>$order->shipping_tax,
+				 'cart_tax'=>$order->cart_tax,
+				 'total'=>$order->total,
+				 'total_tax'=>$order->total_tax,
+				 'customer_id'=>$order->customer_id,
+				 'order_key'=>$order->order_key,
+				 'payment_method'=>$order->payment_method,
+				 'payment_method_title'=>$order->payment_method_title,
+				 'transaction_id'=>$order->transaction_id,
+				 'customer_ip_address'=>$order->customer_ip_address,
+				 // 'customer_user_agent'=>$order->customer_user_agent,
+				 'customer_user_agent'=>'',
+				 'created_via'=>$order->created_via,
+				 // 'customer_note'=>$order->customer_note,
+				 'customer_note'=>'NA',
+				 'date_completed'=>$order->date_completed,
+				 'date_paid'=>$order->date_paid,
+				 'cart_hash'=>$order->cart_hash,
+				 'number'=>$order->number,
+				 'date_created_gmt'=>$order->date_created_gmt,
+				 'date_modified_gmt'=>$order->date_modified_gmt,
+				 'date_completed_gmt'=>$order->date_completed_gmt,
+				 'date_paid_gmt'=>$order->date_paid_gmt,
+				 'currency_symbol'=>$order->currency_symbol,
+			];
+			// $this->InsertBilling($order->id,$order->billing,$vid);
+			// $this->InsertShipping($order->id,$order->shipping,$vid);
+		 //    $this->OrderMetaData($order->id,$order->meta_data);
+		    // $this->insertLineItems($order->id,$order->line_items,$vid);
+			//$this->LineItem_Metadata($order->id,$order->line_items);
+			// $this->OrderTaxLines($order->id,$order->tax_lines,$vid);
+			// $this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
+			// $this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
+			// $this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
+		 //    $this->Order_refunds($order->id,$order->refunds,$vid);
+			// $this->Order_links($order->id,$order->_links,$vid);
+
+	    }
+       	
+	    // if(!empty($Orders)){
+	    //    	Orders::insert($Orders); 	
+
+	    //    	// $this->getWayBill($vid, $url);
+     //   	}
+			
+		$jsonResponse=$this->getProductWP($url, intval($vid));
+		// var_dump($jsonResponse); die;
+		$this->InsertProduct($jsonResponse, $vid);
+		
+		 // $jsonResponseVariation=$this->getProductVariation($jsonResponse,$url, intval($vid));
+
+		
+		// dd($jsonResponse);
+
+		// $jsonResponsecat=$this->getProductCatWP($url, intval($vid));
+		// $this->InsertProductCat($jsonResponsecat, $vid);
+		// // var_dump($jsonResponsecat);
+		// // dd($jsonResponsecat);
+
+		// $jsonResponseTag=$this->getProductTagWp($url, intval($vid));
+		// $this->InsertProductTag($jsonResponseTag, $vid);
+		// // dd($jsonResponseTag);
+
+		// $jsonResponseAtt=$this->getProductAttWp($url, intval($vid));
+		// $this->InsertProductAtt($jsonResponseAtt, $vid);
+		
+		
+    }
 	
 }
