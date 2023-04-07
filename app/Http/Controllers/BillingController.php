@@ -177,7 +177,8 @@ class BillingController extends Controller
                 ->where('waybill.vid', '=', intval($vid));
             })   
                 ->select( "vendors.name as vendor_name", 
-                DB::raw('(CASE WHEN way_data.gateway =0  THEN "Majime Invoicing" WHEN way_data.gateway =1  THEN "Self Invoicing" END) AS invoice_detail'),"orders.oid as order_no","suborder_details.suborder_id as suborder_id",
+                DB::raw('(CASE WHEN way_data.gateway =0  THEN "Majime Invoicing" WHEN way_data.gateway =1  THEN "Self Invoicing" END) AS invoice_detail'),
+                "orders.oid as order_no","suborder_details.suborder_id as suborder_id",
                 "suborder_details.invoice_no as invoice_no","suborder_details.created_at as invoice_date","suborder_details.total as invoice_amount"
                 ,"line_items.product_id as product_id"
                 ,"products.hsn_code as hsn","way_data.state as invoice_state_code_from",
@@ -314,18 +315,18 @@ class BillingController extends Controller
                                         // }
                                     }
                                     $count = ($duplicate == 1)?$count:$duplicate;
-                                    if(($way_data[0]->gateway)==0)
-                                    {
-                                        $vendor_name='MAJ';
-                                        $vendorPrefix=strtoupper(substr($way_data[0]->order_prefix, 0, -1));
-                                        $ven = $vendor_name.$j.$current_year.$j.$vendorPrefix.$j;    
-                                        $vendor_invoice = $ven;
-                                    }
-                                    else{
+                                    // if(($way_data[0]->gateway)==0)
+                                    // {
+                                    //     $vendor_name='MAJ';
+                                    //     $vendorPrefix=strtoupper(substr($way_data[0]->order_prefix, 0, -1));
+                                    //     $ven = $vendor_name.$j.$current_year.$j.$vendorPrefix.$j;    
+                                    //     $vendor_invoice = $ven;
+                                    // }
+                                    // else{
                                         $vendorPrefix=strtoupper(substr($way_data[0]->order_prefix, 0, -1));
                                         $ven = $vendorPrefix.$j.$current_year.$j;
                                         $vendor_invoice = $ven.$orderid.$j;
-                                    }
+                                    // }
                                     $last2 = DB::table('suborder_details')->where('vid','=',$vid)->where('invoice_no', 'like', $ven. '%')->orderBy('id', 'DESC') ->first();
                                     if (isset($last2)==1){
                                         $created_att = explode(' ',$last2->created_at);
@@ -384,13 +385,13 @@ class BillingController extends Controller
                                 $vendor_nam = DB::table('vendors')->where('id','=',$vid)->get();
                                 $vendor_namee=$vendor_nam[0]->name;
                                 $way_data_gateway=$way_data[0]->gateway;
-                                if($way_data_gateway==0)
-                                {
-                                    $invoice_type='Billing to Majime';
-                                }
-                                else{
+                                // if($way_data_gateway==0)
+                                // {
+                                //     $invoice_type='Billing to Majime';
+                                // }
+                                // else{
                                     $invoice_type='Billing to Customer';
-                                }
+                                // }
                                 $invoice_date=$line_item_idd[0]->created_at;
                                 $sub_orderId=$line_item_idd[0]->suborder_id;
                                 $invoice_amount=$line_item_idd[0]->total;

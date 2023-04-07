@@ -134,14 +134,9 @@ class OrderController extends Controller {
     }
     //fetch order items table line_items.order_id = oid(match)and next line_items.vid(match)next pluck product_id use for toArray
     public function order_items($oid) {
-        $orderItems = DB::table("line_items")       
-        ->where('line_items.order_id', '=', $oid)
-        ->where('line_items.vid', '=', intval($_REQUEST['vid']))
-        ->pluck('product_id')->toArray();//table line_item to fetch product_id
-        //get detail products table according to product_id (match)$orderItems(variable)
-        $get_detail=DB::table("products")->whereIn('product_id',$orderItems)->where('vid', '=', intval($_REQUEST['vid']))->get();
-        return response()->json(['error' => false, 'data' => $get_detail, "ErrorCode" => "000"], 200);
-        return $get_detail;
+        $orderItems = DB::table("line_items")->where('order_id', '=', $oid)->where('vid', '=', $_REQUEST['vid'])->get();
+      
+        return $orderItems;
     }
     //getOrderDetails   vendors table according to vendors id=vid
     public function getOrderDetails(Request $request) {

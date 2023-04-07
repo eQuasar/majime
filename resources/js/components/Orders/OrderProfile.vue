@@ -95,7 +95,7 @@
               striped
               hover
               responsive
-              :items="productitems"
+              :items="items"
               :sort-by.sync="sortBy"
               sort-icon-left
               :filter-included-fields="filterOn"
@@ -108,92 +108,16 @@
               <template v-slot:cell(sr)="row">
                 {{ (currentPage - 1) * perPage + row.index + 1 }}
               </template>
-              <template v-slot:cell(action)="row">
-                <b-link @click="target_list"
-                      ><b-icon
-                        icon="pencil-fill"
-                        variant="primary"
-                        aria-hidden="true"
-                        data-toggle="tooltip"
-                        title="Edit HSN, Weight, Cost"
-                      ></b-icon
-                    ></b-link>
-                <!-- <router-link :to="{ name: 'productprofile', params: {product_id:(row.item.product_id).toString() }}"><b-icon icon="eye-fill" aria-hidden="true"></b-icon></router-link> -->
-                <!-- <p class="h3 mb-2"><router-link :to="{ name: 'editproductprofile2', params: { product_id:(row.item.product_id).toString() }}"><b-icon icon="pencil-fill" aria-hidden="true"></b-icon></router-link></p> -->
-           </template>
             </b-table>
           </b-col>
         </b-row>
       </div>
     </div>
-<!-- modal show -->
-<b-modal   id="modal-1" title="Edit Hsn Code and Weight of the Product" hide-footer size="lg">
-          <div class="content_bar card">
-            <div class="card-body">
-              <b-alert show variant="danger" v-if='create_error'>{{create_error}}</b-alert>
-        <div :class="['form-group m-1 p-3', (successful ? 'alert-success' : '')]" v-show="successful">
-        <span v-if="successful" class="label label-sucess">Transaction Detail Enter Sucessfully</span>
-        </div>
-              <b-row>
-                <b-col xl="12" lg="12" md="12">
-                  <div class="profile_info">
-                    <h3 class="own-heading"><p class="h2 mb-2"><strong>Product ID:{{order_product_id}}</strong></p></strong></h3>
-                      </b-overlay>
-                  </div>
-                </b-col>
-              </b-row>
-        <div class="content_bar">
-        <div class="card-body card-body-bg">
-        <b-row>
-          <div>
-        <b-col xl="6" lg="6" md="6"> 
-              <b-form-group id="input-group-hsndetail" label="HSN Code" label-for="input-hsndetail" >
-                <b-form-select v-model="hsndetail" class="" :options="allhsn"  value-field="hsn_code" text-field="hsn_code" >
-                    <template v-slot:first>
-                          <b-form-select-option :value="0" disabled>-- Select HSN Code --</b-form-select-option>
-                      </template>
-                </b-form-select>
-              </b-form-group> 
-            </b-col>
-          </div>
-                    <b-col xl="6" lg="6" md="6"> 
-                    <b-form-group id="input-group-weight" label="Enter Weight of the product" label-for="input-slab1">
-                        <b-form-input id="input-weight"  v-model="weight" type="number" class="number" required placeholder="Enter Weight of Product" ></b-form-input>
-                    </b-form-group>       
-
-                    </b-col>
-                        <b-col xl="6" lg="6" md="6">
-                          <b-form-group
-                              id="price"
-                              label="Cost"
-                              label-for="Cost"
-                              >
-                              <b-form-input
-                                id="price"
-                                v-model="cost"
-                                type="text"
-                                required
-                                placeholder="Cost"
-                              ></b-form-input>
-                          </b-form-group>
-                          </b-col>
-                    </b-form-group>       
-              
-          </b-row>  
-          <b-button type="submit" @click.prevent="create" variant="primary">Submit </b-button>
-        </div>
-        </div>
-        </div>
-        </div>
-        </div>
-  </b-modal>
   </b-container>
 </template>
 
 <script>
 import order from "../../api/order.js";
-import ProductProfile from '../../api/Product.js';
-  import HSN from '../../api/hsn.js';
 export default {
   props: {
     oid: {
@@ -201,16 +125,10 @@ export default {
       required: true,
       default: 0,
     },
-    // product_id: {
-    //       type: String,
-    //       required: true
-    //     },
   },
   mounted() {
     this.getOrder();
     this.getOrderItems();
-    this.getHsn(); 
-    this.product_detail();       
   },
   data() {
     return {
@@ -224,33 +142,6 @@ export default {
       last_name: "",
       address_1: "",
       address_2: "",
-      allhsn:[],
-      allhsn_array:[],
-      weight:'',
-      hsn1:'',
-      hsn:'',
-      hsndetail:'',
-      name:'',
-      order_product_id:"",
-      country:'',
-      status:'',
-      sku:'',
-      price:'',
-      cost:'',
-      parent_name:'',
-      total:'',
-      filter: null,
-      filterOn: [],
-      date_created_gmt:'',
-      amount:0,
-      successful: false,
-      sortBy: 'date',
-      errors_create:[],
-      create_error:'',
-      selected: 'first',
-      vid: 0,
-      perPage: 10,
-      weight:0,
       // oid: 0,
       email: "",
       total_amount:"",
@@ -273,8 +164,6 @@ export default {
       create_error: "",
       selected: "first",
       vid: 0,
-      product_id:"",
-      variation_id:"",
       perPage: 10,
       options: [],
       fields: [
@@ -287,133 +176,41 @@ export default {
           label: "Product ID",
           sortable: true,
         },
-        // {
-        //   key: "variation_id",
-        //   label: "Variation ID",
-        //   sortable: true,
-        // },
+        {
+          key: "variation_id",
+          label: "Variation ID",
+          sortable: true,
+        },
         {
           key: "name",
           label: "Name",
           sortable: true,
         },
-        // {
-        //   key: "hsn_code",
-        //   label: "HSN",
-        //   sortable: true,
-        // },
-        // {
-        //   key: "weight",
-        //   label: "Weight",
-        //   sortable: true,
-        // },
-        // // {
-        // //   key: "quantity",
-        // //   label: "Quantity",
-        // //   sortable: true,
-        // // },
-        // {
-        //   key: "cost",
-        //   label: "Cost",
-        //   sortable: true,
-        // },
         {
-          key: "price",
-          label: "Total",
+          key: "quantity",
+          label: "Quantity",
           sortable: true,
         },
         {
-            key: 'action',
-            label: 'Action',
-            sortable: true
-          },
+          key: "price",
+          label: "Price",
+          sortable: true,
+        },
+        {
+          key: "total",
+          label: "Total",
+          sortable: true,
+        },
       ],
-      
       items: [],
     };
   },
-  watch: {
-        weight(newVal, oldVal) {
-         if (newVal.includes('.')) {
-        this.weight = newVal.split('.')[0] + '.' + newVal.split('.')[1].slice(0, 2)
-        }
-         }
-      },
   methods: {
-    restrictDecimal () {
-            this.weight=this.weight.match(/^\d+\.?\d{0,2}/);
-          },
-        create() {
-          this.create_error = "";
-          if (!this.hsndetail) {
-            this.create_error += "Enter HSN Code,";
-          }
-          if (!this.weight) {
-            this.create_error += "Enter Weight of prduct,";
-          }
-          if (!this.cost) {
-              this.create_error += "Enter Cost,";
-            }
-          if (this.create_error != "") {
-            return false;
-          }
-          let formData = new FormData();
-          formData.append("hsn", this.hsndetail);
-          formData.append("weight", this.weight); 
-          formData.append("cost", this.cost); 
-          formData.append("product_id", this.order_product_id); 
-          HSN.update_hsn_weight(formData)
-            .then((response) => {
-              this.successful = true;
-              this.error = true;
-              this.getOrderItems();
-              this.$router.push({name: 'OrderProfile'});
-            })
-            .catch((error) => {
-                console.log(error);
-                if (error.response.status == 422) {
-                    this.errors_create = error.response.data.errors;
-                }
-            });
-        },
-      getHsn(){
-      HSN.getHsn()
-      .then((response) => {
-          this.allhsn=response.data.data;
-        })
-        .catch((error) => {
-            console.log(error);
-            if (error.response.status == 422) {
-                this.errors_create = error.response.data.errors;
-            }
-            loader.hide();
-        });
-    },
-    ProductDetail(vid) {
-      this.vid = JSON.parse(localStorage.getItem("ivid"));
-      let formData= new FormData();
-      formData.append("product_id",this.order_product_id);
-      formData.append("vid",this.vid);
-      HSN.getProduct_data(formData)
-       .then(( response ) => {
-          console.log(response);
-          this.items=response.data;
-          console.log(this.items);
-        })
-        .catch(response => {
-            this.successful = false;
-            alert('something went wrong');
-        })
-    },
-    target_list(id){
-        this.$bvModal.show("modal-1");
-      },
     getOrder() {
       this.vid = localStorage.getItem("ivid");
       order
         .getOrderProfile(this.oid, this.vid)
         .then((response) => {
-          console.log(response.data);
           if (response.data) {
             this.quantity = response.data[0].quantity;
             this.amount = response.data[0].total;
@@ -465,18 +262,9 @@ export default {
     getOrderItems() {
       order
         .getOrderItems(this.oid, this.vid)
-        .then((response) => {  
-          console.log(response.data.data);
-          this.order_product_id=response.data.data[0].product_id;
-          console.log(this.order_product_id);
-          this.weight=response.data.data[0].weight;
-          this.cost=response.data.data[0].cost;
-          this.hsndetail=response.data.data[0].hsn_code;
-          this.$bvModal.hide('modal-1')
+        .then((response) => {
           if (response.data) {
             this.items = response.data;
-            this.ProductDetail();
-          
           }
         })
         .catch((error) => {
@@ -509,23 +297,6 @@ export default {
       var images = "/public/uploads/otheruser/" + pet;
       return images;
     },
-    product_detail()
-    {
-      let formData = new FormData();
-      formData.append("vid", this.vid);
-      formData.append("oid", this.oid);
-      order
-        .orderproduct_detail(formData)
-        .then((response) => {
-          this.productitems=response.data.data;
-          // alert(response.data.msg);
-          // this.show=false;
-        })
-        .catch((response) => {
-          this.successful = false;
-          alert("something went wrong");
-        });
-    }
   },
 };
 </script>
