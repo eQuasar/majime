@@ -315,8 +315,7 @@ class BillingController extends Controller
                                         $vendor_invoice = $ven."23-24";
                                         // $vendor_invoice = $ven.$orderid.$j;
                                     // }
-                                    $last2 = DB::table('billing_processeds')->where('vid','=',$vid)->where('invoice_no', 'like', $ven. '%')->orderBy('id', 'DESC') ->first();
-                                    // print_r($last2);
+                                    $last2 = DB::table('invoice_infos')->where('vid','=',$vid)->where('invoice_no', 'like', $ven. '%')->orderBy('id', 'DESC') ->first();
                                     // die();
                                     
                                     if (isset($last2)==1){
@@ -326,13 +325,14 @@ class BillingController extends Controller
                                         //     $last_invoice = substr($last2->invoice_no,strrpos($last2->invoice_no,"-")+1);
                                         //     $new_invoice = $last_invoice;
                                         // }else{
+                                            
                                             $last_invoice = substr($last2->invoice_no,strrpos($last2->invoice_no,"-")+1);
                                             $new_invoice = $last_invoice +1;
                                         // }
                                     }else{
                                         $new_invoice = 1;
                                     }
-                                    // echo "--".$new_invoice;
+                                    // echo "--".$new_invoice."--";
                                     $vendor_invoice = $vendor_invoice.$j.$new_invoice;
                                     // die();
                                     
@@ -538,6 +538,7 @@ class BillingController extends Controller
                                 }else{
                                     $Way_bill_no= "";
                                 }
+                                // echo $vendor_invoice."|||";
                                 $billing_processdata[]=[     
                                     'vendor_name'=>$vendor_namee,
                                     'vid'=>$vid,
