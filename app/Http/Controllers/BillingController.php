@@ -267,7 +267,7 @@ class BillingController extends Controller
                             })
                             ->whereIn("orders.status",[$dtobook,$intrans,$dtointrans,$Comple,$rto_del,$dto_ref,$clos,$dis,$del,$dto_del])
                             ->whereBetween('orders.date_created_gmt',$range)
-                            // ->where('orders.billing_processed','=','0')
+                            ->where('orders.billing_processed','=','0')
                             // ->where('orders.oid','=','12465')
                             ->where('orders.vid','=',$vid)
                             ->orderBy('orders.oid')
