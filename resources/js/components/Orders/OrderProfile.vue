@@ -95,7 +95,7 @@
               striped
               hover
               responsive
-              :items="items"
+              :items="productitems"
               :sort-by.sync="sortBy"
               sort-icon-left
               :filter-included-fields="filterOn"
@@ -209,8 +209,8 @@ export default {
   mounted() {
     this.getOrder();
     this.getOrderItems();
-    this.getHsn();
-        this.ProductDetail();
+    this.getHsn(); 
+    this.product_detail();       
   },
   data() {
     return {
@@ -297,28 +297,28 @@ export default {
           label: "Name",
           sortable: true,
         },
-        {
-          key: "hsn_code",
-          label: "HSN",
-          sortable: true,
-        },
-        {
-          key: "weight",
-          label: "Weight",
-          sortable: true,
-        },
         // {
-        //   key: "quantity",
-        //   label: "Quantity",
+        //   key: "hsn_code",
+        //   label: "HSN",
+        //   sortable: true,
+        // },
+        // {
+        //   key: "weight",
+        //   label: "Weight",
+        //   sortable: true,
+        // },
+        // // {
+        // //   key: "quantity",
+        // //   label: "Quantity",
+        // //   sortable: true,
+        // // },
+        // {
+        //   key: "cost",
+        //   label: "Cost",
         //   sortable: true,
         // },
         {
-          key: "cost",
-          label: "Cost",
-          sortable: true,
-        },
-        {
-          key: "total",
+          key: "price",
           label: "Total",
           sortable: true,
         },
@@ -466,14 +466,16 @@ export default {
       order
         .getOrderItems(this.oid, this.vid)
         .then((response) => {  
-          console.log(response.data);
-          this.order_product_id=response.data[0].product_id;
-          this.weight=response.data[0].weight;
-          this.cost=response.data[0].cost;
-          this.hsndetail=response.data[0].hsn_code;
+          console.log(response.data.data);
+          this.order_product_id=response.data.data[0].product_id;
+          console.log(this.order_product_id);
+          this.weight=response.data.data[0].weight;
+          this.cost=response.data.data[0].cost;
+          this.hsndetail=response.data.data[0].hsn_code;
           this.$bvModal.hide('modal-1')
           if (response.data) {
             this.items = response.data;
+            this.ProductDetail();
           
           }
         })
@@ -507,6 +509,23 @@ export default {
       var images = "/public/uploads/otheruser/" + pet;
       return images;
     },
+    product_detail()
+    {
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      formData.append("oid", this.oid);
+      order
+        .orderproduct_detail(formData)
+        .then((response) => {
+          this.productitems=response.data.data;
+          // alert(response.data.msg);
+          // this.show=false;
+        })
+        .catch((response) => {
+          this.successful = false;
+          alert("something went wrong");
+        });
+    }
   },
 };
 </script>

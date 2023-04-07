@@ -264,12 +264,14 @@ class BillingController extends Controller
                             // ->where('orders.billing_processed','=','0')
                             ->where('orders.vid','=',$vid)
                             ->orderBy('orders.oid')
-                            ->select('orders.oid','line_items.quantity','line_items.line_item_id','line_items.product_id','line_items.total','orders.total as order_amount')
+                            ->select('orders.oid','line_items.quantity','line_items.line_item_id','line_items.product_id','line_items.total','orders.total as order_amount','orders.status')
                             ->get();
+                            
                             // dd(count($order_id));die();
                             // print_r($order_id);
                         // echo "Before Billing - ".count($order_id);
                         // die();
+                        // dd(count($order_id));die();
                         $duplicate = 1;
                         $billing_processdata = array();
                         for($i=0;$i<count($order_id);$i++)
@@ -280,6 +282,7 @@ class BillingController extends Controller
                             $order_id_concat=$orderid.$j;
                             $line_item_id=$order_id[$i]->line_item_id;
                             $line_quantity=$order_id[$i]->quantity;
+                            
                             // echo "QTY- ".$line_quantity=$order_id[$i]->quantity;
                             $line_product_id=$order_id[$i]->product_id;
                             $product_detail = DB::table("products")->where('product_id','=',$line_product_id)->get();
@@ -311,7 +314,6 @@ class BillingController extends Controller
                                         // }
                                     }
                                     $count = ($duplicate == 1)?$count:$duplicate;
-                                 
                                     if(($way_data[0]->gateway)==0)
                                     {
                                         $vendor_name='MAJ';
@@ -342,10 +344,10 @@ class BillingController extends Controller
                                     $customer_invoice_no="-";
                                     $customer_invoice_date="-";
                                     $suborder_id=$order_id_concat.$count;
-                                         
-                                    // DB::table('invoice_infos')->insert(['invoice_no'=>$vendor_invoice,'customer_invoice_no'=>$customer_invoice_no,'customer_invoice_date'=>$customer_invoice_date,'order_id'=>$orderid,'vid'=>$vid,'suborder_id'=>$suborder_id,'line_item_id'=>$line_item_id,'total'=>$sub_total]);//2023
-                                    // DB::table('suborder_details')->insert(['order_id'=>$orderid,'vid'=>$vid,'suborder_id'=>$suborder_id,'line_item_id'=>$line_item_id,'invoice_no'=>$vendor_invoice,'total'=>$sub_total]);
+                                    DB::table('invoice_infos')->insert(['invoice_no'=>$vendor_invoice,'customer_invoice_no'=>$customer_invoice_no,'customer_invoice_date'=>$customer_invoice_date,'order_id'=>$orderid,'vid'=>$vid,'suborder_id'=>$suborder_id,'line_item_id'=>$line_item_id,'total'=>$sub_total]);
+                                    DB::table('suborder_details')->insert(['order_id'=>$orderid,'vid'=>$vid,'suborder_id'=>$suborder_id,'line_item_id'=>$line_item_id,'invoice_no'=>$vendor_invoice,'total'=>$sub_total]);
                             }
+                           
                             $line_item_idd = DB::table('suborder_details')->where('vid','=',$vid)->where('suborder_details.suborder_id','=',$suborder_id)->get();
                             $order_lineitem_id=$line_item_idd[0]->line_item_id;
                             $line_item_id = DB::table('line_items')->where('vid','=',$vid)->where('line_item_id', '=', $order_lineitem_id)->get();
@@ -356,7 +358,6 @@ class BillingController extends Controller
                             // dd($get_product_id);die();
                             $way_data =DB::table("way_data")->where('vid','=',$vid)->get();
                             $order_bill_processed =DB::table('orders')->where('vid','=',$vid)->where('orders.oid','=',$get_order_id)->get();
-                         
                             $discount_amount=$order_bill_processed[0]->discount_total;
                             $billing_processed=$order_bill_processed[0]->billing_processed;
                             $parent_order_id=$order_bill_processed[0]->parent_id;
@@ -481,7 +482,6 @@ class BillingController extends Controller
                                     $collectable_amount=$order_amount;
                                 }          
                                 $way_bill =DB::table("waybill")->where('vid','=',$vid)->where('order_id','=',$get_order_id)->get();
-                                dd($way_bill);die();
                                 // echo "\n\nCount  - ".count($way_bill);
                                 if (count($way_bill)>1){
                                     $Way_bill_no=$way_bill[0]->waybill_no;

@@ -159,6 +159,16 @@ export default {
           sortable: true,
         },
         {
+          key: "parent_order_number",
+          label: "Parent Order Number",
+          sortable: true,
+        },
+        {
+          key: "vid",
+          label: "Vid",
+          sortable: true,
+        },
+        {
           key: "vendor_name",
           label: "Vendor Name",
           sortable: true,
@@ -170,30 +180,22 @@ export default {
         },
         {
           key: "invoice_no",
-          label: "Invoice No. To Majime",
+          label: "Invoice No",
           sortable: true,
         },
-        {
-          key: "created_at",
-          label: "Date Invoice No. To Majime ",
-          sortable: true,
-        },
-
         {
           key: "customer_invice_no",
-          label: "Customer Invoice No",
+          label: " CustomerInvoice No",
           sortable: true,
         },
-
         {
           key: "customer_invoice_date",
-          label: "Date Customer Invoice No.",
+          label: " Customer Invoice Date",
           sortable: true,
         },
-
         {
           key: "sub_order_id",
-          label: "Sub Order ID",
+          label: "Sub OrderID",
           sortable: true,
         },
         {
@@ -207,13 +209,13 @@ export default {
           sortable: true,
         },
         {
-          key: "cgst",
-          label: "CGST",
+          key: "sgst",
+          label: "SGST",
           sortable: true,
         },
         {
-          key: "sgst",
-          label: "SGST",
+          key: "cgst",
+          label: "CGST",
           sortable: true,
         },
         {
@@ -233,37 +235,32 @@ export default {
         },
         {
           key: "dispatch_date",
-          label: "Dispatched date",
+          label: "Dispatch Date",
           sortable: true,
         },
         {
           key: "order_from",
-          label: "Invoice State Code (From)",
+          label: "Order From",
           sortable: true,
         },
         {
           key: "order_to",
-          label: "Invoice State Code (To)",
+          label: "Order to ",
           sortable: true,
         },
         {
           key: "delivered_date",
-          label: "Delivery Date",
+          label: "Delivered Date",
           sortable: true,
         },
         {
           key: "dto_booked_date",
-          label: "DTO Booked Date",
+          label: "DtoBooked Date",
           sortable: true,
         },
         {
           key: "dto_delivered_to_warhouse_date",
-          label: "DTO Delivered to Warehouse Date",
-          sortable: true,
-        },
-        {
-          key: "sale_return_status",
-          label: "Sale Return Status",
+          label: "DtoDelivered to Warehouse",
           sortable: true,
         },
         {
@@ -272,27 +269,17 @@ export default {
           sortable: true,
         },
         {
-          key: "refund_date",
-          label: "Refund Date",
-          sortable: true,
-        },
-        {
           key: "refund_amount",
           label: "Refund Amount",
           sortable: true,
         },
         {
-          key: "waybill_no",
-          label: "Waybill No.",
+          key: "sale_return_date",
+          label: "Sale Return Date",
           sortable: true,
         },
         {
-          key: "parent_order_number",
-          label: "Parent Order Number",
-          sortable: true,
-        },
-        {
-          key: "order_status",
+          key: "status",
           label: "Order Status",
           sortable: true,
         },
@@ -327,18 +314,23 @@ export default {
           sortable: true,
         },
         {
-          key: "status_code",
-          label: "State Code",
+          key: "sr",
+          label: "status Code",
           sortable: true,
         },
         {
           key: "post_code",
-          label: "Postcode",
+          label: "Post Code",
           sortable: true,
         },
         {
           key: "country_code",
           label: "Country Code",
+          sortable: true,
+        },
+        {
+          key: "state",
+          label: "state",
           sortable: true,
         },
         {
@@ -353,12 +345,7 @@ export default {
         },
         {
           key: "pay_method_title",
-          label: "Payment Method Title",
-          sortable: true,
-        },
-        {
-          key: "order_subtotal_amount",
-          label: "Order Subtotal Amount",
+          label: "Payment Method",
           sortable: true,
         },
         {
@@ -367,28 +354,18 @@ export default {
           sortable: true,
         },
         {
+          key: "sr",
+          label: "Shipping Charges",
+          sortable: true,
+        },
+        {
           key: "coupon_discount",
-          label: "Coupon Discount",
+          label: "Coupan Discount",
           sortable: true,
         },
         {
           key: "order_amount",
           label: "Order Amount",
-          sortable: true,
-        },
-        {
-          key: "wallet_used",
-          label: "Wallet Used",
-          sortable: true,
-        },
-        {
-          key: "collectable_amount",
-          label: "Collectable Amount",
-          sortable: true,
-        },
-        {
-          key: "orderrefund_amount",
-          label: "Order Refund Amount",
           sortable: true,
         },
         {
@@ -403,7 +380,7 @@ export default {
         },
         {
           key: "sku",
-          label: "SKU",
+          label: "Sku",
           sortable: true,
         },
         {
@@ -413,17 +390,12 @@ export default {
         },
         {
           key: "item_cost",
-          label: "Item Price",
-          sortable: true,
-        },
-        {
-          key: "item_cost",
-          label: "Shipping Cost",
+          label: "Item Cost",
           sortable: true,
         },
         {
           key: "coupon_code",
-          label: "Coupon Code",
+          label: "Coupan Code",
           sortable: true,
         },
         {

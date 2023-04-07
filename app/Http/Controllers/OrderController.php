@@ -140,7 +140,7 @@ class OrderController extends Controller {
         ->pluck('product_id')->toArray();//table line_item to fetch product_id
         //get detail products table according to product_id (match)$orderItems(variable)
         $get_detail=DB::table("products")->whereIn('product_id',$orderItems)->where('vid', '=', intval($_REQUEST['vid']))->get();
-        
+        return response()->json(['error' => false, 'data' => $get_detail, "ErrorCode" => "000"], 200);
         return $get_detail;
     }
     //getOrderDetails   vendors table according to vendors id=vid
@@ -2273,6 +2273,16 @@ class OrderController extends Controller {
         return $order;
 
      }
-  
-
+     public function order_product_profile(Request $request)
+     {
+        $oid=$request->oid;
+        $orderItems = DB::table("line_items")       
+        ->where('line_items.order_id', '=', $oid)
+        ->where('line_items.vid', '=', intval($_REQUEST['vid']))
+        ->pluck('product_id')->toArray();//table line_item to fetch product_id
+        //get detail products table according to product_id (match)$orderItems(variable)
+        $get_detail=DB::table("products")->whereIn('product_id',$orderItems)->where('vid', '=', intval($_REQUEST['vid']))->get();
+        return response()->json(['error' => false, 'data' => $get_detail, "ErrorCode" => "000"], 200);
+        
+     }
 }
