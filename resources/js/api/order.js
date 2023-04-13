@@ -143,4 +143,16 @@ export default {
     {
         return axios.post('order_product_profile', data)
     },
+    suborder_details(data)
+    {
+        return axios.post('suborder_details', data)
+    },
+    suborder_detailsdata(data)
+    {
+        return axios.post('suborder_details', data)
+    },
+    suborder_refund_amount(data)
+    {
+        return axios.post('refund_amount', data)
+    }
 }

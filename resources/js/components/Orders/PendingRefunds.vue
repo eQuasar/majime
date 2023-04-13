@@ -91,7 +91,16 @@
                         title="Refund Status"
                         v-model="statusAssign"
                       ></b-icon></b-link
-                    >&nbsp;&nbsp;<router-link
+                    >&nbsp;
+                    <router-link
+                      :to="{
+                        name: 'refundorder',
+                        params: { oid: row.item.oid.toString() },
+                      }"
+                      ><b-icon icon="pencil-fill" aria-hidden="true"></b-icon
+                    ></router-link>
+                    &nbsp;
+                    <router-link
                       :to="{
                         name: 'OrderProfile',
                         params: { oid: row.item.oid.toString() },
@@ -115,6 +124,7 @@
         </b-col>
       </b-row>
       <b-modal id="modal-1" title="Change Status:" hide-footer size="lg">
+     
         <b-form>
           <b-alert show variant="danger" v-if="create_error">{{
             create_error
@@ -413,6 +423,7 @@ export default {
       const modalId = "confirm-modal";
       let modalSetTimeout = null;
       this.$bvModal
+      
         .msgBoxConfirm(`Are You Sure Want to Change Refund Status`, {
           id: modalId,
         })

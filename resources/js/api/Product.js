@@ -56,6 +56,10 @@ export default {
     get_import_data(data)
     {
         return axios.post('get_import_data', data)
+    },
+    import_data(data)
+    {
+      return axios.post('import_product_info', data)
     }
 
 

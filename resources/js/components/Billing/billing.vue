@@ -107,16 +107,7 @@
             <template v-slot:cell(sr)="row">
               {{ (currentPage - 1) * perPage + row.index + 1 }}
             </template>
-            <template v-slot:cell(name)="row">
-              <span v-if='row.item.user'>{{row.item.user.name}}</span>
-            </template> 
-            <template v-slot:cell(email)="row">
-              <span v-if='row.item.user'>{{row.item.user.email}}</span>
-            </template>
-            <template v-slot:cell(phone)="row">
-              <span v-if='row.item.user'>{{row.item.user.phone}}</span>
-            </template>  -->
-          </b-table> 
+          </b-table>
           <b-pagination
             v-model="currentPage"
             :total-rows="rows"
@@ -253,16 +244,16 @@ export default {
           label: "Delivered Date",
           sortable: true,
         },
-        {
-          key: "dto_booked_date",
-          label: "DtoBooked Date",
-          sortable: true,
-        },
-        {
-          key: "dto_delivered_to_warhouse_date",
-          label: "DtoDelivered to Warehouse",
-          sortable: true,
-        },
+        // {
+        //   key: "dto_booked_date",
+        //   label: "DtoBooked Date",
+        //   sortable: true,
+        // },
+        // {
+        //   key: "dto_delivered_to_warhouse_date",
+        //   label: "DtoDelivered to Warehouse",
+        //   sortable: true,
+        // },
         {
           key: "sale_return_date",
           label: "Sale Return Date",
@@ -288,11 +279,11 @@ export default {
           label: "Order Date",
           sortable: true,
         },
-        {
-          key: "customer_note",
-          label: "Customer Note",
-          sortable: true,
-        },
+        // {
+        //   key: "customer_note",
+        //   label: "Customer Note",
+        //   sortable: true,
+        // },
         {
           key: "first_name",
           label: "First Name",
@@ -358,16 +349,16 @@ export default {
           label: "Shipping Charges",
           sortable: true,
         },
-        {
-          key: "coupon_discount",
-          label: "Coupan Discount",
-          sortable: true,
-        },
-        {
-          key: "order_amount",
-          label: "Order Amount",
-          sortable: true,
-        },
+        // {
+        //   key: "coupon_discount",
+        //   label: "Coupan Discount",
+        //   sortable: true,
+        // },
+        // {
+        //   key: "order_amount",
+        //   label: "Order Amount",
+        //   sortable: true,
+        // },
         {
           key: "product_id",
           label: "Product Id",
@@ -393,11 +384,11 @@ export default {
           label: "Item Cost",
           sortable: true,
         },
-        {
-          key: "coupon_code",
-          label: "Coupan Code",
-          sortable: true,
-        },
+        // {
+        //   key: "coupon_code",
+        //   label: "Coupan Code",
+        //   sortable: true,
+        // },
         {
           key: "product_weight",
           label: "Product Weight",
@@ -406,6 +397,7 @@ export default {
       ],
       items: [],
       items_sale_return: [],
+      items_sale_invoice:[],
       itemshsn: [],
       itemsstate: [],
     };
@@ -424,7 +416,7 @@ export default {
       billings
         .get_biiling_detail(formData)
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           this.items = response.data;
           this.show = false;
         })
@@ -441,7 +433,58 @@ export default {
       billings
         .get_hsn_detail(formData)
         .then((response) => {
+          // console.log(response.data);
+          this.itemshsn = response.data;
+          this.show = false;
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+    },
+    sale_invoice_wise_detail() {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      billings
+        .sale_invoice_wise_detail(formData)
+        .then((response) => {
           console.log(response.data);
+          this.itemshsn = response.data;
+          this.show = false;
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+    },
+    sale_return_wise_detail() {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      billings
+        .sale_return_wise_detail(formData)
+        .then((response) => {
+          // console.log(response.data);
+          this.itemshsn = response.data;
+          this.show = false;
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+    },
+    hsn_wise_detail_copy() {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      billings
+        .hsn_wise_detail_copy(formData)
+        .then((response) => {
+          // console.log(response.data);
           this.itemshsn = response.data;
           this.show = false;
         })
@@ -458,7 +501,7 @@ export default {
       billings
         .get_state_detail(formData)
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           this.itemsstate = response.data;
           this.show = false;
         })
@@ -475,8 +518,9 @@ export default {
       billings
         .get_saleinvoice_detail(formData)
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           this.items_sale_invoice = response.data;
+          console.log(this.items_sale_invoice);
           this.show = false;
         })
         .catch((error) => {
@@ -492,7 +536,7 @@ export default {
       billings
         .get_salereturn_detail(formData)
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           this.items_sale_return = response.data;
           this.show = false;
         })
@@ -510,8 +554,60 @@ export default {
         data,
         [
           [
-            "Sr No",
-            
+            "Sr no",
+            "Vid",
+            "Vendor name",
+            "Invoie Type",
+            "Invoice Name",
+            "SubOrder Id",
+            "Texable Amount",
+            "IGST",
+            "SGST",
+            "CGST",
+            "Invoice Amount",
+            " HSN Code",
+            "Tax Percentage",
+            "Dispatch Date",
+            "Order From",
+            "Order To",
+            "Delivered Date",
+            "Dto Booked Date",
+            "Dto Delivered Date",
+            "Sale return Status",
+            "Sale Return Date",
+            "Refund Date",
+            "Refund Amount",
+            "Waybill No",
+            "Wallet Processed Date",
+            "Parent OrderId",
+            "Order Status",
+            "Order Date",
+            "Customer Note",
+            "First_name",
+            "Last Name",
+            "Address",
+            "City",
+            "Status",
+            "Post Code",
+            "Country",
+            "State",
+            "Email",
+            "Cart Discount Amount",
+            "Phone",
+            "Payment Method",
+            "Order SUbtotal Amount",
+            "Order Amount",
+            "Wallet Used",
+            "Collectable Amount",
+            "OrderRefund Date",
+            "Product Id",
+            "Product Name",
+            "SKU",
+            "Product Qty",
+            "Item Cost",
+            "Product Weight",
+            "Invoice Date",
+            "Updated at",
           ],
         ],
         { origin: "A1" }

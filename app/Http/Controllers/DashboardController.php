@@ -24,7 +24,6 @@ class DashboardController extends Controller
       $pack='packed';
       $hold='on-hold';
 
-
       $date = \Carbon\Carbon::today()->subDays(7);
       //get data from table orders base vid, table orders according to status equal to processing
     $processing_orders=DB::table("orders")->where('orders.vid','=',$vid)->where('orders.status','=','processing')->where('date_created', '>=', $date)->get();// get table from orders date created lessthan equal $data

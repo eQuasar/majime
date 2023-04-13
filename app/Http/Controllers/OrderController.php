@@ -1689,8 +1689,137 @@ class OrderController extends Controller {
 
        
     }
+    public function changeProcessing_Status_refund_amount(Request $request){
+
+           
+            if ($request->loc == "wp") {
+                $listImp['0'] = $request->oid;
+            } elseif ($request->allSelected == "false") {
+                $listImp['0'] = $request->oid;
+                
+                // var_dump($listImp); die;
+                
+            } else {
+                $listImp = explode(',', $request->allSelected);
+            }
+            for ($i = 0;$i < count($listImp);$i++) 
+            {
+                // $amount =>$request = $amount;
+                // $amount = $request->amount;
+                // // $amount=>$request->refund_amount;
+                // $suborder_details_data = DB::table('suborder_details')->where('order_id', intval($listImp[$i]))->where('vid', intval($request->vid))->insert(['refund_amount'=>$amount]);
+               
+               
+               
+                // dd($suborder_details_data);die();
+             
+                DB::table('orders')->where('oid', intval($listImp[$i]))->where('vid', intval($request->vid))->update(['status' => $request->status_assign]);
+                // print_r($woocommerce->put('orders/'.$imp[$i], $data)); die;
+                // https://isdemo.in/fc/wp-json/wc/v3/orders/5393?status=completed
+                $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
+                $curl = curl_init();
+                curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $listImp[$i] . '?status=' . $request->status_assign, CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
+                $response = curl_exec($curl);
+                curl_close($curl);
+                $jsonResp = json_decode($response);
+                // var_dump($jsonResp);
+             
+                
+                
+                if($request->status_assign=='confirmed')
+                {
+                    $date = date('Y-m-d');
+                    $confirm_order_data[]=[     
+                    'vid'=>$request->vid,
+                    'oid'=>$listImp[$i],
+                    'order_confirmdate'=>$date,
+                    ];   
+                   
+                }elseif($request->status_assign=='dto-refunded')
+                {
+                    $date = date('Y-m-d');
+                    $confirm_order_data[]=[     
+                    'vid'=>$request->vid,
+                    'oid'=>$listImp[$i],
+                    'dto_refunddate'=>$date,
+                    ];   
+                    
+                }elseif($request->status_assign=='closed')
+                {
+                    $date = date('Y-m-d');
+                    $confirm_order_data[]=[     
+                    'vid'=>$request->vid,
+                    'oid'=>$listImp[$i],
+                    'order_closedate'=>$date,
+                    ];   
+                }
+                elseif($request->status_assign=='cancelled')
+                {
+                    $date = date('Y-m-d');
+                    $confirm_order_data[]=[     
+                    'vid'=>$request->vid,
+                    'oid'=>$listImp[$i],
+                    'order_canceldate'=>$date,
+                    ];   
+    
+                    $orders = DB::table("orders")->where('vid', '=', intval($request->vid))->where('oid', '=', intval($listImp[$i]))->get()->toArray();
+                    if($orders[0]['payment_method'] == "cod"){
+                        JsonController::smsSend($request->vid,$listImp[$i],"cancel-cod");
+                    }else{
+                        JsonController::smsSend($request->vid,$listImp[$i],"cancel-prepaid");
+                    }
+                }
+                elseif($request->status_assign=='dispatched')
+                {
+                    $date = date('Y-m-d');
+                    $confirm_order_data[]=[     
+                    'vid'=>$request->vid,
+                    'oid'=>$listImp[$i],
+                    'order_canceldate'=>$date,
+                    ];   
+                }  
+            }
+            // else
+            // {
+            //     return response()->json(['error' => false, 'msg' => "Please Enter HSN Code and Weight.", "ErrorCode" => "000"], 200);
+            // }
+                // hsn code and weight with processing confirmed(if )
+            order_reldate::insert($confirm_order_data); 
+            return response()->json(['error' => false, 'msg' => "Order Status Successfully Updated.", "ErrorCode" => "000"], 200);
+                // }
+                // else{
+                //     return response()->json(['error' => false, 'msg' => "Please Enter HSN Code and Weight", "ErrorCode" => "000"], 200);
+                //    }
+                
+    
+           
+        
+
+    }
+    
+    public function suborder_details(Request $request){
+           
+            $suborder_details_data = DB::table('suborder_details')->where('order_id', intval($request->oid))->where('vid', intval($request->vid))
+            ->get();
+            // dd($suborder_details_data);die();
+            return $suborder_details_data;
+        
+}
+public function refund_amount(Request $request){
+    // echo "asdas";   
+    $current_date=carbon::now();
+        $amount = $request->refund_amount;
+        $suborder_details_data = DB::table('suborder_details')->where('vid', intval($request->vid))
+        ->where('suborder_id',$request->suborder_id)->where('order_id',$request->oid)->update(['refund_amount' => $amount]);
+        $data = DB::table('billing_processeds')->where('vid', intval($request->vid))
+        ->where('sub_order_id',$request->suborder_id)->where('parent_order_number',$request->oid)->update(['refund_amount' => $amount,'refund_date'=>$current_date]);
+        $details_data = DB::table('order_reldates')->insert(['refund_date'=>$current_date,'oid'=>$request->oid,'vid'=>$request->vid]);
+        return response()->json(['error' => false, 'data'=>$suborder_details_data, 'msg' => "Refound Amount Successfully.", "ErrorCode" => "000"], 200);
+    
+}
     //// hsn code and weight with processing confirmed(if start)
     public function changeProcessing_Status_confirmed(Request $request){
+
         // function changeProcessing_Status(Request $request) {
             //echo "asdsad";die();
             // var_dump($_REQUEST); die;
@@ -2286,4 +2415,203 @@ class OrderController extends Controller {
         return response()->json(['error' => false, 'data' => $get_detail, "ErrorCode" => "000"], 200);
         
      }
+     public function state_wise_detail_copy(Request $request){
+        $dto='dto-refunded';//variable
+        $dtoBooked='dto-booked';
+        $dispatched='dispatched';
+        $rtdOnline='rtd-online';
+        $rtdCod='rtd-cod';
+      
+        $dtodel2warehouse='dtodel2warehouse';
+        $dtointransit='dtointransit';
+        $completed='completed';
+        $intransit='intransit';
+        $packed='picked';
+        $deliveredtocust='deliveredtocust';
+        $pickedup='pickedup';
+        $vid=$request->vid;
+      //sale detail
+      $state_data = DB::table('billing_processeds')
+      ->where('vid', intval($request->vid))
+      ->whereIn('status',[$dto,$dtoBooked,$dispatched,$rtdOnline,$rtdCod])
+      ->pluck('order_to')->toArray();
+    //   dd($state_data);die();
+    for($a=0;$a<count($state_data);$a++){
+        // if($state_data==0){
+        //     echo $state_data;
+        // }
+        // if($state_data==1){
+        //     echo $state_data;
+        // }
+        dd($state_data);die();
+    }
+
+        $state_sale_wise_data = DB::table('billing_processeds')
+         ->where('vid', intval($request->vid))
+         ->whereIn('status',[$dto,$dtoBooked,$dispatched,$rtdOnline,$rtdCod])
+         ->distinct()->pluck('order_to')->toArray();
+          for($i=0;$i<count($state_sale_wise_data);$i++)
+          {
+            $state_wise_detail_sale = DB::table('billing_processeds')->where('order_to',$state_sale_wise_data)
+            ->select('order_to','textable_amount','igst','cgst','sgst','invoice_amount')->get();
+            $sale_tex_amount = array();
+            $sale_igst = array(); 
+            $sale_cgst = array();
+            $sale_sgst = array();
+            $sale_invoice_amount = array();
+            for($j=0;$j<count($state_wise_detail_sale);$j++)
+            {
+              $sale_tex_amount[] = $state_wise_detail_sale[$j]->textable_amount;
+              $sale_igst[] = $state_wise_detail_sale[$j]->igst;
+              $sale_cgst[] = $state_wise_detail_sale[$j]->cgst;
+              $sale_sgst[] = $state_wise_detail_sale[$j]->sgst;
+              $sale_invoice_amount[] = $state_wise_detail_sale[$j]->invoice_amount;
+            }
+            $sale_tex_amount = array_sum($sale_tex_amount);
+            $sale_igst = array_sum($sale_igst);
+            $sale_cgst = array_sum($sale_cgst);
+            $sale_sgst = array_sum($sale_sgst);
+            $sale_invoice_amount = array_sum($sale_invoice_amount);  
+          }
+          //end of sale
+          
+          //sale return 
+          $state_sale_return_wise_data = DB::table('billing_processeds')
+          // dd($state_sale_return_wise_data);die();
+          ->where('vid', intval($request->vid))
+          ->whereIn('status',[$dtodel2warehouse,$dtointransit,$completed,$intransit,$packed,$deliveredtocust,$pickedup])
+          ->distinct()->pluck('order_to')->toArray();
+           for($i=0;$i<count($state_sale_return_wise_data);$i++)
+           {
+             $state_return_wise_detail_sale_return = DB::table('billing_processeds')
+             ->where('order_to',$state_sale_return_wise_data)
+             ->select('order_to','textable_amount','igst','cgst','sgst','invoice_amount')->get();
+            //  dd($state_sale_return_wise_data);die();
+             $sale_return_tex_amount = array();
+             $sale_return_igst = array(); 
+             $sale_return_cgst = array();
+             $sale_return_sgst = array();
+             $sale_return_invoice_amount = array();
+             for($j=0;$j<count($state_return_wise_detail_sale_return);$j++)
+             {
+                //  dd($state_sale_return_wise_data);die();
+               $sale_return_tex_amount[] = $state_return_wise_detail_sale_return[$j]->textable_amount;
+               $sale_return_igst[] = $state_return_wise_detail_sale_return[$j]->igst;
+               $sale_return_cgst[] = $state_return_wise_detail_sale_return[$j]->cgst;
+               $sale_return_sgst[] = $state_return_wise_detail_sale_return[$j]->sgst;
+               $sale_return_invoice_amount[] = $state_return_wise_detail_sale_return[$j]->invoice_amount;
+             }
+             $sale_return_tex_amount = array_sum($sale_return_tex_amount);
+             $sale_return_igst = array_sum($sale_return_igst);
+             $sale_return_cgst = array_sum($sale_return_cgst);
+             $sale_return_sgst = array_sum($sale_return_sgst);
+             $sale_return_invoice_amount = array_sum($sale_return_invoice_amount);  
+           }
+           $net_sale_text_amount= $sale_tex_amount-$sale_return_tex_amount;
+           $net_igst= $sale_igst-$sale_return_igst;
+           $net_cgst= $sale_cgst-$sale_return_cgst;
+           $net_sgst= $sale_sgst-$sale_return_sgst;
+           $net_invoice_amount=$sale_invoice_amount - $sale_return_invoice_amount;
+           $arr1 = array(
+            0=> array(
+              'order_to'=>$state_sale_wise_data,
+              'sale_textable_amount'=>$sale_tex_amount,
+              'sale_igst'=>$sale_igst,
+              'sale_cgst'=>$sale_cgst,
+              'sale_sgst'=>$sale_sgst,
+              'sale_invoice_amount'=>$sale_invoice_amount,
+              'return_text_amount'=>$sale_return_tex_amount,
+              'return_igst'=>$sale_return_igst,
+              'return_cgst'=>$sale_return_cgst,
+              'return_sgst'=>$sale_return_sgst,
+              'return_invoice_amount'=>$sale_return_invoice_amount,
+              'net_textable_amount'=>$net_sale_text_amount,
+              'net_igst'=>$net_igst,
+              'net_cgst'=>$net_cgst,
+              'net_sgst'=>$net_sgst,
+              'net_invoice_amount'=>$net_invoice_amount
+            )
+            );          
+         
+           $state_wise = $arr1;
+        dd($state_wise);die();
+         
+         }
+    
+
+//         ->where('vid', intval($request->vid))
+//          //check from table (billing_processeds) status equal to $rto,$dto,$close
+//         ->whereIn('status',[$rto,$dto,$close])
+//         // get data from  table (billing_processeds) 'textable_amount','igst','cgst','sgst','invoice_amount','order_to'
+//         ->select('textable_amount','igst','cgst','sgst','invoice_amount','order_to')->get();
+//         //sale textable amount total textable_amount
+//         $sale_textable_amount_total=$retun_billing_processer_data->sum('textable_amount');
+//         //sale igst total igst
+//         $sale_igst_total=$retun_billing_processer_data->sum('igst');
+//         //sale cgst total cgst
+//         $sale_cgst_total=$retun_billing_processer_data->sum('cgst');
+//         //sale sgst total sgst
+//         $sale_sgst_total=$retun_billing_processer_data->sum('sgst');
+//         //sale invoice_amount  total invoice_amount
+//         $sale_invoice_amount_total=$retun_billing_processer_data->sum('invoice_amount');
+    
+    
+//         //sale retun data start
+//         $sale_return_data = DB::table('billing_processeds')
+//           //check from table (billing_processeds) order_to equal to PB
+//         ->where('order_to','=','PB')
+//         ->where('vid', intval($request->vid))
+//         //check from table (billing_processeds) status equal to $rto,$dto,
+//         ->whereIn('status',[$rto,$dto])
+//          // get data from  table (billing_processeds) 'textable_amount','igst','cgst','sgst','invoice_amount','order_to'
+//         ->select('textable_amount','igst','cgst','sgst','invoice_amount','order_to')->get();
+//          // retun sale textable amount total textable_amount
+//         $retun_sale_textable_amount_total=$retun_billing_processer_data->sum('textable_amount');
+//            // retun sale igst amount total igst
+//         $retun_sale_igst_total=$retun_billing_processer_data->sum('igst');
+//           // retun sale cgst amount total cgst
+//         $retun_sale_cgst_total=$retun_billing_processer_data->sum('cgst');
+//           // retun sale sgst amount total sgst
+//         $retun_sale_sgst_total=$retun_billing_processer_data->sum('sgst');
+//           // retun sale invoice_amount amount total invoice_amount
+//         $retun_sale_invoice_amount_total=$retun_billing_processer_data->sum('invoice_amount');
+        
+//         //net sale for sale textable amount_total-return sale textable amount_total
+//         $net_texable_amount=$sale_textable_amount_total-$retun_sale_textable_amount_total;
+//           //net sale for sale igst-return sale igst total
+//         $net_igst=$retun_sale_igst_total-$sale_igst_total;
+//          //net sale for sale cgst-return sale cgst total
+//         $net_cgst=$retun_sale_cgst_total-$sale_cgst_total;
+//        //net sale for sale sgst-return sale sgst total
+//         $net_sgst=$retun_sale_sgst_total-$sale_sgst_total;
+//        //net sale for sale invoice_amount-return sale invoice_amount total
+//         $net_invoice_amount=$retun_sale_invoice_amount_total-$sale_invoice_amount_total;
+//         //return  array $net_texable_amount,$net_igst, $net_cgst, $net_sgst,
+//         return
+//             [
+//                 $net_texable_amount,
+//                 $net_igst,
+//                 $net_cgst,
+//                 $net_sgst,
+//             ];
+//             // $a1=array("net_texable_amount","net_igst");
+    
+            
+//         // return $net;
+     
+    
+       
+    
+//             //net sale for sale textable amount_total-return sale textable amount_total
+//             $net_texable_amount=$sale_textable_amount_total-$retun_sale_textable_amount_total;
+//             //net sale for sale igst-return sale igst total
+//           $net_igst=$retun_sale_igst_total-$sale_igst_total;
+//            //net sale for sale cgst-return sale cgst total
+//           $net_cgst=$retun_sale_cgst_total-$sale_cgst_total;
+//          //net sale for sale sgst-return sale sgst total
+//           $net_sgst=$retun_sale_sgst_total-$sale_sgst_total;
+//          //net sale for sale invoice_amount-return sale invoice_amount total
+//           $net_invoice_amount=$retun_sale_invoice_amount_total-$sale_invoice_amount_total;
+  
+//      }
 }

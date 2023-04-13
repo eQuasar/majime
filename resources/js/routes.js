@@ -43,6 +43,7 @@ import editbutton2 from './components/Products/editbutton2.vue'
 import Billing from './components/Billing/billing.vue'
 import category from './components/Billing/category.vue'
 import Import_File from './components/Report/import_file.vue'
+import refundorder from './components/Orders/refundorder.vue'
 
 
 
@@ -78,6 +79,9 @@ export const routes = [
     {path:'/admin/import-vendor',component: ImportVendor,name:'importvendor',meta: { auth: true}},
     //{path:'/vendor/Order-detail/:clientid',component: ReportProfile,props: true,name:'orderdetail',meta: { auth: true}},
     {path:'/vendor/OrderProfile/:oid',component: OrderProfile2,props: true,name:'OrderProfile',meta: { auth: true}},
+    {path:'/vendor/Orderrefundprofile/:oid',component: refundorder,props: true,name:'refundorder',meta: { auth: true}},
+    
+
     {path:'/vendor/ListOrdersforVariationID/:product_id',component: productprofile,props: true,name:'productprofile',meta: { auth: true}},
      {path:'/admin/transaction',component:TransactionDetail ,props: true,name:'TransactionDetail',meta: { auth: true}},
      {path:'/admin/ViewTransaction',component:ViewTransaction ,props: true,name:'ViewTransaction',meta: { auth: true}},

@@ -225,6 +225,12 @@ export default {
         .then((response) => {
           console.log(response);
           this.items = response.data;
+          this.hsndetailfile();
+          this.successful = true;
+            this.error = true;
+          this.$router.push({name: 'import_file'});
+          
+          // this.fetchData();
           // this.countrys = response.data.data;
           console.log(this.items);
           //this.seen = false;
@@ -234,6 +240,20 @@ export default {
           alert("something went wrong");
         });
     },
+    hsndetailfile(vid) {
+    this.vid = JSON.parse(localStorage.getItem("ivid"));
+    let formData= new FormData();
+    formData.append("vid",this.vid);
+    product.get_import_data(formData)
+     .then(( response ) => {
+        this.items=response.data;
+        console.log(this.items);
+      })
+      .catch(response => {
+          this.successful = false;
+          alert('something went wrong');
+      })
+  },
     onFileChange(event) {
       this.file = event.target.files[0];
     },
@@ -242,10 +262,16 @@ export default {
       const formData = new FormData();
       formData.append('vid', this.vid);
       formData.append('file', this.file);
-
-      axios.post('https://cl.majime.in/api/v1/import_product_info', formData).then((response) => {
+      // product.get_import_data(formData)
+      // axios.post('https://majimedev.isdemo.in/api/v1/import_product_info', formData).then((response) => {
+        product.import_data(formData)
+     .then(( response ) => {
         this.paymentSuccessful ();
+        setTimeout(function () {
+            window.location.href = "/admin/import/data";
+          }, 2000);
         console.log(response.data);
+
       
       });
     },
