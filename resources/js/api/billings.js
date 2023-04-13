@@ -15,7 +15,7 @@ export default {
     },
     get_hsn_detail(data)
     {
-        return axios.post('hsn_wise_detail', data)
+        return axios.post('hsn_wise_detail_copy', data)
     },
     get_state_detail(data)
     {
@@ -29,6 +29,7 @@ export default {
     {
         return axios.post('sale_invoice_wise_detail', data)
     },
+  
 }
 
 

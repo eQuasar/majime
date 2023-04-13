@@ -61,6 +61,7 @@ Route::group(['prefix' => 'v1'], function () {
   	Route::get('getAllLinks',[App\Http\Controllers\JsonController::class,'getAllLinks']);
   	// Route::get('getJson',[App\Http\Controllers\JsonController::class,'getJson']);
 	Route::post('getJson', 'JsonController@getJson')->name('getJson');
+	Route::post('productgetJson', 'JsonController@productgetJson')->name('productgetJson');
 	// Route::post('getJson', 'JsonController@getJson')->name('getJson');
 	Route::post('changeStatus', 'OrderController@changeStatus')->name('changeStatus');
 	Route::post('assignAWB', 'OrderController@assignAWB')->name('assignAWB');
@@ -149,7 +150,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('get_hsn','HsnDetailController@show')->name('get_hsn');
 	Route::post('hsn_weight_update','HsnDetailController@update')->name('hsn_weight_update');
 	Route::post('getProduct_data','HsnDetailController@getProduct_data')->name('getProduct_data');
-	Route::post('getJson', 'JsonController@getJson')->name('getJson');
+	// Route::post('getJson', 'JsonController@getJson')->name('getJson');
 	Route::post('insert_product/{vid}', 'JsonController@insert_product')->name('insert_product');
 	Route::post('getorder_detail','JsonController@getorder_detail')->name('getorder_detail');
 	Route::post('suborder_detail','JsonController@suborder_detail')->name('suborder_detail');
@@ -172,7 +173,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('sale_invoice_wise_detail','HsnDetailController@sale_invoice_wise_detail')->name('sale_invoice_wise_detail');
 	Route::post('sale_return_wise_detail','HsnDetailController@sale_return_wise_detail')->name('sale_return_wise_detail');
 	Route::post('state_wise_detail','HsnDetailController@state_wise_detail')->name('state_wise_detail');
-	Route::post('hsn_wise_detail','HsnDetailController@hsn_wise_detail')->name('hsn_wise_detail');
+	// Route::post('hsn_wise_detail','HsnDetailController@hsn_wise_detail')->name('hsn_wise_detail');
 	Route::post('hsn_wise_detail_copy','BillingController@hsn_wise_detail_copy')->name('hsn_wise_detail_copy');
 	Route::post('state_wise_detail_copy','OrderController@state_wise_detail_copy')->name('state_wise_detail_copy');
 	

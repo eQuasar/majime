@@ -95,7 +95,7 @@
             striped
             hover
             responsive
-            :items="items"
+            :items="itemsstate"
             :filter-included-fields="filterOn"
             :filter="filter"
             :fields="fields"
@@ -129,10 +129,12 @@ export default {
   mounted() {
     this.getVidz();
     this.getBilling_detail();
-    this.gethsn_detail();
+    // this.gethsn_detail();
     this.getstate_detail();
-    this.salereturn_detail();
+    // this.salereturn_detail();
     this.saleinvoice_detail();
+    this.hsn_wise_detail_copy();
+    this.sale_return_wise_detail();
   },
   data() {
     return {
@@ -150,256 +152,339 @@ export default {
           sortable: true,
         },
         {
-          key: "parent_order_number",
-          label: "Parent Order Number",
-          sortable: true,
-        },
-        {
-          key: "vid",
-          label: "Vid",
-          sortable: true,
-        },
-        {
-          key: "vendor_name",
-          label: "Vendor Name",
-          sortable: true,
-        },
-        {
-          key: "invoicing_type",
-          label: "Invoicing Type",
-          sortable: true,
-        },
-        {
-          key: "invoice_no",
-          label: " Customer Invoice No",
-          sortable: true,
-        },
-        {
-          key: "invoice_no",
-          label: "Customer Invoice No",
-          sortable: true,
-        },
-        {
-          key: "created_at",
-          label: " Customer Invoice Date",
-          sortable: true,
-        },
-        {
-          key: "sub_order_id",
-          label: "Sub OrderID",
-          sortable: true,
-        },
-        {
-          key: "textable_amount",
-          label: "Taxable Amount",
-          sortable: true,
-        },
-        {
-          key: "igst",
-          label: "IGST",
-          sortable: true,
-        },
-        {
-          key: "sgst",
-          label: "SGST",
-          sortable: true,
-        },
-        {
-          key: "cgst",
-          label: "CGST",
-          sortable: true,
-        },
-        {
-          key: "invoice_amount",
-          label: "Invoice Amount",
-          sortable: true,
-        },
-        {
-          key: "hsn_code",
-          label: "HSN Code",
-          sortable: true,
-        },
-        {
-          key: "text_percentage",
-          label: "Tax Percentage",
-          sortable: true,
-        },
-        {
-          key: "dispatch_date",
-          label: "Dispatch Date",
-          sortable: true,
-        },
-        {
-          key: "order_from",
-          label: "Order From",
-          sortable: true,
-        },
-        {
           key: "order_to",
-          label: "Order to ",
+          label: "State",
           sortable: true,
         },
         {
-          key: "delivered_date",
-          label: "Delivered Date",
-          sortable: true,
-        },
-        // {
-        //   key: "dto_booked_date",
-        //   label: "DtoBooked Date",
-        //   sortable: true,
-        // },
-        // {
-        //   key: "dto_delivered_to_warhouse_date",
-        //   label: "DtoDelivered to Warehouse",
-        //   sortable: true,
-        // },
-        {
-          key: "sale_return_date",
-          label: "Sale Return Date",
+          key: "sale_texable_amount",
+          label: "Sale Taxable Amount",
           sortable: true,
         },
         {
-          key: "refund_amount",
-          label: "Refund Amount",
+          key: "sale_igst",
+          label: "Sale IGST",
           sortable: true,
         },
         {
-          key: "sale_return_date",
-          label: "Sale Return Date",
+          key: "sale_cgst",
+          label: "Sale CGST",
           sortable: true,
         },
         {
-          key: "status",
-          label: "Order Status",
+          key: "sale_sgst",
+          label: "Sale SGST",
           sortable: true,
         },
         {
-          key: "order_date",
-          label: "Order Date",
-          sortable: true,
-        },
-        // {
-        //   key: "customer_note",
-        //   label: "Customer Note",
-        //   sortable: true,
-        // },
-        {
-          key: "first_name",
-          label: "First Name",
+          key: "return_texable_amount",
+          label: "Return Taxable Amount",
           sortable: true,
         },
         {
-          key: "last_name",
-          label: "Last Name",
+          key: "return_igst",
+          label: "Return IGST",
           sortable: true,
         },
         {
-          key: "address",
-          label: "Address",
+          key: "return_cgst",
+          label: "Return CGST",
           sortable: true,
         },
         {
-          key: "city",
-          label: "City",
+          key: "return_sgst",
+          label: "Return SGST",
           sortable: true,
         },
         {
-          key: "sr",
-          label: "status Code",
+          key: "return_invoice_amount",
+          label: "Return Invoice Amount",
           sortable: true,
         },
         {
-          key: "post_code",
-          label: "Post Code",
+          key: "net_texable_amount",
+          label: "Net Taxable Amount",
           sortable: true,
         },
         {
-          key: "country_code",
-          label: "Country Code",
+          key: "net_igst",
+          label: "Net IGST",
           sortable: true,
         },
         {
-          key: "state",
-          label: "state",
+          key: "net_cgst",
+          label: "Net CGST",
           sortable: true,
         },
         {
-          key: "email",
-          label: "Email",
+          key: "net_sgst",
+          label: "Net SGST",
           sortable: true,
         },
         {
-          key: "phone",
-          label: "Phone",
-          sortable: true,
-        },
-        {
-          key: "pay_method_title",
-          label: "Payment Method",
-          sortable: true,
-        },
-        {
-          key: "cart_discount_amount",
-          label: "Cart Discount Amount",
-          sortable: true,
-        },
-        {
-          key: "sr",
-          label: "Shipping Charges",
-          sortable: true,
-        },
-        // {
-        //   key: "coupon_discount",
-        //   label: "Coupan Discount",
-        //   sortable: true,
-        // },
-        // {
-        //   key: "order_amount",
-        //   label: "Order Amount",
-        //   sortable: true,
-        // },
-        {
-          key: "product_id",
-          label: "Product Id",
-          sortable: true,
-        },
-        {
-          key: "product_name",
-          label: "Product Name",
-          sortable: true,
-        },
-        {
-          key: "sku",
-          label: "Sku",
-          sortable: true,
-        },
-        {
-          key: "product_qty",
-          label: "Product Qty",
-          sortable: true,
-        },
-        {
-          key: "item_cost",
-          label: "Item Cost",
-          sortable: true,
-        },
-        // {
-        //   key: "coupon_code",
-        //   label: "Coupan Code",
-        //   sortable: true,
-        // },
-        {
-          key: "product_weight",
-          label: "Product Weight",
+          key: "net_invoice_amount",
+          label: "Net Invoice Amount",
           sortable: true,
         },
       ],
+      // fields: [
+      //   {
+      //     key: "sr",
+      //     label: "S No.",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "parent_order_number",
+      //     label: "Parent Order Number",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "vid",
+      //     label: "Vid",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "vendor_name",
+      //     label: "Vendor Name",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "invoicing_type",
+      //     label: "Invoicing Type",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "invoice_no",
+      //     label: " Customer Invoice No",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "invoice_no",
+      //     label: "Customer Invoice No",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "created_at",
+      //     label: " Customer Invoice Date",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "sub_order_id",
+      //     label: "Sub OrderID",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "textable_amount",
+      //     label: "Taxable Amount",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "igst",
+      //     label: "IGST",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "sgst",
+      //     label: "SGST",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "cgst",
+      //     label: "CGST",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "invoice_amount",
+      //     label: "Invoice Amount",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "hsn_code",
+      //     label: "HSN Code",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "text_percentage",
+      //     label: "Tax Percentage",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "dispatch_date",
+      //     label: "Dispatch Date",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "order_from",
+      //     label: "Order From",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "order_to",
+      //     label: "Order to ",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "delivered_date",
+      //     label: "Delivered Date",
+      //     sortable: true,
+      //   },
+      //   // {
+      //   //   key: "dto_booked_date",
+      //   //   label: "DtoBooked Date",
+      //   //   sortable: true,
+      //   // },
+      //   // {
+      //   //   key: "dto_delivered_to_warhouse_date",
+      //   //   label: "DtoDelivered to Warehouse",
+      //   //   sortable: true,
+      //   // },
+      //   {
+      //     key: "sale_return_date",
+      //     label: "Sale Return Date",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "refund_amount",
+      //     label: "Refund Amount",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "sale_return_date",
+      //     label: "Sale Return Date",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "status",
+      //     label: "Order Status",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "order_date",
+      //     label: "Order Date",
+      //     sortable: true,
+      //   },
+      //   // {
+      //   //   key: "customer_note",
+      //   //   label: "Customer Note",
+      //   //   sortable: true,
+      //   // },
+      //   {
+      //     key: "first_name",
+      //     label: "First Name",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "last_name",
+      //     label: "Last Name",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "address",
+      //     label: "Address",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "city",
+      //     label: "City",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "sr",
+      //     label: "status Code",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "post_code",
+      //     label: "Post Code",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "country_code",
+      //     label: "Country Code",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "state",
+      //     label: "state",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "email",
+      //     label: "Email",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "phone",
+      //     label: "Phone",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "pay_method_title",
+      //     label: "Payment Method",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "cart_discount_amount",
+      //     label: "Cart Discount Amount",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "sr",
+      //     label: "Shipping Charges",
+      //     sortable: true,
+      //   },
+      //   // {
+      //   //   key: "coupon_discount",
+      //   //   label: "Coupan Discount",
+      //   //   sortable: true,
+      //   // },
+      //   // {
+      //   //   key: "order_amount",
+      //   //   label: "Order Amount",
+      //   //   sortable: true,
+      //   // },
+      //   {
+      //     key: "product_id",
+      //     label: "Product Id",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "product_name",
+      //     label: "Product Name",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "sku",
+      //     label: "Sku",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "product_qty",
+      //     label: "Product Qty",
+      //     sortable: true,
+      //   },
+      //   {
+      //     key: "item_cost",
+      //     label: "Item Cost",
+      //     sortable: true,
+      //   },
+      //   // {
+      //   //   key: "coupon_code",
+      //   //   label: "Coupan Code",
+      //   //   sortable: true,
+      //   // },
+      //   {
+      //     key: "product_weight",
+      //     label: "Product Weight",
+      //     sortable: true,
+      //   },
+      // ],
       items: [],
       items_sale_return: [],
-      items_sale_invoice:[],
+      items_sale_invoice: [],
       itemshsn: [],
       itemsstate: [],
+      sale_return: [],
     };
   },
   computed: {
@@ -426,7 +511,7 @@ export default {
           }
         });
     },
-    gethsn_detail() {
+    hsn_wise_detail_copy() {
       this.vid = JSON.parse(localStorage.getItem("ivid"));
       let formData = new FormData();
       formData.append("vid", this.vid);
@@ -465,27 +550,10 @@ export default {
       let formData = new FormData();
       formData.append("vid", this.vid);
       billings
-        .sale_return_wise_detail(formData)
+        .get_salereturn_detail(formData)
         .then((response) => {
           // console.log(response.data);
-          this.itemshsn = response.data;
-          this.show = false;
-        })
-        .catch((error) => {
-          if (error.response.status == 422) {
-            this.errors_create = error.response.data.errors;
-          }
-        });
-    },
-    hsn_wise_detail_copy() {
-      this.vid = JSON.parse(localStorage.getItem("ivid"));
-      let formData = new FormData();
-      formData.append("vid", this.vid);
-      billings
-        .hsn_wise_detail_copy(formData)
-        .then((response) => {
-          // console.log(response.data);
-          this.itemshsn = response.data;
+          this.sale_return = response.data;
           this.show = false;
         })
         .catch((error) => {
@@ -529,23 +597,23 @@ export default {
           }
         });
     },
-    salereturn_detail() {
-      this.vid = JSON.parse(localStorage.getItem("ivid"));
-      let formData = new FormData();
-      formData.append("vid", this.vid);
-      billings
-        .get_salereturn_detail(formData)
-        .then((response) => {
-          // console.log(response.data);
-          this.items_sale_return = response.data;
-          this.show = false;
-        })
-        .catch((error) => {
-          if (error.response.status == 422) {
-            this.errors_create = error.response.data.errors;
-          }
-        });
-    },
+    // salereturn_detail() {
+    //   this.vid = JSON.parse(localStorage.getItem("ivid"));
+    //   let formData = new FormData();
+    //   formData.append("vid", this.vid);
+    //   billings
+    //     .get_salereturn_detail(formData)
+    //     .then((response) => {
+    //       // console.log(response.data);
+    //       this.items_sale_return = response.data;
+    //       this.show = false;
+    //     })
+    //     .catch((error) => {
+    //       if (error.response.status == 422) {
+    //         this.errors_create = error.response.data.errors;
+    //       }
+    //     });
+    // },
     Billing_download: function () {
       const data = XLSX.utils.json_to_sheet(this.items);
       const wb = XLSX.utils.book_new();
@@ -618,24 +686,30 @@ export default {
     hsn_download: function () {
       const data = XLSX.utils.json_to_sheet(this.itemshsn);
       const wb = XLSX.utils.book_new();
-      /* fix headers */
-      // XLSX.utils.sheet_add_aoa(
-      //   data,
-      //   [
-      //     [
-      //       "Sr No",
-      //       "Vendor Name",
-      //       "PROJECT NAME",
-      //       "PENDING TASKS",
-      //       "1ST APPOINTMENT",
-      //       "DE-SNAGGING",
-      //       "2ND APPOINTMENT",
-      //       "KEY HANDOVER APPOINTMENT",
-      //       "FINAL KEY HANDOVER DONE",
-      //     ],
-      //   ],
-      //   { origin: "A1" }
-      // );
+      XLSX.utils.sheet_add_aoa(
+        data,
+        [
+          [
+            "HSN Code",
+            "Sale Tax Amount",
+            "Sale IGST",
+            "Sale CGST",
+            "Sale SGST",
+            "Sale Invoice Amount",
+            "Return Tax Amount",
+            "Return IGST",
+            "Return CGST",
+            "Return SGST",
+            "Return Invoice Amount",
+            "Net Tax Amount",
+            "Net IGST",
+            "Net CGST",
+            "Net SGST",
+            "Net Invoice Amount",
+          ],
+        ],
+        { origin: "A1" }
+      );
       XLSX.utils.book_append_sheet(wb, data, "data");
       XLSX.writeFile(wb, "hsn_detail.xlsx");
     },
@@ -643,47 +717,60 @@ export default {
       const data = XLSX.utils.json_to_sheet(this.itemsstate);
       const wb = XLSX.utils.book_new();
       /* fix headers */
-      // XLSX.utils.sheet_add_aoa(
-      //   data,
-      //   [
-      //     [
-      //       "Sr No",
-      //       "Vendor Name",
-      //       "PROJECT NAME",
-      //       "PENDING TASKS",
-      //       "1ST APPOINTMENT",
-      //       "DE-SNAGGING",
-      //       "2ND APPOINTMENT",
-      //       "KEY HANDOVER APPOINTMENT",
-      //       "FINAL KEY HANDOVER DONE",
-      //     ],
-      //   ],
-      //   { origin: "A1" }
-      // );
+      XLSX.utils.sheet_add_aoa(
+        data,
+        [
+          [
+            "State",
+            "Sale Tax Amount",
+            "Sale IGST",
+            "Sale CGST",
+            "Sale SGST",
+            "Sale Invoice Amount",
+            "Return Tax Amount",
+            "Return IGST",
+            "Return CGST",
+            "Return SGST",
+            "Return Invoice Amount",
+            "Net Tax Amount",
+            "Net IGST",
+            "Net CGST",
+            "Net SGST",
+            "Net Invoice Amount",
+          ],
+        ],
+        { origin: "A1" }
+      );
       XLSX.utils.book_append_sheet(wb, data, "data");
       XLSX.writeFile(wb, "statewise_detail.xlsx");
     },
     salereturn_download: function () {
-      const data = XLSX.utils.json_to_sheet(this.items_sale_return);
+      const data = XLSX.utils.json_to_sheet(this.sale_return);
       const wb = XLSX.utils.book_new();
-      /* fix headers */
-      // XLSX.utils.sheet_add_aoa(
-      //   data,
-      //   [
-      //     [
-      //       "Sr No",
-      //       "Vendor Name",
-      //       "PROJECT NAME",
-      //       "PENDING TASKS",
-      //       "1ST APPOINTMENT",
-      //       "DE-SNAGGING",
-      //       "2ND APPOINTMENT",
-      //       "KEY HANDOVER APPOINTMENT",
-      //       "FINAL KEY HANDOVER DONE",
-      //     ],
-      //   ],
-      //   { origin: "A1" }
-      // );
+
+      XLSX.utils.sheet_add_aoa(
+        data,
+        [
+          [
+            "Invoice No",
+            "Sale Return Date",
+            "Taxble Amount",
+            "IGST",
+            "SGST",
+            "CGST",
+            "Refund Amount",
+            "HSN Code",
+            "Tax Percentage",
+            "Product Name",
+            "Product Qty",
+            "SuborderId",
+            "Parent OrderId",
+            "State",
+            "Status",
+          ],
+        ],
+        { origin: "A1" }
+      );
       XLSX.utils.book_append_sheet(wb, data, "data");
       XLSX.writeFile(wb, "sale_return_detail.xlsx");
     },
