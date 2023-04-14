@@ -246,13 +246,28 @@ class WalletprocessedController extends Controller
                         $logistic_cost=$cod_cost+$cod_charges;
                     }
                 }
+
+                if($vendor == 19){
+                    $logistic_cost = 0;
+                }
+
                 if($vendor_data[0]->gateway==0){
-                    $net_amount=$sale_Amount-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
-                }else{
-                    if ($order_table[0]->payment_method != 'wps_wcb_wallet_payment_gateway' && $order_table[0]->payment_method != 'cod'){
-                        $net_amount=0-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                    if($order_table[0]->payment_method == 'cod' && $vendor == 19)
+                    {   
+                        $net_amount=0-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                     }else{
                         $net_amount=$sale_Amount-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                    }
+                }else{
+                    if ($order_table[0]->payment_method != 'wps_wcb_wallet_payment_gateway' && $order_table[0]->payment_method != 'cod'){
+                        $net_amount=0-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                    }else{
+                        if($order_table[0]->payment_method == 'cod' && $vendor == 19)
+                        {   
+                            $net_amount=0-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                        }else{
+                            $net_amount=$sale_Amount-($walletUsedAmt+$logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
+                        }
                     }
                 }
                 $closing_bal=$opening_balance+$net_amount;
@@ -282,7 +297,11 @@ class WalletprocessedController extends Controller
                         $cod_cost=$zone_price;
                         $logistic_cost=$cod_cost+$cod_charges;
                     }
-                    
+                
+
+                if($vendor == 19){
+                    $logistic_cost = 0;
+                }
                     
                 $majime_cost=0;
                 $net_amount=0-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
