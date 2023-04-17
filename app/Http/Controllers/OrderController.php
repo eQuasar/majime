@@ -818,8 +818,8 @@ class OrderController extends Controller {
                         }', CURLOPT_HTTPHEADER => array('Authorization: Token ' . $token, 'Content-Type: application/json', 'Cookie: sessionid=ze4ncds5tobeyynmbb1u0l6ccbpsmggx; sessionid=3q84k2vbcp2r6mq1hpssniobesxvcf12'),));
         $response = curl_exec($curl);
         $new_val = json_decode($response, true);
-        // var_dump($new_val); die;
         $wbill = $new_val["packages"][0]["waybill"];
+        // var_dump($wbill); die;
         $order_items = DB::table("waybill")->where('waybill.vid', $vid)->where('waybill.order_id', $oid)->get()->toArray();
         // var_dump($order_items); die;
         if (count($order_items) >= 1) {
@@ -2614,4 +2614,5 @@ public function refund_amount(Request $request){
 //           $net_invoice_amount=$retun_sale_invoice_amount_total-$sale_invoice_amount_total;
   
 //      }
+
 }
