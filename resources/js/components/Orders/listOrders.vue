@@ -156,8 +156,7 @@
     import * as XLSX from 'xlsx/xlsx.mjs';
 
   export default {
-    props: {
-    },
+  
     mounted() {
       this.getVidz();
       //this.getState();

@@ -144,12 +144,12 @@ export default {
       address_2: "",
       // oid: 0,
       email: "",
-      total_amount:"",
+      total_amount: "",
       phone: "",
       payment_method: "",
       state: "",
       city: "",
-      wallet_price:"",
+      wallet_price: "",
       postcode: "",
       country: "",
       status: "",
@@ -229,7 +229,8 @@ export default {
             this.status = response.data[0].status;
             this.oid = response.data[0].oid;
             this.total_amount = response.data[0].total_main;
-            this.wallet_price = response.data[0].total_main-response.data[0].total;
+            this.wallet_price =
+              response.data[0].total_main - response.data[0].total;
           }
         })
         .catch((error) => {
@@ -248,6 +249,7 @@ export default {
       order
         .returnAWB(formData)
         .then((response) => {
+          console.log(response.data);
           alert(response.data.msg);
           // this.show=false;
         })

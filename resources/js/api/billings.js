@@ -29,6 +29,10 @@ export default {
     {
         return axios.post('sale_invoice_wise_detail', data)
     },
+    get_biiling_filter(data)
+    {
+        return axios.post('billing_filter', data)
+    },
   
 }
 

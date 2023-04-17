@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\Billings;
 use App\Models\Vendors;
 use Illuminate\Http\Request;
@@ -604,11 +602,24 @@ class BillingController extends Controller
           //return response()->json(['data'=>$data ,'msg' => "", "ErrorCode" => "000"], 200); 
    //   api use return billing process according vid and billing_processeds(table)
     public function return_billing_process(Request $request){
+        $date_from=$request->date_from;
+        $date_to=$request->date_to;
+        $range = [$date_from,$date_to];
+        $vid=$request->vid;
+        if(empty($date_from)||empty($date_to))
+        {
        
-      $vid=$request->vid;
-        $retun_billing_processer_data = DB::table('billing_processeds')->where('vid','=',$vid)->get();
-        
-        return $retun_billing_processer_data;
+            $retun_billing_processer_data = DB::table('billing_processeds')->where('vid','=',$vid)->get();
+            
+            return $retun_billing_processer_data;
+        }
+        else{
+            $retun_billing_processer_data = DB::table('billing_processeds')->where('vid','=',$vid)
+            ->whereBetween('billing_processeds.created_at',$range)
+            ->get();
+            
+            return $retun_billing_processer_data;
+        }
     }
     public function update_dispatch_date(Request $request)
     {
@@ -643,13 +654,220 @@ class BillingController extends Controller
 
     }
 
-    public function hsn_wise_detail_copy(Request $request){
+//     public function hsn_wise_detail_copy(Request $request){
+//         $dto='dto-refunded';//variable
+//         $dtoBooked='dto-booked';
+//         $dispatched='dispatched';
+//         $rtdOnline='rtd-online';
+//         $rtdCod='rtd-cod';
+      
+//         $dtodel2warehouse='dtodel2warehouse';
+//         $dtointransit='dtointransit';
+//         $completed='completed';
+//         $intransit='intransit';
+//         $packed='packed';
+//         $deliveredtocust='deliveredtocust';
+//         $pickedup='pickedup';
+//         $vid=$request->vid;
+      
+//       $all_hsn = DB::table('billing_processeds')
+//       ->where('vid', intval($request->vid))->distinct()->pluck('hsn_code')->toArray();
+//         $hsn_sale_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))->whereIn('status',[$dtodel2warehouse,$dtointransit,$completed,$intransit,$packed,$deliveredtocust,$pickedup])->distinct('hsn_code')->pluck('hsn_code')->toArray();
+//          $hsn_sale_return_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))
+//          ->whereIn('status',[$dto,$dtoBooked,$dispatched,$rtdOnline,$rtdCod])->distinct('hsn_code')->pluck('hsn_code')->toArray();
+//          $hsn_wise_detail_sale=array();
+//          for($i=0;$i<count($hsn_sale_wise_data);$i++)
+//          {
+//            $hsn_code=$hsn_sale_wise_data[$i];
+//            $hsn_wise_detail_sale[] = DB::table('billing_processeds')->where('hsn_code',$hsn_code)
+//            ->select(["hsn_code",DB::raw("SUM(textable_amount) as sale_texable_amount"),DB::raw("SUM(igst) as sale_igst"),DB::raw("SUM(cgst) as sale_cgst"),DB::raw("SUM(sgst) as sale_sgst"),DB::raw("SUM(invoice_amount) as sale_invoice_amount")])
+//            ->groupby('hsn_code')
+//            ->get();
+//         }
+//         $hsn_returnwise_detail_sale=array();
+//          for($i=0;$i<count($hsn_sale_return_wise_data);$i++)
+//           {
+//             $hsn_code=$hsn_sale_return_wise_data[$i];
+//             $hsn_returnwise_detail_sale[] = DB::table('billing_processeds')->where('hsn_code',$hsn_code)
+//             ->select([DB::raw("SUM(textable_amount) as return_texable_amount"),
+//                     DB::raw("SUM(igst) as return_igst"),
+//                     DB::raw("SUM(cgst) as return_cgst"),
+//                     DB::raw("SUM(sgst) as return_sgst"),
+//                     DB::raw("SUM(invoice_amount) as return_invoice_amount"),'hsn_code'])
+//                     ->groupby('hsn_code')
+//                     ->get();
+//          } 
+//         $newarray = array();
+//         $inc = 0;
+//         foreach ($hsn_wise_detail_sale as $item){
+//             $check =1;
+//             $returnAmt = '0';
+//             $return_igst = '0';
+//             $return_cgst = '0';
+//             $return_sgst = '0';
+//             $return_invoice_amount = 0;
+//             $return_texable_amount = 0;
+//             if(count($hsn_returnwise_detail_sale)>0){
+//                 $return_texable_amount = '0';
+//             $return_igst = '0';
+//             $return_cgst = '0';
+//             $return_sgst = '0';
+//             $return_invoice_amount = '0';
+//             }else{
+//             foreach($hsn_returnwise_detail_sale as $retItem){
+//                 if($item[0]->hsn_code == $retItem[0]->hsn_code){
+//                     // add all object here
+//                     $return_texable_amount = $retItem[0]->return_texable_amount;
+//                     $returnAmt = $retItem[0]->return_texable_amount;
+//                     $return_igst = $retItem[0]->return_igst;
+//                     $return_cgst = $retItem[0]->return_cgst;
+//                     $return_sgst = $retItem[0]->return_sgst;
+//                     $return_invoice_amount = $retItem[0]->return_invoice_amount;
+//                     $check =0;
+//                 }
+//                 // else{
+//                 //     if($check ==1){
+//                 //         $item[0]->return_texable_amount = '0';
+//                 //         $item[0]->return_igst = '0';
+//                 //         $item[0]->return_cgst = '0';
+//                 //         $item[0]->return_sgst = '0';
+//                 //         $item[0]->return_invoice_amount = '0';
+                        
+//                 //     }
+//                 // }
+//             }
+//         }
+//         $item[0]->return_texable_amount = $return_texable_amount;
+//         $item[0]->returnAmt = $returnAmt;
+//         $item[0]->return_igst = $return_igst;
+//         $item[0]->return_cgst = $return_cgst;
+//         $item[0]->return_sgst = $return_sgst;
+//         $item[0]->return_invoice_amount = $return_invoice_amount;
+
+//         $item[0]->net_texable_amount = ($item[0]->sale_texable_amount)-($returnAmt);
+//         $item[0]->net_igst = ($item[0]->sale_igst)-($return_igst);
+//         $item[0]->net_cgst =($item[0]->sale_cgst)- ($return_cgst);
+//         $item[0]->net_sgst = ($item[0]->sale_sgst)-($return_sgst);
+//         $item[0]->net_invoice_amount = ($item[0]->sale_invoice_amount)-($return_invoice_amount);
+//         $newarray[$inc++] = $item[0];
+//     }
+//         return $newarray;  
+  
+// }
+public function hsn_wise_detail_copy(Request $request){
+    $date_from=$request->date_from;
+    $date_to=$request->date_to;
+
+    $range = [$date_from,$date_to];
+    if(empty($date_from)||empty($date_to)){
+
+            $dto='dto-refunded';//variable
+            $dtoBooked='dto-booked';
+            $dispatched='dispatched';
+            $rtdOnline='rtd-online';
+            $rtdCod='rtd-cod';
+        
+            $dtodel2warehouse='dtodel2warehouse';
+            $dtointransit='dtointransit';
+            $completed='completed';
+            $intransit='intransit';
+            $packed='packed';
+            $deliveredtocust='deliveredtocust';
+            $pickedup='pickedup';
+            $vid=$request->vid;
+        
+        $all_hsn = DB::table('billing_processeds')
+        ->where('vid', intval($request->vid))
+        ->distinct()->pluck('hsn_code')->toArray();
+            $hsn_sale_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))
+            ->whereIn('status',[$dtodel2warehouse,$dtointransit,$completed,$intransit,$packed,$deliveredtocust,$pickedup])->distinct('hsn_code')->pluck('hsn_code')->toArray();
+            $hsn_sale_return_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))
+            ->whereIn('status',[$dto,$dtoBooked,$dispatched,$rtdOnline,$rtdCod])->distinct('hsn_code')->pluck('hsn_code')->toArray();
+            $hsn_wise_detail_sale=array();
+            for($i=0;$i<count($hsn_sale_wise_data);$i++)
+            {
+            $hsn_code=$hsn_sale_wise_data[$i];
+            $hsn_wise_detail_sale[] = DB::table('billing_processeds')->where('hsn_code',$hsn_code)
+            ->select(["hsn_code",DB::raw("SUM(textable_amount) as sale_texable_amount"),DB::raw("SUM(igst) as sale_igst"),DB::raw("SUM(cgst) as sale_cgst"),DB::raw("SUM(sgst) as sale_sgst"),DB::raw("SUM(invoice_amount) as sale_invoice_amount")])
+            ->groupby('hsn_code')
+            ->get();
+            }
+            $hsn_returnwise_detail_sale=array();
+            for($i=0;$i<count($hsn_sale_return_wise_data);$i++)
+            {
+                $hsn_code=$hsn_sale_return_wise_data[$i];
+                $hsn_returnwise_detail_sale[] = DB::table('billing_processeds')->where('hsn_code',$hsn_code)
+                ->select([DB::raw("SUM(textable_amount) as return_texable_amount"),
+                        DB::raw("SUM(igst) as return_igst"),
+                        DB::raw("SUM(cgst) as return_cgst"),
+                        DB::raw("SUM(sgst) as return_sgst"),
+                        DB::raw("SUM(invoice_amount) as return_invoice_amount"),'hsn_code'])
+                        ->groupby('hsn_code')
+                        ->get();
+            } 
+            $newarray = array();
+            $inc = 0;
+            foreach ($hsn_wise_detail_sale as $item){
+                $check =1;
+                $returnAmt = '0';
+                $return_igst = '0';
+                $return_cgst = '0';
+                $return_sgst = '0';
+                $return_invoice_amount = 0;
+                $return_texable_amount = 0;
+                if(count($hsn_returnwise_detail_sale)>0){
+                    $return_texable_amount = '0';
+                $return_igst = '0';
+                $return_cgst = '0';
+                $return_sgst = '0';
+                $return_invoice_amount = '0';
+                }else{
+                foreach($hsn_returnwise_detail_sale as $retItem){
+                    if($item[0]->hsn_code == $retItem[0]->hsn_code){
+                        // add all object here
+                        $return_texable_amount = $retItem[0]->return_texable_amount;
+                        $returnAmt = $retItem[0]->return_texable_amount;
+                        $return_igst = $retItem[0]->return_igst;
+                        $return_cgst = $retItem[0]->return_cgst;
+                        $return_sgst = $retItem[0]->return_sgst;
+                        $return_invoice_amount = $retItem[0]->return_invoice_amount;
+                        $check =0;
+                    }
+                    // else{
+                    //     if($check ==1){
+                    //         $item[0]->return_texable_amount = '0';
+                    //         $item[0]->return_igst = '0';
+                    //         $item[0]->return_cgst = '0';
+                    //         $item[0]->return_sgst = '0';
+                    //         $item[0]->return_invoice_amount = '0';
+                            
+                    //     }
+                    // }
+                }
+            }
+            $item[0]->return_texable_amount = $return_texable_amount;
+            $item[0]->returnAmt = $returnAmt;
+            $item[0]->return_igst = $return_igst;
+            $item[0]->return_cgst = $return_cgst;
+            $item[0]->return_sgst = $return_sgst;
+            $item[0]->return_invoice_amount = $return_invoice_amount;
+
+            $item[0]->net_texable_amount = ($item[0]->sale_texable_amount)-($returnAmt);
+            $item[0]->net_igst = ($item[0]->sale_igst)-($return_igst);
+            $item[0]->net_cgst =($item[0]->sale_cgst)- ($return_cgst);
+            $item[0]->net_sgst = ($item[0]->sale_sgst)-($return_sgst);
+            $item[0]->net_invoice_amount = ($item[0]->sale_invoice_amount)-($return_invoice_amount);
+            $newarray[$inc++] = $item[0];
+        }
+            return $newarray; 
+    } 
+    else{
         $dto='dto-refunded';//variable
         $dtoBooked='dto-booked';
         $dispatched='dispatched';
         $rtdOnline='rtd-online';
         $rtdCod='rtd-cod';
-      
+    
         $dtodel2warehouse='dtodel2warehouse';
         $dtointransit='dtointransit';
         $completed='completed';
@@ -658,53 +876,173 @@ class BillingController extends Controller
         $deliveredtocust='deliveredtocust';
         $pickedup='pickedup';
         $vid=$request->vid;
-      
-      $all_hsn = DB::table('billing_processeds')
-      ->where('vid', intval($request->vid))->distinct()->pluck('hsn_code')->toArray();
-        $hsn_sale_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))->whereIn('status',[$dtodel2warehouse,$dtointransit,$completed,$intransit,$packed,$deliveredtocust,$pickedup])->distinct('hsn_code')->pluck('hsn_code')->toArray();
-         $hsn_sale_return_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))
-         ->whereIn('status',[$dto,$dtoBooked,$dispatched,$rtdOnline,$rtdCod])->distinct('hsn_code')->pluck('hsn_code')->toArray();
-         $hsn_wise_detail_sale=array();
-         for($i=0;$i<count($hsn_sale_wise_data);$i++)
-         {
-           $hsn_code=$hsn_sale_wise_data[$i];
-           $hsn_wise_detail_sale[] = DB::table('billing_processeds')->where('hsn_code',$hsn_code)
-           ->select(["hsn_code",DB::raw("SUM(textable_amount) as sale_texable_amount"),DB::raw("SUM(igst) as sale_igst"),DB::raw("SUM(cgst) as sale_cgst"),DB::raw("SUM(sgst) as sale_sgst"),DB::raw("SUM(invoice_amount) as sale_invoice_amount")])
-           ->groupby('hsn_code')
-           ->get();
-        }
-        $hsn_returnwise_detail_sale=array();
-         for($i=0;$i<count($hsn_sale_return_wise_data);$i++)
-          {
-            $hsn_code=$hsn_sale_return_wise_data[$i];
-            $hsn_returnwise_detail_sale[] = DB::table('billing_processeds')->where('hsn_code',$hsn_code)
-            ->select([DB::raw("SUM(textable_amount) as return_texable_amount"),
-                    DB::raw("SUM(igst) as return_igst"),
-                    DB::raw("SUM(cgst) as return_cgst"),
-                    DB::raw("SUM(sgst) as return_sgst"),
-                    DB::raw("SUM(invoice_amount) as return_invoice_amount"),'hsn_code'])
-                    ->groupby('hsn_code')
-                    ->get();
-         } 
-        $newarray = array();
-        $inc = 0;
-        foreach ($hsn_wise_detail_sale as $item){
-            $check =1;
-            $returnAmt = '0';
-            $return_igst = '0';
-            $return_cgst = '0';
-            $return_sgst = '0';
-            $return_invoice_amount = 0;
-            $return_texable_amount = 0;
-            if(count($hsn_returnwise_detail_sale)>0){
-                $return_texable_amount = '0';
+    
+            $all_hsn = DB::table('billing_processeds')
+            ->where('vid', intval($request->vid))
+            ->whereBetween('billing_processeds.created_at',$range)
+            ->distinct()->pluck('hsn_code')->toArray();
+                $hsn_sale_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))
+                ->whereBetween('billing_processeds.created_at',$range)
+                ->whereIn('status',[$dtodel2warehouse,$dtointransit,$completed,$intransit,$packed,$deliveredtocust,$pickedup])->distinct('hsn_code')->pluck('hsn_code')->toArray();
+                $hsn_sale_return_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))
+                ->whereIn('status',[$dto,$dtoBooked,$dispatched,$rtdOnline,$rtdCod])->distinct('hsn_code')->pluck('hsn_code')->toArray();
+                $hsn_wise_detail_sale=array();
+                for($i=0;$i<count($hsn_sale_wise_data);$i++)
+                {
+                $hsn_code=$hsn_sale_wise_data[$i];
+                $hsn_wise_detail_sale[] = DB::table('billing_processeds')->where('hsn_code',$hsn_code)
+                ->whereBetween('billing_processeds.created_at',$range)
+                ->select(["hsn_code",DB::raw("SUM(textable_amount) as sale_texable_amount"),DB::raw("SUM(igst) as sale_igst"),DB::raw("SUM(cgst) as sale_cgst"),DB::raw("SUM(sgst) as sale_sgst"),DB::raw("SUM(invoice_amount) as sale_invoice_amount")])
+                ->groupby('hsn_code')
+                ->get();
+                }
+                $hsn_returnwise_detail_sale=array();
+                for($i=0;$i<count($hsn_sale_return_wise_data);$i++)
+                {
+                    $hsn_code=$hsn_sale_return_wise_data[$i];
+                    $hsn_returnwise_detail_sale[] = DB::table('billing_processeds')->where('hsn_code',$hsn_code)
+                    ->whereBetween('billing_processeds.created_at',$range)
+                    ->select([DB::raw("SUM(textable_amount) as return_texable_amount"),
+                            DB::raw("SUM(igst) as return_igst"),
+                            DB::raw("SUM(cgst) as return_cgst"),
+                            DB::raw("SUM(sgst) as return_sgst"),
+                            DB::raw("SUM(invoice_amount) as return_invoice_amount"),'hsn_code'])
+                            ->groupby('hsn_code')
+                            ->get();
+                } 
+                $newarray = array();
+                $inc = 0;
+                foreach ($hsn_wise_detail_sale as $item){
+                    $check =1;
+                    $returnAmt = '0';
+                    $return_igst = '0';
+                    $return_cgst = '0';
+                    $return_sgst = '0';
+                    $return_invoice_amount = 0;
+                    $return_texable_amount = 0;
+                    if(count($hsn_returnwise_detail_sale)>0){
+                        $return_texable_amount = '0';
+                    $return_igst = '0';
+                    $return_cgst = '0';
+                    $return_sgst = '0';
+                    $return_invoice_amount = '0';
+                    }else{
+                    foreach($hsn_returnwise_detail_sale as $retItem){
+                        if($item[0]->hsn_code == $retItem[0]->hsn_code){
+                            // add all object here
+                            $return_texable_amount = $retItem[0]->return_texable_amount;
+                            $returnAmt = $retItem[0]->return_texable_amount;
+                            $return_igst = $retItem[0]->return_igst;
+                            $return_cgst = $retItem[0]->return_cgst;
+                            $return_sgst = $retItem[0]->return_sgst;
+                            $return_invoice_amount = $retItem[0]->return_invoice_amount;
+                            $check =0;
+                        }
+                        // else{
+                        //     if($check ==1){
+                        //         $item[0]->return_texable_amount = '0';
+                        //         $item[0]->return_igst = '0';
+                        //         $item[0]->return_cgst = '0';
+                        //         $item[0]->return_sgst = '0';
+                        //         $item[0]->return_invoice_amount = '0';
+                                
+                        //     }
+                        // }
+                    }
+                }
+                $item[0]->return_texable_amount = $return_texable_amount;
+                $item[0]->returnAmt = $returnAmt;
+                $item[0]->return_igst = $return_igst;
+                $item[0]->return_cgst = $return_cgst;
+                $item[0]->return_sgst = $return_sgst;
+                $item[0]->return_invoice_amount = $return_invoice_amount;
+
+                $item[0]->net_texable_amount = ($item[0]->sale_texable_amount)-($returnAmt);
+                $item[0]->net_igst = ($item[0]->sale_igst)-($return_igst);
+                $item[0]->net_cgst =($item[0]->sale_cgst)- ($return_cgst);
+                $item[0]->net_sgst = ($item[0]->sale_sgst)-($return_sgst);
+                $item[0]->net_invoice_amount = ($item[0]->sale_invoice_amount)-($return_invoice_amount);
+                $newarray[$inc++] = $item[0];
+            }
+                return $newarray;  
+    }
+
+}
+
+public function billing_filter(Request $request)
+{
+    
+    // $date_from=$request->date_from .' 00:00:00';
+    $date_from=$request->date_from;
+    $date_to=$request->date_to;
+
+    $range = [$date_from,$date_to];
+
+// if(empty($date_from) || empty($date_to) ){
+    $dto='dto-refunded';//variable
+    $dtoBooked='dto-booked';
+    $dispatched='dispatched';
+    $rtdOnline='rtd-online';
+    $rtdCod='rtd-cod';
+    $dtodel2warehouse='dtodel2warehouse';
+    $dtointransit='dtointransit';
+    $completed='completed';
+    $intransit='intransit';
+    $packed='picked';
+    $deliveredtocust='deliveredtocust';
+    $pickedup='pickedup';
+    $vid=$request->vid;
+  $all_state = DB::table('billing_processeds')
+  ->where('vid', intval($request->vid))->distinct()->pluck('order_to')->toArray();
+    $state_sale_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))
+   ->whereIn('status',[$dtodel2warehouse,$dtointransit,$completed,$intransit,$packed,$deliveredtocust,$pickedup])->distinct('order_to')->pluck('order_to')->toArray();
+ 
+     $state_sale_return_wise_data = DB::table('billing_processeds')
+     ->where('vid', intval($request->vid))
+     ->whereIn('status',[$dto,$dtoBooked,$dispatched,$rtdOnline,$rtdCod])->distinct('order_to')->pluck('order_to')->toArray();
+     $state_wise_detail_sale=array();
+     for($i=0;$i<count($state_sale_wise_data);$i++)
+     {
+       $order_to=$state_sale_wise_data[$i];
+    //    dd($order_to);die();
+       $state_wise_detail_sale[] = DB::table('billing_processeds')->where('order_to',$order_to)
+       ->select(["order_to",DB::raw("SUM(textable_amount) as sale_texable_amount"),DB::raw("Round(SUM(igst),2) as sale_igst"),DB::raw("Round(SUM(cgst),2) as sale_cgst"),DB::raw("Round(SUM(sgst),2) as sale_sgst"),DB::raw("SUM(invoice_amount) as sale_invoice_amount")])
+       ->groupby('order_to')
+       ->get();
+    }
+    $state_returnwise_detail_sale=array();
+     for($i=0;$i<count($state_sale_return_wise_data);$i++)
+      {
+        $order_to=$state_sale_return_wise_data[$i];
+        $state_returnwise_detail_sale[] = DB::table('billing_processeds')->where('order_to',$order_to)
+        ->select([DB::raw("SUM(textable_amount) as return_texable_amount"),
+                DB::raw("SUM(igst) as return_igst"),
+                DB::raw("SUM(cgst) as return_cgst"),
+                DB::raw("SUM(sgst) as return_sgst"),
+                DB::raw("SUM(invoice_amount) as return_invoice_amount"),'order_to'])
+                ->groupby('order_to')
+                ->get();
+     } 
+    $newarray = array();
+    $inc = 0;
+    foreach ($state_wise_detail_sale as $item){
+        $check =1;
+        $returnAmt = '0';
+        $return_igst = '0';
+        $return_cgst = '0';
+        $return_sgst = '0';
+        $return_invoice_amount = 0;
+        $return_texable_amount = 0;
+
+        if (count($state_returnwise_detail_sale)>0){
+            $return_texable_amount = '0';
             $return_igst = '0';
             $return_cgst = '0';
             $return_sgst = '0';
             $return_invoice_amount = '0';
-            }else{
-            foreach($hsn_returnwise_detail_sale as $retItem){
-                if($item[0]->hsn_code == $retItem[0]->hsn_code){
+        }else{
+            foreach($state_returnwise_detail_sale as $retItem){
+                if($item[0]->order_to == $retItem[0]->order_to){
                     // add all object here
                     $return_texable_amount = $retItem[0]->return_texable_amount;
                     $returnAmt = $retItem[0]->return_texable_amount;
@@ -714,16 +1052,6 @@ class BillingController extends Controller
                     $return_invoice_amount = $retItem[0]->return_invoice_amount;
                     $check =0;
                 }
-                // else{
-                //     if($check ==1){
-                //         $item[0]->return_texable_amount = '0';
-                //         $item[0]->return_igst = '0';
-                //         $item[0]->return_cgst = '0';
-                //         $item[0]->return_sgst = '0';
-                //         $item[0]->return_invoice_amount = '0';
-                        
-                //     }
-                // }
             }
         }
         $item[0]->return_texable_amount = $return_texable_amount;
@@ -739,9 +1067,109 @@ class BillingController extends Controller
         $item[0]->net_sgst = ($item[0]->sale_sgst)-($return_sgst);
         $item[0]->net_invoice_amount = ($item[0]->sale_invoice_amount)-($return_invoice_amount);
         $newarray[$inc++] = $item[0];
+       
     }
-        return $newarray;  
+    return $newarray; 
+    //  }
+    //  else{
+    // state wise date filter
+    $dto='dto-refunded';//variable
+    $dtoBooked='dto-booked';
+    $dispatched='dispatched';
+    $rtdOnline='rtd-online';
+    $rtdCod='rtd-cod';
+    $dtodel2warehouse='dtodel2warehouse';
+    $dtointransit='dtointransit';
+    $completed='completed';
+    $intransit='intransit';
+    $packed='picked';
+    $deliveredtocust='deliveredtocust';
+    $pickedup='pickedup';
+    $vid=$request->vid;
+ 
   
-}
+  $all_state = DB::table('billing_processeds')->whereBetween('billing_processeds.created_at',$range)
+  ->where('vid', intval($request->vid))->distinct()->pluck('order_to')->toArray();
+  
+//   dd($all_state);die();
 
+    $state_sale_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))->whereBetween('billing_processeds.created_at',$range)->whereIn('status',[$dtodel2warehouse,$dtointransit,$completed,$intransit,$packed,$deliveredtocust,$pickedup])->distinct('order_to')->pluck('order_to')->toArray();
+ 
+     $state_sale_return_wise_data = DB::table('billing_processeds')->whereBetween('billing_processeds.created_at',$range)->where('vid', intval($request->vid))
+     ->whereIn('status',[$dto,$dtoBooked,$dispatched,$rtdOnline,$rtdCod])->distinct('order_to')->pluck('order_to')->toArray();
+     $state_wise_detail_sale=array();
+     for($i=0;$i<count($state_sale_wise_data);$i++)
+     {
+       $order_to=$state_sale_wise_data[$i];
+    //    dd($order_to);die();
+       $state_wise_detail_sale[] = DB::table('billing_processeds')->where('order_to',$order_to)->whereBetween('billing_processeds.created_at',$range)
+       ->select(["order_to",DB::raw("SUM(textable_amount) as sale_texable_amount"),DB::raw("Round(SUM(igst),2) as sale_igst"),DB::raw("Round(SUM(cgst),2) as sale_cgst"),DB::raw("Round(SUM(sgst),2) as sale_sgst"),DB::raw("SUM(invoice_amount) as sale_invoice_amount")])
+       ->groupby('order_to')
+       ->get();
+    }
+    $state_returnwise_detail_sale=array();
+     for($i=0;$i<count($state_sale_return_wise_data);$i++)
+      {
+        $order_to=$state_sale_return_wise_data[$i];
+        $state_returnwise_detail_sale[] = DB::table('billing_processeds')->where('order_to',$order_to)
+        ->select([DB::raw("SUM(textable_amount) as return_texable_amount"),
+                DB::raw("SUM(igst) as return_igst"),
+                DB::raw("SUM(cgst) as return_cgst"),
+                DB::raw("SUM(sgst) as return_sgst"),
+                DB::raw("SUM(invoice_amount) as return_invoice_amount"),'order_to'])
+                ->groupby('order_to')
+                ->get();
+     } 
+    $newarray = array();
+    $inc = 0;
+    foreach ($state_wise_detail_sale as $item){
+        $check =1;
+        $returnAmt = '0';
+        $return_igst = '0';
+        $return_cgst = '0';
+        $return_sgst = '0';
+        $return_invoice_amount = 0;
+        $return_texable_amount = 0;
+
+        if (count($state_returnwise_detail_sale)>0){
+            $return_texable_amount = '0';
+            $return_igst = '0';
+            $return_cgst = '0';
+            $return_sgst = '0';
+            $return_invoice_amount = '0';
+        }else{
+            foreach($state_returnwise_detail_sale as $retItem){
+                if($item[0]->order_to == $retItem[0]->order_to){
+                    // add all object here
+                    $return_texable_amount = $retItem[0]->return_texable_amount;
+                    $returnAmt = $retItem[0]->return_texable_amount;
+                    $return_igst = $retItem[0]->return_igst;
+                    $return_cgst = $retItem[0]->return_cgst;
+                    $return_sgst = $retItem[0]->return_sgst;
+                    $return_invoice_amount = $retItem[0]->return_invoice_amount;
+                    $check =0;
+                }
+            }
+        }
+        $item[0]->return_texable_amount = $return_texable_amount;
+        $item[0]->returnAmt = $returnAmt;
+        $item[0]->return_igst = $return_igst;
+        $item[0]->return_cgst = $return_cgst;
+        $item[0]->return_sgst = $return_sgst;
+        $item[0]->return_invoice_amount = $return_invoice_amount;
+
+        $item[0]->net_texable_amount = ($item[0]->sale_texable_amount)-($returnAmt);
+        $item[0]->net_igst = ($item[0]->sale_igst)-($return_igst);
+        $item[0]->net_cgst =($item[0]->sale_cgst)- ($return_cgst);
+        $item[0]->net_sgst = ($item[0]->sale_sgst)-($return_sgst);
+        $item[0]->net_invoice_amount = ($item[0]->sale_invoice_amount)-($return_invoice_amount);
+        $newarray[$inc++] = $item[0];
+       
+    }
+    return $newarray;  
 }
+}
+// }
+
+
+

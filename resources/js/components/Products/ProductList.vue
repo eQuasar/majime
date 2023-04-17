@@ -172,7 +172,7 @@
 
         product: null,
         variation_id:"",
-        sortBy: 'date',
+        sortBy: 'date_to',
         sortDesc: true,
         perPage: 10,
         currentPage: 1,

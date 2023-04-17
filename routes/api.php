@@ -106,7 +106,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('changeProcessing_Status', 'OrderController@changeProcessing_Status')->name('changeProcessing_Status');
 	Route::post('suborder_details', 'OrderController@suborder_details')->name('suborder_details');
 	Route::post(' changeProcessing_Status_refund_amount', 'OrderController@ changeProcessing_Status_refund_amount')->name(' changeProcessing_Status_refund_amount');
-    Route::post('change_Processing_Status', 'OrderController@changeProcessing_Status_confirmed')->name('change_Processing_Status');
+    // Route::post('change_Processing_Status', 'OrderController@changeProcessing_Status_confirmed')->name('change_Processing_Status');
 	Route::post('refund_amount', 'OrderController@refund_amount')->name('refund_amount');
     Route::post('getProcessingOrder_Details', 'OrderController@getProcessingOrder_Details')->name('getProcessingOrder_Details');
     Route::get('get_processing_data/{vid}/{status}','OrderController@get_processing_data')->name('get_processing_data');
@@ -176,6 +176,7 @@ Route::group(['prefix' => 'v1'], function () {
 	// Route::post('hsn_wise_detail','HsnDetailController@hsn_wise_detail')->name('hsn_wise_detail');
 	Route::post('hsn_wise_detail_copy','BillingController@hsn_wise_detail_copy')->name('hsn_wise_detail_copy');
 	Route::post('state_wise_detail_copy','OrderController@state_wise_detail_copy')->name('state_wise_detail_copy');
+	Route::post('billing_filter','BillingController@billing_filter')->name('billing_filter');
 	
 }); 
 

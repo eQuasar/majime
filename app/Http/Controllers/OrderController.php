@@ -759,6 +759,7 @@ class OrderController extends Controller {
     }
     // RETURN 
     function return_awb(Request $request) {
+        // dd($request);die();
         $oid = $request->oid;
         $vid = $request->vid;
         $my_data = DB::table("way_data")->where('vid', intval($request->vid))->get();
@@ -770,6 +771,7 @@ class OrderController extends Controller {
         $add = $my_data[0]->add;
         $token = $my_data[0]->token;
         $order_prefix = $my_data[0]->order_prefix;
+        // dd($my_data);die();
         $orders = DB::table("orders")->join('billings', function($join) use ($vid)
         {
             $join->on('orders.oid', '=', 'billings.order_id')
@@ -777,6 +779,7 @@ class OrderController extends Controller {
         })->where('orders.vid', '=', intval($vid))->where('orders.oid', '=', intval($oid))->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                                         WHERE line_items.order_id = orders.oid
                                         GROUP BY line_items.order_id) as quantity"))->get();
+                                        // dd($orders);die();
         if ($request->vid == 1) {
             $curlopt_url = "https://staging-express.delhivery.com/api/cmu/create.json";
             $del_url = "https://staging-express.delhivery.com/c/api/pin-codes/json/";
@@ -822,9 +825,12 @@ class OrderController extends Controller {
         $wbill = $new_val["packages"][0]["waybill"];
         $order_items = DB::table("waybill")->where('waybill.vid', $vid)->where('waybill.order_id', $oid)->get()->toArray();
         // var_dump($order_items); die;
-        if (count($order_items) >= 1) {
+        $dto_booked_current_date = Carbon::now();
+        // echo $mytime->toDateTimeString();       
+        if (count($order_items) >= 1){
             DB::table('waybill')->where('order_id', intval($request->oid))->where('vid', intval($request->vid))->update(['return_waybill_no' => $wbill]);
             DB::table('orders')->where('oid', intval($request->oid))->where('vid', intval($request->vid))->update(['status' => "dtobooked"]);
+            DB::table('order_reldates')->where('oid', intval($request->oid))->where('vid', intval($request->vid))->update(['dto_booked' =>$dto_booked_current_date->format('Y-m-d')]);
             $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
             curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $oid . '?status=dtobooked', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
                 $response = curl_exec($curl);
@@ -865,6 +871,7 @@ class OrderController extends Controller {
             //    $jsonResp2 = json_decode($response2);
             return response()->json(['error' => false, 'msg' => 'Successfully Done', 'abn_no' => $wbill, "ErrorCode" => "000"], 200);
         }
+        // dd($dto_booked_current_date);die();
     }
     //this api use all status cancelled,processing,confirmed,
     function changeStatus(Request $request) {
@@ -2415,128 +2422,128 @@ public function refund_amount(Request $request){
         return response()->json(['error' => false, 'data' => $get_detail, "ErrorCode" => "000"], 200);
         
      }
-     public function state_wise_detail_copy(Request $request){
-        $dto='dto-refunded';//variable
-        $dtoBooked='dto-booked';
-        $dispatched='dispatched';
-        $rtdOnline='rtd-online';
-        $rtdCod='rtd-cod';
+    //  public function state_wise_detail_copy(Request $request){
+    //     $dto='dto-refunded';//variable
+    //     $dtoBooked='dto-booked';
+    //     $dispatched='dispatched';
+    //     $rtdOnline='rtd-online';
+    //     $rtdCod='rtd-cod';
       
-        $dtodel2warehouse='dtodel2warehouse';
-        $dtointransit='dtointransit';
-        $completed='completed';
-        $intransit='intransit';
-        $packed='picked';
-        $deliveredtocust='deliveredtocust';
-        $pickedup='pickedup';
-        $vid=$request->vid;
-      //sale detail
-      $state_data = DB::table('billing_processeds')
-      ->where('vid', intval($request->vid))
-      ->whereIn('status',[$dto,$dtoBooked,$dispatched,$rtdOnline,$rtdCod])
-      ->pluck('order_to')->toArray();
-    //   dd($state_data);die();
-    for($a=0;$a<count($state_data);$a++){
-        // if($state_data==0){
-        //     echo $state_data;
-        // }
-        // if($state_data==1){
-        //     echo $state_data;
-        // }
-        dd($state_data);die();
-    }
+    //     $dtodel2warehouse='dtodel2warehouse';
+    //     $dtointransit='dtointransit';
+    //     $completed='completed';
+    //     $intransit='intransit';
+    //     $packed='picked';
+    //     $deliveredtocust='deliveredtocust';
+    //     $pickedup='pickedup';
+    //     $vid=$request->vid;
+    //   //sale detail
+    //   $state_data = DB::table('billing_processeds')
+    //   ->where('vid', intval($request->vid))
+    //   ->whereIn('status',[$dto,$dtoBooked,$dispatched,$rtdOnline,$rtdCod])
+    //   ->pluck('order_to')->toArray();
+    // //   dd($state_data);die();
+    // for($a=0;$a<count($state_data);$a++){
+    //     // if($state_data==0){
+    //     //     echo $state_data;
+    //     // }
+    //     // if($state_data==1){
+    //     //     echo $state_data;
+    //     // }
+    //     dd($state_data);die();
+    // }
 
-        $state_sale_wise_data = DB::table('billing_processeds')
-         ->where('vid', intval($request->vid))
-         ->whereIn('status',[$dto,$dtoBooked,$dispatched,$rtdOnline,$rtdCod])
-         ->distinct()->pluck('order_to')->toArray();
-          for($i=0;$i<count($state_sale_wise_data);$i++)
-          {
-            $state_wise_detail_sale = DB::table('billing_processeds')->where('order_to',$state_sale_wise_data)
-            ->select('order_to','textable_amount','igst','cgst','sgst','invoice_amount')->get();
-            $sale_tex_amount = array();
-            $sale_igst = array(); 
-            $sale_cgst = array();
-            $sale_sgst = array();
-            $sale_invoice_amount = array();
-            for($j=0;$j<count($state_wise_detail_sale);$j++)
-            {
-              $sale_tex_amount[] = $state_wise_detail_sale[$j]->textable_amount;
-              $sale_igst[] = $state_wise_detail_sale[$j]->igst;
-              $sale_cgst[] = $state_wise_detail_sale[$j]->cgst;
-              $sale_sgst[] = $state_wise_detail_sale[$j]->sgst;
-              $sale_invoice_amount[] = $state_wise_detail_sale[$j]->invoice_amount;
-            }
-            $sale_tex_amount = array_sum($sale_tex_amount);
-            $sale_igst = array_sum($sale_igst);
-            $sale_cgst = array_sum($sale_cgst);
-            $sale_sgst = array_sum($sale_sgst);
-            $sale_invoice_amount = array_sum($sale_invoice_amount);  
-          }
-          //end of sale
+        // $state_sale_wise_data = DB::table('billing_processeds')
+        //  ->where('vid', intval($request->vid))
+        //  ->whereIn('status',[$dto,$dtoBooked,$dispatched,$rtdOnline,$rtdCod])
+        //  ->distinct()->pluck('order_to')->toArray();
+        //   for($i=0;$i<count($state_sale_wise_data);$i++)
+        //   {
+        //     $state_wise_detail_sale = DB::table('billing_processeds')->where('order_to',$state_sale_wise_data)
+        //     ->select('order_to','textable_amount','igst','cgst','sgst','invoice_amount')->get();
+        //     $sale_tex_amount = array();
+        //     $sale_igst = array(); 
+        //     $sale_cgst = array();
+        //     $sale_sgst = array();
+        //     $sale_invoice_amount = array();
+        //     for($j=0;$j<count($state_wise_detail_sale);$j++)
+        //     {
+        //       $sale_tex_amount[] = $state_wise_detail_sale[$j]->textable_amount;
+        //       $sale_igst[] = $state_wise_detail_sale[$j]->igst;
+        //       $sale_cgst[] = $state_wise_detail_sale[$j]->cgst;
+        //       $sale_sgst[] = $state_wise_detail_sale[$j]->sgst;
+        //       $sale_invoice_amount[] = $state_wise_detail_sale[$j]->invoice_amount;
+        //     }
+        //     $sale_tex_amount = array_sum($sale_tex_amount);
+        //     $sale_igst = array_sum($sale_igst);
+        //     $sale_cgst = array_sum($sale_cgst);
+        //     $sale_sgst = array_sum($sale_sgst);
+        //     $sale_invoice_amount = array_sum($sale_invoice_amount);  
+        //   }
+        //   //end of sale
           
-          //sale return 
-          $state_sale_return_wise_data = DB::table('billing_processeds')
-          // dd($state_sale_return_wise_data);die();
-          ->where('vid', intval($request->vid))
-          ->whereIn('status',[$dtodel2warehouse,$dtointransit,$completed,$intransit,$packed,$deliveredtocust,$pickedup])
-          ->distinct()->pluck('order_to')->toArray();
-           for($i=0;$i<count($state_sale_return_wise_data);$i++)
-           {
-             $state_return_wise_detail_sale_return = DB::table('billing_processeds')
-             ->where('order_to',$state_sale_return_wise_data)
-             ->select('order_to','textable_amount','igst','cgst','sgst','invoice_amount')->get();
-            //  dd($state_sale_return_wise_data);die();
-             $sale_return_tex_amount = array();
-             $sale_return_igst = array(); 
-             $sale_return_cgst = array();
-             $sale_return_sgst = array();
-             $sale_return_invoice_amount = array();
-             for($j=0;$j<count($state_return_wise_detail_sale_return);$j++)
-             {
-                //  dd($state_sale_return_wise_data);die();
-               $sale_return_tex_amount[] = $state_return_wise_detail_sale_return[$j]->textable_amount;
-               $sale_return_igst[] = $state_return_wise_detail_sale_return[$j]->igst;
-               $sale_return_cgst[] = $state_return_wise_detail_sale_return[$j]->cgst;
-               $sale_return_sgst[] = $state_return_wise_detail_sale_return[$j]->sgst;
-               $sale_return_invoice_amount[] = $state_return_wise_detail_sale_return[$j]->invoice_amount;
-             }
-             $sale_return_tex_amount = array_sum($sale_return_tex_amount);
-             $sale_return_igst = array_sum($sale_return_igst);
-             $sale_return_cgst = array_sum($sale_return_cgst);
-             $sale_return_sgst = array_sum($sale_return_sgst);
-             $sale_return_invoice_amount = array_sum($sale_return_invoice_amount);  
-           }
-           $net_sale_text_amount= $sale_tex_amount-$sale_return_tex_amount;
-           $net_igst= $sale_igst-$sale_return_igst;
-           $net_cgst= $sale_cgst-$sale_return_cgst;
-           $net_sgst= $sale_sgst-$sale_return_sgst;
-           $net_invoice_amount=$sale_invoice_amount - $sale_return_invoice_amount;
-           $arr1 = array(
-            0=> array(
-              'order_to'=>$state_sale_wise_data,
-              'sale_textable_amount'=>$sale_tex_amount,
-              'sale_igst'=>$sale_igst,
-              'sale_cgst'=>$sale_cgst,
-              'sale_sgst'=>$sale_sgst,
-              'sale_invoice_amount'=>$sale_invoice_amount,
-              'return_text_amount'=>$sale_return_tex_amount,
-              'return_igst'=>$sale_return_igst,
-              'return_cgst'=>$sale_return_cgst,
-              'return_sgst'=>$sale_return_sgst,
-              'return_invoice_amount'=>$sale_return_invoice_amount,
-              'net_textable_amount'=>$net_sale_text_amount,
-              'net_igst'=>$net_igst,
-              'net_cgst'=>$net_cgst,
-              'net_sgst'=>$net_sgst,
-              'net_invoice_amount'=>$net_invoice_amount
-            )
-            );          
+        //   //sale return 
+        //   $state_sale_return_wise_data = DB::table('billing_processeds')
+        //   // dd($state_sale_return_wise_data);die();
+        //   ->where('vid', intval($request->vid))
+        //   ->whereIn('status',[$dtodel2warehouse,$dtointransit,$completed,$intransit,$packed,$deliveredtocust,$pickedup])
+        //   ->distinct()->pluck('order_to')->toArray();
+        //    for($i=0;$i<count($state_sale_return_wise_data);$i++)
+        //    {
+        //      $state_return_wise_detail_sale_return = DB::table('billing_processeds')
+        //      ->where('order_to',$state_sale_return_wise_data)
+        //      ->select('order_to','textable_amount','igst','cgst','sgst','invoice_amount')->get();
+        //     //  dd($state_sale_return_wise_data);die();
+        //      $sale_return_tex_amount = array();
+        //      $sale_return_igst = array(); 
+        //      $sale_return_cgst = array();
+        //      $sale_return_sgst = array();
+        //      $sale_return_invoice_amount = array();
+        //      for($j=0;$j<count($state_return_wise_detail_sale_return);$j++)
+        //      {
+        //         //  dd($state_sale_return_wise_data);die();
+        //        $sale_return_tex_amount[] = $state_return_wise_detail_sale_return[$j]->textable_amount;
+        //        $sale_return_igst[] = $state_return_wise_detail_sale_return[$j]->igst;
+        //        $sale_return_cgst[] = $state_return_wise_detail_sale_return[$j]->cgst;
+        //        $sale_return_sgst[] = $state_return_wise_detail_sale_return[$j]->sgst;
+        //        $sale_return_invoice_amount[] = $state_return_wise_detail_sale_return[$j]->invoice_amount;
+        //      }
+        //      $sale_return_tex_amount = array_sum($sale_return_tex_amount);
+        //      $sale_return_igst = array_sum($sale_return_igst);
+        //      $sale_return_cgst = array_sum($sale_return_cgst);
+        //      $sale_return_sgst = array_sum($sale_return_sgst);
+        //      $sale_return_invoice_amount = array_sum($sale_return_invoice_amount);  
+        //    }
+        //    $net_sale_text_amount= $sale_tex_amount-$sale_return_tex_amount;
+        //    $net_igst= $sale_igst-$sale_return_igst;
+        //    $net_cgst= $sale_cgst-$sale_return_cgst;
+        //    $net_sgst= $sale_sgst-$sale_return_sgst;
+        //    $net_invoice_amount=$sale_invoice_amount - $sale_return_invoice_amount;
+        //    $arr1 = array(
+        //     0=> array(
+        //       'order_to'=>$state_sale_wise_data,
+        //       'sale_textable_amount'=>$sale_tex_amount,
+        //       'sale_igst'=>$sale_igst,
+        //       'sale_cgst'=>$sale_cgst,
+        //       'sale_sgst'=>$sale_sgst,
+        //       'sale_invoice_amount'=>$sale_invoice_amount,
+        //       'return_text_amount'=>$sale_return_tex_amount,
+        //       'return_igst'=>$sale_return_igst,
+        //       'return_cgst'=>$sale_return_cgst,
+        //       'return_sgst'=>$sale_return_sgst,
+        //       'return_invoice_amount'=>$sale_return_invoice_amount,
+        //       'net_textable_amount'=>$net_sale_text_amount,
+        //       'net_igst'=>$net_igst,
+        //       'net_cgst'=>$net_cgst,
+        //       'net_sgst'=>$net_sgst,
+        //       'net_invoice_amount'=>$net_invoice_amount
+        //     )
+        //     );          
          
-           $state_wise = $arr1;
-        dd($state_wise);die();
+        //    $state_wise = $arr1;
+        // dd($state_wise);die();
          
-         }
+        //  }
     
 
 //         ->where('vid', intval($request->vid))

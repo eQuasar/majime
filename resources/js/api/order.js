@@ -154,5 +154,8 @@ export default {
     suborder_refund_amount(data)
     {
         return axios.post('refund_amount', data)
-    }
+    },
+    changeProcessing_Status(data) {
+        return axios.post('changeProcessing_Status', data)
+    },
 }
