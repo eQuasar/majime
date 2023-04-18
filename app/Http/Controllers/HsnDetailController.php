@@ -143,18 +143,18 @@ public function sale_invoice_wise_detail(Request $request)
     $date_to=$request->date_to;
     $range = [$date_from,$date_to];
         if(empty($date_from)||empty($date_to)){
-        $completed='completed';
-        $intransit='intransit';
-        $packed='picked';
-        $deliveredtocust='deliveredtocust';
-        $pickedup='pickedup';
-            $vid=$request->vid;
-            $retun_billing_processer_data = DB::table('billing_processeds')
-            ->where('vid', intval($request->vid))
-            ->whereIn('status',[$completed,$intransit,$packed,$deliveredtocust,$pickedup])
-            ->select('invoice_no','textable_amount','igst','sgst','cgst','invoice_amount','hsn_code','text_percentage','product_name','sku','product_qty','sub_order_id','state','status')
-            ->get();
-            return  $retun_billing_processer_data;
+            $completed='completed';
+            $intransit='intransit';
+            $packed='picked';
+            $deliveredtocust='deliveredtocust';
+            $pickedup='pickedup';
+                $vid=$request->vid;
+                $retun_billing_processer_data = DB::table('billing_processeds')
+                ->where('vid', intval($request->vid))
+                ->whereIn('status',[$completed,$intransit,$packed,$deliveredtocust,$pickedup])
+                ->select('invoice_no','textable_amount','igst','sgst','cgst','invoice_amount','hsn_code','text_percentage','product_name','sku','product_qty','sub_order_id','state','status')
+                ->get();
+                return  $retun_billing_processer_data;
         }
     else{
         $completed='completed';

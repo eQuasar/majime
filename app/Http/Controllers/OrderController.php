@@ -2621,5 +2621,41 @@ public function refund_amount(Request $request){
 //           $net_invoice_amount=$retun_sale_invoice_amount_total-$sale_invoice_amount_total;
   
 //      }
+public function pending_order(Request $request)
+    {
+        
+        $url = $request->url;
+		$vid = $request->vid;
+        // CURLOPT_URL => $url.'/wp-json/wc/v3/products/'.$product_id[$i],
+         // CURLOPT_URL => $url./wp-json/wc/v2/orders?after=2019-01-10T00:00:00Z&before=2019-01-10T23:59:59Z
+     
+      
+        $jsonResponse=$this->getOrderWP($url, $vid);
+
+    }
+    private function getOrderWP($url, $vid)
+	{
+        $last_7date = Carbon::today()->subDays(7);
+        $current_date=Carbon::today();
+		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
+		$curl = curl_init();
+	    curl_setopt_array($curl, array(
+	    CURLOPT_URL => $url.'/wp-json/wc/v3/orders?per_page=100?after'.$current_date.'&before'.$last_7date,
+	    CURLOPT_RETURNTRANSFER => true,
+	    CURLOPT_ENCODING => '',
+	    CURLOPT_MAXREDIRS => 10,
+	    CURLOPT_TIMEOUT => 0,
+	    CURLOPT_FOLLOWLOCATION => true,
+	    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	    CURLOPT_CUSTOMREQUEST => 'GET',
+	    CURLOPT_HTTPHEADER => array(
+	        'Authorization: Basic '.$vendor[0]->token
+	      ),
+	    ));
+	    $response = curl_exec($curl);
+	    curl_close($curl);
+	    $jsonResp = json_decode($response);
+		return  $jsonResp;
+ 	}
 
 }

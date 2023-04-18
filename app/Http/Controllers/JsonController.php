@@ -53,11 +53,14 @@ class JsonController extends Controller
 	public function productgetJson(Request $request)
 	{
 		//DD($request);
-		if(isset($request->url) && $request->url != ''){
+		if(isset($request->url) && $request->url != '')
+		{
 			$url = $request->url;
-		}else{
+		}
+		else
+		{
 			$vid = $request->vid;
-			$vendor =DB::table("vendors")->where('id','=',intval($vid))->get()->toArray();
+			$vendor = DB::table("vendors")->where('id','=',intval($vid))->get()->toArray();
 			$url = $vendor[0]->url;
 		}
 		$vid = $request->vid;
@@ -288,6 +291,7 @@ class JsonController extends Controller
 	}
 	private function getOrderWP($url, $vid)
 	{
+		
 		$vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
 		$curl = curl_init();
 	    curl_setopt_array($curl, array(
@@ -828,11 +832,11 @@ class JsonController extends Controller
 
 	    }
        	
-	    // if(!empty($Orders)){
-	    //    	Orders::insert($Orders); 	
+	    if(!empty($Orders)){
+	       	Orders::insert($Orders); 	
 
-	    //    	// $this->getWayBill($vid, $url);
-     //   	}
+	       	// $this->getWayBill($vid, $url);
+       	}
 			
 		// $jsonResponse=$this->getProductWP($url, intval($vid));
 		// // var_dump($jsonResponse); die;

@@ -265,6 +265,7 @@
 
 <script>
 import dashboard from "../../api/dashboard.js";
+import product from "../../api/Product.js";
 import user from "../../api/user.js";
 import VueApexCharts from "vue-apexcharts";
 import { Pie } from "vue-chartjs/legacy";
@@ -283,6 +284,7 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 export default {
   mounted() {
     this.getVidz();
+    this.productgetJson();
   },
   name: "PieChart",
   name: "DoughnutChart",
@@ -452,6 +454,7 @@ export default {
       values: [],
       stats: [],
       status: [],
+      getJson: [],
       errors_create: [],
       successful: false,
       create_error: "",
@@ -523,6 +526,27 @@ export default {
     },
   },
   methods: {
+    productgetJson() {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      // formData.append("date_from", this.date_from);
+      // formData.append("date_to", this.date_to);
+
+      product
+        .getproductgetJson(formData)
+        .then((response) => {
+          // console.log(response.data);
+          this.getJson = response.data;
+          // console.log(this.items_sale_invoice);
+        
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+    },
     getVidz() {
       if (this.$userId == 1) {
         this.show = true;

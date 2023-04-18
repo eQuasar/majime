@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'v1'], function () {
     // Route::apiResource('billings', 'BillingController');
     // Route::apiResource('billing', 'BillingController');
-	Route::get('insertAllOrders',[App\Http\Controllers\OrderController::class,'insertAllOrders']);
+	Route::get('insertAllgetOrderDetailsOrders',[App\Http\Controllers\OrderController::class,'insertAllOrders']);
 	
     Route::get('my_orders', 'OrderController@my_orders')->name('my_orders');
 	Route::get('smsTrigger', 'JsonController@smsTrigger')->name('smsTrigger');
@@ -177,6 +177,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('hsn_wise_detail_copy','BillingController@hsn_wise_detail_copy')->name('hsn_wise_detail_copy');
 	Route::post('state_wise_detail_copy','OrderController@state_wise_detail_copy')->name('state_wise_detail_copy');
 	Route::post('billing_filter','BillingController@billing_filter')->name('billing_filter');
+	Route::post('pending_order','OrderController@pending_order')->name('pending_order');
 	
 }); 
 

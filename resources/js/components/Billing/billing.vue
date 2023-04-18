@@ -405,6 +405,11 @@ export default {
         .then((response) => {
           // console.log(response.data);
           this.itemsstate = response.data;
+          this.getBilling_detail();
+          // this.getstate_detail();
+          this.saleinvoice_detail();
+          this.hsn_wise_detail_copy();
+          this.sale_return_wise_detail();
           console.log(this.itemsstate);
           this.show = false;
       // let formData = new FormData();

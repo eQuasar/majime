@@ -60,7 +60,11 @@ export default {
     import_data(data)
     {
       return axios.post('import_product_info', data)
-    }
+    },
+    getproductgetJson(data)
+    {
+      return axios.post('productgetJson', data)
+    },
 
 
 
