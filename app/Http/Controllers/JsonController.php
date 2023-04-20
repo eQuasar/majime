@@ -66,6 +66,7 @@ class JsonController extends Controller
 		$vid = $request->vid;
 		$jsonResponse=$this->getOrderWP($url, $vid);
 		// dd($jsonResponse);die();
+		OrderController::pending_order($vid);
 		$this->readdProduct($jsonResponse, $vid, $url);
 	}
 
@@ -818,17 +819,17 @@ class JsonController extends Controller
 				 'date_paid_gmt'=>$order->date_paid_gmt,
 				 'currency_symbol'=>$order->currency_symbol,
 			];
-			// $this->InsertBilling($order->id,$order->billing,$vid);
-			// $this->InsertShipping($order->id,$order->shipping,$vid);
-		    //$this->OrderMetaData($order->id,$order->meta_data);
-		 //    $this->insertLineItems($order->id,$order->line_items,$vid);
-			// //$this->LineItem_Metadata($order->id,$order->line_items);
-			// $this->OrderTaxLines($order->id,$order->tax_lines,$vid);
-			// $this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
-			// $this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
-			// $this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
-		 //    $this->Order_refunds($order->id,$order->refunds,$vid);
-			// $this->Order_links($order->id,$order->_links,$vid);
+			$this->InsertBilling($order->id,$order->billing,$vid);
+			$this->InsertShipping($order->id,$order->shipping,$vid);
+		    $this->OrderMetaData($order->id,$order->meta_data);
+		    $this->insertLineItems($order->id,$order->line_items,$vid);
+			//$this->LineItem_Metadata($order->id,$order->line_items);
+			$this->OrderTaxLines($order->id,$order->tax_lines,$vid);
+			$this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
+			$this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
+			$this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
+		    $this->Order_refunds($order->id,$order->refunds,$vid);
+			$this->Order_links($order->id,$order->_links,$vid);
 
 	    }
        	

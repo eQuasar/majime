@@ -178,6 +178,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('state_wise_detail_copy','OrderController@state_wise_detail_copy')->name('state_wise_detail_copy');
 	Route::post('billing_filter','BillingController@billing_filter')->name('billing_filter');
 	Route::post('pending_order','OrderController@pending_order')->name('pending_order');
+	Route::get('data_scraping','AccountController@data_scraping')->name('data_scraping');
 	
 }); 
 
