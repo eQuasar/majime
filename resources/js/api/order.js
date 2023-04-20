@@ -158,4 +158,7 @@ export default {
     changeProcessing_Status(data) {
         return axios.post('changeProcessing_Status', data)
     },
+    getpending_order(data) {
+        return axios.post('pending_order', data)
+    },
 }

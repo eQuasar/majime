@@ -266,6 +266,7 @@
 <script>
 import dashboard from "../../api/dashboard.js";
 import product from "../../api/Product.js";
+import order from "../../api/order.js";
 import user from "../../api/user.js";
 import VueApexCharts from "vue-apexcharts";
 import { Pie } from "vue-chartjs/legacy";
@@ -285,6 +286,7 @@ export default {
   mounted() {
     this.getVidz();
     this.productgetJson();
+    this.pending_order();
   },
   name: "PieChart",
   name: "DoughnutChart",
@@ -526,6 +528,27 @@ export default {
     },
   },
   methods: {
+    pending_order() {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      // formData.append("date_from", this.date_from);
+      // formData.append("date_to", this.date_to);
+
+      order
+        .getpending_order(formData)
+        .then((response) => {
+          // console.log(response.data);
+          this.getpending_order = response.data;
+          // console.log(this.items_sale_invoice);
+        
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+    },
     productgetJson() {
       this.vid = JSON.parse(localStorage.getItem("ivid"));
       let formData = new FormData();

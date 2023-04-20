@@ -66,7 +66,7 @@ class JsonController extends Controller
 		$vid = $request->vid;
 		$jsonResponse=$this->getOrderWP($url, $vid);
 		// dd($jsonResponse);die();
-		OrderController::pending_order($vid);
+		// OrderController::pending_order($vid);
 		$this->readdProduct($jsonResponse, $vid, $url);
 	}
 

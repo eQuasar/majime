@@ -2622,12 +2622,13 @@ public function refund_amount(Request $request){
 //           $net_invoice_amount=$retun_sale_invoice_amount_total-$sale_invoice_amount_total;
   
 //      }
-public function pending_order($vid)
+public function pending_order(Request $request)
     {
         // $url = $request->url;
-		// $vid = $request->vid;
-        $vendor = DB::table("vendors")->where('id','=',intval($vid))->get();
-		$url = $vendor[0]->url;
+		$vid = $request->vid;
+        $vendor = DB::table("vendors")->where('id','=',intval($vid))->get()->toArray();
+			$url = $vendor[0]->url;
+            // dd($url);die();
         $jsonResponse=$this->getOrderWP($url, $vid);
                 //fetch oid
             foreach($jsonResponse as $order_detail)
