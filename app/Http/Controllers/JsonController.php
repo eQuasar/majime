@@ -65,9 +65,17 @@ class JsonController extends Controller
 		}
 		$vid = $request->vid;
 		$jsonResponse=$this->getOrderWP($url, $vid);
+		if(empty($jsonResponse))
+        {
+            return response()->json(['error' => false, 'msg' =>"New Prpoduct Nor", "ErrorCode" => "000"], 200); 
+        }
+		else{
+			$this->readdProduct($jsonResponse, $vid, $url);
+		}
 		// dd($jsonResponse);die();
 		// OrderController::pending_order($vid);
-		$this->readdProduct($jsonResponse, $vid, $url);
+		
+		
 	}
 
     public function get_order_data(Request $request)
@@ -833,11 +841,11 @@ class JsonController extends Controller
 
 	    }
        	
-	    if(!empty($Orders)){
+	   
 	       	Orders::insert($Orders); 	
-
+			echo "Product Insert Successfully";
 	       	// $this->getWayBill($vid, $url);
-       	}
+       	
 			
 		// $jsonResponse=$this->getProductWP($url, intval($vid));
 		// // var_dump($jsonResponse); die;
@@ -865,7 +873,6 @@ class JsonController extends Controller
 
 	public function InsertProduct($ProductData,$vid)
 		{	
-			
 			// var_dump($ProductData);
 			foreach($ProductData as $InProduct)
 		   {
@@ -930,6 +937,9 @@ class JsonController extends Controller
 			}
 		// }
     	 Products::insert($product);
+		  echo "Product Insert Successfully";
+		// return response()->json(['error' => false, 'msg' =>"Product Insert Successfully", "ErrorCode" => "000"], 200);
+		
     }
     public function InsertProductCat($ProductCat,$vid)
 		{	

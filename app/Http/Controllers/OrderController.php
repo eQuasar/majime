@@ -2620,7 +2620,6 @@ public function refund_amount(Request $request){
 //           $net_sgst=$retun_sale_sgst_total-$sale_sgst_total;
 //          //net sale for sale invoice_amount-return sale invoice_amount total
 //           $net_invoice_amount=$retun_sale_invoice_amount_total-$sale_invoice_amount_total;
-  
 //      }
 public function pending_order(Request $request)
     {
@@ -2630,22 +2629,33 @@ public function pending_order(Request $request)
 			$url = $vendor[0]->url;
             // dd($url);die();
         $jsonResponse=$this->getOrderWP($url, $vid);
+        if(empty($jsonResponse))
+        {
+            return response()->json(['error' => false, 'msg' =>"New Order not", "ErrorCode" => "000"], 200); 
+        }
+        else{
                 //fetch oid
             foreach($jsonResponse as $order_detail)
             {
                 $oid[]=$order_detail->id;
-                // dd($oid);die();
+                // dd($order_detail);die();
             }
+        }
+            //  dd($oid);die();
                 $Order_id= DB::table('orders')->where('vid','=',$vid)->pluck('oid')->toArray();//match vid data
                 $differ=array_diff($oid,$Order_id);
                 // dd($differ);die();
+             
+              
                 foreach($jsonResponse as $order)
                 {
+                    // dd($differ);die();
                     foreach($differ as $pending_id)
                     {
+                     
                         if($order->id==$pending_id)
                         {
-                            // dd($order->id);die();
+                            // dd($pending_id);die();
                                 $Orders[]=[
                                 'oid'=>intval($order->id),
                                 'vid'=>intval($vid),
@@ -2697,21 +2707,23 @@ public function pending_order(Request $request)
                             $this->Order_refunds($order->id,$order->refunds,$vid);
                             $this->Order_links($order->id,$order->_links,$vid);
                         }
-                       
-                      
-                      
                     }
 
-                   
                 }
+                // return $order_detail;
+                // dd($order_detail);die();
                 if(!empty($Orders))
                 {
                 Orders::insert($Orders);
                 return response()->json(['error' => false, 'msg' =>"Pending Order Insert Successfully", "ErrorCode" => "000"], 200);
+                // dd($Orders);die();
                 }
                 else{
                     return response()->json(['error' => false, 'msg' =>"Data Already Inserted", "ErrorCode" => "000"], 200); 
-                }
+                
+              
+               }
+                
      }
                 
   
