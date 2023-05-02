@@ -43,7 +43,6 @@ class OrderController extends Controller {
     }
     //order_search with table orders and billings  (orders.oid == billing.order_id)
     public function order_Search(Request $request) {
-
         $vid = $request->vid;
         $date_from = $request->date_from;
         if($request->date_to != ''){
@@ -60,7 +59,7 @@ class OrderController extends Controller {
                     {
                         $join->on('orders.oid', '=', 'billings.order_id')
                              ->where('billings.vid', '=', intval($vid));
-                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_created_gmt', $range)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_created_gmt', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
                         GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
             }else{
@@ -69,7 +68,7 @@ class OrderController extends Controller {
                     {
                         $join->on('orders.oid', '=', 'billings.order_id')
                              ->where('billings.vid', '=', intval($vid));
-                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_created_gmt', $range)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_created_gmt', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
                         GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
             }
@@ -81,7 +80,7 @@ class OrderController extends Controller {
                     {
                         $join->on('orders.oid', '=', 'billings.order_id')
                              ->where('billings.vid', '=', intval($vid));
-                    })->where('orders.vid', '=', $request->vid)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_created_gmt', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
                         GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
             }else{
@@ -91,7 +90,7 @@ class OrderController extends Controller {
                              ->where('billings.vid', '=', intval($vid));
                     })->where('orders.vid', '=', $request->vid)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
-                        GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
+                        GROUP BY line_items.order_id) as quantity"))->whereBetween('orders.date_created_gmt', $range)->where('orders.status','=',$request->status)->orderBy('orders.oid', 'DESC')->get();
             }
         }
         return $orders;
@@ -2929,6 +2928,10 @@ public function pending_order(Request $request)
 			];
 	    }
 		Order_links::insert($Order_links);
+    }
+    public function order_Searchdata(Request $request)
+    {
+        dd($request);die();
     }
 
 }
