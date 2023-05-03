@@ -12,6 +12,9 @@ export default {
     orderSearch(data) {
         return axios.post('order_Search',data)
     },
+    orderSearchdata(data) {
+        return axios.post('order_Searchdata',data)
+    },
 
     getOrderProfile(oid, vid) {
         return axios.get('order_Profile/' + oid+'?vid='+vid)
