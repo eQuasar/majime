@@ -786,6 +786,20 @@ class JsonController extends Controller
  	}
 
 	public function InsertOrder($InOrder, $vid, $url){
+		DB::table('products')->where('vid', intval($vid))->delete();
+		DB::table('orders')->where('vid', intval($vid))->delete();
+		DB::table('billings')->where('vid', intval($vid))->delete();
+		DB::table('shippings')->where('vid', intval($vid))->delete();
+		DB::table('line_items')->where('vid', intval($vid))->delete();
+		DB::table('Order_Coupan_lines')->where('vid', intval($vid))->delete();
+		DB::table('Order_fee_lines')->where('vid', intval($vid))->delete();
+		DB::table('Order_links')->where('vid', intval($vid))->delete();
+		DB::table('Order_Refunds')->where('vid', intval($vid))->delete();
+		DB::table('products_attributes')->where('vid', intval($vid))->delete();
+		DB::table('order_reldates')->where('vid', intval($vid))->delete();
+		DB::table('tax_lines')->where('vid', intval($vid))->delete();
+		DB::table('categories')->where('vid', intval($vid))->delete();
+		DB::table('products_tag')->where('vid', intval($vid))->delete();
 		foreach($InOrder as $order)
 		{
 			// var_dump($order); die;
@@ -829,7 +843,7 @@ class JsonController extends Controller
 			];
 			$this->InsertBilling($order->id,$order->billing,$vid);
 			$this->InsertShipping($order->id,$order->shipping,$vid);
-		    $this->OrderMetaData($order->id,$order->meta_data);
+		    // $this->OrderMetaData($order->id,$order->meta_data);
 		    $this->insertLineItems($order->id,$order->line_items,$vid);
 			//$this->LineItem_Metadata($order->id,$order->line_items);
 			$this->OrderTaxLines($order->id,$order->tax_lines,$vid);
@@ -841,32 +855,34 @@ class JsonController extends Controller
 
 	    }
        	
+	    if(!empty($Orders)){
 	   
 	       	Orders::insert($Orders); 	
-			echo "Product Insert Successfully";
+			// echo "Product Insert Successfully";
 	       	// $this->getWayBill($vid, $url);
+       }
        	
 			
-		// $jsonResponse=$this->getProductWP($url, intval($vid));
-		// // var_dump($jsonResponse); die;
-		// $this->InsertProduct($jsonResponse, $vid);
+		$jsonResponse=$this->getProductWP($url, intval($vid));
+		// var_dump($jsonResponse); die;
+		$this->InsertProduct($jsonResponse, $vid);
 		
-		 // $jsonResponseVariation=$this->getProductVariation($jsonResponse,$url, intval($vid));
+	 	// $jsonResponseVariation=$this->getProductVariation($jsonResponse,$url, intval($vid));
 
 		
 		// dd($jsonResponse);
 
-		// $jsonResponsecat=$this->getProductCatWP($url, intval($vid));
-		// $this->InsertProductCat($jsonResponsecat, $vid);
-		// // var_dump($jsonResponsecat);
-		// // dd($jsonResponsecat);
+		$jsonResponsecat=$this->getProductCatWP($url, intval($vid));
+		$this->InsertProductCat($jsonResponsecat, $vid);
+		// var_dump($jsonResponsecat);
+		// dd($jsonResponsecat);
 
-		// $jsonResponseTag=$this->getProductTagWp($url, intval($vid));
-		// $this->InsertProductTag($jsonResponseTag, $vid);
-		// // dd($jsonResponseTag);
+		$jsonResponseTag=$this->getProductTagWp($url, intval($vid));
+		$this->InsertProductTag($jsonResponseTag, $vid);
+		// dd($jsonResponseTag);
 
-		// $jsonResponseAtt=$this->getProductAttWp($url, intval($vid));
-		// $this->InsertProductAtt($jsonResponseAtt, $vid);
+		$jsonResponseAtt=$this->getProductAttWp($url, intval($vid));
+		$this->InsertProductAtt($jsonResponseAtt, $vid);
 		
 		
     }
@@ -919,8 +935,8 @@ class JsonController extends Controller
 				 'tax_class'=>$InProduct->tax_class,
 				'manage_stock'=>$InProduct->manage_stock,
 				 'stock_quantity'=>$InProduct->stock_quantity,
-				'backorders'=>$InProduct->backorders,
-				'backorders_allowed'=>$InProduct->backorders_allowed,
+				// 'backorders'=>$InProduct->backorders,
+				// 'backorders_allowed'=>$InProduct->backorders_allowed,
 				 'low_stock_amount'=>$InProduct->low_stock_amount,
 				 'sold_individually'=>$InProduct->sold_individually,
 				 'weight'=>$InProduct->weight,
@@ -1061,10 +1077,10 @@ class JsonController extends Controller
 				'description'=>$Variation_data->description,
 				'permalink'=>$Variation_data->permalink,
 				'sale_price'=>$Variation_data->sale_price,
-				'date_on_sale_from'=>$Variation_data->date_on_sale_from,
-				'date_on_sale_from_gmt'=>$Variation_data->date_on_sale_from_gmt,
-				'date_on_sale_to'=>$Variation_data->date_on_sale_to,
-				'date_on_sale_to_gmt'=>$Variation_data->date_on_sale_to_gmt,
+				// 'date_on_sale_from'=>$Variation_data->date_on_sale_from,
+				// 'date_on_sale_from_gmt'=>$Variation_data->date_on_sale_from_gmt,
+				// 'date_on_sale_to'=>$Variation_data->date_on_sale_to,
+				// 'date_on_sale_to_gmt'=>$Variation_data->date_on_sale_to_gmt,
 				'on_sale'=>$Variation_data->on_sale,
 				'status'=>$Variation_data->status,
 				'purchasable'=>$Variation_data->purchasable,
@@ -1075,9 +1091,9 @@ class JsonController extends Controller
 				'tax_status'=>$Variation_data->tax_status,
 				'tax_class'=>$Variation_data->tax_class,
 				'manage_stock'=>$Variation_data->manage_stock,
-				'backorders'=>$Variation_data->backorders,
-				'backorders_allowed'=>$Variation_data->backorders_allowed,
-				'backordered'=>$Variation_data->backordered,
+				// 'backorders'=>$Variation_data->backorders,
+				// 'backorders_allowed'=>$Variation_data->backorders_allowed,
+				// 'backordered'=>$Variation_data->backordered,
 				'low_stock_amount'=>$Variation_data->low_stock_amount,
 				'weight'=>$Variation_data->weight,
 				'shipping_class'=>$Variation_data->shipping_class,

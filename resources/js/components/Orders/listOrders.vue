@@ -13,7 +13,7 @@
       <b-form @submit="onSubmit" class="date_range">
       <b-col xl="2" lg="2" md="2">
             <select class="form-control custom-select" v-model="status" :options="allstatusdata" @change="onChangeStatus($event)">
-                <option disabled value="null">Select status</option>
+                <option enabled value="null">Select status</option>
                 <option v-for="data in allstatusdata" :value="data.status">{{data.status}}</option>
             </select>
         </b-col>

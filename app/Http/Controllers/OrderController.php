@@ -59,7 +59,7 @@ class OrderController extends Controller {
                     {
                         $join->on('orders.oid', '=', 'billings.order_id')
                              ->where('billings.vid', '=', intval($vid));
-                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_created_gmt', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_modified_gmt', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
                         GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
             }else{
@@ -68,7 +68,7 @@ class OrderController extends Controller {
                     {
                         $join->on('orders.oid', '=', 'billings.order_id')
                              ->where('billings.vid', '=', intval($vid));
-                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_created_gmt', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_modified_gmt', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
                         GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
             }
@@ -80,7 +80,7 @@ class OrderController extends Controller {
                     {
                         $join->on('orders.oid', '=', 'billings.order_id')
                              ->where('billings.vid', '=', intval($vid));
-                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_created_gmt', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                    })->where('orders.vid', '=', $request->vid)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
                         GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
             }else{
@@ -90,7 +90,7 @@ class OrderController extends Controller {
                              ->where('billings.vid', '=', intval($vid));
                     })->where('orders.vid', '=', $request->vid)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
-                        GROUP BY line_items.order_id) as quantity"))->whereBetween('orders.date_created_gmt', $range)->where('orders.status','=',$request->status)->orderBy('orders.oid', 'DESC')->get();
+                        GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
             }
         }
         return $orders;
@@ -1595,6 +1595,7 @@ class OrderController extends Controller {
     public function status_data(Request $request) {
         $order = DB::table("orders")->distinct()->select('orders.status')->where('orders.vid', $request->vid)->get();
         return $order;
+
     }
        // api state search fetch according  table billings 
     public function status_Search(Request $request) {
@@ -2663,17 +2664,22 @@ public function refund_amount(Request $request){
 //      }
 public function pending_order(Request $request)
     {
-        // $url = $request->url;
+        $random = rand(0,1000);
 		$vid = $request->vid;
         $vendor = DB::table("vendors")->where('id','=',intval($vid))->get()->toArray();
 			$url = $vendor[0]->url;
-            // dd($url);die();
-        $jsonResponse=$this->getOrderWP($url, $vid);
-        
+            $ck = $vendor[0]->consumer_key;
+            $cs = $vendor[0]->secret_key;
+            if(isset($ck) || $ck !=''){
+                $suffix = '&consumer_key='.$ck.'&consumer_secret='.$cs.'&q='.$random;
+            }
+            // dd($url);
+            // die();
+        $jsonResponse=$this->getOrderWP($url, $vid, $suffix);
         // print_r($jsonResponse);die();
         if(empty($jsonResponse))
         {
-            return response()->json(['error' => false, 'msg' =>"New Order not", "ErrorCode" => "000"], 200); 
+            return response()->json(['error' => false, 'msg' =>"No new orders found. -- ".$random, "ErrorCode" => "000"], 200); 
         }
         else{
                 //fetch oid
@@ -2757,12 +2763,12 @@ public function pending_order(Request $request)
                 {
                     Orders::insert($Orders);
                     $ordersjson = json_encode($Orders);
-                    return response()->json(['error' => false, 'msg' =>"Pending Order Insert Successfully ----- ".$ordersjson, "ErrorCode" => "000"], 200);
+                    return response()->json(['error' => false, 'msg' =>"Pending Order Insert Successfully ---".$random."-- ".$ordersjson, "ErrorCode" => "000"], 200);
                 
                 }
                 else{
                     $ordersjson = json_encode($jsonResponse);
-                    return response()->json(['error' => false, 'msg' =>"Data Already Inserted ----- ".$ordersjson, "ErrorCode" => "000"], 200); 
+                    return response()->json(['error' => false, 'msg' =>"Data Already Inserted ---".$random."-- ".$ordersjson, "ErrorCode" => "000"], 200); 
                 
               
                }
@@ -2773,7 +2779,7 @@ public function pending_order(Request $request)
 
 
 
-    private function getOrderWP($url, $vid)
+    private function getOrderWP($url, $vid, $suffix)
 	{
         // $last_7date = Carbon::today()->subDays(rand(0,1))->format('Y-m-d');
         // $date=$last_7date.'T00:00:00';
@@ -2791,7 +2797,7 @@ public function pending_order(Request $request)
             // https://ohexchange.in/wp-json/wc/v3/orders?per_page=50&status=processing,cancelled&after=2023-04-11T00:00:00
             
 
-	    CURLOPT_URL => $url.'/wp-json/wc/v3/orders?status=processing&per_page=20',
+	    CURLOPT_URL => $url.'/wp-json/wc/v3/orders?per_page='.rand(18,25).'&status=processing'.$suffix,
         // CURLOPT_URL => $url.'/wp-json/wc/v3/orders?per_page=50&status=processing,cancelled',
 	    CURLOPT_RETURNTRANSFER => true,
 	    CURLOPT_ENCODING => '',
