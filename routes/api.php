@@ -179,7 +179,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('billing_filter','BillingController@billing_filter')->name('billing_filter');
 	Route::post('pending_order','OrderController@pending_order')->name('pending_order');
 	Route::get('data_scraping','AccountController@data_scraping')->name('data_scraping');
-	Route::post('orderSearch_data', 'OrderController@order_Searchdata')->name('order_Searchdata');
+	Route::post('order_Searchdata', 'OrderController@order_Searchdata')->name('order_Searchdata');
 	
 }); 
 

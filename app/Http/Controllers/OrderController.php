@@ -1599,12 +1599,22 @@ class OrderController extends Controller {
     }
        // api state search fetch according  table billings 
     public function status_Search(Request $request) {
-      $vid = $request->vid;
+        $vid = $request->vid;
+        if($request->status=='null')
+        {
+            $order = DB::table("orders")->join('billings', function($join) use ($vid)
+            {
+                $join->on('orders.oid', '=', 'billings.order_id')
+                     ->where('billings.vid', '=', intval($vid));
+            })->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"))->where('orders.vid', $request->vid)->where('billings.vid', $request->vid)->get();
+        }
+        elseif($request->status!='null'){
         $order = DB::table("orders")->join('billings', function($join) use ($vid)
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"))->Where('orders.status', $request->status)->where('orders.vid', $request->vid)->where('billings.vid', $request->vid)->get();
+        })->where('orders.status','=',$request->status)->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"))->Where('orders.status', $request->status)->where('orders.vid', $request->vid)->where('billings.vid', $request->vid)->get();
+    }
         return $order;
     }
        // api zone search fetch according  table zonedetails 
@@ -2937,7 +2947,80 @@ public function pending_order(Request $request)
     }
     public function order_Searchdata(Request $request)
     {
-        dd($request);die();
-    }
+        $vid = $request->vid;
+        $date_from = $request->date_from;
+        if($request->date_to != ''){
+            $date_to = $request->date_to;
+        }else{
+            $date_to = date('Y-m-d');
+        }
+        $range = [$request->date_from, $request->date_to];
+        if($request->status=='null')
+        {
+            $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+                    {
+                        $join->on('orders.oid', '=', 'billings.order_id')
+                             ->where('billings.vid', '=', intval($vid));
+                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_modified_gmt', $range)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                        WHERE line_items.order_id = orders.oid
+                        GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
+            }
+        elseif($request->status!='null'){
+            $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+                    {
+                        $join->on('orders.oid', '=', 'billings.order_id')
+                             ->where('billings.vid', '=', intval($vid));
+                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_modified_gmt', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                        WHERE line_items.order_id = orders.oid
+                        GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
+            }
+            return $orders;
+        }
+        //if condition date from equal data to
+        // if($request->date_from != ""){
+        //     echo "hello";
+            // $range = [$request->date_from, $request->date_to];
+            // // var_dump($range);
+            // if($request->status != null || $request->status != 'null' || $request->status != ''){
+            //     $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+            //         {
+            //             $join->on('orders.oid', '=', 'billings.order_id')
+            //                  ->where('billings.vid', '=', intval($vid));
+            //         })->where('orders.vid', '=', $request->vid)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+            //             WHERE line_items.order_id = orders.oid
+            //             GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
+            // }else{
+            //     echo "string"; die;
+            //     $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+            //         {
+            //             $join->on('orders.oid', '=', 'billings.order_id')
+            //                  ->where('billings.vid', '=', intval($vid));
+            //         })->where('orders.vid', '=', $request->vid)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+            //             WHERE line_items.order_id = orders.oid
+            //             GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
+            // }
+        // }else{
+        //     echo "else";
+            // $range = [$request->date_from.' 00:00:00', $request->date_to.' 23:59:59'];
+            // $order=orders::whereBetween('date_created_gmt',$range)->orderBy('orders.oid', 'DESC')->get();
+            // if($request->status != null || $request->status != ''){
+            //     $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+            //         {
+            //             $join->on('orders.oid', '=', 'billings.order_id')
+            //                  ->where('billings.vid', '=', intval($vid));
+            //         })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_created_gmt', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+            //             WHERE line_items.order_id = orders.oid
+            //             GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
+            // }else{
+            //     $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+            //         {
+            //             $join->on('orders.oid', '=', 'billings.order_id')
+            //                  ->where('billings.vid', '=', intval($vid));
+            //         })->where('orders.vid', '=', $request->vid)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+            //             WHERE line_items.order_id = orders.oid
+            //             GROUP BY line_items.order_id) as quantity"))->whereBetween('orders.date_created_gmt', $range)->where('orders.status','=',$request->status)->orderBy('orders.oid', 'DESC')->get();
+            // }
+        // }
+        // return $orders
 
 }

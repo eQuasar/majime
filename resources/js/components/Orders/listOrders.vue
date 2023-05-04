@@ -8,7 +8,7 @@
     </div> 
    <br>
     <div class="content_bar">
-      <div class="select-list">
+      <!-- <div class="select-list"> -->
     <b-row>
       <b-form @submit="onSubmit" class="date_range">
       <b-col xl="2" lg="2" md="2">
@@ -23,6 +23,7 @@
                 <option v-for="data in allcitydata" :value="data.city">{{data.city}}</option>
             </select>
         </b-col> -->
+        
         <b-col xl="6" lg="6" md="6">
                   <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
                     
@@ -34,7 +35,7 @@
               </b-col>
             </b-form>
     </b-row>
-  </div>
+  <!-- </div> -->
 </div>
 <br>
   <div class="card-body card">
@@ -443,7 +444,7 @@ computed: {
           // formData.append("city", this.city);
           formData.append("status", this.status);
           formData.append("vid", this.vid);
-            order.orderSearch(formData)
+            order.orderSearchdata(formData)
               .then((response) => {    
                       this.items=response.data;
                       this.show=false;
