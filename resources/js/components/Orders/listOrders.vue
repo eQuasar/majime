@@ -61,7 +61,7 @@
                           <b-form-group class="mb-0"> Show <b-form-select id="per-page-select" v-model="perPage" :options="pageOptions" size="sm"></b-form-select> entries </b-form-group>
                       </b-col>
                       <b-col>
-                          <button type="button" class="download-btn btn btn-primary" v-on:click="selectdownload" style="margin-left: 15px;">Download</button>
+                          <button type="button" class="download-btn btn btn-primary" v-on:click="download" style="margin-left: 15px;">Download</button>
                           
                           <span v-if="saw5"><button type="button" class="download-btn btn btn-primary" v-model="statusAssign" v-on:click="addstatus">Change Status</button></span>
                       </b-col>
@@ -209,15 +209,13 @@
           label: '',
           sortable:true
         }, 
-
           {
             key: 'oid',
             label: 'Order ID',
             sortable: true
           },
-
           {
-            key: 'name' ,
+            key: 'customername',
             label: 'Name',
             sortable: true
           },
@@ -264,11 +262,11 @@
             label: 'Status',
             sortable: true
           },
-          {
-            key: 'waybill_no',
-            label: 'AWB',
-            sortable: false
-          },
+          // {
+          //   key: 'waybill_no',
+          //   label: 'AWB',
+          //   sortable: false
+          // },
           {
             key: 'action',
             label: 'Action',
@@ -458,6 +456,13 @@ computed: {
                       });
         
           },
+          download : function() {
+          const data = XLSX.utils.json_to_sheet(this.items)
+          const wb = XLSX.utils.book_new()
+          XLSX.utils.sheet_add_aoa(data, [["OrderID","Name","Qty","Amount","State","City","Order Date","Payment Mode","Contact","Status"]], { origin: "A1" });
+          XLSX.utils.book_append_sheet(wb, data, 'data')
+          XLSX.writeFile(wb,'List_orders.xlsx')
+      },
         getVidz()
            {
             // alert("sss");
@@ -535,22 +540,7 @@ computed: {
                   // loader.hide();
               });
         },
-      download : function() {
-          const data = XLSX.utils.json_to_sheet(this.items)
-          const wb = XLSX.utils.book_new()
-          XLSX.utils.book_append_sheet(wb, data, 'data')
-          XLSX.writeFile(wb,'download_list.xlsx')
-      },
-      download2 : function() {
-        let formData=new FormData();
-        formData.append("selectall",this.selectall);
-        formData.append("vid",this.vid);
-          // const data = XLSX.utils.json_to_sheet(this.items)
-          // const wb = XLSX.utils.book_new()
-          // XLSX.utils.book_append_sheet(wb, data, 'data')
-          // XLSX.writeFile(wb,'download_list.xlsx')
-      },
-
+    
       listOrderChangeStatus()
         {
           this.vid=JSON.parse(localStorage.getItem("ivid"));

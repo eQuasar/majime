@@ -253,13 +253,25 @@ class OrderController extends Controller {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vendor));
         })
-        ->where('orders.vid', '=', intval($vendor))->where('date_created','>=',$date)->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-                                        WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vendor) . "
-                                        GROUP BY line_items.order_id) as quantity"))->get();
+        ->where('orders.vid', '=', intval($vendor))->where('date_created','>=',$date)->orderBy('oid', 'DESC')
+        ->select("orders.oid as oid",DB::raw("CONCAT(billings.first_name,' ',billings.last_name) as customername"), DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        WHERE line_items.order_id = orders.oid
+        GROUP BY line_items.order_id) as quantity"),'orders.total as total',"billings.state as state","billings.city as city","orders.date_modified_gmt as date_created","orders.payment_method_title as payment_method_title",'billings.phone as phone',"orders.status as status")->orderBy('orders.oid', 'DESC')
+        // ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        //                                 WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vendor) . "
+        //                                 GROUP BY line_items.order_id) as quantity"))
+                                        ->get();
         } else {
-            $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', '=', intval($vendor))->where('billings.vid', '=', intval($vendor))->where('date_created','>=',$date)->orderBy('oid', 'DESC')->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-                                        WHERE line_items.order_id = orders.oid
-                                        GROUP BY line_items.order_id) as quantity"))->get();
+            $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', '=', intval($vendor))->where('billings.vid', '=', intval($vendor))->where('date_created','>=',$date)->orderBy('oid', 'DESC')
+            ->select("orders.oid as oid",DB::raw("CONCAT(billings.first_name,' ',billings.last_name) as name"), DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+            WHERE line_items.order_id = orders.oid
+            GROUP BY line_items.order_id) as quantity"),'orders.total as total',"billings.state as state","billings.city as city","orders.date_modified_gmt as date_created","orders.payment_method_title as payment_method_title",'billings.phone as phone',"orders.status as status")->orderBy('orders.oid', 'DESC')
+            
+            
+            // ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+            //                             WHERE line_items.order_id = orders.oid
+            //                             GROUP BY line_items.order_id) as quantity"))
+                                        ->get();
                                                         
         }
         return $orders;
@@ -1608,14 +1620,24 @@ class OrderController extends Controller {
             {
                 $join->on('orders.oid', '=', 'billings.order_id')
                      ->where('billings.vid', '=', intval($vid));
-            })->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"))->where('orders.vid', $request->vid)->where('billings.vid', $request->vid)->get();
+            })
+            ->select("orders.oid as oid",DB::raw("CONCAT(billings.first_name,' ',billings.last_name) as customername"), DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+            WHERE line_items.order_id = orders.oid
+            GROUP BY line_items.order_id) as quantity"),'orders.total as total',"billings.state as state","billings.city as city","orders.date_modified_gmt as date_created","orders.payment_method_title as payment_method_title",'billings.phone as phone',"orders.status as status")->orderBy('orders.oid', 'DESC')
+            // ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"))
+            ->where('orders.vid', $request->vid)->where('billings.vid', $request->vid)->get();
         }
         elseif($request->status!='null'){
         $order = DB::table("orders")->join('billings', function($join) use ($vid)
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })->where('orders.status','=',$request->status)->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"))->Where('orders.status', $request->status)->where('orders.vid', $request->vid)->where('billings.vid', $request->vid)->get();
+        })->where('orders.status','=',$request->status)
+        ->select("orders.oid as oid",DB::raw("CONCAT(billings.first_name,' ',billings.last_name) as customername"), DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+        WHERE line_items.order_id = orders.oid
+        GROUP BY line_items.order_id) as quantity"),'orders.total as total',"billings.state as state","billings.city as city","orders.date_modified_gmt as date_created","orders.payment_method_title as payment_method_title",'billings.phone as phone',"orders.status as status")->orderBy('orders.oid', 'DESC')
+        // ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND     line_items.vid = " . intval($request->vid) . " GROUP BY line_items.order_id) as quantity"))
+        ->Where('orders.status', $request->status)->where('orders.vid', $request->vid)->where('billings.vid', $request->vid)->get();
     }
         return $order;
     }
@@ -2964,9 +2986,11 @@ public function pending_order(Request $request)
                     {
                         $join->on('orders.oid', '=', 'billings.order_id')
                              ->where('billings.vid', '=', intval($vid));
-                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_modified_gmt',$range)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_modified_gmt', $range)
+                    ->select("orders.oid as oid",DB::raw("CONCAT(billings.first_name,' ',billings.last_name) as name"), DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
-                        GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
+                        GROUP BY line_items.order_id) as quantity"),'orders.total as total',"billings.state as state","billings.city as city","orders.date_modified_gmt as date_created","orders.payment_method_title as payment_method_title",'billings.phone as phone',"orders.status as status")->orderBy('orders.oid', 'DESC')
+                        ->get();
             }
         elseif($request->status!='null'){
             $orders = DB::table("orders")->join('billings', function($join) use ($vid)
@@ -2976,9 +3000,9 @@ public function pending_order(Request $request)
                     })->where('orders.vid', '=', $request->vid)
                     ->whereBetween('orders.date_modified_gmt',$range)
                     ->where('orders.status','=',$request->status)
-                    ->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                    ->select("orders.oid as oid",DB::raw("CONCAT(billings.first_name,' ',billings.last_name) as name"),DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
-                        GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
+                        GROUP BY line_items.order_id) as quantity"),'orders.total as total',"billings.state as state","billings.city as city","orders.date_modified_gmt as date_created","orders.payment_method_title as payment_method_title",'billings.phone as phone',"orders.status as status")->orderBy('orders.oid','DESC')->get();
             }
             else{
                 return response()->json(['error' => false, 'msg' =>"Not Applicable","ErrorCode" => "000"], 200); 
@@ -3035,20 +3059,15 @@ public function pending_order(Request $request)
             $vid=$request->vid;
             $range=[$request->date_from,$request->date_to];
             $orders = DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
-            ->where('billings.vid','=',intval($vid))
-            ->where('orders.vid','=',intval($vid))
-            ->where('orders.status','=',$request->status)->get();
-            $orders_old = DB::table("orders")
-            ->where('orders.vid','=',intval($vid))
-            ->whereIn()
-            ->where('orders.status','=',$request->status)->get();
-
-
-            return $orders;
+            // ->where('billings.vid', '=', intval($vid))
+            // ->where('orders.vid', '=', intval($vid))
+            // ->whereBetween('orders.date_modified_gmt',$range)
+            ->where('orders.status','=',$request->status)
             // ->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
             //     WHERE line_items.order_id = orders.oid
             //     GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')
-               
+                ->get();
+                return $orders;
             // $orders = DB::table("orders")->join('billings', function($join) use ($vid)
             // {
             //     $join->on('orders.oid', '=', 'billings.order_id')
