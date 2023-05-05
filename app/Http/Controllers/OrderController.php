@@ -59,9 +59,11 @@ class OrderController extends Controller {
                     {
                         $join->on('orders.oid', '=', 'billings.order_id')
                              ->where('billings.vid', '=', intval($vid));
-                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_modified_gmt', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_modified_gmt', $range)->where('orders.status','=',$request->status)
+                    ->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
-                        GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
+                        GROUP BY line_items.order_id) as quantity"))
+                        ->orderBy('orders.oid', 'DESC')->get();
             }else{
                 echo "string"; die;
                 $orders = DB::table("orders")->join('billings', function($join) use ($vid)
@@ -2954,6 +2956,7 @@ public function pending_order(Request $request)
         }else{
             $date_to = date('Y-m-d');
         }
+        // dd($date_from,$request->date_to);die();
         $range = [$request->date_from, $request->date_to];
         if($request->status=='null')
         {
@@ -2961,7 +2964,7 @@ public function pending_order(Request $request)
                     {
                         $join->on('orders.oid', '=', 'billings.order_id')
                              ->where('billings.vid', '=', intval($vid));
-                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_modified_gmt', $range)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_modified_gmt',$range)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
                         GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
             }
@@ -2970,9 +2973,15 @@ public function pending_order(Request $request)
                     {
                         $join->on('orders.oid', '=', 'billings.order_id')
                              ->where('billings.vid', '=', intval($vid));
-                    })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_modified_gmt', $range)->where('orders.status','=',$request->status)->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                    })->where('orders.vid', '=', $request->vid)
+                    ->whereBetween('orders.date_modified_gmt',$range)
+                    ->where('orders.status','=',$request->status)
+                    ->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
                         GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')->get();
+            }
+            else{
+                return response()->json(['error' => false, 'msg' =>"Not Applicable","ErrorCode" => "000"], 200); 
             }
             return $orders;
         }
@@ -3022,5 +3031,36 @@ public function pending_order(Request $request)
             // }
         // }
         // return $orders
+        public function order(Request $request){
+            $vid=$request->vid;
+            $range=[$request->date_from,$request->date_to];
+            $orders = DB::table("orders")->join('billings','orders.oid','=','billings.order_id')
+            ->where('billings.vid','=',intval($vid))
+            ->where('orders.vid','=',intval($vid))
+            ->where('orders.status','=',$request->status)->get();
+            $orders_old = DB::table("orders")
+            ->where('orders.vid','=',intval($vid))
+            ->whereIn()
+            ->where('orders.status','=',$request->status)->get();
+
+
+            return $orders;
+            // ->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+            //     WHERE line_items.order_id = orders.oid
+            //     GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')
+               
+            // $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+            // {
+            //     $join->on('orders.oid', '=', 'billings.order_id')
+            //          ->where('billings.vid', '=', intval($vid));
+            // })->where('orders.vid', '=', $vid)
+            // ->whereDate('orders.date_modified_gmt','=','2023-02-17')
+            // ->where('orders.status','=',$request->status)
+            // ->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+            //     WHERE line_items.order_id = orders.oid
+            //     GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')
+              
+        }
 
 }
+

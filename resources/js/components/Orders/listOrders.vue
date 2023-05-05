@@ -13,7 +13,7 @@
       <b-form @submit="onSubmit" class="date_range">
       <b-col xl="2" lg="2" md="2">
             <select class="form-control custom-select" v-model="status" :options="allstatusdata" @change="onChangeStatus($event)">
-                <option enabled value="null">Select status</option>
+                <option enabled value="null">All Status</option>
                 <option v-for="data in allstatusdata" :value="data.status">{{data.status}}</option>
             </select>
         </b-col>
@@ -24,7 +24,7 @@
             </select>
         </b-col> -->
         
-        <b-col xl="6" lg="6" md="6">
+        <b-col xl="6" lg="6" md="6" style="display: flex;margin-left: 20px;">
                   <b-alert show variant="danger" v-if="create_error">{{create_error}}</b-alert>
                     
                       <div class="datepiker-block"><span>From:&nbsp;</span> <b-form-datepicker id="from" v-model="date_from" :date-format-options="{ year: 'numeric', month: '2-digit', day: '2-digit' }"

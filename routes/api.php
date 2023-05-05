@@ -180,6 +180,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('pending_order','OrderController@pending_order')->name('pending_order');
 	Route::get('data_scraping','AccountController@data_scraping')->name('data_scraping');
 	Route::post('order_Searchdata', 'OrderController@order_Searchdata')->name('order_Searchdata');
+	Route::post('order', 'OrderController@order')->name('order');
 	
 }); 
 
