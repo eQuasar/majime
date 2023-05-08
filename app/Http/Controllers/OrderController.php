@@ -1059,14 +1059,14 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
         }elseif($request->vid == 20){
-            $address_store = '<p><span class="c_name">Sextacy<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
-            $industry_name = "Sextacy";
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
         }elseif($request->vid == 21){
-            $address_store = '<p><span class="c_name">Blushade<br>GST NO : 07ABAFB6703C1Z1</span></span><br>B-192, first floor, naraina <br/>industrial area phase-1<br>110028 - Delhi, India</p>';
+            $address_store = '<p><span class="c_name">Blushade<br>GST NO : 07ABAFB6703C1Z1</span><br>B-192, first floor, naraina<br>industrial area phase-1<br>110028 - Delhi, India</p>';
             $industry_name = "Blushade";
         }else{
-            $address_store = '<p><span class="c_name">__<br>GST NO : __</span><br>__</p>';
-            $industry_name = "__";
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
         }
 
 
@@ -1345,14 +1345,14 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
         }elseif($request->vid == 20){
-            $address_store = '<p><span class="c_name">Sextacy<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
-            $industry_name = "Sextacy";
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
         }elseif($request->vid == 21){
-            $address_store = '<p><span class="c_name">Blushade<br>GST NO : 07ABAFB6703C1Z1</span></span><br>B-192, first floor, naraina <br/>industrial area phase-1<br>110028 - Delhi, India</p>';
+            $address_store = '<p><span class="c_name">Blushade<br>GST NO : 07ABAFB6703C1Z1</span><br>B-192, first floor, naraina<br>industrial area phase-1<br>110028 - Delhi, India</p>';
             $industry_name = "Blushade";
         }else{
-            $address_store = '<p><span class="c_name">__<br>GST NO : __</span><br>__</p>';
-            $industry_name = "__";
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
         }
 
         $oid = $request->oid;
