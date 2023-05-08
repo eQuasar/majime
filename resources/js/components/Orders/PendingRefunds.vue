@@ -28,13 +28,13 @@
                   >
                     Download
                   </button>
-                  <button
+                  <!-- <button
                     type="button"
                     class="download-btn btn btn-primary"
                     v-on:click="Refundstatus"
                   >
                     Refund
-                  </button>
+                  </button> -->
                 </b-col>
               </b-row>
             </div>
@@ -92,13 +92,16 @@
                         v-model="statusAssign"
                       ></b-icon></b-link
                     >&nbsp;
-                    <router-link
+                    <!-- <router-link @click.native="sayHello(row.item.oid)" to=""
+                      ><b-icon icon="pencil-fill" aria-hidden="true"></b-icon
+                    ></router-link> -->
+                    <!-- <router-link
                       :to="{
                         name: 'refundorder',
                         params: { oid: row.item.oid.toString() },
                       }"
                       ><b-icon icon="pencil-fill" aria-hidden="true"></b-icon
-                    ></router-link>
+                    ></router-link> -->
                     &nbsp;
                     <router-link
                       :to="{
@@ -124,7 +127,6 @@
         </b-col>
       </b-row>
       <b-modal id="modal-1" title="Change Status:" hide-footer size="lg">
-     
         <b-form>
           <b-alert show variant="danger" v-if="create_error">{{
             create_error
@@ -204,6 +206,30 @@
           >
         </b-form>
       </b-modal>
+
+      <b-modal ref="modal-2" v-if="modalshow" id="modal-show">
+        <div class="d-block text-center">
+          <h3>Enter Refund Amount</h3>
+        </div>
+        <div class="text-modal" style="width: 741px">
+          <input
+            class="text-modal"
+            type="text"
+            style="width: 741px"
+            v-model="refund"
+          />
+        </div>
+        <b-button
+          class="mt-2"
+          variant="outline-warning"
+          block
+          @click="Submit_refund"
+          >Submit</b-button
+        >
+        <!-- <b-button class="mt-3" variant="outline-danger" block @click="hideModal"
+          >Close Me</b-button
+        > -->
+      </b-modal>
     </b-overlay>
   </b-container>
 </template>
@@ -224,6 +250,7 @@ export default {
       show: false,
       vendor: null,
       status_assign: "",
+      modalshow: true,
       oid: 0,
       //selected: null,
       options: [{ value: null, text: "Vendor Wise Detail" }],
@@ -232,6 +259,8 @@ export default {
       date: "",
       vid: 0,
       time_slots: [],
+      OrderID: "",
+      refund: "",
       status_assign_array: [],
       allSelected: false,
       seen: false,
@@ -368,7 +397,50 @@ export default {
           // loader.hide();
         });
     },
-
+    sayHello(oid) {
+      this.OrderID = oid;
+      this.$refs["modal-2"].show();
+    },
+    Submit_refund() {
+      // this.vid = JSON.parse(localStorage.getItem("ivid"));
+      // let formData = new FormData();
+      // formData.append("refund_amount", this.refund);
+      // formData.append("oid", this.OrderID);
+      // formData.append("vid", this.vid);
+      // order
+      //   .refund_amount_data(formData)
+      //   .then((response) => {
+      //     this.$alert("", response.data.msg);
+      //     this.modalshow = false;
+      //   })
+      //   .catch((response) => {
+      //     this.successful = false;
+      //     //alert('something went wrong');
+      //   });
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("oid", this.oid);
+      formData.append("status_assign", "dto-refunded");
+      formData.append("allSelected", this.allSelected);
+      formData.append("refund", this.refund);
+      formData.append("vid", this.vid);
+      formData.append("status", this.status);
+      order
+        .changeProcessingStatus(formData)
+        .then((response) => {
+          this.$alert("", response.data.msg);
+          this.modalshow = false;
+          this.getVidz();
+          this.show = false;
+        })
+        .catch((error) => {
+          // console.log(error);
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+          // loader.hide();
+        });
+    },
     getVidz() {
       if (this.$userId == 1) {
         this.vid = JSON.parse(localStorage.getItem("ivid"));
@@ -422,39 +494,44 @@ export default {
       const modalTimeoutSeconds = 3;
       const modalId = "confirm-modal";
       let modalSetTimeout = null;
+
       this.$bvModal
-      
+
         .msgBoxConfirm(`Are You Sure Want to Change Refund Status`, {
           id: modalId,
         })
+
         .then((wasOkPressed) => {
+          this.$refs["modal-2"].show();
           this.show = true;
-          if (wasOkPressed) {
-            this.vid = JSON.parse(localStorage.getItem("ivid"));
-            let formData = new FormData();
-            formData.append("oid", this.oid);
-            formData.append("status_assign", "dto-refunded");
-            formData.append("allSelected", this.allSelected);
-            formData.append("vid", this.vid);
-            formData.append("status", this.status);
-            order
-              .changeProcessingStatus(formData)
-              .then((response) => {
-                this.$alert("", response.data.msg);
-                this.show = false;
-                this.getVidz();
-              })
-              .catch((error) => {
-                // console.log(error);
-                if (error.response.status == 422) {
-                  this.errors_create = error.response.data.errors;
-                }
-                // loader.hide();
-              });
-          } else {
-            /* Do something else */
-            this.show = false;
-          }
+          // if (wasOkPressed) {
+          //   this.$refs["modal-2"].show();
+          //   this.vid = JSON.parse(localStorage.getItem("ivid"));
+          //   let formData = new FormData();
+          //   formData.append("oid", this.oid);
+          //   formData.append("status_assign", "dto-refunded");
+          //   formData.append("allSelected", this.allSelected);
+          //   formData.append("refund", this.refund);
+          //   formData.append("vid", this.vid);
+          //   formData.append("status", this.status);
+          //   order
+          //     .changeProcessingStatus(formData)
+          //     .then((response) => {
+          //       this.$alert("", response.data.msg);
+          //       this.show = false;
+          //       this.getVidz();
+          //     })
+          //     .catch((error) => {
+          //       // console.log(error);
+          //       if (error.response.status == 422) {
+          //         this.errors_create = error.response.data.errors;
+          //       }
+          //       // loader.hide();
+          //     });
+          // } else {
+          //   /* Do something else */
+          //   this.show = false;
+          // }
         })
         .catch(() => {
           console.log("The modal closed unexpectedly");
@@ -497,7 +574,7 @@ export default {
     clearData() {
       this.oid = "";
     },
-    
+
     pendingdownload() {
       this.show = true;
       let formData = new FormData();
@@ -522,6 +599,55 @@ export default {
           // loader.hide();
         });
       this.show = false;
+    },
+    refund() {
+      const modalTimeoutSeconds = 3;
+      const modalId = "confirm-modal";
+      let modalSetTimeout = null;
+      this.$bvModal
+
+        .msgBoxConfirm(`Are You Sure Want to Change Refund Status`, {
+          id: modalId,
+        })
+        .then((wasOkPressed) => {
+          this.show = true;
+          if (wasOkPressed) {
+            this.vid = JSON.parse(localStorage.getItem("ivid"));
+            let formData = new FormData();
+            formData.append("oid", this.oid);
+            formData.append("status_assign", "dto-refunded");
+            formData.append("allSelected", this.allSelected);
+            formData.append("vid", this.vid);
+            formData.append("status", this.status);
+            order
+              .changeProcessingStatus(formData)
+              .then((response) => {
+                this.$alert("", response.data.msg);
+                this.show = false;
+                this.getVidz();
+              })
+              .catch((error) => {
+                // console.log(error);
+                if (error.response.status == 422) {
+                  this.errors_create = error.response.data.errors;
+                }
+                // loader.hide();
+              });
+          } else {
+            /* Do something else */
+            this.show = false;
+          }
+        })
+        .catch(() => {
+          console.log("The modal closed unexpectedly");
+        })
+        .finally(() => {
+          clearTimeout(modalSetTimeout);
+        });
+
+      modalSetTimeout = setTimeout(() => {
+        this.$bvModal.hide(modalId);
+      }, modalTimeoutSeconds * 2000);
     },
   },
 };

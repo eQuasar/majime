@@ -5,6 +5,9 @@ export default {
     getProductDetail(data) {
         return axios.post('getProductdetail', data)
     },
+    getProductSaleDetail(data) {
+        return axios.post('getProductSaledetail', data)
+    },
      categorySearch(data) {
         return axios.post('category_Search', data)
     },

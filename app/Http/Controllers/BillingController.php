@@ -272,6 +272,7 @@ class BillingController extends Controller
                             ->orderBy('orders.oid')
                             ->select('orders.oid','line_items.quantity','line_items.line_item_id','line_items.product_id','line_items.total','orders.total as order_amount','orders.status')
                             ->get();
+                            
                             // dd($order_id);die();
                             // dd(count($order_id));die();
                             // print_r($order_id);

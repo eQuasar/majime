@@ -27,6 +27,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('smsTrigger', 'JsonController@smsTrigger')->name('smsTrigger');
     Route::post('getOrderDetails', 'OrderController@getOrderDetails')->name('getOrderDetails');
 	Route::post('getProductdetail',[App\Http\Controllers\ProductController::class,'productDetail']);
+	Route::post('getProductSaledetail',[App\Http\Controllers\ProductController::class,'productSaleDetail']);
 	Route::get('getDashbaord',[App\Http\Controllers\DashboardController::class,'Dashboard_Detail']);
 	Route::post('walletDetail', 'WalletprocessedController@show')->name('walletDetail'); 
 	Route::get('reportdetail',[App\Http\Controllers\ReportController::class,'Report_detail']);
@@ -181,6 +182,7 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::get('data_scraping','AccountController@data_scraping')->name('data_scraping');
 	Route::post('order_Searchdata', 'OrderController@order_Searchdata')->name('order_Searchdata');
 	Route::post('order', 'OrderController@order')->name('order');
+	Route::post('refundamount_update', 'OrderController@refundamount_update')->name('refundamount_update');
 	
 }); 
 

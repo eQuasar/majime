@@ -20,10 +20,10 @@ export default {
           title: "Sales",
           icon: "fas fa-chart-bar",
           child: [
-            // {
-            //   href: { name: "ProductList" },
-            //   title: "Products",
-            // },
+            {
+              href: { name: "ProductSaleList" },
+              title: "Products",
+            },
             {
               href: { name: "listOrders" },
               title: "Orders",

@@ -167,4 +167,8 @@ export default {
     orderSearchdata(data) {
         return axios.post('order_Searchdata',data)
     },
+    refund_amount_data(data) {
+        return axios.post('refundamount_update',data)
+    },
+
 }

@@ -39,13 +39,13 @@
                 >
                   Process Wallet
                 </button>
-                <!-- <button
+                <button
                   type="button"
                   class="download-btn btn btn-primary"
                   v-on:click="Confirmdownload"
                 >
-                  Download Complete List
-                </button> -->
+                  Download
+                </button>
               </b-col>
             </b-row>
             <div class="blue-bar"></div>
@@ -258,7 +258,7 @@ export default {
           sortable: true,
         },
         {
-          key: "date_created_gmt",
+          key: "date_paid",
           label: "Date",
           sortable: true,
         },
@@ -293,10 +293,10 @@ export default {
           sortable: true,
         },
         {
-            key: 'waybill_no',
-            label: 'AWB',
-            sortable: false
-          },
+          key: "waybill_no",
+          label: "AWB",
+          sortable: false,
+        },
         {
           key: "action",
           label: "Action",
@@ -528,29 +528,52 @@ export default {
     },
 
     Confirmdownload() {
-      this.show = true;
-      let formData = new FormData();
-      formData.append("allSelected", this.allSelected);
-      formData.append("vid", this.vid);
-      wallet
-        .complete_downloadsheet(formData)
-        .then((response) => {
-          console.log(response.data[0]);
-          this.items2 = response.data[0];
-          const data = XLSX.utils.json_to_sheet(this.items2);
-          const wb = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, data, "data");
-          XLSX.writeFile(wb, "PickupList.xlsx");
-        })
-        .catch((error) => {
-          console.log(error);
-          if (error.response.status == 422) {
-            this.errors_create = error.response.data.errors;
-          }
-          // loader.hide();
-        });
-      this.show = false;
+      const data = XLSX.utils.json_to_sheet(this.items);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.sheet_add_aoa(
+        data,
+        [
+          [
+            "Order_id",
+            "Date",
+            "First Name",
+            "Last Name",
+            "Phone",
+            "Email",
+            "Payment Method",
+            "Status",
+            "WayBill No",
+          ],
+        ],
+        { origin: "A1" }
+      );
+      XLSX.utils.book_append_sheet(wb, data, "data");
+      XLSX.writeFile(wb, "CompleteList.xlsx");
     },
+    // Confirmdownload() {
+    //   this.show = true;
+    //   let formData = new FormData();
+    //   formData.append("allSelected", this.allSelected);
+    //   formData.append("vid", this.vid);
+    //   wallet
+    //     .complete_downloadsheet(formData)
+    //     .then((response) => {
+    //       console.log(response.data[0]);
+    //       this.items2 = response.data[0];
+    //       const data = XLSX.utils.json_to_sheet(this.items2);
+    //       const wb = XLSX.utils.book_new();
+    //       XLSX.utils.book_append_sheet(wb, data, "data");
+    //       XLSX.writeFile(wb, "PickupList.xlsx");
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //       if (error.response.status == 422) {
+    //         this.errors_create = error.response.data.errors;
+    //       }
+    //       // loader.hide();
+    //     });
+    //   this.show = false;
+    // },
   },
 };
 </script>

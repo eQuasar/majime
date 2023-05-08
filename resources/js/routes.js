@@ -5,6 +5,7 @@ import wallet from './components/Wallet/wallet.vue'
 import AddAWBData from './components/Manage/AddAWBData.vue'
 import accounts from './components/Accounts/Accounts.vue'
 import ProductList from './components/Products/ProductList.vue'
+import ProductSaleList from './components/Products/saleviseproduct.vue'
 import AdminProductList from './components/Products/ProductList.vue'
 import vendorDashboard from './components/Vendor/Dashboard.vue'
 import listOrders from './components/Orders/listOrders.vue'
@@ -51,6 +52,7 @@ export const routes = [
     {path: '/',component: App},
 	{path: '/home',component: App},
     {path:'/vendor/ProductList',component: ProductList,name:'ProductList',meta: { auth: true}},
+    {path:'/vendor/ProductSaleList',component: ProductSaleList,name:'ProductSaleList',meta: { auth: true}},
     {path:'/admin/ProductList',component: AdminProductList,name:'adminProductList',meta: { auth: true}},
     // {path:'/admin/ZoneDetail',component: ZoneDetail,name:'zoneDetail',meta: { auth: true}},
     {path:'/admin/ZoneRateCard',component: ZoneRateCard,name:'zonerateCard',meta: { auth: true}},

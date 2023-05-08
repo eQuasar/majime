@@ -493,4 +493,7 @@ tbody tr {
         display: none;
     }
 }
+.text-modal{
+    width:600px;
+}
 

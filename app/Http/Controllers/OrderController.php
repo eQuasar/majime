@@ -329,7 +329,7 @@ class OrderController extends Controller {
             $join->on('orders.oid', '=', 'waybill.order_id')
                  ->where('waybill.vid', '=', intval($vid));
         })->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)
-        ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])
+        ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])->select('orders.oid',"orders.date_paid","billings.first_name","billings.last_name","billings.phone","billings.email","orders.payment_method","orders.status","waybill.waybill_no")  
         ->orderBy('orders.oid','DESC')
         ->get();
         
@@ -1678,9 +1678,10 @@ class OrderController extends Controller {
     }
     //api all use according to status
     function changeProcessing_Status(Request $request) {
+        
         // var_dump($_REQUEST); die;
         // echo $request->loc; die;
-       
+        $refund_amount=$request->refund_amount;
         if ($request->loc == "wp") {
             $listImp['0'] = $request->oid;
         } elseif ($request->allSelected == "false") {
@@ -1721,7 +1722,21 @@ class OrderController extends Controller {
                 'oid'=>$listImp[$i],
                 'dto_refunddate'=>$date,
                 ];   
-                
+                $vid=$request->vid;
+                $ldate = date('Y-m-d');
+                $order_id_detail=DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->get(); 
+                $refund_count=count($order_id_detail);
+                if($refund_count==0)
+                {
+                    $refund_cou='1';
+                }
+                else{
+                    $refund_cou=count($order_id_detail);
+                }
+                $refund_amount_detail= round(($refund_amount/ $refund_cou),2);
+                DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->update(['orderrefund_amount' => $refund_amount_detail]); 
+                DB::table('order_reldates')->where('oid','=',$listImp[$i])->where('order_reldates.vid','=',$vid)->update(['dto_refunddate' => $ldate ]);  
+                return response()->json(['error' => false, 'msg' =>"Update Successfully","ErrorCode" => "000"], 200); 
             }elseif($request->status_assign=='closed')
             {
                 $date = date('Y-m-d');
@@ -3079,6 +3094,17 @@ public function pending_order(Request $request)
             //     WHERE line_items.order_id = orders.oid
             //     GROUP BY line_items.order_id) as quantity"))->orderBy('orders.oid', 'DESC')
               
+        }
+
+        public function refundamount_update(Request $request)
+        {
+                $refund_amount=$request->refund_amount;
+                $order_id=$request->oid; 
+                $vid=$request->vid;
+                $ldate = date('Y-m-d');
+                DB::table('billing_processeds')->where('parent_order_number','=',$order_id)->where('billing_processeds.vid','=',$vid)->update(['orderrefund_amount' => $refund_amount ]);  
+                DB::table('order_reldates')->where('oid','=',$order_id)->where('order_reldates.vid','=',$vid)->update(['dto_refunddate' => $ldate ]);  
+                return response()->json(['error' => false, 'msg' =>"Update Successfully","ErrorCode" => "000"], 200); 
         }
 
 }
