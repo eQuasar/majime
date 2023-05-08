@@ -309,7 +309,7 @@ class WalletprocessedController extends Controller
                 
             }
             // Log::info("Order ".$orders[$y]." vid-".$vendor." - COD Charges: ".$cod_charges."   ".$zone." Zone: ".$zone_price." - "."COD Cost ".$cod_cost."  percent_price ".$percent_price. " logistic_cost ".$logistic_cost );
-            $wallet=$request->walletvalue;
+            $wallet=1;
             //insert values into Wallet Processed table into database
             $Wallet_order_data[]=[     
                 'date_created'=>$order_table[0]->date_created,
@@ -336,7 +336,7 @@ class WalletprocessedController extends Controller
             // update order table with wallet processed 
             DB::table('orders')->where('orders.oid', intval($orders[$y]))->where('vid', intval($request->vid))->update(['wallet_processed' => $wallet]);
             // unset($orders);
-        }   
+        }
         walletprocessed::insert($Wallet_order_data); 
 
         return response()->json(['error' => false, 'msg' => "Wallet Processed Successfully", "ErrorCode" => "000"], 200);
