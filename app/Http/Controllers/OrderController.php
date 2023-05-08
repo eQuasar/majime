@@ -263,7 +263,7 @@ class OrderController extends Controller {
                                         ->get();
         } else {
             $orders = DB::table("orders")->join('billings', 'orders.oid', '=', 'billings.order_id')->where('orders.vid', '=', intval($vendor))->where('billings.vid', '=', intval($vendor))->where('date_created','>=',$date)->orderBy('oid', 'DESC')
-            ->select("orders.oid as oid",DB::raw("CONCAT(billings.first_name,' ',billings.last_name) as name"), DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+            ->select("orders.oid as oid",DB::raw("CONCAT(billings.first_name,' ',billings.last_name) as customername"), DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
             WHERE line_items.order_id = orders.oid
             GROUP BY line_items.order_id) as quantity"),'orders.total as total',"billings.state as state","billings.city as city","orders.date_modified_gmt as date_created","orders.payment_method_title as payment_method_title",'billings.phone as phone',"orders.status as status")->orderBy('orders.oid', 'DESC')
             
@@ -1058,6 +1058,12 @@ class OrderController extends Controller {
         }elseif($request->vid == 19){
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
+        }elseif($request->vid == 20){
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
+        }elseif($request->vid == 21){
+            $address_store = '<p><span class="c_name">Blushade<br>GST NO : 07ABAFB6703C1Z1</span><br>B-192, first floor, naraina<br>industrial area phase-1<br>110028 - Delhi, India</p>';
+            $industry_name = "Blushade";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
@@ -1338,6 +1344,12 @@ class OrderController extends Controller {
         }elseif($request->vid == 19){
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
+        }elseif($request->vid == 20){
+            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Style by NansJ";
+        }elseif($request->vid == 21){
+            $address_store = '<p><span class="c_name">Blushade<br>GST NO : 07ABAFB6703C1Z1</span><br>B-192, first floor, naraina<br>industrial area phase-1<br>110028 - Delhi, India</p>';
+            $industry_name = "Blushade";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
@@ -3002,7 +3014,7 @@ public function pending_order(Request $request)
                         $join->on('orders.oid', '=', 'billings.order_id')
                              ->where('billings.vid', '=', intval($vid));
                     })->where('orders.vid', '=', $request->vid)->whereBetween('orders.date_modified_gmt', $range)
-                    ->select("orders.oid as oid",DB::raw("CONCAT(billings.first_name,' ',billings.last_name) as name"), DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                    ->select("orders.oid as oid",DB::raw("CONCAT(billings.first_name,' ',billings.last_name) as customername"), DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
                         GROUP BY line_items.order_id) as quantity"),'orders.total as total',"billings.state as state","billings.city as city","orders.date_modified_gmt as date_created","orders.payment_method_title as payment_method_title",'billings.phone as phone',"orders.status as status")->orderBy('orders.oid', 'DESC')
                         ->get();
@@ -3015,7 +3027,7 @@ public function pending_order(Request $request)
                     })->where('orders.vid', '=', $request->vid)
                     ->whereBetween('orders.date_modified_gmt',$range)
                     ->where('orders.status','=',$request->status)
-                    ->select("orders.oid as oid",DB::raw("CONCAT(billings.first_name,' ',billings.last_name) as name"),DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
+                    ->select("orders.oid as oid",DB::raw("CONCAT(billings.first_name,' ',billings.last_name) as customername"),DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
                         WHERE line_items.order_id = orders.oid
                         GROUP BY line_items.order_id) as quantity"),'orders.total as total',"billings.state as state","billings.city as city","orders.date_modified_gmt as date_created","orders.payment_method_title as payment_method_title",'billings.phone as phone',"orders.status as status")->orderBy('orders.oid','DESC')->get();
             }

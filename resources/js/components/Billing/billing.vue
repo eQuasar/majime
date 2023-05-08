@@ -11,20 +11,29 @@
         <span>Net Taxable Amount</span>
         <p><i>₹ </i>{{ calculatedTotalnet_texable_amount }}</p>
       </div>
+      <div class="stats orng">
+        <span>Net IGST</span>
+        <p><i>₹ </i>{{ calculatedTotalnet_igst }}</p>
+      </div>
+      <div class="stats grn">
+        <span>Net CGST</span>
+        <p><i>₹ </i>{{ calculatedTotalnet_cgst }}</p>
+      </div>
+      <div class="stats red">
+        <span>Net SGST</span>
+        <p><i>₹ </i>{{ calculatedTotalnet_sgst }}</p>
+      </div>
+
       <div class="stats blu">
         <span>Net Invoice Amount</span>
         <p><i>₹ </i>{{ calculatedTotalnet_invoice_amount }}</p>
       </div>
 
-      <div class="stats orng">
-        <span>Net IGST</span>
-        <p><i>₹ </i>{{ calculatedTotalnet_igst }}</p>
-      </div>
+     
 
-      <div class="stats grn">
-        <span>Net CGST</span>
-        <p><i>₹ </i>{{ calculatedTotalnet_cgst }}</p>
-      </div>
+      
+
+      
       <br />
     </div>
     <div class="content_bar">
@@ -234,9 +243,9 @@ export default {
       billing: "",
       net_igst: 0,
       net_cgst: 0,
+      net_sgst: 0,
       net_invoice_amount: 0,
       net_texable_amount: 0,
-      net_sgst: "",
       perPage: 10,
       currentPage: 1,
       pageOptions: [5, 10, 15, 20, 50, 100],
@@ -374,6 +383,11 @@ export default {
     calculatedTotalnet_texable_amount: function () {
       return this.itemsstate.reduce(function (acc, item) {
         return acc + item.net_texable_amount;
+      }, 0);
+    },
+    calculatedTotalnet_sgst: function () {
+      return this.itemsstate.reduce(function (acc, item) {
+        return acc + item.net_sgst;
       }, 0);
     },
     rows() {
@@ -595,60 +609,48 @@ export default {
         data,
         [
           [
-            "Sr no",
             "Vid",
             "Vendor name",
             "Invoie Type",
-            "Invoice Name",
-            "SubOrder Id",
-            "Texable Amount",
+            "Invoice Date",
+            "Invoice No",
+            "SubOrder ID",
+            "Taxable Amount",
             "IGST",
             "SGST",
             "CGST",
             "Invoice Amount",
-            " HSN Code",
+            "Hsn Code",
             "Tax Percentage",
-            "Dispatch Date",
             "Order From",
             "Order To",
             "Delivered Date",
-            "Dto Booked Date",
-            "Dto Delivered Date",
-            "Sale return Status",
+            "DTO Booked Date",
+            "Sale Return Status",
             "Sale Return Date",
-            "Refund Date",
             "Refund Amount",
-            "Waybill No",
-            "Wallet Processed Date",
-            "Parent OrderId",
-            "Order Status",
+            "WayBill No",
+            "Parent Order Number",
+            "Status",
             "Order Date",
-            "Customer Note",
-            "First_name",
+            "First Name",
             "Last Name",
             "Address",
             "City",
-            "Status",
             "Post Code",
-            "Country",
             "State",
             "Email",
-            "Cart Discount Amount",
-            "Phone",
             "Payment Method",
-            "Order SUbtotal Amount",
+            "OrderSubTotal Amount",
+            "Cart Discount Amount",
+            "Coupan Discount",
             "Order Amount",
-            "Wallet Used",
-            "Collectable Amount",
-            "OrderRefund Date",
-            "Product Id",
+            "OrderRefund Amount",
+            "Product ID",
             "Product Name",
-            "SKU",
-            "Product Qty",
-            "Item Cost",
-            "Product Weight",
-            "Invoice Date",
-            "Updated at",
+            "Sku",
+            "Qty",
+            "Item Cost"
           ],
         ],
         { origin: "A1" }
@@ -664,17 +666,17 @@ export default {
         [
           [
             "HSN Code",
-            "Sale Tax Amount",
+            "Sale Amount",
             "Sale IGST",
             "Sale CGST",
             "Sale SGST",
             "Sale Invoice Amount",
-            "Return Tax Amount",
+            "Sale Return Amount",
             "Return IGST",
             "Return CGST",
             "Return SGST",
             "Return Invoice Amount",
-            "Net Tax Amount",
+            "Net Sale Amount",
             "Net IGST",
             "Net CGST",
             "Net SGST",
@@ -695,17 +697,17 @@ export default {
         [
           [
             "State",
-            "Sale Tax Amount",
+            "Sale Amount",
             "Sale IGST",
             "Sale CGST",
             "Sale SGST",
             "Sale Invoice Amount",
-            "Return Tax Amount",
+            "Sale Return Amount",
             "Return IGST",
             "Return CGST",
             "Return SGST",
             "Return Invoice Amount",
-            "Net Tax Amount",
+            "Net Sale Amount",
             "Net IGST",
             "Net CGST",
             "Net SGST",
@@ -727,7 +729,7 @@ export default {
           [
             "Invoice No",
             "Sale Return Date",
-            "Taxble Amount",
+            "Taxable Amount",
             "IGST",
             "SGST",
             "CGST",
