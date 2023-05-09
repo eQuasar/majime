@@ -33,18 +33,43 @@ class ProductController extends Controller {
         {
             $join->on('orders.oid', '=', 'line_items.order_id')
                  ->where('orders.vid', '=', intval($vendor));
+              
+        })->join('products', function($join) use ($vendor)
+        {
+            $join->on('products.product_id', '=', 'line_items.product_id')
+                 ->where('products.vid', '=', intval($vendor));
         })
+
+
+
+
+        // $orders = DB::table("orders")->join('billings', function($join) use ($vid)
+        // {
+        //     $join->on('orders.oid', '=', 'billings.order_id')
+        //          ->where('billings.vid', '=', intval($vid));
+        // })->join('waybill', function($join) use ($vid)
+        // {
+        //     $join->on('orders.oid', '=', 'waybill.order_id')
+        //          ->where('waybill.vid', '=', intval($vid));
+        // })
+
+
+
+
         
         // ->distinct()
         // 					->select('line_items.*',
         // 							DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = 6726 AND line_items.vid = ".intval($vendor)." GROUP BY line_items.order_id) as quantity"))
         ->select(DB::raw('
-							name,
+        line_items.name,
 							variation_id,
-							product_id,
+							line_items.product_id,
 							SUM(quantity) as quantity,
 							date_created_gmt,
-							order_id
+							order_id,
+                            line_items.price,
+                            products.sku,
+                            products.categories
 						') //,
         // DB::raw("(SELECT categories FROM products WHERE products.product_id = line_items.product_id)")
         )
@@ -55,7 +80,7 @@ class ProductController extends Controller {
         //   ->select('s.name as name','s.variation_id as variation_id','s.product_id as product_id',
         //               'e.categories as categories')
         //   ->get();
-        print_r($vendor);
+        
         return $order;
     
         

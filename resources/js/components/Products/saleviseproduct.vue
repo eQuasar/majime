@@ -182,18 +182,18 @@ export default {
           sortable: true,
         },
         {
-          key: "size",
-          label: "Size",
+          key: "sku",
+          label: "SKU",
           sortable: true,
         },
-        {
-          key: "color",
-          label: "Color",
-          sortable: true,
-        },
+        // {
+        //   key: "color",
+        //   label: "Color",
+        //   sortable: true,
+        // },
         {
           key: "price",
-          label: "Amount",
+          label: "Price",
           sortable: true,
         },
       ],
@@ -264,7 +264,7 @@ export default {
         .then((response) => {
           console.log(response);
           this.items = response.data;
-          console.log(this.items);
+          // console.log(this.items);
         })
         .catch((response) => {
           this.successful = false;
