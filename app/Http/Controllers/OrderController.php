@@ -278,15 +278,20 @@ class OrderController extends Controller {
     }
     //packed order use table orders and billings
     public function getPackdetail($vid) {
+        // $orderItems=DB::table("orders")->join('billings','orders.oid', '=', 'billings.order_id')->leftJoin('waybill','orders.oid','=','waybill.order_id')->whereNull('waybill.market_id', '=', $id)->get();
+
         $orderItems = DB::table("orders")->join('billings', function($join) use ($vid)
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })->join('waybill', function($join) use ($vid)
+        })
+        ->leftjoin('waybill', function($join) use ($vid)
         {
             $join->on('orders.oid', '=', 'waybill.order_id')
-                 ->where('waybill.vid', '=', intval($vid));
-        })->where('orders.vid', $vid)->where('orders.status', "packed")->select("orders.*", "billings.*","waybill.waybill_no", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))
+                 ->where('waybill.vid', '=', intval($vid)); 
+        })
+        ->where('orders.vid', $vid)->where('orders.status', "packed")
+        ->select("orders.*", "billings.*","waybill.waybill_no", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT parent_name FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as name"), DB::raw("(SELECT sku FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vid) . " limit 1) as sku"))
         // ->select("line_items.sku as SKU","line_items.name as Name","line_items.quantity as Qty")
         // DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
         //                      WHERE line_items.order_id = orders.oid

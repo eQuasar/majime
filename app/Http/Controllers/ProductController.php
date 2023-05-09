@@ -39,24 +39,6 @@ class ProductController extends Controller {
             $join->on('products.product_id', '=', 'line_items.product_id')
                  ->where('products.vid', '=', intval($vendor));
         })
-
-
-
-
-        // $orders = DB::table("orders")->join('billings', function($join) use ($vid)
-        // {
-        //     $join->on('orders.oid', '=', 'billings.order_id')
-        //          ->where('billings.vid', '=', intval($vid));
-        // })->join('waybill', function($join) use ($vid)
-        // {
-        //     $join->on('orders.oid', '=', 'waybill.order_id')
-        //          ->where('waybill.vid', '=', intval($vid));
-        // })
-
-
-
-
-        
         // ->distinct()
         // 					->select('line_items.*',
         // 							DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = 6726 AND line_items.vid = ".intval($vendor)." GROUP BY line_items.order_id) as quantity"))
@@ -185,7 +167,7 @@ class ProductController extends Controller {
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })->join('waybill', function($join) use ($vid)
+        })->leftjoin('waybill', function($join) use ($vid)
         {
             $join->on('orders.oid', '=', 'waybill.order_id')
                  ->where('waybill.vid', '=', intval($vid));
