@@ -131,61 +131,65 @@ class JsonController extends Controller
 		if(count($orderItems)>0){
 			echo "Already In The System"; die;
 		}else{
-			
-			$Orders[]=[
-				'oid'=>$order->id,
-				'vid'=>intval($vid),
-				'parent_id'=>$order->parent_id,
-				'status'=>$order->status,
-				'currency'=>$order->currency,
-				 'version'=>$order->version,
-				 'prices_include_tax'=>$order->prices_include_tax,
-				 'date_created'=>$order->date_created,
-				 'date_modified'=>$order->date_modified,
-				 'discount_total'=>$order->discount_total,
-				 'discount_tax'=>$order->discount_tax,
-				 'shipping_total'=>$order->shipping_total,
-				 'shipping_tax'=>$order->shipping_tax,
-				 'cart_tax'=>$order->cart_tax,
-				 'total'=>$order->total,
-				 'total_tax'=>$order->total_tax,
-				 'customer_id'=>$order->customer_id,
-				 'order_key'=>$order->order_key,
-				 'payment_method'=>$order->payment_method,
-				 'payment_method_title'=>$order->payment_method_title,
-				 'transaction_id'=>$order->transaction_id,
-				 'customer_ip_address'=>$order->customer_ip_address,
-				 // 'customer_user_agent'=>$order->customer_user_agent,
-				 'customer_user_agent'=>'',
-				 'created_via'=>$order->created_via,
-				 'customer_note'=>'NA',
-				 'date_completed'=>$order->date_completed,
-				 'date_paid'=>$order->date_paid,
-				 'cart_hash'=>$order->cart_hash,
-				 'number'=>$order->number,
-				 'date_created_gmt'=>$order->date_created_gmt,
-				 'date_modified_gmt'=>$order->date_modified_gmt,
-				 'date_completed_gmt'=>$order->date_completed_gmt,
-				 'date_paid_gmt'=>$order->date_paid_gmt,
-				 'currency_symbol'=>$order->currency_symbol,
-			];
-			// print_r($Orders);
-			// die();
-			$this->InsertBilling($order->id,$order->billing,$vid);
-			$this->InsertShipping($order->id,$order->shipping,$vid);
-		    //$this->OrderMetaData($order->id,$order->meta_data);
-		    $this->insertLineItems($order->id,$order->line_items,$vid);
-			// $this->LineItem_Metadata($order->id,$order->line_items);
-			$this->OrderTaxLines($order->id,$order->tax_lines,$vid);
-			$this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
-			$this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
-			$this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
-		    $this->Order_refunds($order->id,$order->refunds,$vid);
-			$this->Order_links($order->id,$order->_links,$vid);
-			$this->smsSend($vid,$order->id,"placed");
-			// echo "Insert";
+			if ($order->status == 'pending' || $order->status == 'Pending') {}else{
+				$Orders[]=[
+					'oid'=>$order->id,
+					'vid'=>intval($vid),
+					'parent_id'=>$order->parent_id,
+					'status'=>$order->status,
+					'currency'=>$order->currency,
+					 'version'=>$order->version,
+					 'prices_include_tax'=>$order->prices_include_tax,
+					 'date_created'=>$order->date_created,
+					 'date_modified'=>$order->date_modified,
+					 'discount_total'=>$order->discount_total,
+					 'discount_tax'=>$order->discount_tax,
+					 'shipping_total'=>$order->shipping_total,
+					 'shipping_tax'=>$order->shipping_tax,
+					 'cart_tax'=>$order->cart_tax,
+					 'total'=>$order->total,
+					 'total_tax'=>$order->total_tax,
+					 'customer_id'=>$order->customer_id,
+					 'order_key'=>$order->order_key,
+					 'payment_method'=>$order->payment_method,
+					 'payment_method_title'=>$order->payment_method_title,
+					 'transaction_id'=>$order->transaction_id,
+					 'customer_ip_address'=>$order->customer_ip_address,
+					 // 'customer_user_agent'=>$order->customer_user_agent,
+					 'customer_user_agent'=>'',
+					 'created_via'=>$order->created_via,
+					 'customer_note'=>'NA',
+					 'date_completed'=>$order->date_completed,
+					 'date_paid'=>$order->date_paid,
+					 'cart_hash'=>$order->cart_hash,
+					 'number'=>$order->number,
+					 'date_created_gmt'=>$order->date_created_gmt,
+					 'date_modified_gmt'=>$order->date_modified_gmt,
+					 'date_completed_gmt'=>$order->date_completed_gmt,
+					 'date_paid_gmt'=>$order->date_paid_gmt,
+					 'currency_symbol'=>$order->currency_symbol,
+				];
+				// print_r($Orders);
+				// die();
+				$this->InsertBilling($order->id,$order->billing,$vid);
+				$this->InsertShipping($order->id,$order->shipping,$vid);
+			    //$this->OrderMetaData($order->id,$order->meta_data);
+			    $this->insertLineItems($order->id,$order->line_items,$vid);
+				// $this->LineItem_Metadata($order->id,$order->line_items);
+				$this->OrderTaxLines($order->id,$order->tax_lines,$vid);
+				$this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
+				$this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
+				$this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
+			    $this->Order_refunds($order->id,$order->refunds,$vid);
+				$this->Order_links($order->id,$order->_links,$vid);
 
-	    	Orders::insert($Orders); 	
+				if ($order->status == 'processing' || $order->status == 'Processing') {
+					$this->smsSend($vid,$order->id,"placed");
+				}
+				// echo "Insert";
+
+		    	Orders::insert($Orders); 	
+		    }
        }
     }
 

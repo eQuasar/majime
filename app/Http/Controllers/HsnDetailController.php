@@ -152,7 +152,7 @@ public function sale_invoice_wise_detail(Request $request)
                 $retun_billing_processer_data = DB::table('billing_processeds')
                 ->where('vid', intval($request->vid))
                 ->whereIn('status',[$completed,$intransit,$packed,$deliveredtocust,$pickedup])
-                ->select('invoice_no','textable_amount','igst','sgst','cgst','invoice_amount','hsn_code','text_percentage','product_name','sku','product_qty','sub_order_id','state','status')
+                ->select('invoice_no','created_at','textable_amount','textable_amount','igst','sgst','cgst','invoice_amount','hsn_code','text_percentage','product_name','sku','product_qty','sub_order_id','state','status')
                 ->get();
                 return  $retun_billing_processer_data;
         }
@@ -167,7 +167,7 @@ public function sale_invoice_wise_detail(Request $request)
             ->where('vid', intval($request->vid))
             ->whereBetween('billing_processeds.created_at',$range)
             ->whereIn('status',[$completed,$intransit,$packed,$deliveredtocust,$pickedup])
-            ->select('invoice_no','textable_amount','igst','sgst','cgst','invoice_amount','hsn_code','text_percentage','product_name','sku','product_qty','sub_order_id','state','status')
+            ->select('invoice_no','created_at','textable_amount','igst','sgst','cgst','invoice_amount','hsn_code','text_percentage','product_name','sku','product_qty','sub_order_id','state','status')
             ->get();
             return  $retun_billing_processer_data;
             }
@@ -224,6 +224,7 @@ public function sale_invoice_wise_detail(Request $request)
     $range = [$date_from,$date_to];
 
     if(empty($date_from)||empty($date_to)){
+
         $dto='dto-refunded';//variable
         $dtoBooked='dto-booked';
         $dispatched='dispatched';
@@ -237,6 +238,7 @@ public function sale_invoice_wise_detail(Request $request)
         $deliveredtocust='deliveredtocust';
         $pickedup='pickedup';
         $closed='closed';
+        $rto='rto-delivered';
         
         $vid=$request->vid;
     
@@ -245,6 +247,7 @@ public function sale_invoice_wise_detail(Request $request)
 
     // ->whereIn('status',[$dto,$closed,$dtodel2warehouse,$dtointransit,$completed,$intransit,$packed,$deliveredtocust,$pickedup])
         $state_sale_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))->distinct('order_to')->pluck('order_to')->toArray();
+      
     // echo "dffdf";print_r($state_sale_wise_data);die();
         $state_wise_detail_sale=array();
         for($i=0;$i<count($state_sale_wise_data);$i++)
@@ -255,18 +258,15 @@ public function sale_invoice_wise_detail(Request $request)
             ->select(["order_to",DB::raw("SUM(textable_amount) as sale_texable_amount"),DB::raw("Round(SUM(igst),2) as sale_igst"),DB::raw("Round(SUM(cgst),2) as sale_cgst"),DB::raw("Round(SUM(sgst),2) as sale_sgst"),DB::raw("SUM(invoice_amount) as sale_invoice_amount")])
             ->groupby('order_to')
             ->get();
-    
-    
         }
         $state_sale_return_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))
-        ->whereIn('status',[$dto])->distinct('order_to')->pluck('order_to')->toArray();
-        
+        ->whereIn('status',[$dto,$rto])->distinct('order_to')->pluck('order_to')->toArray();
         $state_returnwise_detail_sale=array();
         for($i=0;$i<count($state_sale_return_wise_data);$i++)
         {
             $order_to=$state_sale_return_wise_data[$i];
             $state_returnwise_detail_sale[] = DB::table('billing_processeds')->where('order_to',$order_to)
-            ->whereIn('status',[$dto])
+            ->whereIn('status',[$dto,$rto])
             ->select([DB::raw("SUM(textable_amount) as return_texable_amount"),
                     DB::raw("SUM(igst) as return_igst"),
                     DB::raw("SUM(cgst) as return_cgst"),
@@ -275,7 +275,7 @@ public function sale_invoice_wise_detail(Request $request)
                     ->groupby('order_to')
                     ->get();
         } 
-        //  print_r($state_returnwise_detail_sale);die();
+       
         $newarray = array();
         $inc = 0;
         foreach ($state_wise_detail_sale as $item){
@@ -290,6 +290,7 @@ public function sale_invoice_wise_detail(Request $request)
 
 
                 foreach($state_returnwise_detail_sale as $retItem){
+                    
                     
                     if($item[0]->order_to == $retItem[0]->order_to){
                         
@@ -344,6 +345,7 @@ public function sale_invoice_wise_detail(Request $request)
         return $newarray;  
     }
     else{
+        
     $dto='dto-refunded';//variable
         $dtoBooked='dto-booked';
         $dispatched='dispatched';
@@ -356,11 +358,13 @@ public function sale_invoice_wise_detail(Request $request)
         $packed='picked';
         $deliveredtocust='deliveredtocust';
         $pickedup='pickedup';
+        $rto='rto-delivered';
         $vid=$request->vid;
         // ->whereIn('status',[$dtodel2warehouse,$dtointransit,$completed,$intransit,$packed,$deliveredtocust,$pickedup])
     $all_state = DB::table('billing_processeds')
     ->where('vid', intval($request->vid))->whereBetween('billing_processeds.created_at',$range)
     ->distinct()->pluck('order_to')->toArray();
+   
 
         $state_sale_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))
         ->whereBetween('billing_processeds.created_at',$range)
@@ -369,7 +373,7 @@ public function sale_invoice_wise_detail(Request $request)
     
         $state_sale_return_wise_data = DB::table('billing_processeds')->where('vid', intval($request->vid))
         ->whereBetween('billing_processeds.created_at',$range)
-        ->whereIn('status',[$dto])->distinct('order_to')->pluck('order_to')->toArray();
+        ->whereIn('status',[$dto,$rto])->distinct('order_to')->pluck('order_to')->toArray();
         $state_wise_detail_sale=array();
         for($i=0;$i<count($state_sale_wise_data);$i++)
         {
@@ -389,7 +393,7 @@ public function sale_invoice_wise_detail(Request $request)
         {
             $order_to=$state_sale_return_wise_data[$i];
             $state_returnwise_detail_sale[] = DB::table('billing_processeds')->where('order_to',$order_to)
-            ->whereIn('status',[$dto])
+            ->whereIn('status',[$dto,$rto])
             ->select([DB::raw("SUM(textable_amount) as return_texable_amount"),
                     DB::raw("SUM(igst) as return_igst"),
                     DB::raw("SUM(cgst) as return_cgst"),

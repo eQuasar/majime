@@ -181,7 +181,9 @@ class BillingController extends Controller
                 ,"line_items.product_id as product_id"
                 ,"products.hsn_code as hsn","way_data.state as invoice_state_code_from",
                 "billings.state as invoice_state_code_to",
+                
                 DB::raw('(CASE WHEN suborder_details.total<=1000 THEN "5%" WHEN suborder_details.total>1000 THEN "12%" END) AS tax_percentage'),
+
                 DB::raw('(CASE WHEN way_data.state=billings.state THEN "0" END) AS CGST'),
                 DB::raw('(CASE WHEN way_data.state=billings.state THEN "0" END) AS SGST'),
                 "order_reldates.order_deldate as delivery_date",
@@ -394,7 +396,7 @@ class BillingController extends Controller
                  
                             $product_sku= $product_data[0]->sku;
                          
-                            $product_name= $product_data[0]->hsn_code;
+                            // $product_name= $product_data[0]->hsn_code;
                             $product_weight= $product_data[0]->weight;
                             $vendor_name=$way_data[0]->name;
                             $hsn_code= $product_data[0]->hsn_code;
@@ -428,13 +430,21 @@ class BillingController extends Controller
                                 $email=$get_billing_data[0]->email;
                                 $phone=$get_billing_data[0]->phone;
                                 $country=$get_billing_data[0]->country;
-                                if($invoice_amount<=1000)
+                                $hsn_tax =DB::table("hsn_details")->where('hsn_code','=',$hsn_code)->get();
+                                
+                                if(count($hsn_tax) ==0){
+                                    return response()->json(['error' => true,'msg' => "For Product - ".$product_name." - ".$get_product_id.", HSN Master needs to be updated for HSN Code:".$hsn_code.".", "ErrorCode" => "500"], 200); 
+                                }
+
+                                $hsn_amount=$hsn_tax[0]->slab_amount;
+                                
+                                if($invoice_amount<=$hsn_amount)
                                 {
-                                    $tax_percentage="5";
+                                    $tax_percentage=$hsn_tax[0]->slab_1;
                                 }
                                 else
                                 {
-                                    $tax_percentage="12";
+                                    $tax_percentage=$hsn_tax[0]->slab_2;
                                 }
                                 if($order_bill_processed[0]->status=='rto-delivered')
                                 {
@@ -610,7 +620,6 @@ class BillingController extends Controller
         $vid=$request->vid;
         if(empty($date_from)||empty($date_to))
         {
-       
             $retun_billing_processer_data = DB::table('billing_processeds')->where('vid','=',$vid)
             ->select(
             "billing_processeds.vid as vid",
@@ -636,7 +645,7 @@ class BillingController extends Controller
             "billing_processeds.sale_return_date as sale_return_date",
             // "billing_processeds.refund_date as refund_date",
             "billing_processeds.refund_amount as refund_amount",
-            "billing_processeds.waybill_no as waybill_no",
+            // "billing_processeds.waybill_no as waybill_no",
             // "billing_processeds.wallet_procesed_date as wallet_procesed_date",
             "billing_processeds.parent_order_number as parent_order_number",
             "billing_processeds.status as status",
