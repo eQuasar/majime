@@ -28,11 +28,6 @@
         <span>Net Invoice Amount</span>
         <p><i>₹ </i>{{ calculatedTotalnet_invoice_amount }}</p>
       </div>
-
-     
-
-      
-
       
       <br />
     </div>
@@ -629,7 +624,7 @@ export default {
             "Sale Return Status",
             "Sale Return Date",
             "Refund Amount",
-            "WayBill No",
+            // "WayBill No",
             "Parent Order Number",
             "Status",
             "Order Date",
@@ -753,23 +748,29 @@ export default {
       const data = XLSX.utils.json_to_sheet(this.items_sale_invoice);
       const wb = XLSX.utils.book_new();
       /* fix headers */
-      // XLSX.utils.sheet_add_aoa(
-      //   data,
-      //   [
-      //     [
-      //       "Sr No",
-      //       "Vendor Name",
-      //       "PROJECT NAME",
-      //       "PENDING TASKS",
-      //       "1ST APPOINTMENT",
-      //       "DE-SNAGGING",
-      //       "2ND APPOINTMENT",
-      //       "KEY HANDOVER APPOINTMENT",
-      //       "FINAL KEY HANDOVER DONE",
-      //     ],
-      //   ],
-      //   { origin: "A1" }
-      // );
+       XLSX.utils.sheet_add_aoa(
+        data,
+       [
+          [
+            "Invoice No",
+            "Invoice Date",
+            "Taxable Amount",
+            "IGST",
+            "SGST",
+            "CGST",
+            "Invoice Amount",
+            "HSN Code",
+            "Tax Percentage",
+            "Product Name",
+            "Sku",
+            "Qty",
+            "SubOrder ID",
+            "state",
+            "Status",
+          ],
+        ],
+        { origin: "A1" }
+      );
       XLSX.utils.book_append_sheet(wb, data, "data");
       XLSX.writeFile(wb, "saleinvoice_detail.xlsx");
     },

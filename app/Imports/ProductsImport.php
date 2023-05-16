@@ -42,6 +42,7 @@ class ProductsImport implements ToModel,WithHeadingRow
         }
         else
         {
+         
            DB::table('products')->where('product_id','=',$row['product_id'])->update(['name'=>$row['name'],'weight'=>$row['weight'],'price'=>$row['price'], 'hsn_code'=>$row['hsn_code'],'categories'=>$row['categories']]);
         //    return response()->json([ 'msg' => "Update Successfully"]);
         }

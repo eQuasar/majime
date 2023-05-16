@@ -159,9 +159,14 @@ class OrderController extends Controller {
       $vid = $_REQUEST['vid'];
         $order = DB::table("orders")->join('billings', function($join) use ($vid)
         {
-            $join->on('orders.oid', '=', 'billings.order_id')
+            $join->on('billings.order_id', '=', 'orders.oid')
                  ->where('billings.vid', '=', intval($vid));
-        })->where('orders.oid', '=', $oid)->where('orders.vid', '=', intval($_REQUEST['vid']))->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($_REQUEST['vid']) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT SUM(line_items.total) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($_REQUEST['vid']) . " GROUP BY line_items.order_id) as total_main"))->get();
+        })
+        ->leftjoin('line_items', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'line_items.order_id')
+                 ->where('line_items.vid', '=', intval($vid)); 
+        })->where('orders.oid', '=', $oid)->where('orders.vid', '=', intval($vid))->where('billings.vid', '=', intval($vid))->select("orders.*", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($_REQUEST['vid']) . " GROUP BY line_items.order_id) as quantity"), DB::raw("(SELECT SUM(line_items.total) FROM line_items WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($_REQUEST['vid']) . " GROUP BY line_items.order_id) as total_main"))->get();
         return $order;
     }
     //fetch order items table line_items.order_id = oid(match)and next line_items.vid(match)next pluck product_id use for toArray
@@ -255,7 +260,7 @@ class OrderController extends Controller {
         })
         ->where('orders.vid', '=', intval($vendor))->where('date_created','>=',$date)->orderBy('oid', 'DESC')
         ->select("orders.oid as oid",DB::raw("CONCAT(billings.first_name,' ',billings.last_name) as customername"), DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
-        WHERE line_items.order_id = orders.oid
+        WHERE line_items.order_id = orders.oid and line_items.vid=".intval($vendor)."
         GROUP BY line_items.order_id) as quantity"),'orders.total as total',"billings.state as state","billings.city as city","orders.date_modified_gmt as date_created","orders.payment_method_title as payment_method_title",'billings.phone as phone',"orders.status as status")->orderBy('orders.oid', 'DESC')
         // ->select("orders.*", "orders.status as orderstatus", "billings.*", DB::raw("(SELECT SUM(line_items.quantity) FROM line_items
         //                                 WHERE line_items.order_id = orders.oid AND line_items.vid = " . intval($vendor) . "
@@ -770,8 +775,8 @@ class OrderController extends Controller {
                                 $jsonResp2 = json_decode($response2);
                                 $confirm_order_data[]=[     
                                     'vid'=>$request->vid,
-                                    'oid'=>$request->dispatch,
-                                    'order_dispatchdate'=>$date,
+                                    'oid'=>$o_id,
+                                    'order_dispatchdate'=>date("Y-m-d"),
                                     ];   
                                 order_reldate::insert($confirm_order_data);        
                                 return response()->json(['error' => false, 'msg' => "WayBill successfully added.", "ErrorCode" => "000"], 200);
@@ -1069,6 +1074,12 @@ class OrderController extends Controller {
         }elseif($request->vid == 21){
             $address_store = '<p><span class="c_name">Blushade<br>GST NO : 07ABAFB6703C1Z1</span><br>B-192, first floor, naraina<br>industrial area phase-1<br>110028 - Delhi, India</p>';
             $industry_name = "Blushade";
+        }elseif($request->vid == 22){
+            $address_store = '<p><span class="c_name">MONKBREED APPARELS<br>GST NO : 19ABWFM0548G1ZS</span><br>48, Matheswartala Road <br/>Aurus Apartment Tower-1 <br/>17th Floor 17E<br/>700046 - Kolkata, India</p>';
+            $industry_name = "MONKBREED APPARELS";
+        }elseif($request->vid == 23){
+            $address_store = '<p><span class="c_name">OWR<br>GST NO : 03ABQFM7484H1ZS</span><br>B-37/1731, H.no 23 A/1, <br>Guru Nanak Colony,  backside nanaksar gurudwara, <br>near GNE college<br>141006 - Ludhiana, Punjab, India</p>';
+            $industry_name = "OWR";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
@@ -1355,6 +1366,12 @@ class OrderController extends Controller {
         }elseif($request->vid == 21){
             $address_store = '<p><span class="c_name">Blushade<br>GST NO : 07ABAFB6703C1Z1</span><br>B-192, first floor, naraina<br>industrial area phase-1<br>110028 - Delhi, India</p>';
             $industry_name = "Blushade";
+        }elseif($request->vid == 22){
+            $address_store = '<p><span class="c_name">MONKBREED APPARELS<br>GST NO : 19ABWFM0548G1ZS</span><br>48, Matheswartala Road <br/>Aurus Apartment Tower-1 <br/>17th Floor 17E<br/>700046 - Kolkata, India</p>';
+            $industry_name = "MONKBREED APPARELS";
+        }elseif($request->vid == 23){
+            $address_store = '<p><span class="c_name">OWR<br>GST NO : 03ABQFM7484H1ZS</span><br>B-37/1731, H.no 23 A/1, <br>Guru Nanak Colony,  backside nanaksar gurudwara, <br>near GNE college<br>141006 - Ludhiana, Punjab, India</p>';
+            $industry_name = "OWR";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
@@ -1709,6 +1726,27 @@ class OrderController extends Controller {
         } else {
             $listImp = explode(',', $request->allSelected);
         }
+        for($i = 0;$i < count($listImp);$i++) 
+        {
+            if($request->status_assign=='dto-refunded')
+            {
+                $vid=$request->vid;
+                $ldate = date('Y-m-d');
+                $order_id_detail=DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->get(); 
+                $refund_count=count($order_id_detail);
+                if($refund_count==0)
+                {
+                    $refund_cou='1';
+                }
+                else{
+                    $refund_cou=count($order_id_detail);
+                }
+                $refund_amount_detail= round(($refund_amount/ $refund_cou),2);
+                DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->update(['orderrefund_amount' => $refund_amount_detail]); 
+                DB::table('order_reldates')->where('oid','=',$listImp[$i])->where('order_reldates.vid','=',$vid)->update(['dto_refunddate' => $ldate ]);  
+                return response()->json(['error' => false, 'msg' =>"Update Successfully","ErrorCode" => "000"], 200);
+            }
+         }
         for ($i = 0;$i < count($listImp);$i++) 
         {
          
@@ -1738,7 +1776,7 @@ class OrderController extends Controller {
                 'vid'=>$request->vid,
                 'oid'=>$listImp[$i],
                 'dto_refunddate'=>$date,
-                ];   
+                ];
                 $vid=$request->vid;
                 $ldate = date('Y-m-d');
                 $order_id_detail=DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->get();
@@ -1754,7 +1792,8 @@ class OrderController extends Controller {
                 // $refund_amount_detail='20';
                 DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->update(['sale_return_date' => $ldate,'refund_amount'=>$refund_amount_detail]); 
                 DB::table('order_reldates')->where('oid','=',$listImp[$i])->where('order_reldates.vid','=',$vid)->update(['dto_refunddate' => $ldate ]);  
-                return response()->json(['error' => false, 'msg' =>"Update Successfully","ErrorCode" => "000"], 200); 
+                return response()->json(['error' => false, 'msg' =>"Update Successfully","ErrorCode" => "000"], 200);    
+
             }elseif($request->status_assign=='closed')
             {
                 $date = date('Y-m-d');
@@ -1858,7 +1897,22 @@ class OrderController extends Controller {
                     'vid'=>$request->vid,
                     'oid'=>$listImp[$i],
                     'dto_refunddate'=>$date,
-                    ];   
+                    ];
+                    $vid=$request->vid;
+                    $ldate = date('Y-m-d');
+                    $order_id_detail=DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->get(); 
+                    $refund_count=count($order_id_detail);
+                    if($refund_count==0)
+                    {
+                        $refund_cou='1';
+                    }
+                    else{
+                        $refund_cou=count($order_id_detail);
+                    }
+                    $refund_amount_detail= round(($refund_amount/ $refund_cou),2);
+                    DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->update(['sale_return_date' => $ldate,'refund_amount'=>$refund_amount_detail]); 
+                    DB::table('order_reldates')->where('oid','=',$listImp[$i])->where('order_reldates.vid','=',$vid)->update(['dto_refunddate' => $ldate ]);  
+                    return response()->json(['error' => false, 'msg' =>"Update Successfully","ErrorCode" => "000"], 200);    
                     
                 }elseif($request->status_assign=='closed')
                 {
