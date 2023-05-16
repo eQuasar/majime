@@ -1698,7 +1698,7 @@ class OrderController extends Controller {
         
         // var_dump($_REQUEST); die;
         // echo $request->loc; die;
-        $refund_amount=$request->refund_amount;
+        $refund_amount=$request->refund;
         if ($request->loc == "wp") {
             $listImp['0'] = $request->oid;
         } elseif ($request->allSelected == "false") {
@@ -1741,7 +1741,7 @@ class OrderController extends Controller {
                 ];   
                 $vid=$request->vid;
                 $ldate = date('Y-m-d');
-                $order_id_detail=DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->get(); 
+                $order_id_detail=DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->get();
                 $refund_count=count($order_id_detail);
                 if($refund_count==0)
                 {
@@ -1751,7 +1751,8 @@ class OrderController extends Controller {
                     $refund_cou=count($order_id_detail);
                 }
                 $refund_amount_detail= round(($refund_amount/ $refund_cou),2);
-                DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->update(['orderrefund_amount' => $refund_amount_detail]); 
+                // $refund_amount_detail='20';
+                DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->update(['sale_return_date' => $ldate,'refund_amount'=>$refund_amount_detail]); 
                 DB::table('order_reldates')->where('oid','=',$listImp[$i])->where('order_reldates.vid','=',$vid)->update(['dto_refunddate' => $ldate ]);  
                 return response()->json(['error' => false, 'msg' =>"Update Successfully","ErrorCode" => "000"], 200); 
             }elseif($request->status_assign=='closed')

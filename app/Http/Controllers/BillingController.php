@@ -390,14 +390,14 @@ class BillingController extends Controller
                             $coupan_discount='-';
                             $order_amount=$order_bill_processed[0]->total;
                             $product_data =DB::table("products")->where('vid','=',$vid)->where('product_id','=',$get_product_id)->get();
+                           
                             $product_name= $product_data[0]->name;
-                 
                             $product_sku= $product_data[0]->sku;
-                         
                             $product_name= $product_data[0]->hsn_code;
                             $product_weight= $product_data[0]->weight;
                             $vendor_name=$way_data[0]->name;
                             $hsn_code= $product_data[0]->hsn_code;
+                          
                            
                             // dd($line_item_idd);
                             // die();
@@ -428,14 +428,19 @@ class BillingController extends Controller
                                 $email=$get_billing_data[0]->email;
                                 $phone=$get_billing_data[0]->phone;
                                 $country=$get_billing_data[0]->country;
-                                if($invoice_amount<=1000)
+                                $hsn_tax =DB::table("hsn_details")->where('hsn_code','=',$hsn_code)->get();  
+                                
+                                $hsn_amount=$hsn_tax[0]->slab_amount;
+
+                                if ($invoice_amount<=$hsn_amount)
                                 {
-                                    $tax_percentage="5";
+                                    $tax_percentage=$hsn_tax[0]->slab_1;
                                 }
                                 else
                                 {
-                                    $tax_percentage="12";
+                                    $tax_percentage=$hsn_tax[0]->slab_2;
                                 }
+                              
                                 if($order_bill_processed[0]->status=='rto-delivered')
                                 {
                                     $refund_amount=  $invoice_amount;
@@ -469,8 +474,6 @@ class BillingController extends Controller
                                 $amtPaid=$order_bill_processed[0]->total;
                                 $sale_Amount = $orderTotalAmt->total_main;
                                 $walletUsedAmt = $sale_Amount - $amtPaid;
-                                
-
                                 $shippingCharges = 0;
                                 // here we need to minus actual wallet used from below:
                                 $cartDisc = ((int)$walletUsedAmt/(int)$sum_total->val)*(int)$item_cost;
