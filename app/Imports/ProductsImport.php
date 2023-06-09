@@ -17,18 +17,18 @@ class ProductsImport implements ToModel,WithHeadingRow
     * @return \Illuminate\Database\Eloquent\Model|null
     */
     public function model(array $row)
-
+    
     {
         $product = new Products([
             "vid"=>$row['vid'],
             "product_id"=>$row['product_id'],
-            "price"=>$row['price'],
-            "name"=>$row['name'],
+            "cost"=>$row['cost'],
             "hsn_code"=>$row['hsn_code'],
             "weight"=>$row['weight'],
             "categories"=>$row['categories'],
+            "price"=>$row['price'],
+            "name"=>$row['name'],
         ]);
-        // dd($row['product_id'],);
         // die();
         // $data = Products::where('product_id', $product_id)->first();
         $row_data = DB::table("products")->where('vid','=',intval($row['vid']))->where('product_id','=',intval($row['product_id']))->get();
@@ -36,12 +36,11 @@ class ProductsImport implements ToModel,WithHeadingRow
         // die();
         if($row_data->isempty())
         {
-            Products::insert(['vid'=>$row['vid'],'product_id' =>$row['product_id'], 'name'=>$row['name'],'weight'=>$row['weight']??'-', 'hsn_code'=>$row['hsn_code']??'-','categories'=>$row['categories']??'-']);
+            Products::insert(['vid'=>$row['vid'],'product_id' =>$row['product_id'], 'name'=>$row['name'],'weight'=>$row['weight']??'-','price'=>$row['price'], 'hsn_code'=>$row['hsn_code']??'-','categories'=>$row['categories']??'-']);
         }
         else
         {
-         
-           DB::table('products')->where('product_id','=',$row['product_id'])->update(['name'=>$row['name'],'weight'=>$row['weight'],'price'=>$row['price'], 'hsn_code'=>$row['hsn_code'],'categories'=>$row['categories']]);
+           DB::table('products')->where('product_id','=',$row['product_id'])->where('products.vid','=',intval($row['vid']))->update(['name'=>$row['name'],'weight'=>$row['weight'],'price'=>$row['price'], 'hsn_code'=>$row['hsn_code'],'categories'=>$row['categories']]);
         //    return response()->json([ 'msg' => "Update Successfully"]);
         }
        

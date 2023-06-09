@@ -226,6 +226,7 @@ export default {
     this.saleinvoice_detail();
     this.hsn_wise_detail_copy();
     this.sale_return_wise_detail();
+    this.update_date();
   },
   data() {
     return {
@@ -421,15 +422,6 @@ export default {
           this.sale_return_wise_detail();
           console.log(this.itemsstate);
           this.show = false;
-      // let formData = new FormData();
-      // formData.append("date_from", this.date_from);
-      // formData.append("date_to", this.date_to);
-      // formData.append("vid", this.vid);
-      // billings.get_biiling_filter(formData)
-      // .then((response) => {
-      //   // console.log(response.data);
-      //   this.items = response.data;
-      //   this.show=false;
       })
       .catch((error) => {
         if (error.response.status == 422) {
@@ -437,13 +429,27 @@ export default {
         }
       });
     },
-    // onSubmit(){
-    // this.getBilling_detail();
-  //  this.getstate_detail();
-    // this.saleinvoice_detail();
-    // this.hsn_wise_detail_copy();
-    // this.sale_return_wise_detail();
-    // },
+
+    update_date()
+    {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      billings
+        .billing_process_updateDate(formData)
+        .then((response) => {
+          // console.log(response.data);
+          this.items = response.data;
+          this.show = false;
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+
+
+    },
     getBilling_detail() {
       this.show = true;
       this.vid = JSON.parse(localStorage.getItem("ivid"));
@@ -455,7 +461,7 @@ export default {
         .get_biiling_detail(formData)
         .then((response) => {
           // console.log(response.data);
-          this.items = response.data;
+          this.itemsbilling = response.data;
           this.show = false;
         })
         .catch((error) => {
@@ -597,7 +603,7 @@ export default {
     //     });
     // },
     Billing_download: function () {
-      const data = XLSX.utils.json_to_sheet(this.items);
+      const data = XLSX.utils.json_to_sheet(this.itemsbilling);
       const wb = XLSX.utils.book_new();
       /* fix headers */
       XLSX.utils.sheet_add_aoa(

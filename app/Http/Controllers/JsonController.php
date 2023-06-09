@@ -52,7 +52,6 @@ class JsonController extends Controller
 
 	public function productgetJson(Request $request)
 	{
-		//DD($request);
 		if(isset($request->url) && $request->url != '')
 		{
 			$url = $request->url;
@@ -893,9 +892,15 @@ class JsonController extends Controller
 
 	public function InsertProduct($ProductData,$vid)
 		{	
-			// var_dump($ProductData);
-			foreach($ProductData as $InProduct)
-		   {
+			$pro_id=$ProductData[0]->id;
+			if(products::where('product_id', '=', $pro_id)->where('vid','=',intval($vid))->exists()) {
+				return response()->json([ 'msg' => "Product already Exist"]);	
+				
+			 }
+			 else
+			 {
+				foreach($ProductData as $InProduct)
+		         {
 		 	$cat = '';
 		 	for ($i=0; $i < count($InProduct->categories); $i++) { 
 		 		if($i == count($InProduct->categories)-1){
@@ -957,7 +962,9 @@ class JsonController extends Controller
 			}
 		// }
     	 Products::insert($product);
-		  echo "Product Insert Successfully";
+		 return response()->json([ 'msg' => "Product Insert Successfully"]);	
+			 }
+			
 		// return response()->json(['error' => false, 'msg' =>"Product Insert Successfully", "ErrorCode" => "000"], 200);
 		
     }
@@ -1446,89 +1453,92 @@ public function InsertProductVariation_attributes($product_attributes,$vid,$proI
 
 	public function readdProduct($InOrder, $vid, $url){
 		// echo $url; die;
-		DB::table('products')->where('vid', intval($vid))->delete();
+		// DB::table('products')->where('vid', intval($vid))->delete();
 		// echo "string"; die;
 		foreach($InOrder as $order)
 		{
-			// var_dump($order); die;
-          	$Orders[]=[
-				'oid'=>intval($order->id),
-				'vid'=>intval($vid),
-				'parent_id'=>$order->parent_id,
-				'status'=>$order->status,
-				'currency'=>$order->currency,
-				 'version'=>$order->version,
-				 'prices_include_tax'=>$order->prices_include_tax,
-				 'date_created'=>$order->date_created,
-				 'date_modified'=>$order->date_modified,
-				 'discount_total'=>$order->discount_total,
-				 'discount_tax'=>$order->discount_tax,
-				 'shipping_total'=>$order->shipping_total,
-				 'shipping_tax'=>$order->shipping_tax,
-				 'cart_tax'=>$order->cart_tax,
-				 'total'=>$order->total,
-				 'total_tax'=>$order->total_tax,
-				 'customer_id'=>$order->customer_id,
-				 'order_key'=>$order->order_key,
-				 'payment_method'=>$order->payment_method,
-				 'payment_method_title'=>$order->payment_method_title,
-				 'transaction_id'=>$order->transaction_id,
-				 'customer_ip_address'=>$order->customer_ip_address,
-				 // 'customer_user_agent'=>$order->customer_user_agent,
-				 'customer_user_agent'=>'',
-				 'created_via'=>$order->created_via,
-				 // 'customer_note'=>$order->customer_note,
-				 'customer_note'=>'NA',
-				 'date_completed'=>$order->date_completed,
-				 'date_paid'=>$order->date_paid,
-				 'cart_hash'=>$order->cart_hash,
-				 'number'=>$order->number,
-				 'date_created_gmt'=>$order->date_created_gmt,
-				 'date_modified_gmt'=>$order->date_modified_gmt,
-				 'date_completed_gmt'=>$order->date_completed_gmt,
-				 'date_paid_gmt'=>$order->date_paid_gmt,
-				 'currency_symbol'=>$order->currency_symbol,
-			];
-			// $this->InsertBilling($order->id,$order->billing,$vid);
-			// $this->InsertShipping($order->id,$order->shipping,$vid);
-		 //    $this->OrderMetaData($order->id,$order->meta_data);
-		    // $this->insertLineItems($order->id,$order->line_items,$vid);
-			//$this->LineItem_Metadata($order->id,$order->line_items);
-			// $this->OrderTaxLines($order->id,$order->tax_lines,$vid);
-			// $this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
-			// $this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
-			// $this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
-		 //    $this->Order_refunds($order->id,$order->refunds,$vid);
-			// $this->Order_links($order->id,$order->_links,$vid);
+			// if(){
 
-	    }
-       	
-	    // if(!empty($Orders)){
-	    //    	Orders::insert($Orders); 	
+			// }else{
+				$Orders[]=[
+					'oid'=>intval($order->id),
+					'vid'=>intval($vid),
+					'parent_id'=>$order->parent_id,
+					'status'=>$order->status,
+					'currency'=>$order->currency,
+					'version'=>$order->version,
+					'prices_include_tax'=>$order->prices_include_tax,
+					'date_created'=>$order->date_created,
+					'date_modified'=>$order->date_modified,
+					'discount_total'=>$order->discount_total,
+					'discount_tax'=>$order->discount_tax,
+					'shipping_total'=>$order->shipping_total,
+					'shipping_tax'=>$order->shipping_tax,
+					'cart_tax'=>$order->cart_tax,
+					'total'=>$order->total,
+					'total_tax'=>$order->total_tax,
+					'customer_id'=>$order->customer_id,
+					'order_key'=>$order->order_key,
+					'payment_method'=>$order->payment_method,
+					'payment_method_title'=>$order->payment_method_title,
+					'transaction_id'=>$order->transaction_id,
+					'customer_ip_address'=>$order->customer_ip_address,
+					// 'customer_user_agent'=>$order->customer_user_agent,
+					'customer_user_agent'=>'',
+					'created_via'=>$order->created_via,
+					// 'customer_note'=>$order->customer_note,
+					'customer_note'=>'NA',
+					'date_completed'=>$order->date_completed,
+					'date_paid'=>$order->date_paid,
+					'cart_hash'=>$order->cart_hash,
+					'number'=>$order->number,
+					'date_created_gmt'=>$order->date_created_gmt,
+					'date_modified_gmt'=>$order->date_modified_gmt,
+					'date_completed_gmt'=>$order->date_completed_gmt,
+					'date_paid_gmt'=>$order->date_paid_gmt,
+					'currency_symbol'=>$order->currency_symbol,
+				];
+				// $this->InsertBilling($order->id,$order->billing,$vid);
+				// $this->InsertShipping($order->id,$order->shipping,$vid);
+			//    $this->OrderMetaData($order->id,$order->meta_data);
+				// $this->insertLineItems($order->id,$order->line_items,$vid);
+				//$this->LineItem_Metadata($order->id,$order->line_items);
+				// $this->OrderTaxLines($order->id,$order->tax_lines,$vid);
+				// $this->OrderShipping_Lines($order->id,$order->shipping_lines,$vid);
+				// $this->OrderFee_Lines($order->id,$order->fee_lines,$vid);
+				// $this->OrderCoupan_Lines($order->id,$order->coupon_lines,$vid);
+			//    $this->Order_refunds($order->id,$order->refunds,$vid);
+				// $this->Order_links($order->id,$order->_links,$vid);
 
-	    //    	// $this->getWayBill($vid, $url);
-     //   	}
+			}
 			
-		$jsonResponse=$this->getProductWP($url, intval($vid));
-		// var_dump($jsonResponse); die;
-		$this->InsertProduct($jsonResponse, $vid);
-		
-		 // $jsonResponseVariation=$this->getProductVariation($jsonResponse,$url, intval($vid));
+			// if(!empty($Orders)){
+			//    	Orders::insert($Orders); 	
 
-		
-		// dd($jsonResponse);
+			//    	// $this->getWayBill($vid, $url);
+		//   	}
+				
+			$jsonResponse=$this->getProductWP($url, intval($vid));
+			// var_dump($jsonResponse); die;
+			$this->InsertProduct($jsonResponse, $vid);
+			
+			// $jsonResponseVariation=$this->getProductVariation($jsonResponse,$url, intval($vid));
 
-		// $jsonResponsecat=$this->getProductCatWP($url, intval($vid));
-		// $this->InsertProductCat($jsonResponsecat, $vid);
-		// // var_dump($jsonResponsecat);
-		// // dd($jsonResponsecat);
+			
+			// dd($jsonResponse);
 
-		// $jsonResponseTag=$this->getProductTagWp($url, intval($vid));
-		// $this->InsertProductTag($jsonResponseTag, $vid);
-		// // dd($jsonResponseTag);
+			// $jsonResponsecat=$this->getProductCatWP($url, intval($vid));
+			// $this->InsertProductCat($jsonResponsecat, $vid);
+			// // var_dump($jsonResponsecat);
+			// // dd($jsonResponsecat);
 
-		// $jsonResponseAtt=$this->getProductAttWp($url, intval($vid));
-		// $this->InsertProductAtt($jsonResponseAtt, $vid);
+			// $jsonResponseTag=$this->getProductTagWp($url, intval($vid));
+			// $this->InsertProductTag($jsonResponseTag, $vid);
+			// // dd($jsonResponseTag);
+
+			// $jsonResponseAtt=$this->getProductAttWp($url, intval($vid));
+			// $this->InsertProductAtt($jsonResponseAtt, $vid);
+		// }
 		
 		
     }

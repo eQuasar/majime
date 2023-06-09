@@ -25,6 +25,7 @@ import ViewTransaction from './components/Admin/ViewTransaction.vue'
 import PendingRefunds from './components/Orders/PendingRefunds.vue'
 import PackedOrders from './components/Orders/PackedOrders.vue'
 import ForDelivery from './components/Products/ForDelivery.vue'
+import VendorForDelivery from './components/Products/vendor_for_delivery.vue'
 import OnHoldOrders from './components/Orders/OnHoldOrders.vue'
 import DtoIntransit from './components/Orders/dtoIntransit.vue'
 import DtoBooked from './components/Orders/dtoBooked.vue'
@@ -45,6 +46,8 @@ import Billing from './components/Billing/billing.vue'
 import category from './components/Billing/category.vue'
 import Import_File from './components/Report/import_file.vue'
 import refundorder from './components/Orders/refundorder.vue'
+import VendorBilling from './components/Billing/vendorbilling.vue'
+
 
 
 
@@ -87,7 +90,9 @@ export const routes = [
     {path:'/vendor/ListOrdersforVariationID/:product_id',component: productprofile,props: true,name:'productprofile',meta: { auth: true}},
      {path:'/admin/transaction',component:TransactionDetail ,props: true,name:'TransactionDetail',meta: { auth: true}},
      {path:'/admin/ViewTransaction',component:ViewTransaction ,props: true,name:'ViewTransaction',meta: { auth: true}},
-     {path:'/vendor/ForDelivery',component:ForDelivery,name:'fordelivery',meta: { auth: true}},
+     {path:'/admin/ForDelivery',component:ForDelivery,name:'fordelivery',meta: { auth: true}},
+     {path:'/vendor/ForDelivery',component:VendorForDelivery,name:'vendorfordelivery',meta: { auth: true}},
+
      {path:'/vendor/OnHoldOrders',component:OnHoldOrders,name:'onholdorders',meta: { auth: true}},
       {path:'/vendor/dtoIntransit',component:DtoIntransit,name:'dtoIntransit',meta: { auth: true}},
       {path:'/vendor/dtoBooked',component:DtoBooked,name:'dtoBooked',meta: { auth: true}},
@@ -101,6 +106,7 @@ export const routes = [
     {path:'/vendor/Product_list/product_id',component: editbutton,props: true,name:'editbutton',meta: { auth: true}},
     {path:'/vendor/editProduct_variation/:product_id/:variation_id',component: editbutton2,props: true,name:'editbutton2',meta: { auth: true}},
     {path:'/admin/billing',component: Billing,name:'billing',meta: { auth: true}},
+    {path:'/vendor/billing',component: VendorBilling,name:'vendorbilling',meta: { auth: true}},
     {path:'/admin/category',component: category,name:'category',meta: { auth: true}},
     {path:'/admin/import/data',component: Import_File,name:'import_file',meta: { auth: true}},
     {path:'/vendor/order_profile/:product_id',component: EditProductProfile2,props: true,name:'editproductprofile2',meta: { auth: true}},

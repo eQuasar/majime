@@ -678,6 +678,7 @@ computed: {
              .then((response) => {
                 console.log(response.data[0]);
                 this.$alert("", response.data.msg);
+                this.show=false;
                   this.items2=response.data[0];
                   const data = XLSX.utils.json_to_sheet(this.items2)
                 const wb = XLSX.utils.book_new()
@@ -691,7 +692,7 @@ computed: {
               }
               // loader.hide();
           });
-          this.show=false;
+          
       },
     },
 };  

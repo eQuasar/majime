@@ -183,6 +183,8 @@ Route::group(['prefix' => 'v1'], function () {
 	Route::post('order_Searchdata', 'OrderController@order_Searchdata')->name('order_Searchdata');
 	Route::post('order', 'OrderController@order')->name('order');
 	Route::post('refundamount_update', 'OrderController@refundamount_update')->name('refundamount_update');
+	Route::post('update_date', 'BillingController@update_date')->name('update_date');
+	Route::post('sale_return_update_date', 'BillingController@sale_return_update_date')->name('sale_return_update_date');
 	
 }); 
 

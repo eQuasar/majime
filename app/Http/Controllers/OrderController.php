@@ -1048,8 +1048,8 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Donna Flair<br>GST NO : </span><br>Deep Vihar, E-10/7530/9, Village Famra Bahadur ke Road, <br>Deep Vihar, The Knit Lounge, <br>141004 - Ludhiana, Punjab, India</p>';
             $industry_name = "Donna Flair";
         }elseif($request->vid == 13){
-            $address_store = '<p><span class="c_name">MAD<br>GST NO : 03BGXPR0302L1Z8</span><br>B-32-E12/875 Thapar Nagar Opp GMT Public School Near Jalandhar Bypass, <br>Jalandhar Bypass, GMT Public School, <br>141008 - Ludhiana, Punjab, India</p>';
-            $industry_name = "MAD";
+            $address_store = '<p><span class="c_name">MAD About Decor<br>GST NO : 03BGXPR0302L1Z8</span><br>Site No.3, Industrial Plots, Near Budh Mandir<br>Village Kadian, G.T. Road<br>141008 - Ludhiana, Punjab, India</p>';
+            $industry_name = "MAD About Decor";
         }elseif($request->vid == 14){
             $address_store = '<p><span class="c_name">Menage<br>GST NO : 03AKFPS6566A1ZA</span><br>H.No. 3732 Sector 32-A, <br>Chandigarh Road<br>141010 - Ludhiana, Punjab, India</p>';
             $industry_name = "Menage";
@@ -1069,8 +1069,8 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
         }elseif($request->vid == 20){
-            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
-            $industry_name = "Style by NansJ";
+            $address_store = '<p><span class="c_name">Sextacy<br>GST NO : 03AABCA5335J3ZY</span><br>Ha-51, Focal Point Phase 6<br>Focal Point <br>141010 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Sextacy";
         }elseif($request->vid == 21){
             $address_store = '<p><span class="c_name">Blushade<br>GST NO : 07ABAFB6703C1Z1</span><br>B-192, first floor, naraina<br>industrial area phase-1<br>110028 - Delhi, India</p>';
             $industry_name = "Blushade";
@@ -1078,7 +1078,7 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">MONKBREED APPARELS<br>GST NO : 19ABWFM0548G1ZS</span><br>48, Matheswartala Road <br/>Aurus Apartment Tower-1 <br/>17th Floor 17E<br/>700046 - Kolkata, India</p>';
             $industry_name = "MONKBREED APPARELS";
         }elseif($request->vid == 23){
-            $address_store = '<p><span class="c_name">OWR<br>GST NO : 03ABQFM7484H1ZS</span><br>B-37/1731, H.no 23 A/1, <br>Guru Nanak Colony,  backside nanaksar gurudwara, <br>near GNE college<br>141006 - Ludhiana, Punjab, India</p>';
+            $address_store = '<p><span class="c_name">OWR<br>GST NO : 03ABQFM7484H1ZS</span><br>134, Bajrang Vihar,<br> Noorwala Road<br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "OWR";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
@@ -1340,8 +1340,8 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Donna Flair<br>GST NO : </span><br>Deep Vihar, E-10/7530/9, Village Famra Bahadur ke Road, <br>Deep Vihar, The Knit Lounge, <br>141004 - Ludhiana, Punjab, India</p>';
             $industry_name = "Donna Flair";
         }elseif($request->vid == 13){
-            $address_store = '<p><span class="c_name">MAD<br>GST NO : 03BGXPR0302L1Z8</span><br>B-32-E12/875 Thapar Nagar Opp GMT Public School Near Jalandhar Bypass, <br>Jalandhar Bypass, GMT Public School, <br>141008 - Ludhiana, Punjab, India</p>';
-            $industry_name = "MAD";
+            $address_store = '<p><span class="c_name">MAD About Decor<br>GST NO : 03BGXPR0302L1Z8</span><br>Site No.3, Industrial Plots, Near Budh Mandir<br>Village Kadian, G.T. Road<br>141008 - Ludhiana, Punjab, India</p>';
+            $industry_name = "MAD About Decor";
         }elseif($request->vid == 14){
             $address_store = '<p><span class="c_name">Menage<br>GST NO : 03AKFPS6566A1ZA</span><br>H.No. 3732 Sector 32-A, <br>Chandigarh Road<br>141010 - Ludhiana, Punjab, India</p>';
             $industry_name = "Menage";
@@ -1361,8 +1361,8 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
         }elseif($request->vid == 20){
-            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
-            $industry_name = "Style by NansJ";
+            $address_store = '<p><span class="c_name">Sextacy<br>GST NO : 03AABCA5335J3ZY</span><br>Ha-51, Focal Point Phase 6<br>Focal Point <br>141010 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Sextacy";
         }elseif($request->vid == 21){
             $address_store = '<p><span class="c_name">Blushade<br>GST NO : 07ABAFB6703C1Z1</span><br>B-192, first floor, naraina<br>industrial area phase-1<br>110028 - Delhi, India</p>';
             $industry_name = "Blushade";
@@ -1370,7 +1370,7 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">MONKBREED APPARELS<br>GST NO : 19ABWFM0548G1ZS</span><br>48, Matheswartala Road <br/>Aurus Apartment Tower-1 <br/>17th Floor 17E<br/>700046 - Kolkata, India</p>';
             $industry_name = "MONKBREED APPARELS";
         }elseif($request->vid == 23){
-            $address_store = '<p><span class="c_name">OWR<br>GST NO : 03ABQFM7484H1ZS</span><br>B-37/1731, H.no 23 A/1, <br>Guru Nanak Colony,  backside nanaksar gurudwara, <br>near GNE college<br>141006 - Ludhiana, Punjab, India</p>';
+            $address_store = '<p><span class="c_name">OWR<br>GST NO : 03ABQFM7484H1ZS</span><br>134, Bajrang Vihar,<br> Noorwala Road<br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "OWR";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
@@ -1712,9 +1712,7 @@ class OrderController extends Controller {
     }
     //api all use according to status
     function changeProcessing_Status(Request $request) {
-        
-        // var_dump($_REQUEST); die;
-        // echo $request->loc; die;
+
         $refund_amount=$request->refund;
         if ($request->loc == "wp") {
             $listImp['0'] = $request->oid;
@@ -1726,27 +1724,27 @@ class OrderController extends Controller {
         } else {
             $listImp = explode(',', $request->allSelected);
         }
-        for($i = 0;$i < count($listImp);$i++) 
-        {
-            if($request->status_assign=='dto-refunded')
-            {
-                $vid=$request->vid;
-                $ldate = date('Y-m-d');
-                $order_id_detail=DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->get(); 
-                $refund_count=count($order_id_detail);
-                if($refund_count==0)
-                {
-                    $refund_cou='1';
-                }
-                else{
-                    $refund_cou=count($order_id_detail);
-                }
-                $refund_amount_detail= round(($refund_amount/ $refund_cou),2);
-                DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->update(['orderrefund_amount' => $refund_amount_detail]); 
-                DB::table('order_reldates')->where('oid','=',$listImp[$i])->where('order_reldates.vid','=',$vid)->update(['dto_refunddate' => $ldate ]);  
-                return response()->json(['error' => false, 'msg' =>"Update Successfully","ErrorCode" => "000"], 200);
-            }
-         }
+        // for($i = 0;$i < count($listImp);$i++) 
+        // {
+        //     if($request->status_assign=='dto-refunded')
+        //     {
+        //         $vid=$request->vid;
+        //         $ldate = date('Y-m-d');
+        //         $order_id_detail=DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->get(); 
+        //         $refund_count=count($order_id_detail);
+        //         if($refund_count==0)
+        //         {
+        //             $refund_cou='1';
+        //         }
+        //         else{
+        //             $refund_cou=count($order_id_detail);
+        //         }
+        //         $refund_amount_detail= round(($refund_amount/ $refund_cou),2);
+        //         DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->update(['orderrefund_amount' => $refund_amount_detail]); 
+        //         DB::table('order_reldates')->where('oid','=',$listImp[$i])->where('order_reldates.vid','=',$vid)->update(['dto_refunddate' => $ldate ]);  
+        //         return response()->json(['error' => false, 'msg' =>"Update Successfully","ErrorCode" => "000"], 200);
+        //     }
+        //  }
         for ($i = 0;$i < count($listImp);$i++) 
         {
          

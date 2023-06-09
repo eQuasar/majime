@@ -268,7 +268,8 @@ export default {
      .then(( response ) => {
         this.paymentSuccessful ();
         setTimeout(function () {
-            window.location.href = "/admin/import/data";
+            // window.location.href = "/admin/import/data";
+            this.$router.push("/admin/import/data").catch(()=>{});
           }, 2000);
         console.log(response.data);
 
