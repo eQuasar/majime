@@ -63,7 +63,7 @@ export default {
               // icon: 'fa fa-user',
             },
             {
-              href: { name: "fordelivery" },
+              href: { name: "vendorfordelivery" },
               title: "Dispatched Orders",
               // icon: 'fa fa-user',
             },
@@ -74,6 +74,11 @@ export default {
               // icon: 'fa fa-user',
             },
           ],
+        },
+        {
+          href: { name: "vendorbilling" },
+          title: "Billing",
+          icon: "fa-solid fa-file-invoice",
         },
         {
           title: "Return Mgt",

@@ -13,6 +13,88 @@
           <br />
         </div>
       </div>
+      <b-modal
+        ref="modal-2"
+        v-if="modalshow"
+        id="modal-show"
+        v-bind:hide-footer="true"
+      >
+        <div class="d-block text-center">
+          <h3>Choose Shipment</h3>
+        </div>
+        <div class="shipment-type">
+          <b-form-group label="Select Option" v-slot="{ ariaDescribedby }">
+            <b-form-radio
+              v-model="shipment"
+              :aria-describedby="ariaDescribedby"
+              name="some-radios"
+              value="Air"
+              >Air</b-form-radio
+            >
+            <b-form-radio
+              v-model="shipment"
+              :aria-describedby="ariaDescribedby"
+              name="some-radios"
+              value="Surface"
+              >Surface</b-form-radio
+            >
+          </b-form-group>
+        </div>
+        <!-- <b-form-group
+          id="input-group-description"
+          label="Description"
+          label-for="input-name"
+        >
+          <b-form-select
+            class="mt-2"
+            v-model="shipment"
+            :options="descriptions"
+            label="Description"
+            label-for="input-city"
+          ></b-form-select>
+        </b-form-group> -->
+        <b-button
+          class="mt-2"
+          variant="outline-warning"
+          block
+          @click="confirm_shipment"
+          >Submit</b-button
+        >
+      </b-modal>
+      <b-modal
+        ref="modal-3"
+        v-if="modalshow"
+        id="modal-show"
+        v-bind:hide-footer="true"
+      >
+        <div class="d-block text-center">
+          <h3>Choose Shipment</h3>
+        </div>
+        <b-form-group label="Select Option" v-slot="{ ariaDescribedby }">
+          <b-form-radio
+            v-model="shipment"
+            :aria-describedby="ariaDescribedby"
+            name="some-radios"
+            value="Air"
+            >Air</b-form-radio
+          >
+          <b-form-radio
+            v-model="shipment"
+            :aria-describedby="ariaDescribedby"
+            name="some-radios"
+            value="Surface"
+            >Surface</b-form-radio
+          >
+        </b-form-group>
+        <b-button
+          class="mt-2"
+          variant="outline-warning"
+          block
+          @click="confirm_shipment_allSelected"
+          >Submit</b-button
+        >
+      </b-modal>
+
       <div class="content_bar">
         <div class="card-body card">
           <div class="call-center-dashboard">
@@ -104,8 +186,8 @@
             {{ (currentPage - 1) * perPage + row.index + 1 }}
           </template>
           <template v-slot:cell(name)="row">
-                {{(row.item.first_name)}} {{(row.item.last_name)}} 
-              </template>
+            {{ row.item.first_name }} {{ row.item.last_name }}
+          </template>
           <template v-slot:cell(select)="row">
             <input
               type="checkbox"
@@ -211,6 +293,7 @@ export default {
       show: false,
       vendor: null,
       status_assign: 0,
+      modalshow: true,
       oid: 0,
       statusAssign: "",
       selected: null,
@@ -228,6 +311,8 @@ export default {
       date_from: "",
       date_to: "",
       sortBy: "date",
+      shipment: "",
+      description: "",
       sortDesc: true,
       perPage: 10,
       allSelected: [],
@@ -235,6 +320,11 @@ export default {
       pageOptions: [5, 10, 15, 20, 50, 100],
       filter: null,
       filterOn: [],
+      descriptions: [
+        { value: null, text: "Please select an option" },
+        { value: "air", text: "Air" },
+        { value: "surface", text: "Surface" },
+      ],
       fields: [
         {
           key: "select",
@@ -242,57 +332,58 @@ export default {
           sortable: true,
         },
         {
-          key: 'oid',
-          label: 'Order ID',
-          sortable: true
+          key: "oid",
+          label: "Order ID",
+          sortable: true,
         },
         {
-          key: 'date_created_gmt',
-          label: 'Order Date ',
-          sortable: true
+          key: "date_created_gmt",
+          label: "Order Date ",
+          sortable: true,
         },
         {
-          key: 'total',
-          label: 'Amount',
-          sortable: true
+          key: "total",
+          label: "Amount",
+          sortable: true,
         },
         {
-          key: 'name' ,
-          label: 'Name',
-          sortable: true
+          key: "name",
+          label: "Name",
+          sortable: true,
         },
         {
-          key: 'state',
-          label: 'State',
-          sortable: true
+          key: "state",
+          label: "State",
+          sortable: true,
         },
         {
-          key: 'city',
-          label: 'City',
-          sortable: true
+          key: "city",
+          label: "City",
+          sortable: true,
         },
         {
-          key: 'phone',
-          label: 'Contact',
-          sortable: false
+          key: "phone",
+          label: "Contact",
+          sortable: false,
         },
         {
-          key: 'payment_method_title',
-          label: 'Payment Mode',
-          sortable: false
+          key: "payment_method_title",
+          label: "Payment Mode",
+          sortable: false,
         },
         {
-          key: 'status',
-          label: 'Status',
-          sortable: true
+          key: "status",
+          label: "Status",
+          sortable: true,
         },
         {
-          key: 'action',
-          label: 'Action',
-          sortable: false
-        }
+          key: "action",
+          label: "Action",
+          sortable: false,
+        },
       ],
       items: [],
+      itemsd: [],
       packedItems: [],
       errors_create: [],
       successful: false,
@@ -325,6 +416,52 @@ export default {
           console.log(error);
         });
       console.log("Pack - 3");
+    },
+    confirm_shipment() {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      formData.append("oid", this.oid);
+      formData.append("shipment", this.shipment);
+      // formData.append("oid", oid);
+      order
+        .shipment_update(formData)
+        .then((response) => {
+          this.oid = response.data.data;
+          console.log(this.oid);
+          this.$refs["modal-2"].hide();
+          // console.log(response);
+          this.$alert("", response.data.msg);
+          this.getVidz();
+          // this.assignawb_orderr(this.oid);
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+    },
+    assignawb_orderr(oid) {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      this.show = true;
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      formData.append("oid", this.oid);
+      order
+        .assignAWBOrderr(formData)
+        .then((response) => {
+          this.$alert("", response.data.msg);
+          this.show = false;
+          this.getVidz();
+          // this.items.splice(this.items.indexOf(index), 1);
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
     },
     getvendor() {
       let formData = new FormData();
@@ -420,11 +557,36 @@ export default {
     },
     confirmAssignAWB() {
       if (this.allSelected != "") {
-        this.assignAWB();
+        this.$refs["modal-3"].show();
       } else {
         this.$alert("", "Please choose at least one value from checkbox...");
       }
     },
+    confirm_shipment_allSelected() {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
+      formData.append("allSelected", this.allSelected);
+      formData.append("shipment", this.shipment);
+      // formData.append("oid", oid);
+      order
+        .shipment_update_allselected(formData)
+        .then((response) => {
+          this.oid = response.data.data;
+          console.log(this.oid);
+          this.$refs["modal-3"].hide();
+          this.$alert("", response.data.msg);
+          this.getVidz();
+          // this.assignAWB();
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
+        });
+    },
+
     assignAWB() {
       // alert('Assigned Successfully');
       this.show = true;
@@ -440,32 +602,17 @@ export default {
           this.show = false;
           this.getVidz();
         })
-        .catch((response) => {
-          this.successful = false;
-          alert("something went wrong");
+        .catch((error) => {
+          console.log(error);
+          if (error.response.status == 422) {
+            this.errors_create = error.response.data.errors;
+          }
         });
     },
     assignAWBOrder(oid, index) {
-      this.show = true;
-      // alert('Assigned Successfully');
-      this.vid = JSON.parse(localStorage.getItem("ivid"));
-      let formData = new FormData();
-      formData.append("vid", this.vid);
-      formData.append("oid", oid);
-      order
-        .assignAWBOrder(formData)
-        .then((response) => {
-          this.$alert("", response.data.msg);
-          this.show = false;
-          this.getVidz();
-          // this.items.splice(this.items.indexOf(index), 1);
-        })
-        .catch((response) => {
-          this.successful = false;
-          alert("something went wrong");
-        });
+      this.$refs["modal-2"].show();
+      this.oid = oid;
     },
-
     cancelstatusOID(oid) {
       this.oid = oid;
       this.allSelected = false;

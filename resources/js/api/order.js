@@ -38,6 +38,10 @@ export default {
     assignAWBOrder(data){
         return axios.post('assignAWBOrder', data)
     },
+    assignAWBOrderr(data){
+        return axios.post('assignAWBOrder', data)
+    },
+    
     return_order(){
         return axios.get('return_order')
     },
@@ -170,5 +174,11 @@ export default {
     refund_amount_data(data) {
         return axios.post('refundamount_update',data)
     },
+    shipment_update(data) {
+        return axios.post('shipment_update',data)
+    },
+    shipment_update_allselected(data){
+        return axios.post('shipment_update_all',data)
+    }
 
 }

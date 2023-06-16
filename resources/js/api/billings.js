@@ -33,6 +33,10 @@ export default {
     {
         return axios.post('billing_filter', data)
     },
+    billing_process_updateDate(data)
+    {
+        return axios.post('update_date', data)
+    },
   
 }
 

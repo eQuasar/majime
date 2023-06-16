@@ -325,6 +325,33 @@ class OrderController extends Controller {
         ->where('orders.status', $status)->get();
         return $orderItems;
     }
+    public function shipment_update(Request $request)
+    {
+        $data=DB::table('shipment_types')->insert(['vid' => $request->vid, 'oid' => $request->oid, 'shipment_type' => $request->shipment]);
+        $m = $this->assignAWBOrder($request);
+        if($m->original['error'] == true){
+            return response()->json(['error' => true, 'data'=>$request->oid,'msg' => $m->original['msg'], "ErrorCode" => "000"], 200);
+        }else{
+            return response()->json(['error' => false, 'data'=>$request->oid,'msg' => 'Shipment Detail update successfully', "ErrorCode" => "000"], 200);
+        }
+    }
+    public function shipment_update_all(Request $request)
+    {
+        $main = explode(',', $request->allSelected);
+        $vid = $request->vid;
+        // echo "strong"; die;
+        for ($i = 0;$i < count($main);$i++)
+        {
+            $data=DB::table('shipment_types')->insert(['vid' => $request->vid, 'oid' => $main[$i], 'shipment_type' => $request->shipment]);
+        }
+        $m = $this->assignAWB($request);
+        if($m->original['error'] == true){
+            return response()->json(['error' => true, 'data'=>$request->oid,'msg' => $m->original['msg'], "ErrorCode" => "000"], 200);
+        }else{
+            return response()->json(['error' => false, 'data'=>$request->oid,'msg' => 'Shipment Detail update successfully', "ErrorCode" => "000"], 200);
+        }
+        // return response()->json(['error' => false,'msg' => 'Shipment Detail update successfully', "ErrorCode" => "000"], 200);
+    }
      //fetch order stataus (api send)$vid, $statrto,$statdto,$statcomp,$clos(variavle) according to orders table and billings
     public function getComplete_OrdersStatus($vid, $statrto,$statdto,$statcomp,$clos) 
     {
@@ -419,39 +446,7 @@ class OrderController extends Controller {
                 $jsonResp = json_decode($response);
                 DB::table('waybill')->where('order_id', $_REQUEST['order_id'])->where('vid', $_REQUEST['vid'])->update(['return_waybill_no' => $wbill]);
                 DB::table('orders')->where('oid', $_REQUEST['order_id'])->where('vid', $_REQUEST['vid'])->update(['status' => "dtobooked"]);
-                //           $curl = curl_init();
-                //           $vendor =DB::table("vendors")->where('id','=',intval($vid))->get();
-                //           var_dump($vendor[0]->url); die;
-                //    curl_setopt_array($curl, array(
-                //    CURLOPT_URL => $vendor[0]->url.'/wp-json/wc/v3/orders/'.$_REQUEST['order_id'].'?status=dtobooked',
-                //    CURLOPT_RETURNTRANSFER => true,
-                //    CURLOPT_ENCODING => '',
-                //    CURLOPT_MAXREDIRS => 10,
-                //    CURLOPT_TIMEOUT => 0,
-                //    CURLOPT_FOLLOWLOCATION => true,
-                //    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                //    CURLOPT_CUSTOMREQUEST => 'PUT',
-                //    CURLOPT_HTTPHEADER => array(
-                //        'Authorization: Basic '.$vendor[0]->token
-                //      ),
-                //    ));
-                //    $response = curl_exec($curl);
-                //    curl_close($curl);
-                //    $jsonResp = json_decode($response);
-                // $curl2 = curl_init();
-                // curl_setopt_array($curl2, array(
-                //   CURLOPT_URL => $vendor[0]->url.'/wp-json/waybill/waybill_data?order_id='.$order_id.'&return=1&waybill_no='.$new_val["packages"][0]["waybill"],
-                //   CURLOPT_RETURNTRANSFER => true,
-                //   CURLOPT_ENCODING => '',
-                //   CURLOPT_MAXREDIRS => 10,
-                //   CURLOPT_TIMEOUT => 0,
-                //   CURLOPT_FOLLOWLOCATION => true,
-                //   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                //   CURLOPT_CUSTOMREQUEST => 'GET',
-                // ));
-                //    $response2 = curl_exec($curl2);
-                //    curl_close($curl2);
-                //    $jsonResp2 = json_decode($response2);
+
                 return response()->json(['error' => false, 'abn_no' => $wbill, "ErrorCode" => "000"], 200);
             }else{
                 DB::table('waybill')->insert(['vid' => $vid, 'order_id' => $oid, 'return_waybill_no' => $wbill, 'date_created' => date("Y-m-d h:i:s") ]);
@@ -462,15 +457,22 @@ class OrderController extends Controller {
     }
     //assign number according to packed order
     public function assignAWB(Request $request) {
+        $error = false;
+        $msg = "";
+        if(isset($request->shipment) && $request->shipment != ''){
+            $shipment = $request->shipment;
+        }else{
+            $shipment = "Surface";
+        }
         $main = explode(',', $request->allSelected);
         $vid = $request->vid;
         // echo "strong"; die;
         for ($i = 0;$i < count($main);$i++) {
             $orders = DB::table("orders")->join('billings', function($join) use ($vid)
-        {
-            $join->on('orders.oid', '=', 'billings.order_id')
-                 ->where('billings.vid', '=', intval($vid));
-        })->where('orders.oid', intval($main[$i]))->where('orders.vid', $request->vid)->where('orders.status', 'confirmed')->get();
+                        {
+                            $join->on('orders.oid', '=', 'billings.order_id')
+                            ->where('billings.vid', '=', intval($vid));
+                        })->where('orders.oid', intval($main[$i]))->where('orders.vid', $request->vid)->where('orders.status', 'confirmed')->get();
             $my_data = DB::table("way_data")->where('vid', $request->vid)->get();
             $city = $my_data[0]->city;
             $name = $my_data[0]->name;
@@ -516,7 +518,7 @@ class OrderController extends Controller {
                               "pin": ' . $order->postcode . ',
                               "cod_amount":' . $order->total . ',
                               "order": "' . $order_prefix . $order->oid . '",
-                              "shipping_mode" : "Surface",
+                              "shipping_mode" : "'.$shipment.'",
                               "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '",
                               "weight": "' . $weight . '"
                             }
@@ -542,7 +544,7 @@ class OrderController extends Controller {
                               "pin": ' . $order->postcode . ',
                               "cod_amount":' . $order->total . ',
                               "order": "' . $order_prefix . $order->oid . '",
-                              "shipping_mode" : "Surface",
+                              "shipping_mode" : "'.$shipment.'",
                               "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '"
                             }
                           ],
@@ -639,10 +641,9 @@ class OrderController extends Controller {
                     $response = curl_exec($curl);
                     curl_close($curl);
                     $jsonResp = json_decode($response);
-                    $error = false;
+                    $error = true;
                     $msg = "No WayBill generate so status set to on-hold.";
                     // return response()->json(['error' => false, 'msg' => "No WayBill generate so status set to on-hold.","ErrorCode" => "000"],200);
-                    
                 }
             }
         }
@@ -654,7 +655,12 @@ class OrderController extends Controller {
     }
     //assign aws number packed order
     function assignAWBOrder(Request $request) {
-        // dd($request); die;
+        
+        if(isset($request->shipment) && $request->shipment != ''){
+            $shipment = $request->shipment;
+        }else{
+            $shipment = "Surface";
+        }
         $vid = $request->vid;
         $orders = DB::table("orders")->join('billings', function($join) use ($vid)
         {
@@ -719,7 +725,7 @@ class OrderController extends Controller {
                           "pin": ' . $order->postcode . ',
                           "cod_amount":' . $order->total . ',
                           "order": "' . $order_prefix . $order->oid . '",
-                          "shipping_mode" : "Surface",
+                          "shipping_mode" : "'.$shipment.'",
                           "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '",
                           "weight": "' . $weight . '"
                         }
@@ -740,6 +746,7 @@ class OrderController extends Controller {
                 $response = curl_exec($curl);
                 curl_close($curl);
                 $new_val = json_decode($response, true);
+                
                 // var_dump($new_val["packages"][0]['status']); die;
                 // if(isset($new_val["packages"])){
                 if (!empty($new_val["packages"])) {
@@ -758,7 +765,7 @@ class OrderController extends Controller {
                         $order_items = DB::table("waybill")->where('waybill.vid', $request->vid)->where('waybill.order_id', $order_id)->get()->toArray();
                         if (empty($order_items)) {
                             if($new_val["packages"][0]['status'] == "Fail"){
-                                return response()->json(['error' => false, 'msg' => $new_val["packages"][0]['remarks'][0], "ErrorCode" => "000"], 200);
+                                return response()->json(['error' => true, 'msg' => $new_val["packages"][0]['remarks'][0], "ErrorCode" => "000"], 200);
                             }else{
                                 DB::table('waybill')->insert(['vid' => $request->vid, 'order_id' => $order_id, 'waybill_no' => $wbill, 'date_created' => date("Y-m-d h:i:s") ]);
                                 DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "packed"]);
@@ -783,8 +790,9 @@ class OrderController extends Controller {
                             }
                         } else {
                             if($new_val["packages"][0]['status'] == "Fail"){
-                                return response()->json(['error' => false, 'msg' => $new_val["packages"][0]['remarks'][0], "ErrorCode" => "000"], 200);
+                                return response()->json(['error' => true, 'msg' => $new_val["packages"][0]['remarks'][0], "ErrorCode" => "000"], 200);
                             }else{
+                                $order_items_update = DB::table("waybill")->where('waybill.vid', $request->vid)->where('waybill.order_id', $order_id)->update(['waybill_no'=> $wbill])->get()->toArray();
                                 $curl = curl_init();
                                 $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
                                 curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=packed', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
@@ -792,7 +800,7 @@ class OrderController extends Controller {
                                 curl_close($curl);
                                 $jsonResp = json_decode($response);
                                 DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "packed"]);
-                                return response()->json(['error' => false, 'msg' => "Already Assign AWB No.", "ErrorCode" => - 2], 200);
+                                return response()->json(['error' => false, 'msg' => "AWB Updated Successfully", "ErrorCode" => - 2], 200);
                             }
                         }
                     // }
@@ -1048,8 +1056,8 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Donna Flair<br>GST NO : </span><br>Deep Vihar, E-10/7530/9, Village Famra Bahadur ke Road, <br>Deep Vihar, The Knit Lounge, <br>141004 - Ludhiana, Punjab, India</p>';
             $industry_name = "Donna Flair";
         }elseif($request->vid == 13){
-            $address_store = '<p><span class="c_name">MAD<br>GST NO : 03BGXPR0302L1Z8</span><br>B-32-E12/875 Thapar Nagar Opp GMT Public School Near Jalandhar Bypass, <br>Jalandhar Bypass, GMT Public School, <br>141008 - Ludhiana, Punjab, India</p>';
-            $industry_name = "MAD";
+            $address_store = '<p><span class="c_name">MAD About Decor<br>GST NO : 03BGXPR0302L1Z8</span><br>Site No.3, Industrial Plots, Near Budh Mandir<br>Village Kadian, G.T. Road<br>141008 - Ludhiana, Punjab, India</p>';
+            $industry_name = "MAD About Decor";
         }elseif($request->vid == 14){
             $address_store = '<p><span class="c_name">Menage<br>GST NO : 03AKFPS6566A1ZA</span><br>H.No. 3732 Sector 32-A, <br>Chandigarh Road<br>141010 - Ludhiana, Punjab, India</p>';
             $industry_name = "Menage";
@@ -1069,8 +1077,8 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
         }elseif($request->vid == 20){
-            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
-            $industry_name = "Style by NansJ";
+            $address_store = '<p><span class="c_name">Sextacy<br>GST NO : 03AABCA5335J3ZY</span><br>Ha-51, Focal Point Phase 6<br>Focal Point <br>141010 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Sextacy";
         }elseif($request->vid == 21){
             $address_store = '<p><span class="c_name">Blushade<br>GST NO : 07ABAFB6703C1Z1</span><br>B-192, first floor, naraina<br>industrial area phase-1<br>110028 - Delhi, India</p>';
             $industry_name = "Blushade";
@@ -1078,7 +1086,7 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">MONKBREED APPARELS<br>GST NO : 19ABWFM0548G1ZS</span><br>48, Matheswartala Road <br/>Aurus Apartment Tower-1 <br/>17th Floor 17E<br/>700046 - Kolkata, India</p>';
             $industry_name = "MONKBREED APPARELS";
         }elseif($request->vid == 23){
-            $address_store = '<p><span class="c_name">OWR<br>GST NO : 03ABQFM7484H1ZS</span><br>B-37/1731, H.no 23 A/1, <br>Guru Nanak Colony,  backside nanaksar gurudwara, <br>near GNE college<br>141006 - Ludhiana, Punjab, India</p>';
+            $address_store = '<p><span class="c_name">OWR<br>GST NO : 03ABQFM7484H1ZS</span><br>134, Bajrang Vihar,<br> Noorwala Road<br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "OWR";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
@@ -1340,8 +1348,8 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Donna Flair<br>GST NO : </span><br>Deep Vihar, E-10/7530/9, Village Famra Bahadur ke Road, <br>Deep Vihar, The Knit Lounge, <br>141004 - Ludhiana, Punjab, India</p>';
             $industry_name = "Donna Flair";
         }elseif($request->vid == 13){
-            $address_store = '<p><span class="c_name">MAD<br>GST NO : 03BGXPR0302L1Z8</span><br>B-32-E12/875 Thapar Nagar Opp GMT Public School Near Jalandhar Bypass, <br>Jalandhar Bypass, GMT Public School, <br>141008 - Ludhiana, Punjab, India</p>';
-            $industry_name = "MAD";
+            $address_store = '<p><span class="c_name">MAD About Decor<br>GST NO : 03BGXPR0302L1Z8</span><br>Site No.3, Industrial Plots, Near Budh Mandir<br>Village Kadian, G.T. Road<br>141008 - Ludhiana, Punjab, India</p>';
+            $industry_name = "MAD About Decor";
         }elseif($request->vid == 14){
             $address_store = '<p><span class="c_name">Menage<br>GST NO : 03AKFPS6566A1ZA</span><br>H.No. 3732 Sector 32-A, <br>Chandigarh Road<br>141010 - Ludhiana, Punjab, India</p>';
             $industry_name = "Menage";
@@ -1361,8 +1369,8 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
         }elseif($request->vid == 20){
-            $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
-            $industry_name = "Style by NansJ";
+            $address_store = '<p><span class="c_name">Sextacy<br>GST NO : 03AABCA5335J3ZY</span><br>Ha-51, Focal Point Phase 6<br>Focal Point <br>141010 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Sextacy";
         }elseif($request->vid == 21){
             $address_store = '<p><span class="c_name">Blushade<br>GST NO : 07ABAFB6703C1Z1</span><br>B-192, first floor, naraina<br>industrial area phase-1<br>110028 - Delhi, India</p>';
             $industry_name = "Blushade";
@@ -1370,7 +1378,7 @@ class OrderController extends Controller {
             $address_store = '<p><span class="c_name">MONKBREED APPARELS<br>GST NO : 19ABWFM0548G1ZS</span><br>48, Matheswartala Road <br/>Aurus Apartment Tower-1 <br/>17th Floor 17E<br/>700046 - Kolkata, India</p>';
             $industry_name = "MONKBREED APPARELS";
         }elseif($request->vid == 23){
-            $address_store = '<p><span class="c_name">OWR<br>GST NO : 03ABQFM7484H1ZS</span><br>B-37/1731, H.no 23 A/1, <br>Guru Nanak Colony,  backside nanaksar gurudwara, <br>near GNE college<br>141006 - Ludhiana, Punjab, India</p>';
+            $address_store = '<p><span class="c_name">OWR<br>GST NO : 03ABQFM7484H1ZS</span><br>134, Bajrang Vihar,<br> Noorwala Road<br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "OWR";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
@@ -1712,9 +1720,7 @@ class OrderController extends Controller {
     }
     //api all use according to status
     function changeProcessing_Status(Request $request) {
-        
-        // var_dump($_REQUEST); die;
-        // echo $request->loc; die;
+
         $refund_amount=$request->refund;
         if ($request->loc == "wp") {
             $listImp['0'] = $request->oid;
@@ -1726,27 +1732,27 @@ class OrderController extends Controller {
         } else {
             $listImp = explode(',', $request->allSelected);
         }
-        for($i = 0;$i < count($listImp);$i++) 
-        {
-            if($request->status_assign=='dto-refunded')
-            {
-                $vid=$request->vid;
-                $ldate = date('Y-m-d');
-                $order_id_detail=DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->get(); 
-                $refund_count=count($order_id_detail);
-                if($refund_count==0)
-                {
-                    $refund_cou='1';
-                }
-                else{
-                    $refund_cou=count($order_id_detail);
-                }
-                $refund_amount_detail= round(($refund_amount/ $refund_cou),2);
-                DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->update(['orderrefund_amount' => $refund_amount_detail]); 
-                DB::table('order_reldates')->where('oid','=',$listImp[$i])->where('order_reldates.vid','=',$vid)->update(['dto_refunddate' => $ldate ]);  
-                return response()->json(['error' => false, 'msg' =>"Update Successfully","ErrorCode" => "000"], 200);
-            }
-         }
+        // for($i = 0;$i < count($listImp);$i++) 
+        // {
+        //     if($request->status_assign=='dto-refunded')
+        //     {
+        //         $vid=$request->vid;
+        //         $ldate = date('Y-m-d');
+        //         $order_id_detail=DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->get(); 
+        //         $refund_count=count($order_id_detail);
+        //         if($refund_count==0)
+        //         {
+        //             $refund_cou='1';
+        //         }
+        //         else{
+        //             $refund_cou=count($order_id_detail);
+        //         }
+        //         $refund_amount_detail= round(($refund_amount/ $refund_cou),2);
+        //         DB::table('billing_processeds')->where('parent_order_number',$listImp[$i])->where('billing_processeds.vid','=',$vid)->update(['orderrefund_amount' => $refund_amount_detail]); 
+        //         DB::table('order_reldates')->where('oid','=',$listImp[$i])->where('order_reldates.vid','=',$vid)->update(['dto_refunddate' => $ldate ]);  
+        //         return response()->json(['error' => false, 'msg' =>"Update Successfully","ErrorCode" => "000"], 200);
+        //     }
+        //  }
         for ($i = 0;$i < count($listImp);$i++) 
         {
          
@@ -2796,7 +2802,7 @@ public function pending_order(Request $request)
             }
             // dd($url);
             // die();
-        $jsonResponse=$this->getOrderWP($url, $vid, $suffix);
+        $jsonResponse=$this->getOrderWP($url,$vid,$suffix);
         // print_r($jsonResponse);die();
         if(empty($jsonResponse))
         {

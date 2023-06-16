@@ -496,4 +496,7 @@ tbody tr {
 .text-modal{
     width:600px;
 }
-
+.shipment-type .custom-control{
+    width: 46%;
+    float: left;
+}

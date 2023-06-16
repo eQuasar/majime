@@ -186,8 +186,8 @@ class WalletprocessedController extends Controller
                     if($total_weight>500)
                     {
                         $cod_cost=$zone_price;
-                        $percent_price=(int)($total_weight/500);
-                        $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
+                        $percent_price=ceil($total_weight/500);
+                        $pp_amount=($cod_cost*($above_value))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{
@@ -212,8 +212,8 @@ class WalletprocessedController extends Controller
                     if($total_weight>500)
                     {
                         $cod_cost=$zone_price;
-                        $percent_price=(int)($total_weight/500);
-                        $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
+                        $percent_price=ceil($total_weight/500);
+                        $pp_amount=($cod_cost*($above_value))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{
@@ -237,8 +237,8 @@ class WalletprocessedController extends Controller
                     if($total_weight>500)
                     {
                         $cod_cost=$zone_price;
-                        $percent_price=(int)($total_weight/500);
-                        $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
+                        $percent_price=ceil($total_weight/500);
+                        $pp_amount=($cod_cost*($above_value))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{
@@ -289,8 +289,8 @@ class WalletprocessedController extends Controller
                     if($total_weight>500)
                     {
                         $cod_cost=$zone_price;
-                        $percent_price=(int)($total_weight/500);
-                        $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
+                        $percent_price=ceil($total_weight/500);
+                        $pp_amount=($cod_cost*($above_value))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{

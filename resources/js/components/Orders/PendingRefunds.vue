@@ -503,7 +503,7 @@ export default {
 
         .then((wasOkPressed) => {
           this.$refs["modal-2"].show();
-          this.show = true;
+          // this.show = true;
           // if (wasOkPressed) {
           //   this.$refs["modal-2"].show();
           //   this.vid = JSON.parse(localStorage.getItem("ivid"));
