@@ -361,12 +361,12 @@ class OrderController extends Controller {
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })->join('waybill', function($join) use ($vid)
-        {
-            $join->on('orders.oid', '=', 'waybill.order_id')
-                 ->where('waybill.vid', '=', intval($vid));
-        })->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)
-        ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])->select('orders.oid',"orders.date_paid","billings.first_name","billings.last_name","billings.phone","billings.email","orders.payment_method","orders.status","waybill.waybill_no")  
+        })
+
+        ->where('orders.vid', $vid)
+        ->where('orders.wallet_processed', $int_check)
+        ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])
+        ->select('orders.oid',"orders.date_paid","billings.first_name","billings.last_name","billings.phone","billings.email","orders.payment_method","orders.status","orders.id as waybill")  
         ->orderBy('orders.oid','DESC')
         ->get();
         
