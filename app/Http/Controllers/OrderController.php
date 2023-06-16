@@ -361,12 +361,12 @@ class OrderController extends Controller {
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })
-
-        ->where('orders.vid', $vid)
-        ->where('orders.wallet_processed', $int_check)
-        ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])
-        ->select('orders.oid',"orders.date_paid","billings.first_name","billings.last_name","billings.phone","billings.email","orders.payment_method","orders.status","orders.id as waybill")  
+        })->join('waybill', function($join) use ($vid)
+        {
+            $join->on('orders.oid', '=', 'waybill.order_id')
+                 ->where('waybill.vid', '=', intval($vid));
+        })->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)
+        ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])->select('orders.oid',"orders.date_paid","billings.first_name","billings.last_name","billings.phone","billings.email","orders.payment_method","orders.status","waybill.waybill_no")  
         ->orderBy('orders.oid','DESC')
         ->get();
         
@@ -597,6 +597,7 @@ class OrderController extends Controller {
                                     // return response()->json(['error' => false, 'msg' => "WayBill successfully added.", "ErrorCode" => "000"],200);
                                     
                                 } else {
+                                    $order_items_update = DB::table("waybill")->where('waybill.vid', $request->vid)->where('waybill.order_id', $order_id)->update(['waybill_no'=> $wbill])->get()->toArray();
                                     $curl = curl_init();
                                     $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
                                     curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=packed', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
@@ -605,9 +606,11 @@ class OrderController extends Controller {
                                     $jsonResp = json_decode($response);
                                     DB::table('orders')->where('oid', $order_id)->where('vid', $request->vid)->update(['status' => "packed"]);
                                     $error = false;
-                                    $msg = "Already Assign AWB No.";
+                                    $msg = "AWB Updated Successfully";
                                     // return response()->json(['error' => true, 'msg' => "Already Assign AWB No.","ErrorCode" => -2],200);
                                 }
+                            }else{
+                                return response()->json(['error' => true, 'msg' => $new_val["packages"][0]['remarks'][0], "ErrorCode" => "000"], 200);
                             }
                         } else {
                             $error = true;
