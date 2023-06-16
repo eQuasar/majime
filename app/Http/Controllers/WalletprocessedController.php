@@ -125,7 +125,7 @@ class WalletprocessedController extends Controller
             $walletUsedAmt = $sale_Amount - $amtPaid;
             
             //calculate majime cost 
-            $majime_cost=(($order_table[0]->total-$walletUsedAmt)*($mjm_cost/100));
+            $majime_cost=(($order_table[0]->total)*($mjm_cost/100));
             if($order_table[0]->payment_method == 'cod' || $order_table[0]->payment_method == 'wps_wcb_wallet_payment_gateway')
             {
                 $payment_gateway=0;
@@ -187,7 +187,7 @@ class WalletprocessedController extends Controller
                     {
                         $cod_cost=$zone_price;
                         $percent_price=ceil($total_weight/500);
-                        $pp_amount=($cod_cost*($above_value))*($percent_price-1);
+                        $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{
@@ -213,7 +213,7 @@ class WalletprocessedController extends Controller
                     {
                         $cod_cost=$zone_price;
                         $percent_price=ceil($total_weight/500);
-                        $pp_amount=($cod_cost*($above_value))*($percent_price-1);
+                        $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{
@@ -238,7 +238,7 @@ class WalletprocessedController extends Controller
                     {
                         $cod_cost=$zone_price;
                         $percent_price=ceil($total_weight/500);
-                        $pp_amount=($cod_cost*($above_value))*($percent_price-1);
+                        $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{
@@ -290,7 +290,7 @@ class WalletprocessedController extends Controller
                     {
                         $cod_cost=$zone_price;
                         $percent_price=ceil($total_weight/500);
-                        $pp_amount=($cod_cost*($above_value))*($percent_price-1);
+                        $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
                     }
                     else{
@@ -335,7 +335,6 @@ class WalletprocessedController extends Controller
             );
             // update order table with wallet processed 
             DB::table('orders')->where('orders.oid', intval($orders[$y]))->where('vid', intval($request->vid))->update(['wallet_processed' => $wallet]);
-            // unset($orders);
         }
         walletprocessed::insert($Wallet_order_data); 
 
