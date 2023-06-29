@@ -29,7 +29,7 @@
               :aria-describedby="ariaDescribedby"
               name="some-radios"
               value="Express"
-              >Air</b-form-radio
+              >Express</b-form-radio
             >
             <b-form-radio
               v-model="shipment"
@@ -77,7 +77,7 @@
               :aria-describedby="ariaDescribedby"
               name="some-radios"
               value="Express"
-              >Air</b-form-radio
+              >Express</b-form-radio
             >
             <b-form-radio
               v-model="shipment"

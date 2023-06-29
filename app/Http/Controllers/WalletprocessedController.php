@@ -110,6 +110,11 @@ class WalletprocessedController extends Controller
             $vendor_rate=DB::table("vendor_ratecards")->where('vendor_ratecards.vid','=',$order_table[0]->vid)->get();
             //Get Vendor Data according to the Vendor 
             $vendor_data=DB::table("way_data")->where('way_data.vid','=',$order_table[0]->vid)->get();
+            // ORDER if it is Express or not
+            $order_Shipdata=DB::table("shipment_types")->where('shipment_types.vid','=',$vendor)->where('shipment_types.oid','=',intval($orders[$y]))->where('shipment_type','like','Express')->get();
+            // $order_Shipdata=DB::table("shipment_types")->where('shipment_types.vid','=','21')->where('shipment_types.oid','=','16039')->where('shipment_type','like','Express')->get();
+            $expressShipment = count($order_Shipdata);
+            // 1.67
             //SMS Charges according to the vendor 
             $sms_cost=$vendor_rate[0]->sms_charges;
             //Majime Cost according to the vendor
@@ -189,10 +194,16 @@ class WalletprocessedController extends Controller
                         $percent_price=ceil($total_weight/500);
                         $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
+                        if($expressShipment>0){
+                            $logistic_cost = $logistic_cost * 1.67;
+                        }
                     }
                     else{
                         $cod_cost=$zone_price;
                         $logistic_cost=$cod_cost+$cod_charges;
+                        if($expressShipment>0){
+                            $logistic_cost = $logistic_cost * 1.67;
+                        }
                     } 
                 }
                 //caluclate logistic cost if payment method is Wallet Used
@@ -215,10 +226,16 @@ class WalletprocessedController extends Controller
                         $percent_price=ceil($total_weight/500);
                         $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
+                        if($expressShipment>0){
+                            $logistic_cost = $logistic_cost * 1.67;
+                        }
                     }
                     else{
                         $cod_cost=$zone_price;
                         $logistic_cost=$cod_cost+$cod_charges;
+                        if($expressShipment>0){
+                            $logistic_cost = $logistic_cost * 1.67;
+                        }
                     }
                 }
                 //caluclate logistic cost if payment method is prepaid
@@ -240,14 +257,20 @@ class WalletprocessedController extends Controller
                         $percent_price=ceil($total_weight/500);
                         $pp_amount=($cod_cost*($above_value/100))*($percent_price-1);
                         $logistic_cost=$cod_cost+$pp_amount+$cod_charges;
+                        if($expressShipment>0){
+                            $logistic_cost = $logistic_cost * 1.67;
+                        }
                     }
                     else{
                         $cod_cost=$zone_price;
                         $logistic_cost=$cod_cost+$cod_charges;
+                        if($expressShipment>0){
+                            $logistic_cost = $logistic_cost * 1.67;
+                        }
                     }
                 }
 
-                if($vendor == 19 || $vendor == 10){
+                if($vendor == 19 || $vendor == 10 ||  $vendor == 21 ||  $vendor == 22){
                     $logistic_cost = 0;
                 }
 

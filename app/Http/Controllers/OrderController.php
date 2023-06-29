@@ -178,6 +178,7 @@ class OrderController extends Controller {
     //getOrderDetails   vendors table according to vendors id=vid
     public function getOrderDetails(Request $request) {
         $vendor = $request->vid;
+        $curl_data = array();
         $vendor2 = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
         $curl = curl_init();
         curl_setopt_array($curl, array(
@@ -361,12 +362,15 @@ class OrderController extends Controller {
         {
             $join->on('orders.oid', '=', 'billings.order_id')
                  ->where('billings.vid', '=', intval($vid));
-        })->join('waybill', function($join) use ($vid)
-        {
-            $join->on('orders.oid', '=', 'waybill.order_id')
-                 ->where('waybill.vid', '=', intval($vid));
-        })->where('orders.vid', $vid)->where('orders.wallet_processed', $int_check)
-        ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])->select('orders.oid',"orders.date_paid","billings.first_name","billings.last_name","billings.phone","billings.email","orders.payment_method","orders.status","waybill.waybill_no")  
+        })
+        // ->join('waybill', function($join) use ($vid)
+        // {
+        //     $join->on('orders.oid', '=', 'waybill.order_id')
+        //          ->where('waybill.vid', '=', intval($vid));
+        // })
+        ->where('orders.vid', $vid)
+        ->where('orders.vid', $vid)->where('orders.wallet_processed','0')
+        ->whereIn('orders.status',[$statrto,$statdto,$statcomp,$clos])->select('orders.oid',"orders.date_paid","billings.first_name","billings.last_name","billings.phone","billings.email","orders.payment_method","orders.status","orders.status")  
         ->orderBy('orders.oid','DESC')
         ->get();
         
@@ -464,6 +468,7 @@ class OrderController extends Controller {
         }else{
             $shipment = "Surface";
         }
+
         $main = explode(',', $request->allSelected);
         $vid = $request->vid;
         // echo "strong"; die;
@@ -482,7 +487,12 @@ class OrderController extends Controller {
             $add = $my_data[0]->add;
             $token = $my_data[0]->token;
             $order_prefix = $my_data[0]->order_prefix;
-            $weight = '450';
+            if ($vid == '22' || $vid == '21'){
+                $weight = '200';
+            }else{
+                $weight = '450';    
+            }
+            
             foreach ($orders as $order) {
                 // var_dump($order);die();
                 $order_id = $order->oid;
@@ -545,7 +555,8 @@ class OrderController extends Controller {
                               "cod_amount":' . $order->total . ',
                               "order": "' . $order_prefix . $order->oid . '",
                               "shipping_mode" : "'.$shipment.'",
-                              "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '"
+                              "products_desc": "' . str_replace( array( '\'', '"', ';', '-', '<', '>', '&', '|' ), ' ', $product_name) . '",
+                              "weight": "' . $weight . '"
                             }
                           ],
                           "pickup_location": 
@@ -597,7 +608,8 @@ class OrderController extends Controller {
                                     // return response()->json(['error' => false, 'msg' => "WayBill successfully added.", "ErrorCode" => "000"],200);
                                     
                                 } else {
-                                    $order_items_update = DB::table("waybill")->where('waybill.vid', $request->vid)->where('waybill.order_id', $order_id)->update(['waybill_no'=> $wbill])->get()->toArray();
+                                    // $order_items_update = DB::table("waybill")->where('waybill.vid', $request->vid)->where('waybill.order_id', $order_id)->update(['waybill.waybill_no'=> $wbill])->get()->toArray();
+                                    DB::table('waybill')->where('order_id', $order_id)->where('vid', $request->vid)->update(['waybill_no' => $wbill]);
                                     $curl = curl_init();
                                     $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
                                     curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=packed', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
@@ -680,7 +692,11 @@ class OrderController extends Controller {
         $country = $my_data[0]->country;
         $phone = $my_data[0]->phone;
         $add = $my_data[0]->add;
-        $weight = '450';
+        if ($vid == '22' || $vid == '21'){
+            $weight = '200';
+        }else{
+            $weight = '450';    
+        }
         $token = $my_data[0]->token;
         $order_prefix = $my_data[0]->order_prefix;
         if ($request->vid == 1) {
@@ -795,7 +811,8 @@ class OrderController extends Controller {
                             if($new_val["packages"][0]['status'] == "Fail"){
                                 return response()->json(['error' => true, 'msg' => $new_val["packages"][0]['remarks'][0], "ErrorCode" => "000"], 200);
                             }else{
-                                $order_items_update = DB::table("waybill")->where('waybill.vid', $request->vid)->where('waybill.order_id', $order_id)->update(['waybill_no'=> $wbill])->get()->toArray();
+                                // $order_items_update = DB::table("waybill")->where('waybill.vid', $request->vid)->where('waybill.order_id', $order_id)->update(['waybill_no'=> $wbill])->get()->toArray();
+                                DB::table('waybill')->where('order_id', $order_id)->where('vid', $request->vid)->update(['waybill_no' => $wbill]);
                                 $curl = curl_init();
                                 $vendor = DB::table("vendors")->where('id', '=', intval($request->vid))->get();
                                 curl_setopt_array($curl, array(CURLOPT_URL => $vendor[0]->url . '/wp-json/wc/v3/orders/' . $order_id . '?status=packed', CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_HTTPHEADER => array('Authorization: Basic ' . $vendor[0]->token),));
@@ -1091,6 +1108,12 @@ class OrderController extends Controller {
         }elseif($request->vid == 23){
             $address_store = '<p><span class="c_name">OWR<br>GST NO : 03ABQFM7484H1ZS</span><br>134, Bajrang Vihar,<br> Noorwala Road<br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "OWR";
+        }elseif($request->vid == 25){
+            $address_store = '<p><span class="c_name">Clothoverse<br>GST NO : 03BXTPT8906R1Z9</span><br>498/5d, new upkar nagar,<br/> civil lines<br>141001 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Clothoverse";
+        }elseif($request->vid == 26){
+            $address_store = '<p><span class="c_name">Devoid<br>GST NO : 03ABQFM7484H1ZS</span><br>A/41 Galaxy Apartment<br/> Bodakdev  Near The <br/>Grand Bhagwati Hotel<br>380054 - Ahmedabad, India</p>';
+            $industry_name = "Devoid";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";
@@ -1383,6 +1406,12 @@ class OrderController extends Controller {
         }elseif($request->vid == 23){
             $address_store = '<p><span class="c_name">OWR<br>GST NO : 03ABQFM7484H1ZS</span><br>134, Bajrang Vihar,<br> Noorwala Road<br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "OWR";
+        }elseif($request->vid == 25){
+            $address_store = '<p><span class="c_name">Clothoverse<br>GST NO : 03BXTPT8906R1Z9</span><br>498/5d, new upkar nagar,<br/> civil lines<br>141001 - Ludhiana, Punjab, India</p>';
+            $industry_name = "Clothoverse";
+        }elseif($request->vid == 26){
+            $address_store = '<p><span class="c_name">Devoid<br>GST NO : 03ABQFM7484H1ZS</span><br>A/41 Galaxy Apartment<br/> Bodakdev  Near The <br/>Grand Bhagwati Hotel<br>380054 - Ahmedabad, India</p>';
+            $industry_name = "Devoid";
         }else{
             $address_store = '<p><span class="c_name">Style By NansJ<br>GST NO : 03AEMFS1193J1ZT</span><br>41/12 Village Bajra<br>Rahon Road <br>141007 - Ludhiana, Punjab, India</p>';
             $industry_name = "Style by NansJ";

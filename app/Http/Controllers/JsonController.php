@@ -576,6 +576,7 @@ class JsonController extends Controller
 					}
 					echo "\n<br/>WAY: ".$waybillno." Order: ".$order->oid;
 				$url = $del_url."waybill=".$waybillno."&token=".$way_data[0]->token;
+				// $url = $del_url."waybill=".$waybillno."&token=ed99803a18868406584c6d724f71ebccc80a89f9";
 				$curl = curl_init();
 				curl_setopt_array($curl, array(
 					CURLOPT_URL => $url, 
@@ -628,10 +629,10 @@ class JsonController extends Controller
 					$status = "rto-delivered";
 				} else if ($status == "Closed" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
 					$status = "deliveredtocust";
-					$this->smsSend($vid,$order_id,"deliveredtocust");
+					// $this->smsSend($vid,$order_id,"deliveredtocust");
 				} else if ($status == "Canceled" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "CN" ){
 					$status = "deliveredtocust";
-					$this->smsSend($vid,$order_id,"deliveredtocust");
+					// $this->smsSend($vid,$order_id,"deliveredtocust");
 				} else if ($status == "Delivered" && $response['ShipmentData'][$i]['Shipment']['Status']['StatusType'] == "DL" ){
 					$status = "deliveredtocust";
 					$this->smsSend($vid,$order_id,"deliveredtocust");
