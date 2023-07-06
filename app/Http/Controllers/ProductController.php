@@ -289,14 +289,8 @@ class ProductController extends Controller {
     public function import_product_info(Request $request)
     {
         $data_file=$request->file;
-        //     $uploaded_files = $data_file->store("Users/eq-mini/Documents");
-        // print_r($uploaded_files);
-        // exit();
-     //Excel::import(new ProductsImport,$request->file('file'));
-     //Excel::import(new ProductsImport, $request->file('select_users_file'));
-         Excel::import(new ProductsImport,$data_file);
+         $data=\Excel::import(new ProductsImport,$data_file);
          return response()->json(['msg' => "File Upload Successfully", "ErrorCode" => "000"], 200); 
-        //  return redirect()->back();
     
     }
    

@@ -11,9 +11,11 @@
       </div>
     </div>
     <b-button pill variant="info" style="float: right" @click="goToCreate()"
-      >Enter HSN Detail</b-button>
-      <b-button pill variant="info" style="float: right" @click="first()"
-      >Download</b-button>
+      >Enter HSN Detail</b-button
+    >
+    <b-button pill variant="info" style="float: right" @click="first()"
+      >Download</b-button
+    >
     <div class="content_bar">
       <div class="card-body card">
         <div class="call-center-dashboard">
@@ -81,19 +83,19 @@
         </template>
         <!-- <template v-slot:cell(id)="row"> #{{ row.item.id }} </template> -->
         <template v-slot:cell(hsn_code)="row">
-          <span> {{ row.item.hsn_code}}</span>
+          <span> {{ row.item.hsn_code }}</span>
         </template>
         <template v-slot:cell(slab_1)="row">
-          <span> {{row.item.slab_1}}</span>
-        </template> 
+          <span> {{ row.item.slab_1 }}</span>
+        </template>
         <template v-slot:cell(slab_2)="row">
-          <span>{{ row.item.slab_2}}</span>
+          <span>{{ row.item.slab_2 }}</span>
         </template>
         <template v-slot:cell(slab_amount)="row">
           <span>{{ row.item.slab_amount }}</span>
         </template>
         <template v-slot:cell(description)="row">
-          <span>{{ row.item.description}}</span>
+          <span>{{ row.item.description }}</span>
         </template>
         <!-- <template v-slot:cell(action)="row">
           <router-link
@@ -120,7 +122,6 @@
 import hsn from "../../api/hsn.js";
 import * as XLSX from "xlsx/xlsx.mjs";
 
-
 export default {
   props: {},
   mounted() {
@@ -138,7 +139,6 @@ export default {
       ariaDescribedby: "",
       time: "",
       date: "",
-     
 
       vid: 0,
       time_slots: [],
@@ -205,6 +205,9 @@ export default {
   },
   methods: {
     getHsnDetail(vid) {
+      this.vid = JSON.parse(localStorage.getItem("ivid"));
+      let formData = new FormData();
+      formData.append("vid", this.vid);
       hsn
         .getHsn()
         .then((response) => {
@@ -219,11 +222,15 @@ export default {
           alert("something went wrong");
         });
     },
-      first: function () {
+    first: function () {
       const data = XLSX.utils.json_to_sheet(this.items);
       const wb = XLSX.utils.book_new();
       /* fix headers */
-      XLSX.utils.sheet_add_aoa(data, [["S no.","HSN Detail","Slab 1","Slab 2","Amount","Description"]], { origin: "A1" });  
+      XLSX.utils.sheet_add_aoa(
+        data,
+        [["S no.", "HSN Detail", "Slab 1", "Slab 2", "Amount", "Description"]],
+        { origin: "A1" }
+      );
       XLSX.utils.book_append_sheet(wb, data, "data");
       XLSX.writeFile(wb, "hsn_masterdownload.xlsx");
     },

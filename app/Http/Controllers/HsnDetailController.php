@@ -58,8 +58,9 @@ class HsnDetailController extends Controller
      * @return \Illuminate\Http\Response
      */
     // api use for listing from table hsn_details get all hsn details
-    public function show(Hsn_detail $hsn_detail)
+    public function show(Request $request)
     {
+
         $hsn_data=DB::table('hsn_details')->get();
         return response()->json(['error' => false,'data' => $hsn_data],200);
     

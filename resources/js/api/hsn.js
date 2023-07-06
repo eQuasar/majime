@@ -7,7 +7,7 @@ export default {
     },
     getHsn()
     {
-        return axios.get('get_hsn');
+        return axios.get('get_hsn')
     },
     update_hsn_weight(data)
     {

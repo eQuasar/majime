@@ -228,11 +228,8 @@ export default {
           this.hsndetailfile();
           this.successful = true;
             this.error = true;
-          this.$router.push({name: 'import_file'});
-          
-          // this.fetchData();
-          // this.countrys = response.data.data;
           console.log(this.items);
+          this.$router.push({name: 'import_file'});
           //this.seen = false;
         })
         .catch((response) => {
@@ -269,6 +266,7 @@ export default {
         this.paymentSuccessful ();
         setTimeout(function () {
             // window.location.href = "/admin/import/data";
+            // this.$router.push({name: 'import_file'});
             this.$router.push("/admin/import/data").catch(()=>{});
           }, 2000);
         console.log(response.data);

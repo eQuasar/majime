@@ -275,7 +275,7 @@ class WalletprocessedController extends Controller
                 }
 
                 if($vendor_data[0]->gateway==0){
-                    if($order_table[0]->payment_method == 'cod' && ($vendor == 19 || $vendor == 10))
+                    if($order_table[0]->payment_method == 'cod' && ($vendor == 19 || $vendor == 10 ||  $vendor == 21 ||  $vendor == 22))
                     {   
                         $net_amount=0-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                     }else{
@@ -285,7 +285,7 @@ class WalletprocessedController extends Controller
                     if ($order_table[0]->payment_method != 'wps_wcb_wallet_payment_gateway' && $order_table[0]->payment_method != 'cod'){
                         $net_amount=0-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                     }else{
-                        if($order_table[0]->payment_method == 'cod' && ($vendor == 19 || $vendor == 10))
+                        if($order_table[0]->payment_method == 'cod' && ($vendor == 19 || $vendor == 10 ||  $vendor == 21 ||  $vendor == 22))
                         {   
                             $net_amount=0-($logistic_cost+$majime_cost+$sms_cost+$payment_gateway);
                         }else{
@@ -322,7 +322,7 @@ class WalletprocessedController extends Controller
                     }
                 
 
-                if($vendor == 19 || $vendor == 10){
+                if($vendor == 19 || $vendor == 10 ||  $vendor == 21 ||  $vendor == 22){
                     $logistic_cost = 0;
                 }
                     

@@ -202,13 +202,14 @@
           if (this.create_error != "") {
             return false;
           }
-          // this.vid = JSON.parse(localStorage.getItem("ivid"));
+          this.vid = JSON.parse(localStorage.getItem("ivid"));
           let formData = new FormData();
           formData.append("hsn", this.hsn);
           formData.append("slab1", this.slab1); 
           formData.append("slab2", this.slab2);
           formData.append("slab_amount", this.slab_amount);
           formData.append("description", this.description);
+          formData.append("vid", this.vid);
           HSN.hsn_detail(formData)
             .then((response) => {
               this.successful = true;
